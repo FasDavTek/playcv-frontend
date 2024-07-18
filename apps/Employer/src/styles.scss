@@ -1,0 +1,50 @@
+/* You can add global styles to this file, and also import other style files */
+@import url(../../../libs/styles/main.scss);
+
+a {
+  font-family: 'Inter', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Nunito Sans', serif;
+}
+
+// input[type='radio'] {
+//   color: white;
+//   accent-color: #54d4bd;
+// }
+
+// mui list
+.MuiList-root {
+  li {
+    padding: 14px 25px !important;
+    color: #344054 !important;
+    &:hover {
+      background-color: #54d4bd;
+      color: #fff !important;
+    }
+
+    span {
+      font-size: 14px !important;
+    }
+  }
+}
+
+.ce-px {
+  @apply px-4 md:px-6;
+}
+
+.ce-py {
+  @apply py-4 md:py-6;
+}
+
+.reportFormBanner {
+  background-size: cover;
+  background-position: right;
+  //   background-image: url(./assets/images/reports/procedure-tracker-bg.png);
+}

@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.centered-modal {
+  @apply absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[90%] md:max-w-[450px];
+}
+.centered-modal-md {
+  @apply absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[90%] md:max-w-[30%];
+}
+.centered-modal-large {
+  @apply absolute top-[80%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[90%] md:max-w-[75%] rounded-[20px] overflow-scroll h-full block;
+}
+
+.right-modal {
+  @apply absolute top-0 bottom-0 right-0 w-[90%] md:max-w-[650px] 2xl:max-w-[950px];
+}
+
+.ce-px {
+  @apply px-4 md:px-6;
+}
+
+.ce-py {
+  @apply py-4 md:py-6;
+}
+
+// table
+.ce-table-holder {
+  @apply border-[#E5E5E5] border border-solid bg-[#FBFBFB] rounded-[20px] p-[16px];
+  overflow-x: auto;
+
+  .table-heading {
+    @apply font-medium mb-[14px] font-dmsans text-lg text-neutral-200;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+
+    thead {
+      @apply bg-ce-lgreen rounded-lg;
+
+      th {
+        @apply text-[#282828] text-left;
+        white-space: nowrap;
+      }
+    }
+
+    tbody {
+      tr {
+        background-color: white;
+      }
+
+      td {
+        @apply text-[#525252] text-nowrap;
+        border-bottom: 1px solid #e1e1e1;
+      }
+    }
+
+    th,
+    td {
+      padding: 12px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 400;
+    }
+  }
+}
+
+.dashboard-table-holder {
+  overflow-x: auto;
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+
+    thead {
+      @apply bg-primary-100;
+
+      th {
+        @apply text-white text-left;
+        white-space: nowrap;
+      }
+    }
+
+    tbody {
+      td {
+        @apply text-[#525252] text-nowrap;
+        border-bottom: 1px solid #e1e1e1;
+      }
+    }
+
+    th,
+    td {
+      padding: 12px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 400;
+    }
+  }
+}
+
+.sort-container {
+  @apply bg-[#F8F8FA] gap-4 rounded-[20px] flex px-5 py-2.5 items-center;
+
+  .sort-text {
+    @apply text-xs;
+  }
+
+  .sort-value {
+    @apply text-[#2C3647] text-sm;
+  }
+}
