@@ -1,0 +1,106 @@
+.main-icon {
+  @apply rounded-xl px-4 py-3 mt-2 flex items-center space-x-3;
+}
+
+.messaging-holder {
+  @apply px-5 py-3 mt-2;
+
+  .messaging-navlink {
+    @apply flex items-center gap-3;
+  }
+}
+
+.logoAndName {
+  @apply flex items-center space-x-3;
+}
+
+.main-icon:hover,
+.main-icon.active {
+  background-color: #ffffff8f;
+}
+
+.subnavs {
+  @apply grid text-[#FFFFFF8F] gap-2 font-medium;
+}
+
+.subnavs a {
+  @apply pl-[27px] py-1 rounded-[20px];
+}
+
+.subnavs a.active {
+  background-color: #ffffff8f;
+}
+
+aside {
+  .MuiAccordion-root {
+    background-color: inherit;
+    box-shadow: unset;
+  }
+
+  .MuiAccordionSummary-root {
+    min-height: unset;
+    padding: 0;
+  }
+
+  .MuiAccordionSummary-root.Mui-expanded {
+    min-height: unset;
+  }
+
+  .MuiAccordionSummary-content {
+    margin: 0;
+  }
+
+  .MuiAccordionSummary-content.Mui-expanded {
+    margin: 0;
+  }
+}
+
+.collapsed-sidebar {
+  .collapse-hideText {
+    display: none;
+  }
+
+  .collapse-show {
+    display: block !important;
+  }
+
+  .main-icon {
+    @apply p-2 w-fit mx-auto justify-center;
+  }
+
+  .logoAndName {
+    @apply justify-center;
+  }
+
+  .messaging-holder {
+    @apply p-2;
+
+    .messaging-navlink {
+      @apply justify-center;
+    }
+  }
+
+  .subnavs {
+    justify-content: center;
+
+    a {
+      @apply p-2;
+    }
+  }
+
+  .MuiAccordionDetails-root {
+    padding: 8px;
+  }
+
+  .MuiButtonBase-root.MuiAccordionSummary-root {
+    display: none;
+  }
+}
+
+.minx {
+  @apply w-5 grid grid-cols-2 h-5 border-2 border-[#ffffff8f] border-solid;
+
+  div:nth-child(2) {
+    @apply bg-[#ffffff8f];
+  }
+}
