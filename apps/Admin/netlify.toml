@@ -1,0 +1,8 @@
+[build]
+  command = "nx build Admin"
+  publish = "dist/apps/Admin"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

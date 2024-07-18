@@ -1,0 +1,8 @@
+[build]
+  command = "nx build Employer"
+  publish = "dist/apps/Employer"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
