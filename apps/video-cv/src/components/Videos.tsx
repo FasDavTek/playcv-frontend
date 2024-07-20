@@ -5,6 +5,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { videoCVs } from '../utils/videoCVs'
 import { ChannelCard, Loader, VideoCard } from '.';
 import { Button } from '@video-cv/ui-components';
+import { Link } from 'react-router-dom';
 
 // TODO: Rename component
 const Videos = ({ videos }: any) => {
@@ -56,19 +57,17 @@ const Videos = ({ videos }: any) => {
             <Box key={idx}>{item.url && <VideoCard video={item} />}</Box>
           ))} */}
           {currentVideos.map((video: any) => (
-            <Box key={video.id}>
-              <VideoCard video={video} />
-            </Box>
+            // <Link key={video.id} to={`/video/${video.id}`} state={video}>
+              <Box key={video.id}>
+                <VideoCard video={video} />
+              </Box>
+            // </Link>
           ))}
         </div>
 
         <div className="flex justify-end gap-2 mt-4">
-          <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}>
-            
-          </Button>
-          <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>
-            
-          </Button>
+          <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
+          <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
       </div>
     </div>
   );

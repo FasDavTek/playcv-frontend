@@ -65,9 +65,9 @@ const Navbar = () => {
         <Link
           className=""
           to="/"
-          style={{ display: 'flex', alignItems: 'center' }}
+          style={{ display: 'flex', borderRadius: 'lg', alignItems: 'center' }}
         >
-          <img src={Assets.Images.Logo} alt="logo" className="h-14" />
+          <img src={Assets.Images.Dragnet} alt="logo" className="h-14 rounded-lg" />
           {/* <h2 className="text-black text-2xl">Logo</h2> */}
         </Link>
         {/* <SearchBar /> */}

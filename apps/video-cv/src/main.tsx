@@ -7,6 +7,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Routes from './routes';
 import CartProvider from './context/CartProvider';
 import AuthProvider from './context/AuthProvider';
+import './styles.scss'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

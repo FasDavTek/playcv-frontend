@@ -6,9 +6,11 @@
     "landing": "nx serve video-cv --port=4100",
     "build-landing": "nx build video-cv",
     "candidate": "nx serve Candidate --port=4101",
-    "build-candidate": "nx build Candidate",
+    "build-professional": "nx build Candidate",
     "employer": "nx serve Employer --port=4102",
-    "admin": "nx serve Admin --port=4103"
+    "build-employer": "nx build Employer",
+    "admin": "nx serve Admin --port=4103",
+    "build-admin": "nx build Admin"
   },
   "private": true,
   "dependencies": {

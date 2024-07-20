@@ -6,17 +6,17 @@ import { Button } from '@video-cv/ui-components';
 
 const JobDetail = () => {
   return (
-    <div className="job-detail flex flex-col md:flex-row py-10 px-3 md:px-10 gap-5 md:gap-10">
-      <section className="flex-[9]">
+    <div className="job-detail h-[88dvh] overflow-hidden flex flex-col md:flex-row py-10 px-3 md:px-10 gap-5 md:gap-10">
+      <section className="flex-[9] overflow-x-scroll">
         <div className="flex flex-col items-start justify-start md:flex-row md:items-center md:justify-between mb-3">
-          <h5 className="font-bold text-5xl my-5">UI/UX Designer</h5>
+          <h5 className="font-bold text-3xl my-5">UI/UX Designer</h5>
           {/* <Button label="Apply Now" /> */}
         </div>
         <div className="flex gap-3">
           <div className="h-16 w-16 border rounded-lg"></div>
-          <div className="flex items-start justify-start gap-4">
-            <p className="">Pixel Studio</p>
-            <LocationOnIcon sx={{ fontSize: '17px', color: 'gray', mr: '' }} />
+          <div className="flex items-center justify-start gap-4">
+            <h5 className="font-semibold text-lg">Pixel Studio</h5>
+            <LocationOnIcon sx={{ fontSize: '17px', color: 'gray', mr: '-.875rem' }} />
             Location
           </div>
         </div>
@@ -64,7 +64,7 @@ const JobDetail = () => {
           </a>
         </div>
       </section>
-      <section className="border flex-[3] rounded-lg min-h-[400px]">
+      <section className="border flex-[3] rounded-lg min-h-[400px] overflow-y-scroll">
         <h5 className="mt-3 mb-2 font-bold text-2xl p-5">Similar roles</h5>
       </section>
     </div>

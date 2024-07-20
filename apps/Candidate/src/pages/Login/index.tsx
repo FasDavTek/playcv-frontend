@@ -20,7 +20,7 @@ const Login = () => {
     setTimeout(() => {
       setLoading(false);
       handleLogin();
-      window.location.href = '/';
+      window.location.href = 'home';
 
       return;
     }, 1500);
