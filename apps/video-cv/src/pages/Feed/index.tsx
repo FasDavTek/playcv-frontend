@@ -5,11 +5,12 @@ import { Link } from 'react-router-dom';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 import { fetchFromAPI } from '../../utils/fetchFromAPI';
-import { Videos, Sidebar } from '../../components';
+import { Videos, Sidebar, JobBoard } from '../../components';
 // import { Videos as VideosConstant } from '../../utils/Videos';
 import { Images } from '@video-cv/assets';
 import { Button } from '@video-cv/ui-components';
 import { videoCVs } from './../../utils/videoCVs';
+import fetchJobs from '../../components/fetchJobs';
 
 const Feed = () => {
   const [selectedCategory, setSelectedCategory] = useState('New');
@@ -93,47 +94,50 @@ const Feed = () => {
         </Box>
 
         {/* LAtest jobs section */}
-        <Box className="mt-20 w-full md:w-9/12 mx-auto">
-          <h2 className="font-bold text-4xl my-5">LATEST JOBS</h2>
-          <div className="flex flex-col gap-4">
-            {[1, 2, 3, 4].map((val) => (
-              <Paper
-                elevation={4}
-                // variant="outlined"
-                square={false}
-                className="bg-white p-4 md:p-10"
-                key={val}
-              >
-                <div className="flex justify-between">
-                  <h4 className="font-bold">Job Title</h4>
-                  <div className="flex flex-col gap-2">
-                    <h5 className="font-bold text-black">
-                      <LocationOnIcon
-                        sx={{ fontSize: '17px', color: 'gray', mr: '2px' }}
-                      />
-                      Location
-                    </h5>
-                    <p className="font-light text-gray-500">
-                      Posted 5 mins ago
-                    </p>
-                  </div>
+        <Box className="mt-20 w-full mx-auto">
+          <Typography
+           variant="h5"
+           fontWeight="bold"
+           mb={2}
+           sx={{ color: 'black' }}
+           className="font-bold text-3xl my-5">LATEST JOBS</Typography>
+          {/* <JobBoard jobs={jobs}> */}
+          <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+          {[1,2,3,4].map((val) => (
+            <Paper
+              elevation={4}
+              square={false}
+              className="bg-white py-4 px-2 md:py-10 md:px-3"
+              key={val}
+            >
+              <div className="flex flex-col">
+                <h3 className="font-bold">Job Title</h3>
+                <Typography variant='subtitle2'>
+                  Company Name
+                </Typography>
+                <div className="flex flex-col gap-2">
+                  <h5 className="font-semibold text-black">
+                    <LocationOnIcon sx={{ fontSize: '17px', color: 'gray', mr: '2px' }} />
+                    Location
+                  </h5>
+                  <p className="font-light text-[.75rem] text-gray-500">
+                    Posted 5 mins ago
+                  </p>
                 </div>
-                <div className="mt-4">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus
-                  dolorem maiores consectetur consequuntur ad recusandae rerum
-                  sapiente quam doloribus accusantium aliquam repellat
-                  distinctio eum.
-                </div>
-                <div className="flex justify-end">
-                  <Link
-                    className="text-base hover:underline"
-                    to="/job-board/12345"
-                  >
-                    Read More...
-                  </Link>
-                </div>
-              </Paper>
-            ))}
+              </div>
+              <div className="mt-4 text-pretty">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Minus dolorem maiores consectetur consequuntur ad recusandae
+                rerum sapiente quam doloribus accusantium aliquam repellat
+                distinctio eum.
+              </div>
+              <div className="flex justify-end">
+                <Link className="text-base hover:underline" to="/job-board/12345">
+                  Read More...
+                </Link>
+              </div>
+            </Paper>
+          ))}
           </div>
         </Box>
 

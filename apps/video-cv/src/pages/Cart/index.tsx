@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
 import { useCart } from '../../context/CartProvider';
-import { Paper } from '@mui/material';
+import { Box, Checkbox, Paper, Stack, styled, Typography } from '@mui/material';
 import { Button } from '@video-cv/ui-components';
 import { Icons } from '@video-cv/assets';
 import { usePaystack } from '@video-cv/payment';
 import { useAuth } from '../../context/AuthProvider';
+import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -23,6 +24,18 @@ const Cart = () => {
     }
   );
 
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
+
+  useEffect(() => {
+    if (selectAll) {
+      setSelectedItems(cartState.cart.map(item => item.id));
+    } else {
+      setSelectedItems([]);
+    }
+  }, [selectAll, cartState.cart]);
+
   const handleRemoveFromCart = (id: string) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: { id } });
   };
@@ -37,75 +50,130 @@ const Cart = () => {
     }
   };
 
+  const ClampedText = styled(Typography)({
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+    WebkitLineClamp: 2,
+    // textOverflow: 'ellipsis',
+  });
+
+  const handleCheckboxChange = (id: string) => {
+    if (selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter(itemId => itemId !== id));
+    } else {
+      setSelectedItems([...selectedItems, id]);
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    selectedItems.forEach(id => {
+      handleRemoveFromCart(id);
+    });
+    setSelectedItems([]);
+    setSelectAll(false);
+  };
+
+  const totalPrice = cartState.cart
+    .filter(item => selectedItems.includes(item.id))
+    .reduce((acc, item) => acc + item.price, 0);
+
   // TODO: onCheckout, login if not already logged in
 
   return (
-    <div className="min-h-screen px-10 flex py-10 gap-3 flex-col">
-      <div className="w-full md:w-[80%] mx-auto flex flex-col md:flex-row gap-5 md:items-start">
-        <div className="md:flex-[7]">
-          <div className="border py-1 px-2 ">
-            Cart ({cartState.cart.length})
+    <div className="min-h-screen px-3 py-5 md:px-5 xl:px-10 flex md:py-10 gap-3 flex-col">
+      <div className="w-full md:w-[100%] xl:w-[75%] mx-auto flex flex-col md:flex-row gap-5 md:items-start md:justify-between">
+        <div className={`flex-1 ${isSummaryOpen ? 'md:flex-[7]' : 'md:w-full'}`}>
+          <Typography variant='h4' marginBottom={4}>
+             My Cart ({cartState.cart.length})
+          </Typography>
+          <div className="border py-4 px-3 rounded-lg">
+            <Stack direction='row' spacing={3} justifyContent='space-between'>
+              <Stack direction='row' alignItems='center' justifyContent='center'>
+                <Checkbox color="success" checked={selectAll} onChange={(e) => setSelectAll(e.target.checked)} />
+                <Typography variant='body1' fontWeight='550'>
+                  Select All
+                </Typography>
+              </Stack>
+
+              <Button variant='black' label='Delete' className='black' onClick={handleDeleteSelected}></Button>
+            </Stack>
           </div>
-          <div className=" flex flex-col gap-3">
+          <div className=" flex flex-col py-2 gap-3">
             {cartState.cart.map((item: any) => {
-              console.log(item.id);
               return (
-                <Paper
-                  // variant="outlined"
-                  key={item.id}
-                  square={false}
-                  className="bg-white p-4 md:p-10 flex justify-between"
-                >
-                  <div className="left">
-                    <div className="up flex gap-2">
-                      <img
-                        alt=""
-                        className=" w-[50px] h-[50px] rounded"
-                        src={item.imageSrc}
-                      />
-                      Name of the video
-                    </div>
-                    <div className="">
-                      <span
-                        role="button"
-                        onClick={() => handleRemoveFromCart(item.id)}
-                        className="border flex items-center gap-1 w-fit border-transparent text-sm font-bold hover:bg-slate-100  rounded-md mt-3 px-2 py-1 md:px-4 md:py-1.5"
-                      >
-                        <img alt="" className="w-5 h-15" src={Icons.Trash} />
-                        Remove
-                      </span>
-                      {/* <Button
-                        variant="neutral"
-                        label="Remove"
-                        className="mt-4"
-                        onClick={() => handleRemoveFromCart(item.id)}
-                      /> */}
-                    </div>
-                  </div>
-                  <div className="right">
-                    <p className="">₦ {item.price}</p>
-                  </div>
-                </Paper>
+                <Box key={item.id} className="bg-white p-2 md:px-5 md:py-3 flex rounded-lg shadow-sm border border-gray-100 justify-between">
+                  <Stack direction={['column', 'row']} alignItems='center' width='100%' className="flex">
+                    <Stack direction={['column', 'row']} alignItems='flex-start' width={['100%', '90%']}>
+                      <Checkbox color="success" checked={selectedItems.includes(item.id)} onChange={() => handleCheckboxChange(item.id)} />
+                      <div className="flex gap-2 items-center w-full">
+                        <img alt="" className=" w-[60px] h-[60px] md:w-[100px] md:h-[100px] rounded-xl" src={item.imageSrc}/>
+                        <Stack className='' width='85%' spacing={1}>
+                          <Typography variant='subtitle1'>
+                            Frontend Developer
+                          </Typography>
+                          <Typography variant='body1' fontWeight='400'>
+                            Lorem Ipsum
+                          </Typography>
+                          <Box>
+                            
+                          <ClampedText variant='body2'>
+                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
+                          </ClampedText>
+                            
+                            {/* <Typography onClick={handleToggle} variant='body2' sx={{ cursor: 'pointer', fontWeight: 'semibold' }} style={{ color: 'white' }}>
+                              {isExpanded ? 'Show less' : '...more'}
+                            </Typography> */}
+                          </Box>
+                        </Stack>
+                      </div>
+                    </Stack>
+
+                    <Stack direction={['row', 'column']} flex={1} flexGrow={1} alignItems={['start', 'flex-end']} className='w-full gap-3 md:justify-between mt-1 md:mt-0' spacing={2}>
+                      {/* <Typography className="">₦ {item.price}</Typography> */}
+                      <div className="">
+                        <span role="button" onClick={() => handleRemoveFromCart(item.id)} className="flex items-center border-transparent text-xs font-bold hover:bg-slate-100 rounded-full px-1 py-1 md:px-1 md:py-1">
+                          <RemoveShoppingCartIcon className="w-1 h-1" />
+                        </span>
+                      </div>
+                      <Button variant='black' label='Connect' onClick={() => setIsSummaryOpen(true)} className='black text-sm'></Button>
+                    </Stack>
+                  </Stack>
+                </Box>
               );
             })}
           </div>
         </div>
-        <div className="md:flex-[3] border flex flex-col gap-3">
-          <h5 className=" border-b uppercase px-1 py-0.5">Cart Summary</h5>
+        {isSummaryOpen && (
+          <div className="md:flex-[3] border flex-col gap-3 hidden md:flex">
+            <h5 className="border-b uppercase px-1 py-0.5">Cart Summary</h5>
+            <div className="flex justify-between px-1 py-0.5">
+              <p className="px-1 py-0.5">Subtotal</p>
+              <p className="">
+                ₦{' '}{totalPrice}
+              </p>
+            </div>
+            <div className="px-1 py-0.5">
+              <Button
+                label="Checkout"
+                onClick={handleEmployerSignin}
+                className="w-full"
+              />
+            </div>
+          </div>
+        )}
+        
+      </div>
+      <div className={`fixed bottom-0 left-0 right-0 bg-white z-10 transition-height rounded-t-xl duration-300 ${isSummaryOpen ? 'h-auto' : 'h-0 overflow-hidden'} md:hidden`}>
+        <div className="border flex flex-col gap-3 p-4 rounded-t-xl">
+          <h5 className="border-b uppercase px-1 py-0.5">Cart Summary</h5>
           <div className="flex justify-between px-1 py-0.5">
             <p className="px-1 py-0.5">Subtotal</p>
             <p className="">
-              ₦{' '}
-              {cartState.cart.reduce(
-                (accumulator: number, currentValue: any) =>
-                  accumulator + currentValue.price,
-                0
-              )}
+              ₦{' '}{totalPrice}
             </p>
           </div>
-
           <div className="px-1 py-0.5">
-            {/* TODO: If not signed in, navigate to Employer sign in */}
             <Button
               label="Checkout"
               onClick={handleEmployerSignin}

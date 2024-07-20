@@ -7,7 +7,7 @@ import {
 } from 'react';
 
 import { GetItemsFromLocalStorage, RemoveFromLocalStorage, AddToLocalStorage, } from '@video-cv/utils';
-interface ICartItem {
+export interface ICartItem {
   name: string;
   id: string;
   imageSrc: string;

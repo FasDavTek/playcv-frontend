@@ -79,6 +79,11 @@ a {
   scrollbar-width: none;
 }
 
+.black {
+  border-radius: 25px !important;
+  padding: .375rem 1rem !important;
+}
+
 @media screen and (max-width: 900px) {
   .category-btn {
     margin: 10px;
@@ -146,7 +151,7 @@ a {
 
 .nav-elements {
   display: flex;
-  align-items: center;
+  align-items: start;
 }
 
 .nav-elements ul {
@@ -192,6 +197,7 @@ a {
   .menu-icon {
     display: block;
     cursor: pointer;
+    place-items: center;
   }
 
   .nav-elements {
@@ -204,12 +210,14 @@ a {
     height: calc(100vh - 60px);
     transition: all 0.3s ease-in;
     overflow: hidden;
+    display: none;
     .active-nav-link {
       border-bottom: 0px !important;
     }
   }
 
   .nav-elements.active {
+    display: block;
     width: 270px;
   }
 
