@@ -130,7 +130,7 @@ const Cart = () => {
                     </Stack>
 
                     <Stack direction={['row', 'column']} flex={1} flexGrow={1} alignItems={['start', 'flex-end']} className='w-full gap-3 md:justify-between mt-1 md:mt-0' spacing={2}>
-                      {/* <Typography className="">₦ {item.price}</Typography> */}
+                      <Typography className={`${isSummaryOpen ? 'flex' : 'hidden'}`}>₦ {item.price}</Typography>
                       <div className="">
                         <span role="button" onClick={() => handleRemoveFromCart(item.id)} className="flex items-center border-transparent text-xs font-bold hover:bg-slate-100 rounded-full px-1 py-1 md:px-1 md:py-1">
                           <RemoveShoppingCartIcon className="w-1 h-1" />

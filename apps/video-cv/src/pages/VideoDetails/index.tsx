@@ -83,9 +83,10 @@ const VideoDetails = () => {
                     Frontend Developer
                   </Typography>
 
-                  <Typography variant='caption' align='center' bgcolor='InfoText' py='.125rem' height='2.125rem' lineHeight='2rem' borderRadius='1000px' color='white' px='1.25rem'>
+                  {/* <Typography variant='caption' align='center' bgcolor='InfoText' py='.125rem' height='2.125rem' lineHeight='2rem' borderRadius='1000px' color='white' px='1.25rem'>
                     ₦200
-                  </Typography>
+                  </Typography> */}
+                  <Button onClick={handleAddToCart} variant='custom' className='text-[#5c6bc0] hover:text-[#2e3a86]' icon={<AddShoppingCartIcon />} />
                 </Stack>
 
                 <Stack direction='row' alignItems='center' spacing={8}>
@@ -93,7 +94,6 @@ const VideoDetails = () => {
                     {/* Uploaded by: {video.uploaderName} */}
                     Lorem Ipsum.
                   </Typography>
-                  <Button onClick={handleAddToCart} variant='custom' className='text-[#5c6bc0] hover:text-[#2e3a86]' label='Add to Cart' />
                 </Stack>
 
                 <Box bgcolor='#495057' p={1}  borderRadius={2} color='white' sx={{ backdropFilter: 'blur(.625rem)' }}>
