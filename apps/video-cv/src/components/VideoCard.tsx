@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 import { Typography, Card, CardContent, CardMedia, Tooltip, Stack } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 import {
   demoThumbnailUrl,
@@ -86,7 +85,7 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
           </Typography>
           <Tooltip title='Add to wishlist' placeholder='right-start'>
             <span>
-            <Button variant="custom" color="gray" className='text-[#5c6bc0] hover:text-[#2e3a86]' onClick={handleAddToCart} icon={isInWishlist ? <BookmarkIcon /> : <BookmarkBorderIcon />}></Button>
+            <Button variant="custom" color="gray" className='text-[#5c6bc0] hover:text-[#2e3a86]' onClick={handleAddToCart} icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />}></Button>
             </span>
           </Tooltip>
         </Stack>

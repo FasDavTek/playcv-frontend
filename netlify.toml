@@ -9,15 +9,20 @@
 
 [[redirects]]
   from = "/employer/*"
-  to = "/employer/:splat"
+  to = "/employer/index.html"
   status = 200
 
 [[redirects]]
   from = "/professional/*"
-  to = "/professional/:splat"
+  to = "/professional/index.html"
   status = 200
 
 [[redirects]]
-  from = "/admin/*"
-  to = "/admin/:splat"
+  from = "/vcadmin/*"
+  to = "/vcadmin/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200
