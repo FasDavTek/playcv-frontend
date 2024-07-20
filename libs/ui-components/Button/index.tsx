@@ -5,7 +5,7 @@ import { Loader } from '../index';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label?: string | ReactElement;
-  variant?: 'primary' | 'neutral' | 'tertiary' | 'success' | 'custom' | 'blue' | 'red' | 'none';
+  variant?: 'primary' | 'neutral' | 'tertiary' | 'success' | 'custom' | 'blue' | 'red' | 'none' | 'black';
   icon?: any;
   iconAfter?: any;
   loading?: boolean;
@@ -22,6 +22,7 @@ const variants = {
   blue: 'bg-violet-700 border border-neuytral-100 text-white hover:bg-transparent hover:text-violet-600 !rounded-md',
   red: 'bg-red-500 text-white',
   none: 'bg-transparent border-none',
+  black: 'bg-black text-white',
 };
 
 const Button: React.FC<ButtonProps> = ({

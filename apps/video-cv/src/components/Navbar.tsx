@@ -7,11 +7,13 @@ import { logo } from '../utils/constants';
 import { SearchBar } from '.';
 import { useCart } from '../context/CartProvider';
 import * as Assets from '@video-cv/assets';
+import MenuIcon from '@mui/icons-material/Menu';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 
 const Hamburger = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="52"
+    width="22"
     height="24"
     viewBox="0 0 52 24"
   >
@@ -59,9 +61,9 @@ const Navbar = () => {
 
   return (
     <div
-      className={`flex items-center px-10 sticky bg-white top-0 justify-center z-20 navbar`}
+      className={`flex items-center px-3 md:px-10 sticky bg-white top-0 justify-center z-20 navbar`}
     >
-      <div className="w-full mx-auto flex justify-between">
+      <div className="w-full mx-auto flex items-center justify-between">
         <Link
           className=""
           to="/"
@@ -72,9 +74,9 @@ const Navbar = () => {
         </Link>
         {/* <SearchBar /> */}
         <div className="menu-icon" onClick={handleShowNavbar}>
-          <Hamburger />
+          {showNavbar ? <MenuOpenIcon sx={{ width: '1.75rem', height: '1.75rem' }} className='w-12 h-12' /> : <MenuIcon sx={{ width: '1.75rem', height: '1.75rem' }} className='w-12 h-12' />}
         </div>
-        <div className={`nav-elements ${showNavbar && 'active'} items-center justify-center`}>
+        <div className={`nav-elements ${showNavbar && 'active'} justify-start px-3`}>
           <ul>
             <li>
               <NavLink
