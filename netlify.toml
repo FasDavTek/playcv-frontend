@@ -1,9 +1,9 @@
 [build]
   command = "yarn build-landing && yarn build-candidate && yarn build-admin"
   publish = "dist/apps/video-cv"
-  environment = { 
-    GENERATE_SOURCEMAP = "true"
-  }
+
+[context.production.environment]
+  GENERATE_SOURCEMAP = "true"
 
 [[redirects]]
   from = "/account"
