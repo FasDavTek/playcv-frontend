@@ -97,6 +97,22 @@ const Navbar = () => {
             </li>
             <li>
               <NavLink
+                to="/talents"
+                className={({ isActive, isPending }) =>
+                  `text-black text-lg  ${
+                    isPending
+                      ? 'pending'
+                      : isActive
+                      ? 'active-nav-link'
+                      : 'nav-link'
+                  }`
+                }
+              >
+                Talent Gallery
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
                 to="/job-board"
                 className={({ isActive, isPending }) =>
                   `text-black text-lg  ${

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { Box, Stack, Typography, Paper } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 import { fetchFromAPI } from '../../utils/fetchFromAPI';
@@ -13,6 +13,7 @@ import { videoCVs } from './../../utils/videoCVs';
 import fetchJobs from '../../components/fetchJobs';
 
 const Feed = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('New');
 
   return (
@@ -27,7 +28,7 @@ const Feed = () => {
               Discover the best job listings tailored to your skills and aspirations. Join thousands of professionals who have found their dream jobs through our platform.
             </Typography>
             <Box className="flex items-center gap-10" sx={{ marginBottom: '1.25rem' }}>
-              <Button variant="blue" color="primary" label={'Explore Jobs'} className="text-lg"></Button>
+              <Button variant="blue" color="primary" label={'Explore Jobs'} onClick={() => navigate('/job-board')} className="text-lg"></Button>
               <Button variant="custom" color="primary" label={'Hire a talent'} className="text-lg"></Button>
             </Box>
             <Typography variant='body2' className="text-lg" sx={{ fontSize: '1rem', color: '#7f8c8d' }}>
