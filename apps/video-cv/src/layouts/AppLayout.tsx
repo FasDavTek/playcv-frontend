@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthProvider';
 import { Layout } from '@video-cv/ui-components';
 import * as Assets from '@video-cv/assets';
 
-const routesWithoutDashboardLayout = ['job-board', 'cart', 'video/'];
+const routesWithoutDashboardLayout = ['job-board', 'cart', 'talents', 'video/'];
 
 export default function AppLayout(): React.ReactElement {
   const { authState } = useAuth();
@@ -20,12 +20,12 @@ export default function AppLayout(): React.ReactElement {
         (route) =>
           location.pathname.includes(route) || location.pathname === '/'
       ) ? (
-        <Box sx={{ backgroundColor: '#fff' }}>
+        <Box sx={{ backgroundColor: '#fff' }} height='100dvh'>
           <Navbar />
           <Suspense fallback={<h1>Loading...</h1>}>
             <Outlet />
           </Suspense>
-          <footer className="py-5 px-10 text-center flex gap-3 justify-center  bottom-0 left-0 right-0 relative">
+          <footer className="py-5 flex-1 px-10 text-center flex gap-3 justify-center  bottom-0 left-0 right-0 relative">
             <a href="https://facebook.com/" className="">
               <img
                 src={Assets.Icons.Facebook}

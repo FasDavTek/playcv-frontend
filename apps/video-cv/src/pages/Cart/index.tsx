@@ -81,7 +81,7 @@ const Cart = () => {
   // TODO: onCheckout, login if not already logged in
 
   return (
-    <div className="min-h-screen px-3 py-5 md:px-5 xl:px-10 flex md:py-10 gap-3 flex-col">
+    <div className="h-screen px-3 py-5 md:px-5 xl:px-10 flex md:py-10 gap-3 flex-col">
       <div className="w-full md:w-[100%] xl:w-[75%] mx-auto flex flex-col md:flex-row gap-5 md:items-start md:justify-between">
         <div className={`flex-1 ${isSummaryOpen ? 'md:flex-[7]' : 'md:w-full'}`}>
           <Typography variant='h4' marginBottom={4}>

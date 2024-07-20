@@ -83,6 +83,27 @@ const JobBoard = () => {
               containerClass="flex-1"
             />
 
+            <Select
+              options={[]}
+              label="Role"
+              placeholder="Select Role"
+              containerClass="flex-1"
+            />
+
+            <Select
+              options={[]}
+              label="Keywords"
+              placeholder="Select Keyword"
+              containerClass="flex-1"
+            />
+
+            <Select
+              options={[]}
+              label="Location"
+              placeholder="Select Location"
+              containerClass="flex-1"
+            />
+
             <Radio
               label="Job Status"
               options={[
@@ -97,12 +118,17 @@ const JobBoard = () => {
           </div>
         </div>
         {/* job board */}
-        <div className=" flex-[9]  p-4">
+        <div className=" flex-[9] p-4">
           {/* Search box comes here */}
 
           <h4 className="font-black text-xl text-gray-700">250 Job Results</h4>
-          <div className="mt-20 mx-auto">
-            <h2 className="font-bold text-3xl my-5">LATEST JOBS</h2>
+          <div className="mt-10 mx-auto">
+            <Typography
+              variant="h5"
+              fontWeight="bold"
+              mb={2}
+              sx={{ color: 'black' }}
+              className="font-bold text-3xl my-5">LATEST JOBS</Typography>
             <div className={` items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
               {jobs.map((val) => (
                 <Paper

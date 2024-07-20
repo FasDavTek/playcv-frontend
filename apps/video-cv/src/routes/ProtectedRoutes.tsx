@@ -8,6 +8,7 @@ import ErrorBoundary from './ErrorBoundary';
 // import { routes } from "../constants";
 
 const Home = lazy(() => import('../pages/Home'));
+const TalentGallery = lazy(() => import('../pages/TalentGallery'));
 const VideoDetails = lazy(() => import('../pages/VideoDetails'));
 const Feed = lazy(() => import('../pages/Feed'));
 const JobBoard = lazy(() => import('../pages/JobBoard'));
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
       {
         path: '',
         element: <Feed />,
+      },
+      {
+        path: 'talents',
+        element: <TalentGallery />,
       },
       {
         path: 'video/:id',
