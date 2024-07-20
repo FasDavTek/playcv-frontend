@@ -1,5 +1,5 @@
 [build]
-  command = "yarn build-landing && yarn build-candidate && yarn build-employer && yarn build-admin"
+  command = "yarn build-landing && yarn build-employer && yarn build-admin"
   publish = "dist/apps/video-cv"
 
 [[redirects]]
