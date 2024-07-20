@@ -26,10 +26,10 @@ const Feed = () => {
               Discover the best job listings tailored to your skills and aspirations. Join thousands of professionals who have found their dream jobs through our platform.
             </Typography>
             <Box className="flex items-center gap-10" sx={{ marginBottom: '1.25rem' }}>
-              <Button variant="custom" color="primary" label={'Explore Jobs'} className="text-lg"></Button>
+              <Button variant="blue" color="primary" label={'Explore Jobs'} className="text-lg"></Button>
               <Button variant="custom" color="primary" label={'Hire a talent'} className="text-lg"></Button>
             </Box>
-            <Typography className="text-lg" sx={{ fontSize: '1rem', color: '#7f8c8d' }}>
+            <Typography variant='body2' className="text-lg" sx={{ fontSize: '1rem', color: '#7f8c8d' }}>
                 Reach <span className="text-TColor-150 font-bold">50K+</span> Individuals
             </Typography>
           </Box>
@@ -77,6 +77,21 @@ const Feed = () => {
 
           <Videos videos={videoCVs.slice(10, 30)} />
         </Box>
+
+        <Box className="mt-20">
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            mb={2}
+            sx={{ color: 'black' }}
+            className="font-bold text-5xl my-5"
+          >
+            EXPERIENCED PROFESSIONAL
+          </Typography>
+
+          <Videos videos={videoCVs.slice(10, 30)} />
+        </Box>
+
         {/* LAtest jobs section */}
         <Box className="mt-20 w-full md:w-9/12 mx-auto">
           <h2 className="font-bold text-4xl my-5">LATEST JOBS</h2>
@@ -122,19 +137,6 @@ const Feed = () => {
           </div>
         </Box>
 
-        <Box className="mt-20">
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            mb={2}
-            sx={{ color: 'black' }}
-            className="font-bold text-5xl my-5"
-          >
-            EXPERIENCED PROFESSIONAL
-          </Typography>
-
-          <Videos videos={videoCVs.slice(10, 30)} />
-        </Box>
       </Box>
     </Stack>
   );

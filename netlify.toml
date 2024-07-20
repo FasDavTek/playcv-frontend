@@ -1,0 +1,23 @@
+[build]
+  command = "yarn build-landing && yarn build-candidate && yarn build-employer && yarn build-admin"
+  publish = "dist/apps/video-cv"
+
+[[redirects]]
+  from = "/account"
+  to = "/account/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/employer/*"
+  to = "/employer/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/professional/*"
+  to = "/professional/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/:splat"
+  status = 200

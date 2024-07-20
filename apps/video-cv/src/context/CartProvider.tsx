@@ -6,29 +6,25 @@ import {
   useReducer,
 } from 'react';
 
-import {
-  GetItemsFromLocalStorage,
-  RemoveFromLocalStorage,
-  AddToLocalStorage,
-} from '@video-cv/utils';
-
-export const CartContext = createContext<any>(null); // Specify the context type
-const CART_KEY = 'VIDEO-CV-CART';
-
+import { GetItemsFromLocalStorage, RemoveFromLocalStorage, AddToLocalStorage, } from '@video-cv/utils';
 interface ICartItem {
   name: string;
   id: string;
   imageSrc: string;
-  price: string;
+  price: number;
 }
 
 interface IState {
   cart: ICartItem[];
-}
+};
+
+const CART_KEY = 'VIDEO-CV-CART';
 
 const initialState: IState = {
   cart: GetItemsFromLocalStorage(CART_KEY) ?? [],
 };
+
+export const CartContext = createContext<{ cartState: IState; dispatch: React.Dispatch<any> } | undefined>(undefined);
 
 const CartReducer = (
   state: IState,
@@ -38,10 +34,12 @@ const CartReducer = (
   switch (action.type) {
     case 'ADD_TO_CART': {
       console.log('add to cart type', action);
-      AddToLocalStorage(action.payload, CART_KEY);
+      const newItem = action.payload;
+      const updatedCart = [...state.cart, newItem];
+      AddToLocalStorage(updatedCart, CART_KEY);
       return {
         ...state,
-        cart: [...state.cart, action.payload],
+        cart: updatedCart,
       };
     }
     case 'REMOVE_FROM_CART': {
@@ -53,11 +51,11 @@ const CartReducer = (
       RemoveFromLocalStorage(action.payload.id, CART_KEY);
       return {
         ...state,
-        cart: [...filteredList],
+        cart: filteredList,
       };
     }
     case 'CLEAR_CART': {
-      localStorage.clear();
+      localStorage.removeItem(CART_KEY);
       return {
         ...state,
         cart: [],
@@ -80,8 +78,14 @@ const CartProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (context === undefined) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+  return context;
+};
+
 export default CartProvider;
 
-export const useCart = () => {
-  return useContext(CartContext);
-};
+

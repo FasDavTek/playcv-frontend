@@ -1,8 +1,0 @@
-[build]
-  command = "nx build video-cv"
-  publish = "dist/apps/video-cv"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
