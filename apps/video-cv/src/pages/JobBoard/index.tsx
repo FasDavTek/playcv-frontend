@@ -78,13 +78,6 @@ const JobBoard = () => {
           <div className="p-3 mx-auto flex flex-col gap-3">
             <Select
               options={[]}
-              label="Date Posted"
-              placeholder="Select Date"
-              containerClass="flex-1"
-            />
-
-            <Select
-              options={[]}
               label="Role"
               placeholder="Select Role"
               containerClass="flex-1"
@@ -101,6 +94,13 @@ const JobBoard = () => {
               options={[]}
               label="Location"
               placeholder="Select Location"
+              containerClass="flex-1"
+            />
+
+            <Select
+              options={[]}
+              label="Date Posted"
+              placeholder="Select Date"
               containerClass="flex-1"
             />
 

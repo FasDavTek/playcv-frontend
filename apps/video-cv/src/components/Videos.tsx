@@ -68,7 +68,7 @@ const Videos = ({ videos }: any) => {
         <div className="flex justify-end gap-2 mt-4">
           <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
           <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
-      </div>
+        </div>
     </div>
   );
 };

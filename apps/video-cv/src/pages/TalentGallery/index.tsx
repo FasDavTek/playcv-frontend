@@ -1,11 +1,58 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Stack, Typography } from '@mui/material'
 import { Images } from '@video-cv/assets';
 import { Button, Radio, Select } from '@video-cv/ui-components';
 import { VideoCard, Videos } from '../../components';
 import { videoCVs } from '../../utils/videoCVs';
+import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 const index = () => {
+    const [currentPage, setCurrentPage] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
+    useEffect(() => {
+        const handleResize = () => {
+          const screenWidth = window.innerWidth;
+          if (screenWidth >= 768) {
+            setItemsPerPage(30);
+          } else {
+            setItemsPerPage(10);
+          }
+        };
+    
+        // Set the initial items per page based on screen width
+        handleResize();
+    
+        // Add event listener to update items per page on resize
+        window.addEventListener('resize', handleResize);
+    
+        // Clean up event listener on component unmount
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+    
+    const totalPages = Math.ceil(videoCVs.length / itemsPerPage);
+
+    const handlePrevPage = () => {
+    if (currentPage > 0) {
+        setCurrentPage((prevPage) => prevPage - 1);
+    }
+    };
+
+    const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+        setCurrentPage((prevPage) => prevPage + 1);
+    }
+    };
+
+    const paginatedItems = videoCVs.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+    );
+
+
   return (
     <Box>
         <Box className="min-h-[500px] bg-[#F7FaFF] px-3 md:px-10 flex justify-center items-start py-10 flex-col gap-3">
@@ -44,12 +91,6 @@ const index = () => {
                 <div className="p-3 mx-auto flex flex-col gap-3">
                     <Select
                         options={[]}
-                        label="Date Posted"
-                        placeholder="Select Date"
-                        containerClass="flex-1"
-                    />
-                    <Select
-                        options={[]}
                         label="Job"
                         placeholder="Select Role"
                         containerClass="flex-1"
@@ -65,6 +106,12 @@ const index = () => {
                         options={[]}
                         label="Location"
                         placeholder="Select Location"
+                        containerClass="flex-1"
+                    />
+                    <Select
+                        options={[]}
+                        label="Date Posted"
+                        placeholder="Select Date"
                         containerClass="flex-1"
                     />
 
@@ -99,7 +146,10 @@ const index = () => {
                             <VideoCard key={video.id} video={video} />
                         ))}
                     </div>
-                    {/* <Videos Videos={videoCVs.slice(0, 30)} /> */}
+                    <div className="flex justify-end gap-2 mt-4">
+                        <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
+                        <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
+                    </div>
                 </div>
             </div>
         </Box>

@@ -68,7 +68,7 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
       sx={{
         width: { xs: '100%', sm: '100%', md: '100%' },
         maxWidth: '300px',
-        boxShadow: '0',
+        boxShadow: { xs: '1', sm: '1', lg:'0'},
         mx: 'auto',
         borderRadius: 2,
         '&:hover': {
