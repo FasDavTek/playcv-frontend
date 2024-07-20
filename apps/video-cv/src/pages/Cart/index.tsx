@@ -48,6 +48,7 @@ const Cart = () => {
           </div>
           <div className=" flex flex-col gap-3">
             {cartState.cart.map((item: any) => {
+              console.log(item.id);
               return (
                 <Paper
                   // variant="outlined"

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Typography, Card, CardContent, CardMedia, Tooltip, Stack } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -12,7 +12,6 @@ import {
 } from '../utils/constants';
 import { Button } from '@video-cv/ui-components';
 import { useCart } from '../context/CartProvider';
-import { Images } from '@video-cv/assets';
 
 interface VideoProps {
   video: {
@@ -35,18 +34,33 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
   const { cartState, dispatch } = useCart();
   const [isInWishlist, setIsInWishlist] = useState(false);
 
+  useEffect(() => {
+    // Check if the item is in the cart on component mount
+    const itemInCart = cartState.cart.some((item: any) => item.id === id);
+    setIsInWishlist(itemInCart);
+  }, [cartState, id]);
+
   const handleAddToCart = () => {
+    const itemInCart = cartState.cart.some((item: any) => item.id === id);
     setIsInWishlist(!isInWishlist);
-    const value = {
-      name: uploaderName,
-      id: id,
-      imageSrc: imageSrc,
-      price: price,
-    };
-    dispatch({
-      type: 'ADD_TO_CART',
-      payload: value,
-    });
+    if (itemInCart) {
+      dispatch({
+        type: 'REMOVE_FROM_CART',
+        payload: { id },
+      });
+    }
+    else {
+      const value = {
+        name: uploaderName,
+        id: id,
+        imageSrc: imageSrc,
+        price: price,
+      };
+      dispatch({
+        type: 'ADD_TO_CART',
+        payload: value,
+      });
+    }
   };
 
   return (
@@ -75,9 +89,9 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
       <CardContent sx={{ backgroundColor: 'transparent', height: 'auto' }}>
         <Typography variant="subtitle1" fontWeight="bold" color="#000">
           {role.slice(0, 30)}{' '}
-          <CheckCircleIcon
+          {/* <CheckCircleIcon
             sx={{ fontSize: '12px', color: 'gray', ml: '5px' }}
-          />
+          /> */}
         </Typography>
         <Stack direction='row' alignItems='center' justifyContent='space-between' my='.3125rem'>
           <Typography variant="subtitle2" color="gray">
@@ -85,7 +99,7 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
           </Typography>
           <Tooltip title='Add to wishlist' placeholder='right-start'>
             <span>
-            <Button variant="custom" color="gray" className='text-[#5c6bc0] hover:text-[#2e3a86]' onClick={handleAddToCart} icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />}></Button>
+              <Button variant="custom" color="gray" className='text-[#5c6bc0] hover:text-[#2e3a86]' onClick={handleAddToCart} icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />}></Button>
             </span>
           </Tooltip>
         </Stack>
