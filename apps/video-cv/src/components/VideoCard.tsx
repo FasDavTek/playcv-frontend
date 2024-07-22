@@ -4,6 +4,7 @@ import { Typography, Card, CardContent, CardMedia, Tooltip, Stack } from '@mui/m
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { useInView } from 'react-intersection-observer';
 
 import {
   demoThumbnailUrl,
@@ -33,6 +34,10 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
   const { videoUrl, uploaderName, views, role, description, id, imageSrc, price, link = '/video/cV2gBU6hKfY' /*   link = `/video/${id}` */ } = video;
   const { cartState, dispatch } = useCart();
   const [isInWishlist, setIsInWishlist] = useState(false);
+  const { ref, inView } = useInView({
+    triggerOnce: true, // Load the image only once when it comes into view
+    threshold: 0.1, // Trigger when 10% of the image is visible
+  });
 
   useEffect(() => {
     // Check if the item is in the cart on component mount
@@ -80,8 +85,9 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
     >
       <Link to={link} style={{ textDecoration: 'none' }} >
         <CardMedia
+          ref={ref}
           component='img'
-          image={imageSrc || demoThumbnailUrl}
+          image={inView ? imageSrc || demoThumbnailUrl : demoThumbnailUrl}
           title={role}
           onError={(e) => {
             e.currentTarget.onerror = null;
