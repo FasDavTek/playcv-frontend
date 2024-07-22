@@ -22,7 +22,7 @@ interface VideoProps {
     uploadDate: string;
     views: number;
     isActive: boolean;
-    imageSrc: string;
+    imageSrc?: string;
     price: number;
     link?: string;
     description: string;
@@ -80,9 +80,13 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
     >
       <Link to={link} style={{ textDecoration: 'none' }} >
         <CardMedia
-          component='video'
+          component='img'
           image={imageSrc || demoThumbnailUrl}
           title={role}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = demoThumbnailUrl;
+          }}
           sx={{ width: { xs: '100%', sm: '358px' }, height: 180 }}
         />
       </Link>

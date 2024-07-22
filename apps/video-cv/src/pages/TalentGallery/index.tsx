@@ -139,7 +139,7 @@ const index = () => {
                         fontWeight="bold"
                         mb={2}
                         sx={{ color: 'black' }}
-                        className="font-bold text-3xl my-5">LATEST JOBS
+                        className="font-bold text-3xl my-5">LATEST VIDEO CVs
                     </Typography>
                     <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
                         {videoCVs.map((video) => (
