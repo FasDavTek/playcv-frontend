@@ -87,7 +87,7 @@ const VideoDetails = () => {
                 <Typography variant="h4" gutterBottom>
                   Frontend Developer
                 </Typography>
-                <Button onClick={handleAddToCart} variant="custom" className="text-[#5c6bc0] hover:text-[#2e3a86]" icon={<AddShoppingCartIcon />} />
+                <Button onClick={handleAddToCart} variant="custom" className="text-[#5c6bc0] hover:text-[#2e3a86] animate-bounce" icon={<AddShoppingCartIcon />} />
               </Stack>
               <Stack direction="row" alignItems="center" spacing={8}>
                 <Typography variant="body1" gutterBottom>
@@ -111,12 +111,12 @@ const VideoDetails = () => {
         </Box>
         <Box className="flex-1 flex-grow overflow-auto flex items-start px-1 md:px-8">
           <Stack direction="column" className=" w-full items-start md:items-center justify-start overflow-hidden space-y-1">
-            <div className="flex overflow-auto hide-scrollbar gap-2 my-1 bg-gray-200 px-3 py-2 rounded-md">
+            <div className="flex overflow-auto hide-scrollbar gap-2 my-1 bg-gray-200 px-3 py-2 rounded-lg">
               {['Cart1', 'Cart2', 'Cart3', 'Cart4', 'Cart5', 'Cart6', 'Cart7', 'Cart8', 'Cart9'].map((label, index) => (
                 <button
                   key={index}
                   onClick={() => setTabValue(index)}
-                  className={`flex items-center text-gray-800 hover:text-blue-700 px-4 py-2 rounded-full focus:outline-none focus:ring-1 focus:ring-neutral-500 ${tabValue === index ? 'bg-gray-400' : 'bg-gray-200'}`}
+                  className={`flex items-center text-gray-800 hover:text-blue-700 px-4 py-2 rounded-full focus:outline-none focus:ring-1 focus:ring-neutral-500 ${tabValue === index ? 'bg-gray-400' : 'bg-gray-200'} ${index === 0 ? 'flex-shrink-0' : ''}`}
                 >
                   {label} <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">3</span>
                 </button>

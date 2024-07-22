@@ -82,7 +82,7 @@ const index = () => {
             </Stack>
         </Box>
 
-        <Box className="bg-white min-h-[400px] flex flex-col md:flex-row w-[95%] md:w-[90%] mx-auto gap-2 my-6 ">
+        <Box className="bg-white min-h-[400px] flex flex-col lg:flex-row w-[95%] md:w-[90%] mx-auto gap-2 my-6 ">
             <div className="card-containers flex-[2] h-fit min-h-[200px]">
                 <div className="border-b flex p-4 justify-between">
                     <p className="font-bold" role="button" onClick={() => {console.log('');}}>Filter</p>
@@ -132,7 +132,7 @@ const index = () => {
             <div className=" flex-[9] p-4">
                 {/* Search box comes here */}
 
-                <h4 className="font-black text-xl text-gray-700">250 Job Results</h4>
+                <h4 className="font-black text-xl text-gray-700">250 CV Results</h4>
                 <div className="mt-10 mx-auto">
                     <Typography
                         variant="h5"
