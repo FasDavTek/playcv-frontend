@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import ReactPlayer from 'react-player';
-import { Box, Stack, Modal, Typography, Card, CardMedia, CardContent } from '@mui/material';
+import { Box, Stack, Modal, Typography, Card, CardMedia, CardContent, Tabs, Tab } from '@mui/material';
 
 import { useCart } from '../../context/CartProvider';
 import { Button } from '@video-cv/ui-components';
@@ -18,6 +18,26 @@ const ClampedText = styled(Typography)({
   WebkitLineClamp: 2,
   // textOverflow: 'ellipsis',
 });
+
+const TabPanel = (props: any) => {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+};
 
 const VideoDetails = () => {
   const id = 'GDa8kZLNhJ4';
@@ -50,20 +70,25 @@ const VideoDetails = () => {
   };
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [tabValue, setTabValue] = useState(0);
 
-  const handleToggle = () => {
-    setIsExpanded(!isExpanded);
+  // const handleToggle = () => {
+  //   setIsExpanded(!isExpanded);
+  // };
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
   };
   
   return (
-    <Box minHeight="95dvh" className="py-9 px-9">
+    <Box minHeight="95dvh" className="py-9 px-3 md:px-9">
       {/* {!video 
         ? (
         <Typography variant="h6" textAlign='center' marginY='auto' alignSelf='center' justifySelf='center'>Video not found</Typography>
         ) : ( */}
-        <Stack direction={{ xs: 'column', md: 'row' }}>
+        <Stack direction='column' spacing={3}>
           <Box flex={3} className='rounded-lg'>
-            <Stack direction='column' spacing='1rem'>
+            <Stack direction='column' spacing='rem'>
               <Box className="w-full top-[86px] rounded-3xl">
                 <ReactPlayer
                   // url={video?.videoUrl}
@@ -109,30 +134,39 @@ const VideoDetails = () => {
                       Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
                     </ClampedText>
                   )}
-                  <Typography onClick={handleToggle} variant='body2' sx={{ cursor: 'pointer', fontWeight: 'semibold' }} style={{ color: 'white' }}>
+                  {/* <Typography onClick={handleToggle} variant='body2' sx={{ cursor: 'pointer', fontWeight: 'semibold' }} style={{ color: 'white' }}>
                     {isExpanded ? 'Show less' : '...more'}
-                  </Typography>
+                  </Typography> */}
                 </Box>
 
               </Box>
             </Stack>
           </Box>
-          <Box flex={1} flexGrow={1} className="flex items-start px-8">
-            <Stack direction='column' width='100%' alignItems='center' justifyContent='start' overflow='hidden' spacing={1}>
+          <Box flex={1} flexGrow={1} className="flex items-start px-1 md:px-8">
+            <Stack direction='column' maxHeight='600px' width='100%' alignItems='center' justifyContent='start' overflow='hidden' spacing={1}>
               {/* <Typography variant="body1" gutterBottom>
                 {video.description}
               </Typography> */}
-              <Stack className='hide-scrollbar' direction='row' width='24.375rem' spacing={1} overflow='scroll'>
-                <Button variant='custom' className='text-[#5c6bc0] hover:text-[#2e3a86]' label='Cart1' />
-                <Button variant='custom' className='text-[#5c6bc0] hover:text-[#2e3a86]' label='Cart2' />
-                <Button variant='custom' className='text-[#5c6bc0] hover:text-[#2e3a86]' label='Cart3' />
-                <Button variant='custom' className='text-[#5c6bc0] hover:text-[#2e3a86]' label='Cart4' />
-                <Button variant='custom' className='text-[#5c6bc0] hover:text-[#2e3a86]' label='Cart5' />
-                <Button variant='custom' className='text-[#5c6bc0] hover:text-[#2e3a86]' label='Cart6' />
-                <Button variant='custom' className='text-[#5c6bc0] hover:text-[#2e3a86]' label='Cart7' />
-                <Button variant='custom' className='text-[#5c6bc0] hover:text-[#2e3a86]' label='Cart8' />
-                <Button variant='custom' className='text-[#5c6bc0] hover:text-[#2e3a86]' label='Cart9' />
-              </Stack>
+              <Tabs value={tabValue} onChange={handleChange} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile aria-label="video-cv category tab" sx={{ '.MuiTabs-indicator': { display: 'none' }, '.Mui-selected': { backgroundColor: 'crimson', color: 'white', borderRadius: '.5rem' } }} className='hide-scrollbar'>
+                <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart1' />
+                <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart2' />
+                <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart3' />
+                <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart4' />
+                <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart5' />
+                <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart6' />
+                <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart7' />
+                <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart8' />
+                <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart9' />
+              </Tabs>
+              <TabPanel value={tabValue} index={0}></TabPanel>
+              <TabPanel value={tabValue} index={1}></TabPanel>
+              <TabPanel value={tabValue} index={2}></TabPanel>
+              <TabPanel value={tabValue} index={3}></TabPanel>
+              <TabPanel value={tabValue} index={4}></TabPanel>
+              <TabPanel value={tabValue} index={5}></TabPanel>
+              <TabPanel value={tabValue} index={6}></TabPanel>
+              <TabPanel value={tabValue} index={7}></TabPanel>
+              <TabPanel value={tabValue} index={8}></TabPanel>
               <Stack direction='column' width='100%' overflow='hidden'>
                 <Card sx={{ display: 'flex' }}>
                   <CardMedia
