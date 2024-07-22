@@ -41,12 +41,19 @@ const Cart = () => {
   };
 
   // console.log('isAuth', isAuthenticated);
-  const handleEmployerSignin = () => {
+  const handleCheckout = () => {
     // if not signed in, navigate to sign in, append ?next to sign in
     // if signed in, trigger paystack modal
     // TODO: Do sign in logic
-    if (isAuthenticated?.authState) {
-      payButtonFn();
+    if (isAuthenticated?.authState?.isAuthenticated) {
+      if (isAuthenticated.authState.userType === 'employer') {
+        payButtonFn();
+      } else if (isAuthenticated.authState.userType === 'job-seeker') {
+        // Handle job-seeker specific logic, for example:
+        navigate('/auth/login');
+      }
+    } else {
+      navigate('/auth/login');
     }
   };
 
@@ -156,7 +163,7 @@ const Cart = () => {
             <div className="px-1 py-0.5">
               <Button
                 label="Checkout"
-                onClick={handleEmployerSignin}
+                onClick={handleCheckout}
                 className="w-full"
               />
             </div>
@@ -164,6 +171,8 @@ const Cart = () => {
         )}
         
       </div>
+
+      {/* MOBILE CHECKOUT */}
       <div className={`fixed bottom-0 left-0 right-0 bg-white z-10 transition-height rounded-t-xl duration-300 ${isSummaryOpen ? 'h-auto' : 'h-0 overflow-hidden'} md:hidden`}>
         <div className="border flex flex-col gap-3 p-4 rounded-t-xl">
           <h5 className="border-b uppercase px-1 py-0.5">Cart Summary</h5>
@@ -176,7 +185,7 @@ const Cart = () => {
           <div className="px-1 py-0.5">
             <Button
               label="Checkout"
-              onClick={handleEmployerSignin}
+              onClick={handleCheckout}
               className="w-full"
             />
           </div>
