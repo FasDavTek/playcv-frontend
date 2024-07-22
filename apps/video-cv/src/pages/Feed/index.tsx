@@ -104,7 +104,7 @@ const Feed = () => {
            className="font-bold text-3xl my-5">LATEST JOBS</Typography>
           {/* <JobBoard jobs={jobs}> */}
           <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-          {[1,2,3,4].map((val) => (
+          {[1,2,3,4,5,6,7,8].map((val) => (
             <Paper
               elevation={4}
               square={false}
