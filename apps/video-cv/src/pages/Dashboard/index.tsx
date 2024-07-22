@@ -23,7 +23,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className="grid mt-5 gap-4 grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
+        {/* <div className="grid mt-5 gap-4 grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
           <DashboardCard
             // icon={Assets.Icons.Dashboard.Calendar}
             text="Active ADs"
@@ -39,7 +39,7 @@ const Dashboard = () => {
             text="Orders"
             figure={({} as any)?.manageFacilities ?? 0}
           />
-        </div>
+        </div> */}
         <div className="grid grid-cols-1 2xl:grid-cols-2 mt-5 gap-5">
           <ProfileVisitsChart />
           <JobVacancyChart />

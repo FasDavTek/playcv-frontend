@@ -1,10 +1,10 @@
 export interface INavItem {
   name: string;
-  img?: string;
+  img?: any;
   route: string;
   children?: {
     name: string;
     route: string;
-    img?: string;
+    img?: any;
   }[];
 }

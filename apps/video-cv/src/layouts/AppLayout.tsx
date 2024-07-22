@@ -15,12 +15,12 @@ export default function AppLayout(): React.ReactElement {
   const location = useLocation();
 
   return (
-    <div>
+    <div className='h-[100dvh]'>
       {routesWithoutDashboardLayout.some(
         (route) =>
           location.pathname.includes(route) || location.pathname === '/'
       ) ? (
-        <Box sx={{ backgroundColor: '#fff' }} height='100dvh'>
+        <Box sx={{ backgroundColor: '#fff' }}>
           <Navbar />
           <Suspense fallback={<h1>Loading...</h1>}>
             <Outlet />
