@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { Link, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Divider } from '@mui/material';
 
 import './Layout.scss';
 // import { IUser, UserTypeEnum } from '@video-cv/models';
@@ -34,7 +34,7 @@ const Sidebar = ({
 
   return (
     <aside
-      className={`px-4 py-10 md:px-6 md:py-14 md:pr-10 bg-ce-green h-screen fixed top-0 [z-index:51] duration-500 w-[80%] max-w-[300px] text-sm text-white overflow-y-auto lg:!left-0 ${
+      className={`px-4 py-10 md:px-6 md:py-14 md:pr-10 bg-[#1e6091] h-screen fixed top-0 [z-index:51] duration-500 w-[80%] max-w-[300px] text-sm text-white overflow-y-auto lg:!left-0 ${
         sidebarOpen ? ' left-0 ' : ' left-[-100%] '
       } 
       ${
@@ -57,10 +57,12 @@ const Sidebar = ({
         </Link>
       )}
 
-      <Link to="/dashboard" className="logoAndName flex cursor-pointer">
-        <img src={Assets.Images.Logo} alt="Facility Logo" className="h-14" />
-        <h5 className="text-xl">VideoCv</h5>
+      <Link to="/dashboard" className="logoAndName flex cursor-pointer mb-9">
+        <img src={Assets.Images.Dragnet} alt="Facility Logo" className="h-14 rounded-md" />
+        <h5 className="text-xl text-white">VideoCv</h5>
       </Link>
+
+      <Divider className='text-white' />
 
       <p className="mt-10 mb-5 px-4">
         <span className="collapse-hideText cursor-default text-xl font-bold">
@@ -79,7 +81,7 @@ const Sidebar = ({
                   id={navItem.name}
                 >
                   <div className="px-4 py-3 flex items-center space-x-3 text-black">
-                    {/* <img className="w-6" src={navItem.img} alt={navItem.name} /> */}
+                  {navItem.img && <img className="w-6 icon" src={navItem.img} alt={navItem.name} />}
                     <span className="collapse-hideText">{navItem.name}</span>
                   </div>
                 </AccordionSummary>
@@ -91,6 +93,7 @@ const Sidebar = ({
                         onClick={handleCloseSidebar}
                         to={item.route}
                       >
+                        {item.img && <img className="w-6 icon" src={item.img} alt={item.name} />}
                         <span className="collapse-hideText">{item.name}</span>
                         {/* <img
                           className="hidden collapse-show"
@@ -109,9 +112,9 @@ const Sidebar = ({
                 key={index}
                 onClick={handleCloseSidebar}
                 to={navItem.route}
-                className="!mt-2 main-icon text-black font-semibold"
+                className="!mt-2 main-icon text-white font-semibold"
               >
-                {/* <img className="w-6" src={navItem.img} alt={navItem.name} /> */}
+                {navItem.img && <img className="w-6 icon" src={navItem.img} alt={navItem.name} />}
                 <span className="collapse-hideText">{navItem.name}</span>
               </NavLink>
             );
@@ -153,20 +156,20 @@ const Sidebar = ({
           <a
             href="https://wa.link/ev1zz4"
             target="_blank"
-            className="collapse-hideText text-black font-semibold underline"
+            className="collapse-hideText text-white font-semibold underline"
           >
             Support
           </a>
         </NavLink>
       </div>
       <div
-        className={`bottom-0 ml-4 relative text-black font-semibold ${
+        className={`bottom-0 ml-4 relative text-white font-semibold ${
           !sidebarExpanded && 'hidden'
         }`}
       >
         Go to{' '}
         <a
-          className="underline"
+          className="underline text-white"
           href="https://nyscjobs.ng/home/"
           target="_blank"
         >
