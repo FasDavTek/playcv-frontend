@@ -6,6 +6,8 @@ import { Button } from '@video-cv/ui-components';
 import { useLocation } from 'react-router-dom';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import EmailIcon from '@mui/icons-material/Email';
 import styled from '@emotion/styled';
 import { Images } from '@video-cv/assets';
 import './../../styles.scss';
@@ -89,10 +91,14 @@ const VideoDetails = () => {
                 </Typography>
                 <Button onClick={handleAddToCart} variant="custom" className="text-[#5c6bc0] hover:text-[#2e3a86] animate-bounce" icon={<AddShoppingCartIcon />} />
               </Stack>
-              <Stack direction="row" alignItems="center" spacing={8}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={8}>
                 <Typography variant="body1" gutterBottom>
                   Lorem Ipsum.
                 </Typography>
+                <Stack direction='row' spacing={1}>
+                  <Button variant="custom" className='text-green-600' icon={<WhatsAppIcon />} />
+                  <Button variant='custom' className='text-blue-600' icon={<EmailIcon />} />
+                </Stack>
               </Stack>
               <Box className="bg-gray-700 p-4 rounded-xl text-white backdrop-blur-sm">
                 <Typography variant="subtitle2">views</Typography>
