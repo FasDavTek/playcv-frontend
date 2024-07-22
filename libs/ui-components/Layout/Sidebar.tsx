@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Accordion, AccordionSummary, AccordionDetails, Divider } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 import './Layout.scss';
 // import { IUser, UserTypeEnum } from '@video-cv/models';
@@ -44,7 +45,7 @@ const Sidebar = ({
       }`}
     >
       <button
-        className="btn-icon lg:hidden block ml-auto mb-4 mr-2 bg-white"
+        className="btn-icon lg:hidden block ml-auto mb-4 mr-2 p-0.5 rounded-full bg-[#f8f9fa] cursor-pointer"
         onClick={handleCloseSidebar}
       >
         <img src={Assets.Icons.X} className="w-5" alt="" />
@@ -81,7 +82,7 @@ const Sidebar = ({
                   id={navItem.name}
                 >
                   <div className="px-4 py-3 flex items-center space-x-3 text-black">
-                  {navItem.img && <img className="w-6 icon" src={navItem.img} alt={navItem.name} />}
+                  {navItem.img && <img className="w-5 icon" src={navItem.img} alt={navItem.name} />}
                     <span className="collapse-hideText">{navItem.name}</span>
                   </div>
                 </AccordionSummary>
@@ -93,7 +94,7 @@ const Sidebar = ({
                         onClick={handleCloseSidebar}
                         to={item.route}
                       >
-                        {item.img && <img className="w-6 icon" src={item.img} alt={item.name} />}
+                        {item.img && <img className="w-5 icon" src={item.img} alt={item.name} />}
                         <span className="collapse-hideText">{item.name}</span>
                         {/* <img
                           className="hidden collapse-show"
@@ -114,7 +115,7 @@ const Sidebar = ({
                 to={navItem.route}
                 className="!mt-2 main-icon text-white font-semibold"
               >
-                {navItem.img && <img className="w-6 icon" src={navItem.img} alt={navItem.name} />}
+                {navItem.img && <img className="w-5 icon" src={navItem.img} alt={navItem.name} />}
                 <span className="collapse-hideText">{navItem.name}</span>
               </NavLink>
             );
@@ -122,16 +123,6 @@ const Sidebar = ({
         })}
 
         {/* logout common to all */}
-        <button
-          onClick={() => {
-            onLogout();
-            handleCloseSidebar();
-          }}
-          className="main-icon w-full"
-        >
-          {/* <img className="w-6" src={Assets.Icons.Logout} alt="" /> */}
-          <span className="collapse-hideText">Logout</span>
-        </button>
       </div>
 
       {/* <div className="mt-10 flex justify-between items-center">
@@ -147,7 +138,7 @@ const Sidebar = ({
         ></button>
       </div> */}
 
-      <div className="messaging-holder mb-14">
+      <div className="messaging-holder mb-14 mt-10">
         <NavLink
           // onClick={handleCloseSidebar}
           to="https://wa.link/ev1zz4"
@@ -176,6 +167,18 @@ const Sidebar = ({
           nyscjobs.ng
         </a>
       </div>
+
+      <button
+        onClick={() => {
+          onLogout();
+          handleCloseSidebar();
+        }}
+        className="main-icon w-full flex justify-between mt-16"
+      >
+        {/* <img className="w-6" src={Assets.Icons.Logout} alt="" /> */}
+        <span className="collapse-hideText">Logout</span>
+        <LogoutIcon />
+      </button>
     </aside>
   );
 };
