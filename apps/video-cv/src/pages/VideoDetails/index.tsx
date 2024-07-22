@@ -147,7 +147,7 @@ const VideoDetails = () => {
               {/* <Typography variant="body1" gutterBottom>
                 {video.description}
               </Typography> */}
-              <Tabs value={tabValue} onChange={handleChange} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile aria-label="video-cv category tab" sx={{ '.MuiTabs-indicator': { display: 'none' }, '.Mui-selected': { backgroundColor: 'crimson', color: 'white', borderRadius: '.5rem' } }} className='hide-scrollbar'>
+              <Tabs value={tabValue} onChange={handleChange} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile aria-label="video-cv category tab" sx={{ '.MuiTabs-indicator': { display: 'none' }, '.Mui-selected': { backgroundColor: '#403d39', color: 'white', borderRadius: '.5rem' } }} className='hide-scrollbar'>
                 <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart1' />
                 <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart2' />
                 <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart3' />
@@ -158,36 +158,213 @@ const VideoDetails = () => {
                 <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart8' />
                 <Tab className='text-[#5c6bc0] hover:text-[#2e3a86] border-b-0' label='Cart9' />
               </Tabs>
-              <TabPanel value={tabValue} index={0}></TabPanel>
-              <TabPanel value={tabValue} index={1}></TabPanel>
-              <TabPanel value={tabValue} index={2}></TabPanel>
-              <TabPanel value={tabValue} index={3}></TabPanel>
-              <TabPanel value={tabValue} index={4}></TabPanel>
-              <TabPanel value={tabValue} index={5}></TabPanel>
-              <TabPanel value={tabValue} index={6}></TabPanel>
-              <TabPanel value={tabValue} index={7}></TabPanel>
-              <TabPanel value={tabValue} index={8}></TabPanel>
-              <Stack direction='column' width='100%' overflow='hidden'>
-                <Card sx={{ display: 'flex' }}>
-                  <CardMedia
-                    component="img"
-                    sx={{ width: 151 }}
-                    image={Images.HeroImage}
-                    alt="Live from space album cover"
-                  />
-                  <CardContent sx={{ flex: '1 0 auto' }}>
-                    <Typography component="div" variant="h6">
-                      Live From Space
-                    </Typography>
-                    <Typography variant="subtitle1" color="text.secondary" component="div">
-                      Mac Miller
-                    </Typography>
-                    <Typography variant="subtitle2" color="text.secondary" component="div">
-                      views
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Stack>
+              <TabPanel value={tabValue} index={0}>
+                <Stack direction='column' width='100%' overflow='hidden'>
+                  <Card sx={{ display: 'flex' }}>
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 151 }}
+                      image={Images.HeroImage}
+                      alt="Live from space album cover"
+                    />
+                    <CardContent sx={{ flex: '1 0 auto' }}>
+                      <Typography component="div" variant="h6">
+                        Live From Space
+                      </Typography>
+                      <Typography variant="subtitle1" color="text.secondary" component="div">
+                        Mac Miller
+                      </Typography>
+                      <Typography variant="subtitle2" color="text.secondary" component="div">
+                        views
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Stack>
+              </TabPanel>
+              <TabPanel value={tabValue} index={1} width='100%'>
+                <Stack direction='column' width='100%' overflow='hidden'>
+                  <Card sx={{ display: 'flex' }}>
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 151 }}
+                      image={Images.HeroImage}
+                      alt="Live from space album cover"
+                    />
+                    <CardContent sx={{ flex: '1 0 auto' }}>
+                      <Typography component="div" variant="h6">
+                        Live From Space
+                      </Typography>
+                      <Typography variant="subtitle1" color="text.secondary" component="div">
+                        Mac Miller
+                      </Typography>
+                      <Typography variant="subtitle2" color="text.secondary" component="div">
+                        views
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Stack>
+              </TabPanel>
+              <TabPanel value={tabValue} index={2} width='100%'>
+                <Stack direction='column' width='100%' overflow='hidden'>
+                  <Card sx={{ display: 'flex' }}>
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 151 }}
+                      image={Images.HeroImage}
+                      alt="Live from space album cover"
+                    />
+                    <CardContent sx={{ flex: '1 0 auto' }}>
+                      <Typography component="div" variant="h6">
+                        Live From Space
+                      </Typography>
+                      <Typography variant="subtitle1" color="text.secondary" component="div">
+                        Mac Miller
+                      </Typography>
+                      <Typography variant="subtitle2" color="text.secondary" component="div">
+                        views
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Stack>
+              </TabPanel>
+              <TabPanel value={tabValue} index={3} width='100%'>
+                <Stack direction='column' width='100%' overflow='hidden'>
+                  <Card sx={{ display: 'flex' }}>
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 151 }}
+                      image={Images.HeroImage}
+                      alt="Live from space album cover"
+                    />
+                    <CardContent sx={{ flex: '1 0 auto' }}>
+                      <Typography component="div" variant="h6">
+                        Live From Space
+                      </Typography>
+                      <Typography variant="subtitle1" color="text.secondary" component="div">
+                        Mac Miller
+                      </Typography>
+                      <Typography variant="subtitle2" color="text.secondary" component="div">
+                        views
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Stack>
+              </TabPanel>
+              <TabPanel value={tabValue} index={4} width='100%'>
+                <Stack direction='column' width='100%' overflow='hidden'>
+                  <Card sx={{ display: 'flex' }}>
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 151 }}
+                      image={Images.HeroImage}
+                      alt="Live from space album cover"
+                    />
+                    <CardContent sx={{ flex: '1 0 auto' }}>
+                      <Typography component="div" variant="h6">
+                        Live From Space
+                      </Typography>
+                      <Typography variant="subtitle1" color="text.secondary" component="div">
+                        Mac Miller
+                      </Typography>
+                      <Typography variant="subtitle2" color="text.secondary" component="div">
+                        views
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Stack>
+              </TabPanel>
+              <TabPanel value={tabValue} index={5} width='100%'>
+                <Stack direction='column' width='100%' overflow='hidden'>
+                  <Card sx={{ display: 'flex' }}>
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 151 }}
+                      image={Images.HeroImage}
+                      alt="Live from space album cover"
+                    />
+                    <CardContent sx={{ flex: '1 0 auto' }}>
+                      <Typography component="div" variant="h6">
+                        Live From Space
+                      </Typography>
+                      <Typography variant="subtitle1" color="text.secondary" component="div">
+                        Mac Miller
+                      </Typography>
+                      <Typography variant="subtitle2" color="text.secondary" component="div">
+                        views
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Stack>
+              </TabPanel>
+              <TabPanel value={tabValue} index={6} width='100%'>
+                <Stack direction='column' width='100%' overflow='hidden'>
+                  <Card sx={{ display: 'flex' }}>
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 151 }}
+                      image={Images.HeroImage}
+                      alt="Live from space album cover"
+                    />
+                    <CardContent sx={{ flex: '1 0 auto' }}>
+                      <Typography component="div" variant="h6">
+                        Live From Space
+                      </Typography>
+                      <Typography variant="subtitle1" color="text.secondary" component="div">
+                        Mac Miller
+                      </Typography>
+                      <Typography variant="subtitle2" color="text.secondary" component="div">
+                        views
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Stack>
+              </TabPanel>
+              <TabPanel value={tabValue} index={7} width='100%'>
+                <Stack direction='column' width='100%' overflow='hidden'>
+                  <Card sx={{ display: 'flex' }}>
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 151 }}
+                      image={Images.HeroImage}
+                      alt="Live from space album cover"
+                    />
+                    <CardContent sx={{ flex: '1 0 auto' }}>
+                      <Typography component="div" variant="h6">
+                        Live From Space
+                      </Typography>
+                      <Typography variant="subtitle1" color="text.secondary" component="div">
+                        Mac Miller
+                      </Typography>
+                      <Typography variant="subtitle2" color="text.secondary" component="div">
+                        views
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Stack>
+              </TabPanel>
+              <TabPanel value={tabValue} index={8} width='100%'>
+                <Stack direction='column' width='100%' overflow='hidden'>
+                  <Card sx={{ display: 'flex' }}>
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 151 }}
+                      image={Images.HeroImage}
+                      alt="Live from space album cover"
+                    />
+                    <CardContent sx={{ flex: '1 0 auto' }}>
+                      <Typography component="div" variant="h6">
+                        Live From Space
+                      </Typography>
+                      <Typography variant="subtitle1" color="text.secondary" component="div">
+                        Mac Miller
+                      </Typography>
+                      <Typography variant="subtitle2" color="text.secondary" component="div">
+                        views
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Stack>
+              </TabPanel>
             </Stack>
           </Box>
         </Stack>
