@@ -13,7 +13,7 @@ const VideoManagement = lazy(() => import('../pages/Dashboard'));
 const router = createBrowserRouter([
   {
     path: '/*',
-    element: <Suspense fallback={<h1>Loading...</h1>}>{<Layout />}</Suspense>,
+    element: <Suspense fallback={<h1>Loading...</h1>}>{<Layout type='Employer' />}</Suspense>,
     children: [
       {
         path: '',

@@ -11,9 +11,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        manrope: ['Manrope'],
-        dmsans: ['DM Sans'],
-        nunito: ['Nunito Sans'],
+        manrope: ['Manrope', 'sans-serif'],
+        dmsans: ['DM Sans', 'sans-serif'],
+        nunito: ['Nunito Sans', 'sans-serif'],
       },
       colors: {
         'ce-green': ' #9ABDDC',
