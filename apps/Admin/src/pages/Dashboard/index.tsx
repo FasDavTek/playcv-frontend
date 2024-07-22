@@ -14,9 +14,9 @@ const Dashboard = () => {
   // );
 
   return (
-    <section className="ce-px ce-py grid xl:grid-cols-[1fr_auto] gap-5">
+    <section className="ce-px ce-py grid xl:grid-cols-[1fr_auto] gap-5 w-full">
       <div>
-        <div className="md:flex justify-between md:items-center gap-4 py-5">
+        <div className="flex justify-between md:items-center gap-4 py-5">
           <div className="flex gap-2 items-center">
             {/* <img
               src={Assets.Images.Temp.DummyUserIcon3}
