@@ -15,7 +15,7 @@ const DashboardCard = ({
   metric = 0,
 }: DashboardCardProps) => {
   return (
-    <div className="rounded-[20px] p-3 bg-white [box-shadow:0px_4px_12px_0px_#0000000A]">
+    <div className="rounded-[20px] p-3 bg-white [box-shadow:0px_4px_12px_0px_#0000000A] w-full">
       <div className="flex gap-4 items-center">
         <img className="w-10" src={icon} alt="" />
         <p>{text}</p>
