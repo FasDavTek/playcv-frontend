@@ -81,6 +81,7 @@ const EmployerRoutes: any = [
     pageName: 'Profile',
   },
 ];
+
 const AdminRoutes: any = [
   {
     name: 'Dashboard',

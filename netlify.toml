@@ -16,8 +16,8 @@
   status = 200
 
 [[redirects]]
-  from = "/professional/*"
-  to = "/professional/index.html"
+  from = "/candidate/*"
+  to = "/candidate/index.html"
   status = 200
 
 [[redirects]]
@@ -25,7 +25,3 @@
   to = "/vcadmin/index.html"
   status = 200
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200

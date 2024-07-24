@@ -102,23 +102,6 @@ const Navbar = () => {
             </li>
             <li>
               <NavLink
-                to="/profile"
-                className={({ isActive, isPending }) =>
-                  `text-black text-lg  ${
-                    isPending
-                      ? 'pending'
-                      : isActive
-                      ? 'active-nav-link'
-                      : 'nav-link'
-                  }`
-                }
-                onClick={handleNavItemClick}
-              >
-                Profile
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
                 to="/talents"
                 className={({ isActive, isPending }) =>
                   `text-black text-lg  ${
@@ -149,6 +132,40 @@ const Navbar = () => {
                 onClick={handleNavItemClick}
               >
                 Job Board
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/candidate"
+                className={({ isActive, isPending }) =>
+                  `text-black text-lg  ${
+                    isPending
+                      ? 'pending'
+                      : isActive
+                      ? 'active-nav-link'
+                      : 'nav-link'
+                  }`
+                }
+                onClick={handleNavItemClick}
+              >
+                Professional
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/employer"
+                className={({ isActive, isPending }) =>
+                  `text-black text-lg  ${
+                    isPending
+                      ? 'pending'
+                      : isActive
+                      ? 'active-nav-link'
+                      : 'nav-link'
+                  }`
+                }
+                onClick={handleNavItemClick}
+              >
+                Employer
               </NavLink>
             </li>
             <li>
