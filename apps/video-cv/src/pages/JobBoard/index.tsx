@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 import { Link } from 'react-router-dom';
 import { Paper, Pagination, Box, Stack, Typography } from '@mui/material';
@@ -10,43 +10,84 @@ import { Images } from '@video-cv/assets';
 import { Button } from '@video-cv/ui-components';
 import { mockJobs } from '../../utils/jobs';
 import { JobCard } from '../../components';
-
-interface Filters {
-  title: string;
-  category: string;
-  location: string;
-  datePosted: string;
-  jobStatus: string;
-}
+import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 const JobBoard = () => {
-  const [filters, setFilters] = useState<Filters>({
-    title: '',
-    category: '',
-    location: '',
-    datePosted: '',
-    jobStatus: 'all',
-  });
+  const [currentPage, setCurrentPage] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+    const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+    const [searchText, setSearchText] = useState('');
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [isFilterApplied, setIsFilterApplied] = useState(false);
 
-  const handleFilter = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: value,
-    }));
-  };
+    useEffect(() => {
+        const handleResize = () => {
+          const screenWidth = window.innerWidth;
+          if (screenWidth >= 768) {
+            setItemsPerPage(30);
+          } else {
+            setItemsPerPage(10);
+          }
+        };
+    
+        // Set the initial items per page based on screen width
+        handleResize();
+    
+        // Add event listener to update items per page on resize
+        window.addEventListener('resize', handleResize);
+    
+        // Clean up event listener on component unmount
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
-  const filteredJobs = mockJobs.filter((job: any) => {
-    return (
-      (filters.title ? job.title.includes(filters.title) : true) &&
-      (filters.category ? job.category.includes(filters.category) : true) &&
-      (filters.location ? job.location.includes(filters.location) : true) &&
-      (filters.datePosted ? job.datePosted.includes(filters.datePosted) : true) &&
-      (filters.jobStatus !== 'all' ? job.status === filters.jobStatus : true)
+    const filterJobs = () => {
+        return mockJobs.filter((job) => {
+            const matchesText = job.title.toLowerCase().includes(searchText.toLowerCase());
+            // const matchesCategory = setSelectedCategories.length === 0 || selectedCategories.includes(video.category);
+            // return matchesText && matchesCategory;
+            return matchesText;
+        });
+    };
+    
+    const filteredJobs = filterJobs();
+    const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+
+    const handlePrevPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage((prevPage) => prevPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages - 1) {
+            setCurrentPage((prevPage) => prevPage + 1);
+        }
+    };
+
+    const paginatedJobs = filteredJobs.slice(
+        currentPage * itemsPerPage,
+        (currentPage + 1) * itemsPerPage
     );
-  });
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchText(e.target.value);
+        setIsFilterApplied(true);
+    };
+    
+    const handleCategoryChange = (e: React.ChangeEvent<{ value: string[] }>) => {
+        setSelectedCategories(e.target.value);
+        setIsFilterApplied(true);
+    };
+    
+    const handleClearFilters = () => {
+        setSearchText('');
+        setSelectedCategories([]);
+        setIsFilterApplied(false);
+    };
 
   return (
     <Box>
@@ -100,16 +141,7 @@ const JobBoard = () => {
             <p
               className="text-red-500"
               role="button"
-              onClick={() => {
-                console.log('');
-                () => setFilters({
-                  title: '',
-                  category: '',
-                  location: '',
-                  datePosted: '',
-                  jobStatus: 'all',
-                })
-              }}
+              onClick={handleClearFilters}
             >
               Clear All
             </p>
@@ -120,8 +152,8 @@ const JobBoard = () => {
               placeholder="Search..."
               containerClass="flex-1"
               name="role"
-              onChange={handleFilter}
-              value={filters.title}
+              value={searchText}
+              onChange={handleSearchChange}
             />
 
             <Select
@@ -130,8 +162,8 @@ const JobBoard = () => {
               placeholder="Select Category(s)"
               containerClass="flex-1"
               name="category"
-              onChange={handleFilter}
-              value={filters.category}
+              value={selectedCategories}
+              onChange={handleCategoryChange}
             />
 
             <Select
@@ -140,8 +172,6 @@ const JobBoard = () => {
               placeholder="Select Location"
               containerClass="flex-1"
               name="location"
-              onChange={handleFilter}
-              value={filters.location}
             />
 
             <Select
@@ -150,8 +180,6 @@ const JobBoard = () => {
               placeholder="Select Date"
               containerClass="flex-1"
               name="datePosted"
-              onChange={handleFilter}
-              value={filters.datePosted}
             />
 
             <Radio
@@ -160,10 +188,9 @@ const JobBoard = () => {
                 { value: 'all', label: 'All' },
                 { value: 'active', label: 'Active' },
               ]}
-              onChange={handleFilter}
+              // onChange={handleFilter}
               defaultValue={'all'}
               name="jobStatus"
-              value={filters.jobStatus}
             />
 
             <div className=""></div>
@@ -173,7 +200,9 @@ const JobBoard = () => {
         <div className=" flex-[9] p-4">
           {/* Search box comes here */}
 
-          <h4 className="font-black text-xl text-gray-700">{filteredJobs.length} Job Results</h4>
+          {filteredJobs.length > 0 ? (
+            <h4 className="font-black text-xl text-gray-700">{filteredJobs.length} Job Results</h4>
+          ) : null}
           <div className="mt-10 mx-auto">
             <Typography
               variant="h5"
@@ -182,9 +211,13 @@ const JobBoard = () => {
               sx={{ color: 'black' }}
               className="font-bold text-3xl my-5">LATEST JOBS</Typography>
             <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-              {filteredJobs.map((job) => (
+              {paginatedJobs.map((job) => (
                 <JobCard key={job.id} job={job} />
               ))}
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+                <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
+                <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
             </div>
           </div>
         </div>
