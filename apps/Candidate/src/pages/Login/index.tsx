@@ -15,16 +15,29 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    debugger;
+    alert('Form submitted');
+    console.log('Login1')
     setLoading(true);
     // simulate login
+    console.log('Login2')
     setTimeout(() => {
+      console.log('Login3')
       setLoading(false);
+      console.log('Login4')
       handleLogin();
-      window.location.href = 'home';
+      navigate('/dashboard');
+      console.log('Login5')
+      // window.location.href = 'home';
 
       return;
     }, 1500);
   };
+
+  const handleClick = () => {
+    console.log('Login button clicked');
+    navigate('/dashboard');
+  }
 
   return (
     <div className="min-h-screen flex">
@@ -59,7 +72,7 @@ const Login = () => {
             <Input label="Password" placeholder="user@email.com" />
           </div>
 
-          <Button {...{ loading }} className="w-full my-10" label="Login" />
+          <Button {...{ loading }} className="w-full my-10 text-white" label="Login" onClick={handleClick} />
         </form>
       </div>
     </div>

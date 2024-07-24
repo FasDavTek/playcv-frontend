@@ -13,7 +13,8 @@ import Payment from './credit-card-solid.svg';
 import Content from './newspaper-solid.svg';
 import OrderManagement from './folder-tree-solid.svg';
 import VideoManagement from './clapperboard-solid.svg';
-import VideoWareHouse from './photo-film-solid.svg'
-import Guideline from './clipboard-list-solid.svg'
+import VideoWareHouse from './photo-film-solid.svg';
+import Guideline from './clipboard-list-solid.svg';
+import FacebookLink from './facebook-brands-solid.svg'
 
-export { Hamburger, X, Trash, Cart, Facebook, HouseIcon, User, Vacancy, UserMagnagement, Advert, FAQ, Payment, Content, OrderManagement, VideoManagement, VideoWareHouse, Guideline };
+export { Hamburger, X, Trash, Cart, Facebook, HouseIcon, User, Vacancy, UserMagnagement, Advert, FAQ, Payment, Content, OrderManagement, VideoManagement, VideoWareHouse, Guideline, FacebookLink };

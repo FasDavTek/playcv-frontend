@@ -74,8 +74,8 @@ const Layout = ({
         <footer className="py-5 px-10 text-center flex gap-3 justify-center  bottom-0 left-0 right-0 relative">
           <a href="https://facebook.com/" className="">
             <img
-              src={Assets.Icons.Facebook}
-              className="w-[25px] h-[25px]"
+              src={Assets.Icons.FacebookLink}
+              className="w-[2.125rem] h-[2.125rem] md:w-[25px] md:h-[25px] icon-blue"
               alt="facebook icon"
             />
           </a>

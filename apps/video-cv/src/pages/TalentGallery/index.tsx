@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Stack, Typography } from '@mui/material'
 import { Images } from '@video-cv/assets';
-import { Button, Radio, Select } from '@video-cv/ui-components';
+import { Button, Input, Radio, Select } from '@video-cv/ui-components';
 import { VideoCard, Videos } from '../../components';
 import { videoCVs } from '../../utils/videoCVs';
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
@@ -10,6 +10,11 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 const index = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(10);
+
+    const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+    const [searchText, setSearchText] = useState('');
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [isFilterApplied, setIsFilterApplied] = useState(false);
 
     useEffect(() => {
         const handleResize = () => {
@@ -32,25 +37,51 @@ const index = () => {
           window.removeEventListener('resize', handleResize);
         };
     }, []);
+
+    const filterVideoCVs = () => {
+        return videoCVs.filter((video) => {
+            const matchesText = video.role.toLowerCase().includes(searchText.toLowerCase());
+            // const matchesCategory = setSelectedCategories.length === 0 || selectedCategories.includes(video.category);
+            // return matchesText && matchesCategory;
+            return matchesText;
+        });
+    };
     
-    const totalPages = Math.ceil(videoCVs.length / itemsPerPage);
+    const filteredVideoCVs = filterVideoCVs();
+    const totalPages = Math.ceil(filteredVideoCVs.length / itemsPerPage);
 
     const handlePrevPage = () => {
-    if (currentPage > 0) {
-        setCurrentPage((prevPage) => prevPage - 1);
-    }
+        if (currentPage > 0) {
+            setCurrentPage((prevPage) => prevPage - 1);
+        }
     };
 
     const handleNextPage = () => {
-    if (currentPage < totalPages - 1) {
-        setCurrentPage((prevPage) => prevPage + 1);
-    }
+        if (currentPage < totalPages - 1) {
+            setCurrentPage((prevPage) => prevPage + 1);
+        }
     };
 
-    const paginatedItems = videoCVs.slice(
-    currentPage * itemsPerPage,
-    (currentPage + 1) * itemsPerPage
+    const paginatedItems = filteredVideoCVs.slice(
+        currentPage * itemsPerPage,
+        (currentPage + 1) * itemsPerPage
     );
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchText(e.target.value);
+        setIsFilterApplied(true);
+    };
+    
+    const handleCategoryChange = (e: React.ChangeEvent<{ value: string[] }>) => {
+        setSelectedCategories(e.target.value);
+        setIsFilterApplied(true);
+    };
+    
+    const handleClearFilters = () => {
+        setSearchText('');
+        setSelectedCategories([]);
+        setIsFilterApplied(false);
+    };
 
 
   return (
@@ -86,20 +117,24 @@ const index = () => {
             <div className="card-containers flex-[2] h-fit min-h-[200px]">
                 <div className="border-b flex p-4 justify-between">
                     <p className="font-bold" role="button" onClick={() => {console.log('');}}>Filter</p>
-                    <p className="text-red-500" role="button" onClick={() => {console.log('');}}>Clear All</p>
+                    <p className="text-red-500" role="button" onClick={handleClearFilters}>Clear All</p>
                 </div>
                 <div className="p-3 mx-auto flex flex-col gap-3">
-                    <Select
-                        options={[]}
-                        label="Job"
-                        placeholder="Select Role"
+                    <Input
+                        label="Find CV"
+                        placeholder="Search..."
                         containerClass="flex-1"
+                        value={searchText}
+                        onChange={handleSearchChange}
                     />
                     <Select
-                        options={[]}
-                        label="Keywords"
-                        placeholder="Select Keyword"
+                        options={categoryOptions.map(option => ({ label: option, value: option }))}
+                        label="Categories"
+                        placeholder="Select Category(s)"
                         containerClass="flex-1"
+                        multiple
+                        value={selectedCategories}
+                        onChange={handleCategoryChange}
                     />
 
                     <Select
@@ -132,7 +167,9 @@ const index = () => {
             <div className=" flex-[9] p-4">
                 {/* Search box comes here */}
 
-                <h4 className="font-black text-xl text-gray-700">250 CV Results</h4>
+                {filteredVideoCVs.length > 0 ? (
+                    <h4 className="font-black text-xl text-gray-700">{filteredVideoCVs.length} CV Results</h4>
+                ) : null}
                 <div className="mt-10 mx-auto">
                     <Typography
                         variant="h5"
@@ -141,8 +178,8 @@ const index = () => {
                         sx={{ color: 'black' }}
                         className="font-bold text-3xl my-5">LATEST VIDEO CVs
                     </Typography>
-                    <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-                        {videoCVs.map((video) => (
+                    <div className={`items-center md:items-start justify-start grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+                        {paginatedItems.map((video) => (
                             <VideoCard key={video.id} video={video} />
                         ))}
                     </div>
