@@ -59,6 +59,10 @@ const Navbar = () => {
     setShowNavbar(!showNavbar);
   };
 
+  const handleNavItemClick = () => {
+    setShowNavbar(false);
+  };
+
   return (
     <div
       className={`flex items-center px-3 md:px-10 sticky bg-white top-0 justify-center z-20 navbar`}
@@ -91,6 +95,7 @@ const Navbar = () => {
                       : 'nav-link'
                   }`
                 }
+                onClick={handleNavItemClick}
               >
                 Find VideoCV
               </NavLink>
@@ -107,6 +112,7 @@ const Navbar = () => {
                       : 'nav-link'
                   }`
                 }
+                onClick={handleNavItemClick}
               >
                 Profile
               </NavLink>
@@ -123,6 +129,7 @@ const Navbar = () => {
                       : 'nav-link'
                   }`
                 }
+                onClick={handleNavItemClick}
               >
                 Talent Gallery
               </NavLink>
@@ -139,6 +146,7 @@ const Navbar = () => {
                       : 'nav-link'
                   }`
                 }
+                onClick={handleNavItemClick}
               >
                 Job Board
               </NavLink>
@@ -146,7 +154,10 @@ const Navbar = () => {
             <li>
               {/* TODO: Show logged in if user is logged in */}
               <button
-                onClick={() => navigate('/cart')}
+                onClick={() => {
+                  handleNavItemClick
+                   navigate('/cart')
+                }}
                 className="border border-black rounded h-fit w-fit px-3 py-1 flex gap-2 items-center"
               >
                 <img
