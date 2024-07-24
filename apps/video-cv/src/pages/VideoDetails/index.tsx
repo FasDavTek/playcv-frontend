@@ -11,6 +11,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import styled from '@emotion/styled';
 import { Images } from '@video-cv/assets';
 import './../../styles.scss';
+import { JobBoard } from '../../components';
+import { mockJobs } from '../../utils/jobs';
 
 const ClampedText = styled(Typography)({
   display: '-webkit-box',
@@ -47,6 +49,8 @@ const VideoDetails = () => {
   const [tabValue, setTabValue] = useState(0);
   const [isInWishlist, setIsInWishlist] = useState(false);
 
+  const itemsPerPage = 4;
+
   useEffect(() => {
     // Check if the item is in the cart on component mount
     const itemInCart = cartState.cart.some((item: any) => item.id === id);
@@ -76,6 +80,28 @@ const VideoDetails = () => {
     }
   };
 
+  const shareOnWhatsApp = (videoUrl: string) => {
+    const message = `Check out my video: ${videoUrl}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  }
+
+  const shareViaEmail = (videoUrl: string) => {
+    const subject = `Check out my video`;
+    const body = `Here is the link: ${videoUrl}`;
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
+  };
+
+  const getTabs = (items: string[]) => {
+    const numberOfTabs = Math.ceil(items.length / itemsPerPage);
+    return Array.from({ length: numberOfTabs }, (_, index) => {
+      const start = index * itemsPerPage;
+      const end = start + itemsPerPage;
+      return items.slice(start, end);
+    });
+  };
+
   return (
     <Box className="min-h-screen mx-auto py-9 px-3 md:px-9 max-w-7xl">
       <Stack direction="column" spacing={3}>
@@ -89,15 +115,15 @@ const VideoDetails = () => {
                 <Typography variant="h4" gutterBottom>
                   Frontend Developer
                 </Typography>
-                <Button onClick={handleAddToCart} variant="custom" className="text-[#5c6bc0] hover:text-[#2e3a86] animate-bounce" icon={<AddShoppingCartIcon />} />
+                <Button onClick={handleAddToCart} variant="custom" className="text-[#5c6bc0] hover:text-[#2e3a86] animate-bounce" icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />} />
               </Stack>
               <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={8}>
                 <Typography variant="body1" gutterBottom>
                   Lorem Ipsum.
                 </Typography>
                 <Stack direction='row' spacing={1}>
-                  <Button variant="custom" className='text-green-600' icon={<WhatsAppIcon />} />
-                  <Button variant='custom' className='text-blue-600' icon={<EmailIcon />} />
+                  <Button variant="custom" className='text-green-600 hover:text-green-500' icon={<WhatsAppIcon />} onClick={() => shareOnWhatsApp(`https://www.youtube.com/watch?v=${id}`)} />
+                  <Button variant='custom' className='text-blue-600 hover:text-blue-500' icon={<EmailIcon />} onClick={() => shareViaEmail(`https://www.youtube.com/watch?v=${id}`)} />
                 </Stack>
               </Stack>
               <Box className="bg-gray-700 p-4 rounded-xl text-white backdrop-blur-sm">
@@ -160,6 +186,8 @@ const VideoDetails = () => {
               ))}
           </Stack>
         </Box>
+        
+        <JobBoard jobs={mockJobs.slice(0, 3)} />
       </Stack>
     </Box>
   );

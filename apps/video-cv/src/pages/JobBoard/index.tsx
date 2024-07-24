@@ -1,20 +1,52 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 
 import { Link } from 'react-router-dom';
 import { Paper, Pagination, Box, Stack, Typography } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
-import { Select, Radio } from '@video-cv/ui-components';
+import { Select, Radio, Input } from '@video-cv/ui-components';
 import { useFilters } from '@video-cv/hooks';
 import { Images } from '@video-cv/assets';
 import { Button } from '@video-cv/ui-components';
+import { mockJobs } from '../../utils/jobs';
+import { JobCard } from '../../components';
+
+interface Filters {
+  title: string;
+  category: string;
+  location: string;
+  datePosted: string;
+  jobStatus: string;
+}
 
 const JobBoard = () => {
-  const [jobs, setJobs] = useState([1, 2, 3, 4]);
+  const [filters, setFilters] = useState<Filters>({
+    title: '',
+    category: '',
+    location: '',
+    datePosted: '',
+    jobStatus: 'all',
+  });
 
-  const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setJobs(e.target.value === 'all' ? [1, 2, 3, 4] : [3, 4]);
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+
+  const handleFilter = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
   };
+
+  const filteredJobs = mockJobs.filter((job: any) => {
+    return (
+      (filters.title ? job.title.includes(filters.title) : true) &&
+      (filters.category ? job.category.includes(filters.category) : true) &&
+      (filters.location ? job.location.includes(filters.location) : true) &&
+      (filters.datePosted ? job.datePosted.includes(filters.datePosted) : true) &&
+      (filters.jobStatus !== 'all' ? job.status === filters.jobStatus : true)
+    );
+  });
 
   return (
     <Box>
@@ -70,38 +102,56 @@ const JobBoard = () => {
               role="button"
               onClick={() => {
                 console.log('');
+                () => setFilters({
+                  title: '',
+                  category: '',
+                  location: '',
+                  datePosted: '',
+                  jobStatus: 'all',
+                })
               }}
             >
               Clear All
             </p>
           </div>
           <div className="p-3 mx-auto flex flex-col gap-3">
-            <Select
-              options={[]}
+            <Input
               label="Role"
-              placeholder="Select Role"
+              placeholder="Search..."
               containerClass="flex-1"
+              name="role"
+              onChange={handleFilter}
+              value={filters.title}
             />
 
             <Select
-              options={[]}
-              label="Keywords"
-              placeholder="Select Keyword"
+              options={categoryOptions.map(option => ({ label: option, value: option }))} // Replace with actual options
+              label="Categories"
+              placeholder="Select Category(s)"
               containerClass="flex-1"
+              name="category"
+              onChange={handleFilter}
+              value={filters.category}
             />
 
             <Select
-              options={[]}
+              options={[]} // Replace with actual options
               label="Location"
               placeholder="Select Location"
               containerClass="flex-1"
+              name="location"
+              onChange={handleFilter}
+              value={filters.location}
             />
 
             <Select
-              options={[]}
+              options={[]} // Replace with actual options
               label="Date Posted"
               placeholder="Select Date"
               containerClass="flex-1"
+              name="datePosted"
+              onChange={handleFilter}
+              value={filters.datePosted}
             />
 
             <Radio
@@ -112,6 +162,8 @@ const JobBoard = () => {
               ]}
               onChange={handleFilter}
               defaultValue={'all'}
+              name="jobStatus"
+              value={filters.jobStatus}
             />
 
             <div className=""></div>
@@ -121,7 +173,7 @@ const JobBoard = () => {
         <div className=" flex-[9] p-4">
           {/* Search box comes here */}
 
-          <h4 className="font-black text-xl text-gray-700">250 Job Results</h4>
+          <h4 className="font-black text-xl text-gray-700">{filteredJobs.length} Job Results</h4>
           <div className="mt-10 mx-auto">
             <Typography
               variant="h5"
@@ -129,51 +181,10 @@ const JobBoard = () => {
               mb={2}
               sx={{ color: 'black' }}
               className="font-bold text-3xl my-5">LATEST JOBS</Typography>
-            <div className={` items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-              {jobs.map((val) => (
-                <Paper
-                  elevation={4}
-                  // variant="outlined"
-                  square={false}
-                  className="bg-white py-4 px-2 md:py-10 md:px-3"
-                  key={val}
-                >
-                  <div className="flex flex-col">
-                    <h3 className="font-bold">Job Title</h3>
-                    <Typography variant='subtitle2'>
-                      Company Name
-                    </Typography>
-                    <div className="flex flex-col gap-2">
-                      <h5 className="font-semibold text-black">
-                        <LocationOnIcon
-                          sx={{ fontSize: '17px', color: 'gray', mr: '2px' }}
-                        />
-                        Location
-                      </h5>
-                      <p className="font-light text-[.75rem] text-gray-500">
-                        Posted 5 mins ago
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-4 text-pretty">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Minus dolorem maiores consectetur consequuntur ad recusandae
-                    rerum sapiente quam doloribus accusantium aliquam repellat
-                    distinctio eum.
-                  </div>
-                  <div className="flex justify-end">
-                    <Link
-                      className="text-base hover:underline"
-                      to="/job-board/12345"
-                    >
-                      Read More...
-                    </Link>
-                  </div>
-                </Paper>
+            <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+              {filteredJobs.map((job) => (
+                <JobCard key={job.id} job={job} />
               ))}
-            </div>
-            <div className="flex justify-end">
-              <Pagination className="mt-5" size="large" count={10} />
             </div>
           </div>
         </div>

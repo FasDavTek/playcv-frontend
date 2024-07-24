@@ -11,6 +11,7 @@ import { Images } from '@video-cv/assets';
 import { Button } from '@video-cv/ui-components';
 import { videoCVs } from './../../utils/videoCVs';
 import fetchJobs from '../../components/fetchJobs';
+import { mockJobs } from '../../utils/jobs';
 
 const Feed = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const Feed = () => {
             </Typography>
             <Box className="flex items-center gap-10" sx={{ marginBottom: '1.25rem' }}>
               <Button variant="blue" color="primary" label={'Explore Jobs'} onClick={() => navigate('/job-board')} className="text-lg"></Button>
-              <Button variant="custom" color="primary" label={'Hire a talent'} className="text-lg"></Button>
+              <Button variant="custom" color="primary" label={'Hire a talent'} onClick={() => navigate('/talents')} className="text-lg"></Button>
             </Box>
             <Typography variant='body2' className="text-lg" sx={{ fontSize: '1rem', color: '#7f8c8d' }}>
                 Reach <span className="text-TColor-150 font-bold">50K+</span> Individuals
@@ -66,6 +67,19 @@ const Feed = () => {
 
           <Videos videos={videoCVs.slice(0, 20)} />
         </Box>
+
+          {/* LAtest jobs section */}
+        <Box className="mt-20 w-full mx-auto">
+          <Typography
+           variant="h5"
+           fontWeight="bold"
+           mb={2}
+           sx={{ color: 'black' }}
+           className="font-bold text-3xl my-5">LATEST JOBS</Typography>
+          {/* <JobBoard jobs={jobs}> */}
+          <JobBoard jobs={mockJobs.slice(0, 30)} />
+        </Box>
+
         <Box className="mt-20 ">
           <Typography
             variant="h5"
@@ -92,54 +106,6 @@ const Feed = () => {
           </Typography>
 
           <Videos videos={videoCVs.slice(10, 30)} />
-        </Box>
-
-        {/* LAtest jobs section */}
-        <Box className="mt-20 w-full mx-auto">
-          <Typography
-           variant="h5"
-           fontWeight="bold"
-           mb={2}
-           sx={{ color: 'black' }}
-           className="font-bold text-3xl my-5">LATEST JOBS</Typography>
-          {/* <JobBoard jobs={jobs}> */}
-          <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-          {[1,2,3,4,5,6,7,8].map((val) => (
-            <Paper
-              elevation={4}
-              square={false}
-              className="bg-white py-4 px-2 md:py-10 md:px-3"
-              key={val}
-            >
-              <div className="flex flex-col">
-                <h3 className="font-bold">Job Title</h3>
-                <Typography variant='subtitle2'>
-                  Company Name
-                </Typography>
-                <div className="flex flex-col gap-2">
-                  <h5 className="font-semibold text-black">
-                    <LocationOnIcon sx={{ fontSize: '17px', color: 'gray', mr: '2px' }} />
-                    Location
-                  </h5>
-                  <p className="font-light text-[.75rem] text-gray-500">
-                    Posted 5 mins ago
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 text-pretty">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Minus dolorem maiores consectetur consequuntur ad recusandae
-                rerum sapiente quam doloribus accusantium aliquam repellat
-                distinctio eum.
-              </div>
-              <div className="flex justify-end">
-                <Link className="text-base hover:underline" to="/job-board/12345">
-                  Read More...
-                </Link>
-              </div>
-            </Paper>
-          ))}
-          </div>
         </Box>
 
       </Box>

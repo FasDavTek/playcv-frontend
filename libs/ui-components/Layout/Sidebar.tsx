@@ -125,6 +125,8 @@ const Sidebar = ({
         {/* logout common to all */}
       </div>
 
+      <Divider className='text-white' />
+
       {/* <div className="mt-10 flex justify-between items-center">
         <p
           className={`px-4 cursor-default text-xl font-bold ${
