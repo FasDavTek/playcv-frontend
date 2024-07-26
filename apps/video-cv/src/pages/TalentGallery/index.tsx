@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/effect-creative';
+import 'swiper/css/autoplay';
+import { EffectCreative, Autoplay } from 'swiper/modules';
 import { Images } from '@video-cv/assets';
 import { Button, Input, Radio, Select } from '@video-cv/ui-components';
 import { VideoCard, Videos } from '../../components';
 import { videoCVs } from '../../utils/videoCVs';
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+
+const heroImages = [Images.HeroImage6, Images.HeroImage7, Images.HeroImage8, Images.HeroImage9, Images.HeroImage9];
 
 const index = () => {
     const [currentPage, setCurrentPage] = useState(0);
@@ -86,29 +93,33 @@ const index = () => {
 
   return (
     <Box>
-        <Box className="min-h-[500px] bg-[#F7FaFF] px-3 md:px-10 flex justify-center items-start py-10 flex-col gap-3">
-            <Stack direction={{ xs: 'column', md: 'row' }} alignItems='center' spacing={4}>
-                <Box flex={1}>
+        <Box className="min-h-[500px] bg-[#F7FaFF] px-3 md:px-10 flex justify-center w-full items-start py-10 flex-col gap-3">
+            <Stack direction={{ xs: 'column', md: 'row' }} alignItems='center' spacing={4} width='100%'>
+                <Box flex={1} width='100%' className='flex flex-col gap-4'>
                     <Typography variant="h3" fontSize="2xl" lineHeight="shorter" fontWeight="extrabold">
-                        Discover Top Talent
+                        SHOWCASE YOUR SKILLS & QUALITIES!
                     </Typography>
                     <Typography variant="body1" fontSize="lg" color="gray.600">
-                        Browse through a catalog of video resumes from talented professionals and find the perfect fit for your organization.
+                        Let thousands of potential employers notice you via videoCV
                     </Typography>
                 </Box>
-                <Box flexShrink={0} className='!rounded-lg'
+                <Box className='!rounded-lg'
                     sx={{
                     flex: 1,
-                    display: { xs: 'none', md: 'block' },
+                    display: { xs: 'none', md: 'flex' },
                     alignSelf: 'center',
                     textAlign: 'center',
                     }}
+                    width='35%'
                 >
-                    <img className='!rounded-lg'
-                    src={Images.HeroImage}
-                    alt="Job search illustration"
-                    style={{ maxWidth: '80%', height: 'auto', borderRadius: 'lg' }}
-                    />
+                    <Swiper grabCursor={false} loop={true} autoplay={{ delay: 3000, disableOnInteraction: false }} speed={3000} effect={'creative'} creativeEffect={{ prev: { shadow: true, translate: ['-20%', 0, -1], }, next: { translate: ['100%', 0, 0] } }} modules={[EffectCreative, Autoplay]} style={{ width: '100%', maxWidth: '100%', height: 'auto', borderRadius: '.75rem' }}>
+                        {heroImages.map((image: any, index: any) => (
+                            <SwiperSlide key={index}>
+                                <img className='!rounded-lg' src={image} alt={`Hero image ${index + 1}`} style={{ width: '100%', objectFit: 'cover', maxWidth: '100%', height: '350px', borderRadius: 'lg' }} />
+                            </SwiperSlide>
+                            
+                        ))}
+                    </Swiper>
                 </Box>
             </Stack>
         </Box>
@@ -137,7 +148,7 @@ const index = () => {
                         onChange={handleCategoryChange}
                     />
 
-                    <Select
+                    {/* <Select
                         options={[]}
                         label="Location"
                         placeholder="Select Location"
@@ -148,7 +159,7 @@ const index = () => {
                         label="Date Posted"
                         placeholder="Select Date"
                         containerClass="flex-1"
-                    />
+                    /> */}
 
                     <Radio
                         label="Job Status"

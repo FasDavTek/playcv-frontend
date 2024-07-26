@@ -73,7 +73,7 @@ const Navbar = () => {
           to="/"
           style={{ display: 'flex', borderRadius: 'lg', alignItems: 'center' }}
         >
-          <img src={Assets.Images.Dragnet} alt="logo" className="h-14 rounded-lg" />
+          <img src={Assets.Images.LogoWhite} alt="logo" className="h-14 rounded-lg" />
           {/* <h2 className="text-black text-2xl">Logo</h2> */}
         </Link>
         {/* <SearchBar /> */}
@@ -134,7 +134,7 @@ const Navbar = () => {
                 Job Board
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink
                 to="/candidate"
                 className={({ isActive, isPending }) =>
@@ -167,7 +167,7 @@ const Navbar = () => {
               >
                 Employer
               </NavLink>
-            </li>
+            </li> */}
             <li>
               {/* TODO: Show logged in if user is logged in */}
               <button

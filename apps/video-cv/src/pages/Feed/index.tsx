@@ -7,26 +7,32 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { fetchFromAPI } from '../../utils/fetchFromAPI';
 import { Videos, Sidebar, JobBoard } from '../../components';
 // import { Videos as VideosConstant } from '../../utils/Videos';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/effect-creative';
+import 'swiper/css/autoplay';
+import { EffectCreative, Autoplay } from 'swiper/modules';
 import { Images } from '@video-cv/assets';
 import { Button } from '@video-cv/ui-components';
 import { videoCVs } from './../../utils/videoCVs';
 import fetchJobs from '../../components/fetchJobs';
 import { mockJobs } from '../../utils/jobs';
 
+const heroImages = [Images.HeroImage1, Images.HeroImage2, Images.HeroImage3, Images.HeroImage4, Images.HeroImage5];
+
 const Feed = () => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState('New');
 
   return (
     <Stack className="flex flex-col">
-      <Box className="min-h-[500px] bg-[#F7FaFF] px-10 flex justify-center items-start py-10 flex-col gap-6">
-        <Stack direction={{ xs: 'column', md: 'row' }} alignItems='center' spacing={4}>
-          <Box flex={1}>
+      <Box className="min-h-[500px] bg-[#F7FaFF] px-10 flex justify-center w-full items-start py-10 flex-col gap-6">
+        <Stack direction={{ xs: 'column', md: 'row' }} alignItems='center' spacing={4} width='100%'>
+          <Box flex={1} width='100%'>
             <Typography variant="h3" className="font-bold text-[42px] leading-[66px] md:leading-[72px] text-[#2c3e50]" sx={{ marginBottom: '1.25rem' }}>
-              Accelerate Your Career with Top Job Opportunities
+              ACCELERATE YOUR CAREER!
             </Typography>
             <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.2rem', marginBottom: '1.875rem' }}>
-              Discover the best job listings tailored to your skills and aspirations. Join thousands of professionals who have found their dream jobs through our platform.
+              Announce your amazing business, inventions, products, and services as a young entrepreneur via your video profile
             </Typography>
             <Box className="flex items-center gap-10" sx={{ marginBottom: '1.25rem' }}>
               <Button variant="blue" color="primary" label={'Explore Jobs'} onClick={() => navigate('/job-board')} className="text-lg"></Button>
@@ -39,16 +45,22 @@ const Feed = () => {
           <Box className='!rounded-lg'
             sx={{
               flex: 1,
-              display: { xs: 'none', md: 'block' },
+              display: { xs: 'none', md: 'flex' },
               alignSelf: 'center',
               textAlign: 'center',
             }}
+            width='35%'
           >
-            <img className='!rounded-lg'
-              src={Images.HeroImage}
-              alt="Job search illustration"
-              style={{ maxWidth: '80%', height: 'auto', borderRadius: 'lg' }}
-            />
+
+           <Swiper grabCursor={false} loop={true} autoplay={{ delay: 3000, disableOnInteraction: false }} speed={3000} effect={'creative'} creativeEffect={{ prev: { shadow: true, translate: ['-20%', 0, -1], }, next: { translate: ['100%', 0, 0] } }} modules={[EffectCreative, Autoplay]} style={{ width: '100%', maxWidth: '100%', height: 'auto', borderRadius: '.75rem' }}>
+              {heroImages.map((image: any, index: any) => (
+                <SwiperSlide key={index}>
+                  <img className='!rounded-lg' src={image} alt={`Hero image ${index + 1}`} style={{ width: '100%', objectFit: 'cover', maxWidth: '100%', height: '350px', borderRadius: 'lg' }} />
+                </SwiperSlide>
+                
+              ))}
+           </Swiper>
+            
           </Box>
         </Stack>
       </Box>
