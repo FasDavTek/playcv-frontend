@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, useMediaQuery } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/effect-creative';
@@ -93,10 +93,10 @@ const index = () => {
 
   return (
     <Box>
-        <Box className="min-h-[500px] bg-[#F7FaFF] px-3 md:px-10 flex justify-center w-full items-start py-10 flex-col gap-3">
-            <Stack direction={{ xs: 'column', md: 'row' }} alignItems='center' spacing={4} width='100%'>
-                <Box flex={1} width='100%' className='flex flex-col gap-4'>
-                    <Typography variant="h3" fontSize="2xl" lineHeight="shorter" fontWeight="extrabold">
+        <Box className="min-h-[500px] bg-[#F7FaFF] px-3 md:px-16 flex justify-center w-full items-start py-10 flex-col gap-3">
+            <Stack direction={{ xs: 'column', md: 'row' }} alignItems='center' justifyContent='space-between' spacing={{ xs: 10, base: 30 }} width='100%'>
+                <Box flex={2} width={['100%', '70%']} className='flex flex-col gap-4'>
+                    <Typography variant="h3" lineHeight="shorter" fontWeight="extrabold" fontSize={{ xs: '32px', md: '42px' }}>
                         SHOWCASE YOUR SKILLS & QUALITIES!
                     </Typography>
                     <Typography variant="body1" fontSize="lg" color="gray.600">
@@ -110,12 +110,14 @@ const index = () => {
                     alignSelf: 'center',
                     textAlign: 'center',
                     }}
-                    width='35%'
+                    width='40%'
+                    height='500px'
                 >
-                    <Swiper grabCursor={false} loop={true} autoplay={{ delay: 3000, disableOnInteraction: false }} speed={3000} effect={'creative'} creativeEffect={{ prev: { shadow: true, translate: ['-20%', 0, -1], }, next: { translate: ['100%', 0, 0] } }} modules={[EffectCreative, Autoplay]} style={{ width: '100%', maxWidth: '100%', height: 'auto', borderRadius: '.75rem' }}>
+                    
+                    <Swiper grabCursor={false} loop={true} autoplay={{ delay: 3000, disableOnInteraction: false }} speed={3000} effect={'creative'} creativeEffect={{ prev: { shadow: true, translate: ['-20%', 0, -1], }, next: { translate: ['100%', 0, 0] } }} modules={[EffectCreative, Autoplay]} style={{ width: '100%', height: '100%', maxWidth: '100%', borderRadius: '.75rem' }}>
                         {heroImages.map((image: any, index: any) => (
                             <SwiperSlide key={index}>
-                                <img className='!rounded-lg' src={image} alt={`Hero image ${index + 1}`} style={{ width: '100%', objectFit: 'cover', maxWidth: '100%', height: '350px', borderRadius: 'lg' }} />
+                                <img className='!rounded-lg h-full' src={image} alt={`Hero image ${index + 1}`} style={{ width: '100%', objectFit: 'cover', maxWidth: '100%', borderRadius: 'lg' }} />
                             </SwiperSlide>
                             
                         ))}
