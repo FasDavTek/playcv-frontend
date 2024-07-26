@@ -6,6 +6,11 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 import { Select, Radio, Input } from '@video-cv/ui-components';
 import { useFilters } from '@video-cv/hooks';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/effect-creative';
+import 'swiper/css/autoplay';
+import { EffectCreative, Autoplay } from 'swiper/modules';
 import { Images } from '@video-cv/assets';
 import { Button } from '@video-cv/ui-components';
 import { mockJobs } from '../../utils/jobs';
@@ -13,14 +18,20 @@ import { JobCard } from '../../components';
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
+
+const heroImages = [Images.HeroImage10, Images.HeroImage11, Images.HeroImage12, Images.HeroImage13, Images.HeroImage14];
+
 const JobBoard = () => {
   const [currentPage, setCurrentPage] = useState(0);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
-    const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
-    const [searchText, setSearchText] = useState('');
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-    const [isFilterApplied, setIsFilterApplied] = useState(false);
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+  const [searchText, setSearchText] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [selectedDates, setSelectedDates] = useState<string[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [isFilterApplied, setIsFilterApplied] = useState(false);
 
     useEffect(() => {
         const handleResize = () => {
@@ -48,8 +59,11 @@ const JobBoard = () => {
         return mockJobs.filter((job) => {
             const matchesText = job.title.toLowerCase().includes(searchText.toLowerCase());
             // const matchesCategory = setSelectedCategories.length === 0 || selectedCategories.includes(video.category);
+            const matchesLocation = selectedLocations.length === 0 || selectedLocations.includes(job.location);
+            const matchesDate = selectedDates.length === 0 || selectedDates.includes(job.postedTime);
+            // const matchesStatus = selectedStatus === 'all' || job.status === selectedStatus;
             // return matchesText && matchesCategory;
-            return matchesText;
+            return matchesText && matchesLocation && matchesDate /* && matchesStatus */ ;
         });
     };
     
@@ -82,17 +96,35 @@ const JobBoard = () => {
         setSelectedCategories(e.target.value);
         setIsFilterApplied(true);
     };
+
+    const handleLocationChange = (e: ChangeEvent<{ value: string[] }>) => {
+      setSelectedLocations(e.target.value);
+      setIsFilterApplied(true);
+    };
+  
+    const handleDateChange = (e: ChangeEvent<{ value: string[] }>) => {
+      setSelectedDates(e.target.value);
+      setIsFilterApplied(true);
+    };
+
+    const handleStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setSelectedStatus(e.target.value);
+      setIsFilterApplied(true);
+    };
     
     const handleClearFilters = () => {
         setSearchText('');
         setSelectedCategories([]);
+        setSelectedLocations([]);
+        setSelectedDates([]);
+        setSelectedStatus('all');
         setIsFilterApplied(false);
     };
 
   return (
     <Box>
-      <Box className="min-h-[500px] bg-[#F7FaFF] px-3 md:px-10 flex justify-center items-start py-10 flex-col gap-3">
-        <Stack direction={{ xs: 'column', md: 'row' }} alignItems='center' spacing={4}>
+      <Box className="min-h-[500px] bg-[#F7FaFF] px-3 md:px-10 flex justify-center w-full items-start py-10 flex-col gap-3">
+        <Stack direction={{ xs: 'column', md: 'row' }} alignItems='center' spacing={4} width='100%'>
           <Box className='!rounded-lg'
             sx={{
               flex: 1,
@@ -100,22 +132,26 @@ const JobBoard = () => {
               alignSelf: 'center',
               textAlign: 'center',
             }}
+            width='35%'
           >
-            <img className='!rounded-lg'
-              src={Images.HeroImage}
-              alt="Job search illustration"
-              style={{ maxWidth: '80%', height: 'auto', borderRadius: 'lg' }}
-            />
+            <Swiper grabCursor={false} loop={true} autoplay={{ delay: 3000, disableOnInteraction: false }} speed={3000} effect={'creative'} creativeEffect={{ prev: { shadow: true, translate: ['-20%', 0, -1], }, next: { translate: ['100%', 0, 0] } }} modules={[EffectCreative, Autoplay]} style={{ width: '100%', maxWidth: '100%', height: 'auto', borderRadius: '.75rem' }}>
+                {heroImages.map((image: any, index: any) => (
+                  <SwiperSlide key={index}>
+                    <img className='!rounded-lg' src={image} alt={`Hero image ${index + 1}`} style={{ width: '100%', objectFit: 'cover', maxWidth: '100%', height: '350px', borderRadius: 'lg' }} />
+                  </SwiperSlide>
+                    
+                ))}
+            </Swiper>
           </Box>
-          <Box flex={1}>
+          <Box flex={1} width='100%'>
             <Typography variant="h3" className="font-bold text-[42px] leading-[66px] md:leading-[72px] text-[#2c3e50]" sx={{ marginBottom: '1.25rem' }}>
-              Find Your Dream Job
+              ACCELERATE YOUR CAREER
             </Typography>
             <Typography variant="h6" className="text-lg text-secondary mt-3">
-              Explore thousands of job listings and find the one that's perfect for you.
+              Discover the best job listings for young graduates tailored to your aspirations.
             </Typography>
             <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.2rem', marginBottom: '1.875rem' }}>
-              Connect with top companies and get started on your career journey today!
+              Announce your amazing business, inventions, products, and services as a young entrepreneur via your video profile
             </Typography>
             <div className="flex items-center gap-6 mt-6">
               <Typography variant="body2" className="text-lg" sx={{ fontSize: '1rem', color: '#7f8c8d' }}>
@@ -129,22 +165,8 @@ const JobBoard = () => {
         {/* filter */}
         <div className="card-containers flex-[2] h-fit min-h-[200px]">
           <div className="border-b flex p-4 justify-between">
-            <p
-              className="font-bold"
-              role="button"
-              onClick={() => {
-                console.log('');
-              }}
-            >
-              Filter
-            </p>
-            <p
-              className="text-red-500"
-              role="button"
-              onClick={handleClearFilters}
-            >
-              Clear All
-            </p>
+            <p className="font-bold" role="button" onClick={() => {}}>Filter</p>
+            <p className="text-red-500" role="button" onClick={handleClearFilters}>Clear All</p>
           </div>
           <div className="p-3 mx-auto flex flex-col gap-3">
             <Input
@@ -162,6 +184,7 @@ const JobBoard = () => {
               placeholder="Select Category(s)"
               containerClass="flex-1"
               name="category"
+              multiple
               value={selectedCategories}
               onChange={handleCategoryChange}
             />
@@ -172,6 +195,9 @@ const JobBoard = () => {
               placeholder="Select Location"
               containerClass="flex-1"
               name="location"
+              multiple
+              value={selectedLocations}
+              onChange={handleLocationChange}
             />
 
             <Select
@@ -180,6 +206,9 @@ const JobBoard = () => {
               placeholder="Select Date"
               containerClass="flex-1"
               name="datePosted"
+              multiple
+              value={selectedDates}
+              onChange={handleDateChange}
             />
 
             <Radio
@@ -187,10 +216,13 @@ const JobBoard = () => {
               options={[
                 { value: 'all', label: 'All' },
                 { value: 'active', label: 'Active' },
+                { value: 'closed', label: 'Closed' },
               ]}
               // onChange={handleFilter}
               defaultValue={'all'}
               name="jobStatus"
+              onChange={handleStatusChange}
+              value={selectedStatus}
             />
 
             <div className=""></div>

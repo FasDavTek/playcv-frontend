@@ -59,7 +59,7 @@ const Sidebar = ({
       )}
 
       <Link to="/dashboard" className="logoAndName flex cursor-pointer mb-9">
-        <img src={Assets.Images.Dragnet} alt="Facility Logo" className="h-14 rounded-md" />
+        <img src={Assets.Images.LogoWhite} alt="Facility Logo" className="h-14 rounded-md" />
         <h5 className="text-xl text-white">VideoCv</h5>
       </Link>
 
