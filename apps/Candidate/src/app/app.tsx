@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 
-import ProtectedRoutes from '../routes/ProtectedRoutes';
+import ProtectedRoutes from '../../../../libs/sharedRoutes/ProtectedRoutes';
 import AuthRoutes from '../routes/AuthRoutes';
 import { useAuth } from '../context/AuthProvider';
 

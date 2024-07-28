@@ -134,7 +134,7 @@ const Navbar = () => {
                 Job Board
               </NavLink>
             </li>
-            {/* <li>
+            <li>
               <NavLink
                 to="/candidate"
                 className={({ isActive, isPending }) =>
@@ -167,7 +167,7 @@ const Navbar = () => {
               >
                 Employer
               </NavLink>
-            </li> */}
+            </li>
             <li>
               {/* TODO: Show logged in if user is logged in */}
               <button

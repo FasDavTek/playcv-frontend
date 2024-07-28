@@ -1,4 +1,4 @@
-import ProtectedRoutes from '../routes/ProtectedRoutes';
+import ProtectedRoutes from '../../../../libs/sharedRoutes/ProtectedRoutes';
 
 const AuthRoutes = () => {
   return <></>;

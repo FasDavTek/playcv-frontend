@@ -141,19 +141,13 @@ const Sidebar = ({
       </div> */}
 
       <div className="messaging-holder mb-14 mt-10">
-        <NavLink
-          // onClick={handleCloseSidebar}
-          to="https://wa.link/ev1zz4"
-          className="messaging-navlink"
+        <a
+          href="https://wa.link/ev1zz4"
+          target="_blank"
+          className="collapse-hideText text-white font-semibold underline messaging-navlink"
         >
-          <a
-            href="https://wa.link/ev1zz4"
-            target="_blank"
-            className="collapse-hideText text-white font-semibold underline"
-          >
-            Support
-          </a>
-        </NavLink>
+          Support
+        </a>
       </div>
       <div
         className={`bottom-0 ml-4 relative text-white font-semibold ${

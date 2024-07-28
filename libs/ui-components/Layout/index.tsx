@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 
 import { Outlet } from 'react-router-dom';
@@ -26,6 +26,10 @@ const Layout = ({
     Employer: EmployerRoutes,
     Admin: AdminRoutes,
   };
+
+  useEffect(() => {
+    console.log('navlinks:', routes[type]);
+  }, [type]);
 
   const openLogoutModal = () => {
     setLogoutMOdalOpen(true);

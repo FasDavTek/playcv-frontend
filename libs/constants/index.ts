@@ -1,48 +1,49 @@
 import { Icons } from '@video-cv/assets';
+import { ROUTES } from '../ui-components/shared/routes';
 
 const CandidateRoutes = [
   {
     name: 'Dashboard',
     img: Icons.HouseIcon,
-    route: '/dashboard',
+    route: ROUTES.CANDIDATE_DASHBOARD,
     pageName: 'Dashboard',
 
   },
   {
     name: 'Profile',
     img: Icons.User,
-    route: '/profile',
+    route: ROUTES.CANDIDATE_PROFILE,
     pageName: 'Profile',
   },
   {
     name: 'Video Management',
     img: Icons.VideoManagement,
-    route: '/video-management',
+    route: ROUTES.CANDIDATE_VIDEO_MANAGEMENT,
     pageName: 'My Videos',
   },
   {
     name: 'VideoCV Guideline',
     img: Icons.Guideline,
-    route: '/video-guideline',
+    route: ROUTES.CANDIDATE_VIDEO_GUIDELINE,
     pageName: 'Video CV GuideLine',
   },
   {
     name: 'Vacancies',
     img: Icons.Vacancy,
-    route: '/vacancies',
+    route: ROUTES.CANDIDATE_VACANCIES,
     pageName: 'Job Listing',
   },
   {
     name: 'Payment',
     img: Icons.Payment,
-    route: '/payment',
+    route: ROUTES.CANDIDATE_PAYMENT,
     pageName: 'Payment History',
   },
 
   {
     name: 'FAQ',
     img: Icons.FAQ,
-    route: '/faq',
+    route: ROUTES.CANDIDATE_FAQ,
     pageName: 'Frequently Asked Questions',
   },
 ];
@@ -53,31 +54,31 @@ const EmployerRoutes: any = [
   {
     name: 'Dashboard',
     img: Icons.HouseIcon,
-    route: '/dashboard',
+    route: ROUTES.EMPLOYER_DASHBOARD,
     pageName: 'Dashboard',
   },
   {
     name: 'VideoCV Guideline',
     img: Icons.Guideline,
-    route: '/video-guideline',
+    route: ROUTES.EMPLOYER_GUIDELINE,
     pageName: 'Video CV GuideLine',
   },
   {
     name: 'Advertisement',
     img: Icons.Advert,
-    route: '/advertisement',
+    route: ROUTES.EMPLOYER_ADVERTISEMENT,
     pageName: 'Advertisement',
   },
   {
     name: 'Video Warehouse',
     img: Icons.VideoWareHouse,
-    route: '/video-management',
+    route: ROUTES.EMPLOYER_VIDEO_MANAGEMENT,
     pageName: 'Video Warehouse',
   },
   {
     name: 'Profile',
     img: Icons.User,
-    route: '/profile',
+    route: ROUTES.EMPLOYER_PROFILE,
     pageName: 'Profile',
   },
 ];
@@ -86,31 +87,31 @@ const AdminRoutes: any = [
   {
     name: 'Dashboard',
     img: Icons.HouseIcon,
-    route: '/dashboard',
+    route: ROUTES.ADMIN_DASHBOARD,
     pageName: 'Dashboard',
   },
   {
     name: 'User management',
     img: Icons.UserMagnagement,
-    route: '/user-management',
+    route: ROUTES.ADMIN_USER_MANAGEMENT,
     pageName: 'User Management',
   },
   {
     name: 'Content management',
     img: Icons.Content,
-    route: '/content-management',
+    route: ROUTES.ADMIN_CONTENT_MANAGEMENT,
     pageName: 'Content management',
   },
   {
     name: 'Advertisement management',
     img: Icons.Advert,
-    route: '/advertisement-management',
+    route: ROUTES.ADMIN_ADVERTISEMENT_MANAGEMENT,
     pageName: 'Advertisement management',
   },
   {
     name: 'Order management',
     img: Icons.OrderManagement,
-    route: '/order-management',
+    route: ROUTES.ADMIN_ORDER_MANAGEMENT,
     pageName: 'Order management',
   },
 ];
