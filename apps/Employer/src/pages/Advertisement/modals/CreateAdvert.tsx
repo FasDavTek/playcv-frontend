@@ -14,7 +14,7 @@ import {
   Select,
 } from '@video-cv/ui-components';
 
-import { advertSchema } from '../../../schema/formValidations/Advert.schema';
+import { advertSchema } from './../../../../../video-cv/src/schema/formValidations/Advert.schema';
 
 // interface IForm {
 //   name: string;
