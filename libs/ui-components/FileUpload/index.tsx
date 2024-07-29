@@ -96,7 +96,27 @@ const FileUpload = ({
   borderWidth = 2,
   setFile = () => {},
 }: FileUploadProps) => {
-  const [files, setFiles] = useState<any>([]);
+  const [files, setFiles] = useState<File[]>([]);
+
+  const onDrop = useCallback( 
+    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+      if (rejectedFiles.length) {
+        // TODO: Add alert to handle rejection
+        console.log('rejectedFiles', rejectedFiles);
+        return;
+      }
+    
+      setFiles(
+        acceptedFiles.map((file: File) => {
+          setFile(file);
+          return Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          });
+        })
+      );
+    },
+    [setFile]
+  )
 
   const {
     getRootProps,
@@ -108,18 +128,7 @@ const FileUpload = ({
     isDragReject,
     // isFileDialogActive,
   } = useDropzone({
-    onDrop: (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
-      // TODO: Add alert to handle rejection
-      console.log('rejectedFiles', rejectedFiles);
-      setFiles(
-        acceptedFiles.map((file: File) => {
-          setFile(file);
-          return Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          });
-        })
-      );
-    },
+    onDrop,
     accept: { 'video/*': [] },
     maxFiles: 1,
     maxSize: 8388608,
@@ -138,7 +147,7 @@ const FileUpload = ({
       ...(isDragAccept ? acceptStyle : {}),
       ...(isDragReject ? rejectStyle : {}),
     }),
-    [isFocused, isDragAccept, isDragReject]
+    [borderColor, borderStyle, borderWidth, color, isFocused, isDragAccept, isDragReject]
   );
 
   const thumbs = files.map((file: File & any) => (
@@ -168,7 +177,7 @@ const FileUpload = ({
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
         {thumbs.length > 0 ? (
-          <p style={thumbsContainer}>{thumbs}</p>
+          <div style={thumbsContainer}>{thumbs}</div>
         ) : (
           <>
             {uploadIcon && uploadIcon}
