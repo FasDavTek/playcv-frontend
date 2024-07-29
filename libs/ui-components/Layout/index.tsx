@@ -27,10 +27,6 @@ const Layout = ({
     Admin: AdminRoutes,
   };
 
-  useEffect(() => {
-    console.log('navlinks:', routes[type]);
-  }, [type]);
-
   const openLogoutModal = () => {
     setLogoutMOdalOpen(true);
   };
