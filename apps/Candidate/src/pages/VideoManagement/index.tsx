@@ -8,6 +8,8 @@ import { VideoLinks } from '@video-cv/constants';
 import { Videos } from '../../components';
 import { CreateVideoConfirmationModal, UploadVideoModal } from './modals';
 import { routes } from '../../routes/routes';
+import { ROUTES } from 'libs/ui-components/shared/routes';
+import { usePaystack } from '@video-cv/payment';
 
 export type ModalTypes = null | 'confirmationModal' | 'uploadModal';
 
@@ -21,32 +23,38 @@ const Dashboard = () => {
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
-  useEffect(
-    function openUploadModal() {
-      if (queryParams.has('uploadModal')) {
-        navigate(routes.videoManagement, { replace: true });
-        openSetModalFn('uploadModal');
-      }
-    },
-    [location.search]
-  );
+  useEffect(() => {
+    if (queryParams.has('uploadModal')) {
+      navigate('/candidate/video-management', { replace: true });
+      openSetModalFn('uploadModal');
+    }
+  }, [location.search, navigate]);
+
+  // const handleUploadSubmit = () => {
+  //   // TODO: Redirect to Paystack to make payment
+  //   // Assume payButtonFn redirects and then navigate to the video management page upon success.
+  //   // payButtonFn();
+  //   navigate('/candidate/video-management');
+  // };
 
   return (
     <section className="ce-px ce-py gap-5 border min-h-screen ">
       <div className=" h-full">
         <div className="flex justify-end mb-5">
           <Button
-            label="GET STARTED UPLOAD VIDEOCV"
+            variant='custom'
+            label="Upload your Video"
             onClick={() => openSetModalFn('confirmationModal')}
           />
         </div>
         {/* VIDEO CARDS SECTION */}
-        <Videos videos={VideoLinks.slice(0, 10)} />
+        
       </div>
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
         <CreateVideoConfirmationModal
           onClose={closeModal}
-          // onAccept={() => openSetModalFn('uploadModal')}
+          // onAccept={handleConfirmationAccept}
+          onAccept={() => openSetModalFn('uploadModal')}
         />
       </Modal>
       {/* TODO: Add tags field and video upload field */}

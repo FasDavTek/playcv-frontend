@@ -9,46 +9,31 @@ import { usePaystack } from '@video-cv/payment';
 
 const CreateVideConfirmationModal = ({
   onClose,
+  onAccept,
 }: // onAccept,
 {
   onClose: (e?: any) => void;
+  onAccept: () => void;
   // onAccept: (e: ModalTypes) => void;
 }) => {
-  const navigate = useNavigate();
-  const { payButtonFn } = usePaystack(
-    () => {
-      console.log('onSuccess callback');
-      navigate('/video-management?uploadModal=true');
-    },
-    () => {
-      console.log('onFailure callback');
-    }
-  );
-  const ProceedToPayment = () => {
-    // TODO: Redirect to paystack to make payment
-    payButtonFn();
-    onClose();
-  };
-
   return (
-    <div className="bg-white p-10 lg:p-14 centered-modal-md rounded-lg">
-      <p className="text-center text-gray-500 text-lg my-4">
-        You are about to upload a new video, note that uploading video is done
-        within an assigned window of {PaymentTimingDeadlineInDays} days, This
-        means that if you create an upload request, you have until{' '}
-        {PaymentTimingDeadlineInDays} days from now to upload your video.
-        <br /> If you accept this, kindly proceed to payment
+    <div className="bg-white p-5 lg:py-10 px-7 centered-modal-md rounded-lg">
+      <p className=" text-gray-500 text-lg my-4">
+        You are about to upload a new video. Please note that the upload must be completed within {PaymentTimingDeadlineInDays} days from the time of your upload request. 
+        <br /> 
+        If you agree to these terms, please proceed to payment.
       </p>
-      <div className="flex gap-4 justify-center mt-3">
+      <div className="flex gap-8 justify-center mt-5">
         <Button
           className="text-white bg-red-500"
           label="Cancel"
           onClick={onClose}
         />
         <Button
-          className="bg-green-500 text-white "
+          variant='black'
+          // className="bg-green-500 text-white "
           label="Accept"
-          onClick={ProceedToPayment}
+          onClick={onAccept}
         />
       </div>
     </div>

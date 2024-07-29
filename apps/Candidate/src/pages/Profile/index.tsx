@@ -114,7 +114,8 @@ const Profile = () => {
               label="Class of Degree"
               options={[
                 { value: 'firstClass', label: 'First Class' },
-                { value: 'secondClass', label: 'Second Class' },
+                { value: 'secondClassUpper', label: 'Second Class Upper' },
+                { value: 'secondClassLower', label: 'Second Class Lower' },
               ]}
               onChange={handleInputChange}
             />
