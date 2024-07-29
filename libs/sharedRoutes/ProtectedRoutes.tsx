@@ -82,7 +82,7 @@ const router = createBrowserRouter([
           ],
     },
     {
-        path: ROUTES.CANDIDATE_DASHBOARD,
+        path: ROUTES.CANDIDATE,
         element: (
             <Suspense fallback={<h1>Loading...</h1>}>
               {<Layout type="Candidate" />}
@@ -124,7 +124,7 @@ const router = createBrowserRouter([
           ],
     },
     {
-        path: ROUTES.ADMIN_DASHBOARD,
+        path: ROUTES.ADMIN,
         element: (
             <Suspense fallback={<h1>Loading...</h1>}>
               {<Layout type="Admin" />}
@@ -162,7 +162,7 @@ const router = createBrowserRouter([
           ],
     },
     {
-        path: ROUTES.EMPLOYER_DASHBOARD,
+        path: ROUTES.EMPLOYER,
         element: <Suspense fallback={<h1>Loading...</h1>}>{<Layout type='Employer' />}</Suspense>,
         children: [
             {

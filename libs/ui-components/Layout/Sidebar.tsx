@@ -58,7 +58,7 @@ const Sidebar = ({
         </Link>
       )}
 
-      <Link to="/dashboard" className="logoAndName flex cursor-pointer mb-9">
+      <Link to="/" className="logoAndName flex cursor-pointer mb-9">
         <img src={Assets.Images.LogoWhite} alt="Facility Logo" className="h-14 rounded-md" />
         <h5 className="text-xl text-white">VideoCv</h5>
       </Link>
@@ -93,14 +93,12 @@ const Sidebar = ({
                         key={item.route}
                         onClick={handleCloseSidebar}
                         to={item.route}
+                        className={({ isActive }) =>
+                          `main-icon ${isActive ? 'main-icon active' : 'main-icon'}`
+                        }
                       >
                         {item.img && <img className="w-5 icon" src={item.img} alt={item.name} />}
                         <span className="collapse-hideText">{item.name}</span>
-                        {/* <img
-                          className="hidden collapse-show"
-                          src={item.img}
-                          alt=""
-                        /> */}
                       </NavLink>
                     ))}
                   </div>
@@ -113,7 +111,9 @@ const Sidebar = ({
                 key={index}
                 onClick={handleCloseSidebar}
                 to={navItem.route}
-                className="!mt-2 main-icon text-white font-semibold"
+                className={({ isActive }) =>
+                  `!mt-2 main-icon text-white font-semibold ${isActive ? 'active' : ''}`
+                }
               >
                 {navItem.img && <img className="w-5 icon" src={navItem.img} alt={navItem.name} />}
                 <span className="collapse-hideText">{navItem.name}</span>

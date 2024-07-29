@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
-import { Stack } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Stack } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 
 import { logo } from '../utils/constants';
@@ -9,42 +10,16 @@ import { useCart } from '../context/CartProvider';
 import * as Assets from '@video-cv/assets';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
+import { Button } from '@video-cv/ui-components';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 const Hamburger = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="22"
-    height="24"
-    viewBox="0 0 52 24"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 52 24">
     <g id="Group_9" data-name="Group 9" transform="translate(-294 -47)">
-      <rect
-        id="Rectangle_3"
-        data-name="Rectangle 3"
-        width="42"
-        height="4"
-        rx="2"
-        transform="translate(304 47)"
-        fill="#574c4c"
-      />
-      <rect
-        id="Rectangle_5"
-        data-name="Rectangle 5"
-        width="42"
-        height="4"
-        rx="2"
-        transform="translate(304 67)"
-        fill="#574c4c"
-      />
-      <rect
-        id="Rectangle_4"
-        data-name="Rectangle 4"
-        width="52"
-        height="4"
-        rx="2"
-        transform="translate(294 57)"
-        fill="#574c4c"
-      />
+      <rect id="Rectangle_3" data-name="Rectangle 3" width="42" height="4" rx="2" transform="translate(304 47)" fill="#574c4c" />
+      <rect id="Rectangle_5" data-name="Rectangle 5" width="42" height="4" rx="2" transform="translate(304 67)" fill="#574c4c" />
+      <rect id="Rectangle_4" data-name="Rectangle 4" width="52" height="4" rx="2" transform="translate(294 57)" fill="#574c4c" />
     </g>
   </svg>
 );
@@ -54,6 +29,9 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const [showNavbar, setShowNavbar] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleShowNavbar = () => {
     setShowNavbar(!showNavbar);
@@ -61,6 +39,19 @@ const Navbar = () => {
 
   const handleNavItemClick = () => {
     setShowNavbar(false);
+  };
+
+  const handleCartClick = () => {
+    handleNavItemClick();
+    navigate('/cart');
+  };
+
+  const handleGetStartedClick = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   return (
@@ -136,7 +127,7 @@ const Navbar = () => {
             </li>
             <li>
               <NavLink
-                to="/candidate"
+                to="/candidate/dashboard"
                 className={({ isActive, isPending }) =>
                   `text-black text-lg  ${
                     isPending
@@ -153,7 +144,7 @@ const Navbar = () => {
             </li>
             <li>
               <NavLink
-                to="/employer"
+                to="/employer/dashboard"
                 className={({ isActive, isPending }) =>
                   `text-black text-lg  ${
                     isPending
@@ -171,20 +162,54 @@ const Navbar = () => {
             <li>
               {/* TODO: Show logged in if user is logged in */}
               <button
-                onClick={() => {
-                  handleNavItemClick
-                   navigate('/cart')
-                }}
-                className="border border-black rounded h-fit w-fit px-3 py-1 flex gap-2 items-center"
+                onClick={handleCartClick}
+                className="rounded-full h-fit w-fit px-1 py-1 flex gap-2 items-center relative"
               >
                 <img
                   alt=""
                   src={Assets.Icons.Cart}
-                  className="w-[20px] h-[20px]"
+                  className="w-[25px] h-[25px]"
                 />
-                - {cartState.cart.length} items
+                <div className='py-0 px-1.5 bg-neutral-200 text-white text-sm absolute -top-1.5 left-4 rounded-full'>
+                  {cartState.cart.length}
+                </div>
               </button>
             </li>
+            <Button variant='black' label='Get Started' onClick={handleGetStartedClick} />
+            <Dialog fullScreen={fullScreen} aria-labelledby="responsive-dialog-title" open={openModal} onClose={handleCloseModal}>
+              <DialogTitle id="responsive-dialog-title">Get Started</DialogTitle>
+              <IconButton
+                aria-label="close"
+                onClick={handleCloseModal}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  color: (theme) => theme.palette.grey[500],
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+              <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '.95rem' }}>
+                <DialogContentText display='flex' flexDirection='column' gap='.8rem'>
+                  <p>
+                    Welcome to VideoCV! Choose your path to join our community and unlock your potential.
+                  </p>
+                  <p>
+                    <strong>For Professionals:</strong> Create a compelling video resume and showcase your skills to top employers.
+                  </p>
+                  <p>
+                    <strong>For Employers:</strong> Discover talented professionals and streamline your hiring process with our innovative platform.
+                  </p>
+                </DialogContentText>
+                <Stack mx='auto' direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                  <Button variant="black" className='text-sm' label='Sign up as Professional' onClick={() => navigate('/candidate/profile/:id')}>
+                  </Button>
+                  <Button variant="black" className='text-sm' label='Sign up as Employer' onClick={() => navigate('/employer/profile/:id')}>
+                  </Button>
+                </Stack>
+              </DialogContent>
+            </Dialog>
           </ul>
         </div>
       </div>
