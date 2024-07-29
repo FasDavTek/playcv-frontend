@@ -33,7 +33,7 @@ const FormInput = forwardRef<HTMLInputElement, InputProps<any>>(
         <input
           ref={ref}
           className={cx(
-            'py-2.5 pr-2 pl-3 rounded-lg focus:outline-none w-full h-12 border',
+            'py-2.5 pr-2 pl-3 rounded-xl focus:outline-none w-full h-12 border',
             className,
             { 'outline-red-500 border border-red-500': error }
           )}
