@@ -59,7 +59,7 @@ const SelectDropdown: React.FC<any> = <T extends string>({
             },
         }}
         className={cx(
-          'py-2.5 pr-2 pl-3 rounded-lg bg-white active:outline-none focus:outline-none hover:outline-none w-full h-12 border',
+          'py-2.5 pr-2 pl-3 rounded-xl bg-white active:outline-none focus:outline-none hover:outline-none w-full h-12 border',
           className
         )}
         inputProps={{ 'aria-label': 'Without label' }}
