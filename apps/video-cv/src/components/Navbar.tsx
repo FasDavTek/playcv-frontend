@@ -161,7 +161,7 @@ const Navbar = () => {
                 Employer
               </NavLink>
             </li>
-            {isAuthenticated && user.role === 'employer' ? (
+            {(isAuthenticated && user.role === 'employer') || !isAuthenticated ? (
               <li>
                 {/* TODO: Show logged in if user is logged in */}
                 <button
@@ -178,24 +178,9 @@ const Navbar = () => {
                   </div>
                 </button>
               </li>
-            ) : (
-              <li>
-                {/* TODO: Show logged in if user is logged in */}
-                <button
-                  onClick={handleCartClick}
-                  className="rounded-full h-fit w-fit px-1 py-1 flex gap-2 items-center relative"
-                >
-                  <img
-                    alt=""
-                    src={Assets.Icons.Cart}
-                    className="w-[25px] h-[25px]"
-                  />
-                  <div className='py-0 px-1.5 bg-neutral-200 text-white text-sm absolute -top-1.5 left-4 rounded-full'>
-                    {cartState.cart.length}
-                  </div>
-                </button>
-              </li>
-            )}
+            ) :
+              null
+            }
             <Button variant='black' label='Get Started' onClick={handleGetStartedClick} />
             <Dialog fullScreen={fullScreen} aria-labelledby="responsive-dialog-title" open={openModal} onClose={handleCloseModal}>
               <DialogTitle id="responsive-dialog-title">Get Started</DialogTitle>
