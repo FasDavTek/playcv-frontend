@@ -4,6 +4,7 @@ import { Typography, Card, CardContent, CardMedia, Tooltip, Stack } from '@mui/m
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import PushPinIcon from '@mui/icons-material/PushPin';
 import { useInView } from 'react-intersection-observer';
 
 import {
@@ -28,11 +29,12 @@ interface VideoProps {
     price: number;
     link?: string;
     description: string;
+    pinned?: boolean;
   };
 }
 
 const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
-  const { videoUrl, uploaderName, views, role, description, id, imageSrc, price, link = '/video/cV2gBU6hKfY' /*   link = `/video/${id}` */ } = video;
+  const { videoUrl, uploaderName, views, role, description, id, imageSrc, price, pinned, link = '/video/cV2gBU6hKfY' /*   link = `/video/${id}` */ } = video;
   const { cartState, dispatch } = useCart();
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -108,16 +110,22 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
         />
       </Link>
       <CardContent sx={{ backgroundColor: 'transparent', height: 'auto' }}>
-        <Typography variant="subtitle1" fontWeight="bold" color="#000">
-          {role.slice(0, 30)}{' '}
-          {/* <CheckCircleIcon
-            sx={{ fontSize: '12px', color: 'gray', ml: '5px' }}
-          /> */}
-        </Typography>
-        <Stack direction='row' alignItems='center' justifyContent='space-between' my='.3125rem'>
-          <Typography variant="subtitle2" color="gray">
-            {uploaderName}
+        
+          <Typography variant="subtitle1" fontWeight="bold" color="#000">
+            {role.slice(0, 30)}{' '}
+            {/* <CheckCircleIcon
+              sx={{ fontSize: '12px', color: 'gray', ml: '5px' }}
+            /> */}
           </Typography>
+          
+        
+        <Stack direction='row' alignItems='center' justifyContent='space-between' my='.3125rem'>
+          <Stack direction='row' alignItems='center'>
+            <Typography variant="subtitle2" color="gray">
+              {uploaderName}
+            </Typography>
+            {pinned && <PushPinIcon sx={{ fontSize: '1rem', color: 'red', ml: '.5rem' }} />}
+          </Stack>
           {(isAuthenticated && user.role === 'employer') || !isAuthenticated ? (
             <Tooltip title='Add to wishlist' placeholder='right-start'>
               <span>
