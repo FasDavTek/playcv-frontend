@@ -55,7 +55,7 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
       return;
     }
 
-    if (user?.role !== 'employer') {
+    if (user?.userType !== 'employer') {
       return;
     }
 
@@ -126,7 +126,7 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
             </Typography>
             {pinned && <PushPinIcon sx={{ fontSize: '1rem', color: 'red', ml: '.5rem' }} />}
           </Stack>
-          {(isAuthenticated && user.role === 'employer') || !isAuthenticated ? (
+          {(isAuthenticated && user?.userType === 'employer') || !isAuthenticated ? (
             <Tooltip title='Add to wishlist' placeholder='right-start'>
               <span>
                 <Button variant="custom" color="gray" className='text-[#5c6bc0] hover:text-[#2e3a86]' onClick={handleAddToCart} icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />}></Button>
