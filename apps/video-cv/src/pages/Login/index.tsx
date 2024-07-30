@@ -39,7 +39,7 @@ const Login = () => {
         }}
       ></div>
       <div className="border flex-1">
-        <form onSubmit={handleSubmit} className=" w-7/12 mx-auto mt-14">
+        <form onSubmit={handleSubmit} className="w-[90%] md:w-7/12 mx-auto mt-14">
           <h5 className="font-bold text-3xl">Login</h5>
           <p className="">Enter your login details to Sign in</p>
           <div className="flex flex-col gap-5 my-5 mt-10">
@@ -59,7 +59,7 @@ const Login = () => {
             <Input label="Password" placeholder="user@email.com" />
           </div>
 
-          <Button type='submit' {...{ loading }} className="w-full my-10" label="Login" />
+          <Button type='submit' variant='black' {...{ loading }} className="w-full my-10" label="Login" />
           <Stack mt={1} gap={1}>
             <p className="text-center md:text-left">Don't have an account? Choose your path to get started: </p>
             <Stack direction={{ xs: 'column', md: 'row' }} mt={1} gap={3} >

@@ -45,16 +45,17 @@ const Cart = () => {
     // if not signed in, navigate to sign in, append ?next to sign in
     // if signed in, trigger paystack modal
     // TODO: Do sign in logic
-    if (isAuthenticated?.authState?.isAuthenticated) {
-      if (isAuthenticated.authState.userType === 'employer') {
-        payButtonFn();
-      } else if (isAuthenticated.authState.userType === 'job-seeker') {
-        // Handle job-seeker specific logic, for example:
-        navigate('/auth/login');
-      }
-    } else {
-      navigate('/auth/login');
-    }
+    payButtonFn();
+    // if (isAuthenticated?.authState?.isAuthenticated) {
+    //   if (isAuthenticated.authState.userType === 'employer') {
+    //     payButtonFn();
+    //   } else if (isAuthenticated.authState.userType === 'job-seeker') {
+    //     // Handle job-seeker specific logic, for example:
+    //     navigate('/auth/login');
+    //   }
+    // } else {
+    //   navigate('/auth/login');
+    // }
   };
 
   const ClampedText = styled(Typography)({
