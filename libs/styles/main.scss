@@ -124,3 +124,24 @@
     @apply text-[#2C3647] text-sm;
   }
 }
+
+
+.custom-quill .ql-container {
+  padding: .75rem;
+  border-radius: .5rem;
+  border: 1px solid #ddd;
+}
+
+.custom-quill .ql-editor {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.custom-quill .ql-toolbar {
+  border-radius: .5rem;
+  border: 1px solid #ddd;
+}
+
+.custom-quill {
+  width: 100%;
+}

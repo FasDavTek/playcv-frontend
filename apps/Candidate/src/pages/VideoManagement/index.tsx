@@ -8,8 +8,6 @@ import { VideoLinks } from '@video-cv/constants';
 import { Videos } from '../../components';
 import { CreateVideoConfirmationModal, UploadVideoModal } from './modals';
 import { routes } from '../../routes/routes';
-import { ROUTES } from 'libs/ui-components/shared/routes';
-import { usePaystack } from '@video-cv/payment';
 
 export type ModalTypes = null | 'confirmationModal' | 'uploadModal';
 
@@ -24,18 +22,12 @@ const Dashboard = () => {
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
   useEffect(() => {
-    if (queryParams.has('uploadModal')) {
-      navigate('/candidate/video-management', { replace: true });
+    const uploadModalParam = queryParams.get('uploadModal');
+    if (uploadModalParam === 'true') {
       openSetModalFn('uploadModal');
     }
-  }, [location.search, navigate]);
-
-  // const handleUploadSubmit = () => {
-  //   // TODO: Redirect to Paystack to make payment
-  //   // Assume payButtonFn redirects and then navigate to the video management page upon success.
-  //   // payButtonFn();
-  //   navigate('/candidate/video-management');
-  // };
+  }, [queryParams]);
+  
 
   return (
     <section className="ce-px ce-py gap-5 border min-h-screen ">
@@ -53,8 +45,7 @@ const Dashboard = () => {
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
         <CreateVideoConfirmationModal
           onClose={closeModal}
-          // onAccept={handleConfirmationAccept}
-          onAccept={() => openSetModalFn('uploadModal')}
+          // onAccept={() => openSetModalFn('uploadModal')}
         />
       </Modal>
       {/* TODO: Add tags field and video upload field */}
