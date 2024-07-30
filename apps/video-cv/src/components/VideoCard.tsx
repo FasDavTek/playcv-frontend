@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Typography, Card, CardContent, CardMedia, Tooltip, Stack } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
@@ -13,6 +13,7 @@ import {
 } from '../utils/constants';
 import { Button } from '@video-cv/ui-components';
 import { useCart } from '../context/CartProvider';
+import { useAuth } from '../context/AuthProvider';
 
 interface VideoProps {
   video: {
@@ -33,19 +34,29 @@ interface VideoProps {
 const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
   const { videoUrl, uploaderName, views, role, description, id, imageSrc, price, link = '/video/cV2gBU6hKfY' /*   link = `/video/${id}` */ } = video;
   const { cartState, dispatch } = useCart();
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [isInWishlist, setIsInWishlist] = useState(false);
   const { ref, inView } = useInView({
-    triggerOnce: true, // Load the image only once when it comes into view
-    threshold: 0.1, // Trigger when 10% of the image is visible
+    triggerOnce: true,
+    threshold: 0.1,
   });
 
   useEffect(() => {
-    // Check if the item is in the cart on component mount
     const itemInCart = cartState.cart.some((item: any) => item.id === id);
     setIsInWishlist(itemInCart);
   }, [cartState, id]);
 
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      navigate('/auth/login');
+      return;
+    }
+
+    if (user?.role !== 'employer') {
+      return;
+    }
+
     const itemInCart = cartState.cart.some((item: any) => item.id === id);
     setIsInWishlist(!isInWishlist);
     if (itemInCart) {
@@ -107,11 +118,13 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
           <Typography variant="subtitle2" color="gray">
             {uploaderName}
           </Typography>
-          <Tooltip title='Add to wishlist' placeholder='right-start'>
-            <span>
-              <Button variant="custom" color="gray" className='text-[#5c6bc0] hover:text-[#2e3a86]' onClick={handleAddToCart} icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />}></Button>
-            </span>
-          </Tooltip>
+          {(isAuthenticated && user.role === 'employer') || !isAuthenticated ? (
+            <Tooltip title='Add to wishlist' placeholder='right-start'>
+              <span>
+                <Button variant="custom" color="gray" className='text-[#5c6bc0] hover:text-[#2e3a86]' onClick={handleAddToCart} icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />}></Button>
+              </span>
+            </Tooltip>
+          ) : null}
         </Stack>
         <Typography variant="subtitle2" color="gray">
          {views} views
