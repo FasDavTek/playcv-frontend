@@ -50,7 +50,7 @@ const Feed = () => {
               textAlign: 'center',
             }}
             width='40%'
-            height='500px'
+            height='100%'
           >
 
            <Swiper grabCursor={false} loop={true} autoplay={{ delay: 3000, disableOnInteraction: false }} speed={3000} effect={'creative'} creativeEffect={{ prev: { shadow: true, translate: ['-20%', 0, -1], }, next: { translate: ['100%', 0, 0] } }} modules={[EffectCreative, Autoplay]} style={{ width: '100%', maxWidth: '100%', height: 'auto', borderRadius: '.75rem' }}>

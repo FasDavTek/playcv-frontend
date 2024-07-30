@@ -9,13 +9,31 @@ import { usePaystack } from '@video-cv/payment';
 
 const CreateVideConfirmationModal = ({
   onClose,
-  onAccept,
 }: // onAccept,
 {
   onClose: (e?: any) => void;
-  onAccept: () => void;
   // onAccept: (e: ModalTypes) => void;
 }) => {
+  const navigate = useNavigate();
+  const { payButtonFn } = usePaystack(
+    () => {
+      console.log('onSuccess callback');
+      navigate('/video-management?uploadModal=true');
+    },
+    () => {
+      console.log('onFailure callback');
+    }
+  );
+  const ProceedToPayment = () => {
+    // TODO: Redirect to paystack to make payment
+    payButtonFn();
+    onClose();
+  };
+
+  const ProceedToTypes = () => {
+    navigate('/candidate/video-management/types')
+  }
+
   return (
     <div className="bg-white p-5 lg:py-10 px-7 centered-modal-md rounded-lg">
       <p className=" text-gray-500 text-lg my-4">
@@ -33,7 +51,7 @@ const CreateVideConfirmationModal = ({
           variant='black'
           // className="bg-green-500 text-white "
           label="Accept"
-          onClick={onAccept}
+          onClick={ProceedToTypes}
         />
       </div>
     </div>

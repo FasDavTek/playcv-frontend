@@ -38,14 +38,17 @@ const OrderManagementById = lazy(() => import('../../apps/Admin/src/pages/OrderM
 
 // CANDIDATE ROUTES
 const CandidateHome = lazy(() => import('../../apps/Candidate/src/pages/Home'));
-const CandidateDashboard = lazy(() => import('../../apps/Candidate/src/pages//Dashboard'));
-const CandidateVideoManagement = lazy(() => import('../../apps/Candidate/src/pages//VideoManagement'));
-const VideoDetail = lazy(() => import('../../apps/Candidate/src/pages//VideoDetail'));
-const Vacancies = lazy(() => import('../../apps/Candidate/src/pages//Vacancies'));
-const CandidateProfile = lazy(() => import('../../apps/Candidate/src/pages//Profile'));
-const FAQ = lazy(() => import('../../apps/Candidate/src/pages//FAQ'));
-const Payment = lazy(() => import('../../apps/Candidate/src/pages//Payment'));
-const CandidateLogin = lazy(() => import('../../apps/Candidate/src/pages//Login'));
+const CandidateDashboard = lazy(() => import('../../apps/Candidate/src/pages/Dashboard'));
+const CandidateVideoManagement = lazy(() => import('../../apps/Candidate/src/pages/VideoManagement'));
+const CandidateVideoUploadTypes = lazy(() => import('../../apps/Candidate/src/pages/VideoManagement/VideoManagement-Types/VideoUploadTypes'));
+const CandidateVideoUploadDetails = lazy(() => import('../../apps/Candidate/src/pages/VideoManagement/VideoManagement-VideoUpload/VideoUpload'));
+const CandidateVideoUploadConfirmation = lazy(() => import('../../apps/Candidate/src/pages/VideoManagement/VideoManagement-Confirmation/VideoUploadConfirmation'));
+const VideoDetail = lazy(() => import('../../apps/Candidate/src/pages/VideoDetail'));
+const Vacancies = lazy(() => import('../../apps/Candidate/src/pages/Vacancies'));
+const CandidateProfile = lazy(() => import('../../apps/Candidate/src/pages/Profile'));
+const FAQ = lazy(() => import('../../apps/Candidate/src/pages/FAQ'));
+const Payment = lazy(() => import('../../apps/Candidate/src/pages/Payment'));
+const CandidateLogin = lazy(() => import('../../apps/Candidate/src/pages/Login'));
 
 
 const router = createBrowserRouter([
@@ -104,6 +107,18 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.CANDIDATE_VIDEO_MANAGEMENT,
                 element: <CandidateVideoManagement />,
+            },
+            {
+                path: ROUTES.CANDIDATE_VIDEO_UPLOAD_TYPES,
+                element: <CandidateVideoUploadTypes />,
+            },
+            {
+                path: ROUTES.CANDIDATE_VIDEO_UPLOAD,
+                element: <CandidateVideoUploadDetails />,
+            },
+            {
+                path: ROUTES.CANDIDATE_VIDEO_CONFIRMATION,
+                element: <CandidateVideoUploadConfirmation />,
             },
             {
                 path: ROUTES.CANDIDATE_VACANCIES,
