@@ -32,9 +32,9 @@ const Login = () => {
         className="border w-0 md:flex-1 min-h-screen"
         style={{
           backgroundImage: `url(${Images.AuthBG})`,
-          backgroundSize: 'cover', // Adjusted to 'contain'
+          backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center', // Optional: Center the background image
+          backgroundPosition: 'center',
           height: '100%',
         }}
       ></div>

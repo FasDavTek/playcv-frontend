@@ -161,7 +161,7 @@ const Navbar = () => {
                 Employer
               </NavLink>
             </li>
-            {(isAuthenticated && user.role === 'employer') || !isAuthenticated ? (
+            {(isAuthenticated && user?.userType === 'employer') || !isAuthenticated ? (
               <li>
                 {/* TODO: Show logged in if user is logged in */}
                 <button
