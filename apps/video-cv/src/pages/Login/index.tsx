@@ -1,13 +1,15 @@
 import React from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Button, Input } from '@video-cv/ui-components';
 import { Images } from '@video-cv/assets';
 import { useAuth } from '../../context/AuthProvider';
+import { Stack } from '@mui/material';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { handleLogin } = useAuth();
 
@@ -16,13 +18,10 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    // simulate login
     setTimeout(() => {
       setLoading(false);
       handleLogin();
-      // if there is next=cart, navigate to cart
-      window.location.href = '/cart';
-      // else to dashboard
+      navigate(location.state?.from || '/');
       return;
     }, 1500);
   };
@@ -40,7 +39,7 @@ const Login = () => {
         }}
       ></div>
       <div className="border flex-1">
-        <form onSubmit={handleSubmit} className=" w-7/12 mx-auto mt-24">
+        <form onSubmit={handleSubmit} className=" w-7/12 mx-auto mt-14">
           <h5 className="font-bold text-3xl">Login</h5>
           <p className="">Enter your login details to Sign in</p>
           <div className="flex flex-col gap-5 my-5 mt-10">
@@ -60,7 +59,14 @@ const Login = () => {
             <Input label="Password" placeholder="user@email.com" />
           </div>
 
-          <Button {...{ loading }} className="w-full my-10" label="Login" />
+          <Button type='submit' {...{ loading }} className="w-full my-10" label="Login" />
+          <Stack mt={1} gap={1}>
+            <p className="text-center md:text-left">Don't have an account? Choose your path to get started: </p>
+            <Stack direction={{ xs: 'column', md: 'row' }} mt={1} gap={3} >
+              <Button type='submit' variant='custom' className="w-full" label="Sign up as Employer" onClick={() => navigate('/employer/profile/:id')} />
+              <Button type='submit' variant='black' className="w-full" label="Sign up as Professional" onClick={() => navigate('/candidate/profile/:id')} />
+            </Stack>
+          </Stack>
         </form>
       </div>
     </div>
