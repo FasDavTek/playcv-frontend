@@ -162,6 +162,8 @@ const Cart = () => {
             </div>
             <div className="px-1 py-0.5">
               <Button
+                type='submit'
+                variant='black'
                 label="Checkout"
                 onClick={handleCheckout}
                 className="w-full"
@@ -184,6 +186,8 @@ const Cart = () => {
           </div>
           <div className="px-1 py-0.5">
             <Button
+              type='submit'
+              variant='black'
               label="Checkout"
               onClick={handleCheckout}
               className="w-full"

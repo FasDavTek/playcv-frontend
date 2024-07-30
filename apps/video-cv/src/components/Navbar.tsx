@@ -181,7 +181,7 @@ const Navbar = () => {
             ) :
               null
             }
-            <Button variant='black' label='Get Started' onClick={handleGetStartedClick} />
+            <Button variant='black' className='mt-5 md:mt-0' label='Get Started' onClick={handleGetStartedClick} />
             <Dialog fullScreen={fullScreen} aria-labelledby="responsive-dialog-title" open={openModal} onClose={handleCloseModal}>
               <DialogTitle id="responsive-dialog-title">Get Started</DialogTitle>
               <IconButton
