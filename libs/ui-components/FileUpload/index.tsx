@@ -83,6 +83,7 @@ interface FileUploadProps {
   borderWidth?: number;
   color?: string;
   setFile?: (file: File | null) => void;
+  setVideoUrl?: (url: string) => void;
 }
 
 const FileUpload = ({
@@ -95,6 +96,7 @@ const FileUpload = ({
   color = '#9ABDDC',
   borderWidth = 2,
   setFile = () => {},
+  setVideoUrl = () => {},
 }: FileUploadProps) => {
   const [files, setFiles] = useState<File[]>([]);
 
@@ -139,6 +141,29 @@ const FileUpload = ({
     setFile(null);
     e.stopPropagation();
   };
+
+  // const handleSubmit = async () => {
+  //   if (files.length === 0) {
+  //     alert('No file selected');
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append('file', files[0]);
+
+  //   try {
+  //     const response = await axios.post('/api/upload', formData, {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //     });
+  //     setVideoUrl(response.data.url);
+  //     alert('File uploaded successfully');
+  //   } catch (error) {
+  //     console.error('Error uploading file:', error);
+  //     alert('Failed to upload file');
+  //   }
+  // };
 
   const style = useMemo(
     () => ({
