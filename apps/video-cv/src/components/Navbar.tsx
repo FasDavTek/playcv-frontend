@@ -13,6 +13,7 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import { Button } from '@video-cv/ui-components';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import { useAuth } from '../context/AuthProvider';
 
 const Hamburger = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 52 24">
@@ -26,6 +27,7 @@ const Hamburger = () => (
 
 const Navbar = () => {
   const { cartState } = useCart();
+  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const [showNavbar, setShowNavbar] = useState(false);
@@ -159,22 +161,24 @@ const Navbar = () => {
                 Employer
               </NavLink>
             </li>
-            <li>
-              {/* TODO: Show logged in if user is logged in */}
-              <button
-                onClick={handleCartClick}
-                className="rounded-full h-fit w-fit px-1 py-1 flex gap-2 items-center relative"
-              >
-                <img
-                  alt=""
-                  src={Assets.Icons.Cart}
-                  className="w-[25px] h-[25px]"
-                />
-                <div className='py-0 px-1.5 bg-neutral-200 text-white text-sm absolute -top-1.5 left-4 rounded-full'>
-                  {cartState.cart.length}
-                </div>
-              </button>
-            </li>
+            {isAuthenticated && user.role === 'employer' && (
+              <li>
+                {/* TODO: Show logged in if user is logged in */}
+                <button
+                  onClick={handleCartClick}
+                  className="rounded-full h-fit w-fit px-1 py-1 flex gap-2 items-center relative"
+                >
+                  <img
+                    alt=""
+                    src={Assets.Icons.Cart}
+                    className="w-[25px] h-[25px]"
+                  />
+                  <div className='py-0 px-1.5 bg-neutral-200 text-white text-sm absolute -top-1.5 left-4 rounded-full'>
+                    {cartState.cart.length}
+                  </div>
+                </button>
+              </li>
+            )}
             <Button variant='black' label='Get Started' onClick={handleGetStartedClick} />
             <Dialog fullScreen={fullScreen} aria-labelledby="responsive-dialog-title" open={openModal} onClose={handleCloseModal}>
               <DialogTitle id="responsive-dialog-title">Get Started</DialogTitle>

@@ -13,21 +13,20 @@ import {
 } from '@video-cv/ui-components';
 import { usePaystack } from '@video-cv/payment';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 interface IForm {
   name: string;
   description: string;
   category: string[];
   tags: string[];
-  video: File;
+  video: File | null;
   videoTranscript: string;
 }
 
 const UploadVideoModal = ({
   onClose,
-  onSubmit= () => {
-    ('');
-  },
+  onSubmit = () => '',
 }: {
   onClose: (e?: any) => void;
   onSubmit?: (data: IForm) => void;
@@ -57,9 +56,40 @@ const UploadVideoModal = ({
     onClose();
   };
 
+
+
+  const handleFileUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'your_upload_preset'); // Replace with your Cloudinary upload preset
+
+    try {
+      const response = await axios.post('https://api.cloudinary.com/v1_1/your_cloud_name/video/upload', formData); // Replace with your Cloudinary URL
+      return response.data.secure_url;
+    } catch (error) {
+      console.error('Error uploading to Cloudinary:', error);
+      throw error;
+    }
+  };
+
+  const onSubmitHandler = async (data: IForm) => {
+    try {
+      if (data.video) {
+        const videoUrl = await handleFileUpload(data.video);
+        data.video = videoUrl as any;
+      }
+      onSubmit(data);
+      ProceedToPayment();
+    } catch (error) {
+      console.error('Failed to upload video:', error);
+    }
+  };
+
+
+
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmitHandler)}
       className="bg-white p-10 lg:py-9 lg:px-14 centered-modal md:centered-modal-md xl:centered-modal-large rounded-lg"
     >
       <h3 className="text-center font-bold text-xl">Video CV Upload Modal</h3>
@@ -102,11 +132,12 @@ const UploadVideoModal = ({
             containerClass=""
             uploadLabel="Drag and Drop or Browse"
             {...register('video', { required: true })}
+            setFile={(file: File | null) => setValue('video', file)}
           />
         </div>
 
         {/* categories, tags, file upload */}
-        <Button type='submit' className="w-full" label="Submit" onClick={ProceedToPayment} />
+        <Button type='submit' className="w-full" label="Submit" />
       </div>
     </form>
   );
