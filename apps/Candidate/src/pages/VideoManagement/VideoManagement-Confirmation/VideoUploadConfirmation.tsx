@@ -25,9 +25,10 @@ const VideoUploadConfirmation = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center gap-4 text-center justify-center">
-      <h2 className='text-lg'>Upload Confirmation</h2>
+    <div className="h-screen flex flex-col items-center gap-4 w-full md:w-[50%] p-2 md:p-0 mx-auto text-center justify-center">
+      <h2 className='text-lg font-semibold'>Upload Confirmation</h2>
       <p>Your payment was successful. What would you like to do next?</p>
+      <p className='text-red-500 my-4'><span className='font-semibold'>NOTE: </span>By uploading your videoCV on this playfom, you have read the videoCV guideline thoroughly and you agree to this platform's Terms and Conditions</p>
       <Stack direction='row' gap={4}>
       <Button variant='custom' label="Upload Later" onClick={handleUploadLater} />
         <Button variant='black' label="Upload Now" onClick={handleUploadNow} />
