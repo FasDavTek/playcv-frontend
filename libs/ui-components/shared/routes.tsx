@@ -36,6 +36,8 @@ export const ROUTES = {
     HOME: "/Home",
     AUTH: "/auth/",
     LOGIN: "login",
+    CANDIDATE_SIGNUP: "professional-signup",
+    EMPLOYER_SIGNUP: "employer-signup",
     NOT_FOUND: "/Home",
   };
   

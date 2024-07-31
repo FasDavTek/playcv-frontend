@@ -63,8 +63,8 @@ const Login = () => {
           <Stack mt={1} gap={1}>
             <p className="text-center md:text-left">Don't have an account? Choose your path to get started: </p>
             <Stack direction={{ xs: 'column', md: 'row' }} mt={1} gap={3} >
-              <Button type='submit' variant='custom' className="w-full" label="Sign up as Employer" onClick={() => navigate('/employer/profile/:id')} />
-              <Button type='submit' variant='black' className="w-full" label="Sign up as Professional" onClick={() => navigate('/candidate/profile/:id')} />
+              <Button type='submit' variant='custom' className="w-full" label="Sign up as Employer" onClick={() => navigate('/auth/employer-signup')} />
+              <Button type='submit' variant='black' className="w-full" label="Sign up as Professional" onClick={() => navigate('/auth/professional-signup')} />
             </Stack>
           </Stack>
         </form>

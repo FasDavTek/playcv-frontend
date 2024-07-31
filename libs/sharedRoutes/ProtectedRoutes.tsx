@@ -17,6 +17,8 @@ const JobBoard = lazy(() => import('../../apps/video-cv/src/pages/JobBoard'));
 const JobDetail = lazy(() => import('../../apps/video-cv/src/pages/JobDetail'));
 const Cart = lazy(() => import('../../apps/video-cv/src/pages/Cart'));
 const Login = lazy(() => import('../../apps/video-cv/src/pages/Login'));
+const Signup = lazy(() => import('../../apps/Candidate/src/pages/Signup'));
+const EmployerSignup = lazy(() => import('../../apps/Employer/src/pages/Signup'));
 
 // EMPLOYER ROUTES
 const Dashboard = lazy(() => import('../../apps/Employer/src/pages/Dashboard'));
@@ -224,6 +226,14 @@ const router = createBrowserRouter([
                 path: ROUTES.LOGIN,
                 element: <Login />,
             },
+            {
+                path: ROUTES.CANDIDATE_SIGNUP,
+                element: <Signup />,
+            },
+            {
+                path: ROUTES.EMPLOYER_SIGNUP,
+                element: <EmployerSignup />,
+            }
         ]
     }
 ]);
