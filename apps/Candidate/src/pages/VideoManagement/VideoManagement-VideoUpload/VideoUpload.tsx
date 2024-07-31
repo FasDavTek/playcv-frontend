@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useController } from 'react-hook-form';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
 import {
   Button,
   Input,
   TextArea,
   FileUpload,
-  SelectChip,
   Select,
 } from '@video-cv/ui-components';
 import { usePaystack } from '@video-cv/payment';
@@ -14,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { Box, Chip, Stack } from '@mui/material';
 
 interface IForm {
   name: string;
@@ -24,6 +24,34 @@ interface IForm {
   videoTranscript: string;
 }
 
+const SelectChip = ({ label, options, value, onChange }: any) => {
+  const handleChipClick = (optionValue: string) => {
+    if (value.includes(optionValue)) {
+      onChange(value.filter((item: string) => item !== optionValue));
+    } else {
+      onChange([...value, optionValue]);
+    }
+  };
+
+  return (
+    <Box>
+      <label>{label}</label>
+      <Stack pt={1} direction="row" spacing={1}>
+        {options.map((option: any) => (
+          <Chip
+            key={option.value}
+            label={option.label}
+            clickable
+            color={value.includes(option.value) ? 'default' : 'default'}
+            onClick={() => handleChipClick(option.value)}
+            variant={value.includes(option.value) ? 'filled' : 'outlined'}
+          />
+        ))}
+      </Stack>
+    </Box>
+  );
+};
+
 const VideoUpload = ({
   // onClose,
   onSubmit = () => '',
@@ -32,6 +60,7 @@ const VideoUpload = ({
   onSubmit?: (data: IForm) => void;
 }) => {
   const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<IForm>();
+  const { field: categoryField } = useController({ name: 'category', control });
 
   const handleFileUpload = async (file: File) => {
     const formData = new FormData();
@@ -90,7 +119,7 @@ const VideoUpload = ({
             onChange={(value) => setValue('videoTranscript', value)}
             placeholder="Add transcript for your video"
           />
-          <SelectChip label="Category" id="category" {...register('category', { required: true })} />
+          <SelectChip label="Category"  options={[{ value: 'category1', label: 'Category 1' }, { value: 'category2', label: 'Category 2' }]} value={categoryField.value || []} onChange={categoryField.onChange} />
           <div className="">
             <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
               Video CV
