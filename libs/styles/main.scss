@@ -145,3 +145,36 @@
 .custom-quill {
   width: 100%;
 }
+
+
+
+.input-box {
+  position: relative;
+  margin: .5rem 0;
+}
+
+.input-box label {
+  position: absolute;
+  top: -.5rem;
+  left: .5rem;
+  background: #F6F9F8;
+  padding: 0 .25rem;
+  font-size: .75rem;
+  color: gray;
+}
+
+.input-like {
+  display: block;
+  width: 100%;
+  padding: .875rem .75rem;
+  font-size: 1rem;
+  color: black;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: .5rem;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.input-like:hover {
+  border-color: rgba(0, 0, 0, 0.87);
+}
