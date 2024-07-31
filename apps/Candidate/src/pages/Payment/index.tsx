@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { createColumnHelper } from '@tanstack/react-table';
 import { Modal } from '@mui/material';
@@ -6,6 +6,7 @@ import { Modal } from '@mui/material';
 import { formatDate } from '@video-cv/utils';
 import { Button, Table } from '@video-cv/ui-components';
 import { PaymentModal } from './modals';
+import CreateVideoConfirmationModal from '../VideoManagement/modals/CreateVideoConfirmationModal';
 
 type ReportTableColumns = {
   videoName: string;
@@ -89,7 +90,7 @@ const data = [
   },
 ];
 
-type ModalTypes = null | 'paymentModal';
+type ModalTypes = null | 'uploadModal' | 'confirmationModal' | 'paymentModal';
 
 const columnHelper = createColumnHelper<ReportTableColumns>();
 
@@ -127,9 +128,18 @@ const columns = [
 ];
 
 const Payment = () => {
+  const queryParams = new URLSearchParams(location.search);
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
 
   const closeModal = () => setOpenModal(null);
+  const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
+
+  useEffect(() => {
+    const uploadModalParam = queryParams.get('uploadModal');
+    if (uploadModalParam === 'true') {
+      openSetModalFn('uploadModal');
+    }
+  }, [queryParams]);
 
   return (
     <div className="min-h-screen px-3 md:px-10 py-10">
@@ -137,10 +147,8 @@ const Payment = () => {
         {/* TODO: This should open up a payment modal */}
         <Button
           variant='custom'
-          label="Pay f"
-          onClick={() => {
-            setOpenModal('paymentModal');
-          }}
+          label="Pay for video"
+          onClick={() => openSetModalFn('confirmationModal')}
         />
       </div>
       {/* Create Payment */}
@@ -152,6 +160,13 @@ const Payment = () => {
       />
       <Modal open={openModal === 'paymentModal'} onClose={closeModal}>
         <PaymentModal onClose={closeModal} />
+      </Modal>
+
+      <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
+        <CreateVideoConfirmationModal
+          onClose={closeModal}
+          // onAccept={() => openSetModalFn('uploadModal')}
+        />
       </Modal>
     </div>
   );
