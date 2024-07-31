@@ -88,7 +88,9 @@ const index = () => {
   return (
     <div className="min-h-screen flex">
         <div className="border w-0 md:flex-1 min-h-screen" style={{ backgroundImage: `url(${Images.AuthBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', height: '100%', }}></div>
-        <div className="flex-1 p-2 md:p-4">
+        <div className="flex-1 flex flex-col p-2 md:p-4">
+            <h2 className='font-semibold text-center md:text-left text-xl md:text-lg mb-1'>Create Account</h2>
+            <p className='text-lg mb-7 text-center md:text-left text-neutral-300'>Create Your Professional Profile</p>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
                     <Tab label="Personal Information" {...a11yProps(0)} dir={theme.direction} />
