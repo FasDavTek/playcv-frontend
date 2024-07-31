@@ -13,15 +13,17 @@ import {
 } from '@video-cv/ui-components';
 
 const Profile = () => {
+  const [editField, setEditField] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    businessName: '',
-    businessPhoneNumber: '',
-    businessSector: '',
-    businessEmail: '',
-    businessWebsite: '',
-    businessSocialMedia: '',
-    contactPerson: '',
-    contactPersonRole: '',
+    businessName: 'Doe Enterprises',
+    businessPhoneNumber: '+234987654321',
+    businessSector: 'product',
+    businessEmail: 'business@example.com',
+    businessWebsite: 'https://example.com',
+    businessSocialMedia: '@doeenterprises',
+    businessAddress: '123 Business St.',
+    contactPerson: 'John Doe',
+    contactPersonRole: 'Manager',
   });
 
   const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
@@ -35,9 +37,13 @@ const Profile = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleEditClick = (fieldName: string) => {
+    setEditField(fieldName);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add your API request logic here
+    setEditField(null);
     console.log('Form submitted', formData);
   };
 
@@ -45,16 +51,107 @@ const Profile = () => {
     <Box sx={{ width: '90%', marginInline: 'auto' }}>
       <Box >
         <form onSubmit={(e) => handleSubmit(e)}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <Input name='businessName' label="Business Name" placeholder="Business Name" onChange={handleInputChange} />
-              <Input name='businessPhoneNumber' label="Phone Number" placeholder="Phone Number" onChange={handleInputChange} />
-              <Select name="businessSector" label="Industry" options={[{ value: 'product', label: 'Product' }]} onChange={handleInputChange} />
-              <Input name="businessEmail" label="Emmail" placeholder="Emmail" onChange={handleInputChange} />
-              <Input name="businessWebsite" label="Website Url (Optional)" placeholder="Website Url (Optional)" onChange={handleInputChange} />
-              <Input name="businessSocialMedia" label="Social Media Page Link" placeholder="Social Media Page Link" onChange={handleInputChange} />
-              <Input name="businessAddress" label="Office Address" placeholder="Office Address" onChange={handleInputChange} />
-              <Input name="contactPerson" label="Contact person name" placeholder="Contact person name" onChange={handleInputChange} />
-              <Input name="contactPersonRole" label="Contact person position" placeholder="Contact person position" onChange={handleInputChange} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-8">
+              <Box className="input-box">
+                <label>Business Name</label>
+                <Typography className="input-like">{formData.businessName}</Typography>
+              </Box>
+              {editField === 'businessPhoneNumber' ? (
+                <Input
+                  name='businessPhoneNumber'
+                  label="Phone Number"
+                  value={formData.businessPhoneNumber}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <Box className="input-box">
+                  <label>Phone Number</label>
+                  <Typography className="input-like" onClick={() => handleEditClick('businessPhoneNumber')}>{formData.businessPhoneNumber}</Typography>
+                </Box>
+              )}
+              {editField === 'businessSector' ? (
+                <Select
+                  name="businessSector"
+                  label="Industry"
+                  value={formData.businessSector}
+                  options={[{ value: 'product', label: 'Product' }]}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <Box className="input-box">
+                  <label>Industry</label>
+                  <Typography className="input-like" onClick={() => handleEditClick('businessSector')}>{formData.businessSector}</Typography>
+                </Box>
+              )}
+              <Box className="input-box">
+                <label>Email</label>
+                <Typography className='input-like'>{formData.businessEmail}</Typography>
+              </Box>
+              {editField === 'businessWebsite' ? (
+                <Input
+                  name="businessWebsite"
+                  label="Website Url (Optional)"
+                  value={formData.businessWebsite}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <Box className="input-box">
+                  <label>Website URL (Optional)</label>
+                  <Typography className="input-like" onClick={() => handleEditClick('businessWebsite')}>{formData.businessWebsite}</Typography>
+                </Box>
+              )}
+              {editField === 'businessSocialMedia' ? (
+                <Input
+                  name="businessSocialMedia"
+                  label="Social Media Page Link"
+                  value={formData.businessSocialMedia}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <Box className="input-box">
+                  <label>Social Media Page Link</label>
+                  <Typography className="input-like" onClick={() => handleEditClick('businessSocialMedia')}>{formData.businessSocialMedia}</Typography>
+                </Box>
+              )}
+              {editField === 'businessAddress' ? (
+                <Input
+                  name="businessAddress"
+                  label="Office Address"
+                  value={formData.businessAddress}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <Box className="input-box">
+                  <label>Office Address</label>
+                  <Typography className="input-like" onClick={() => handleEditClick('businessAddress')}>{formData.businessAddress}</Typography>
+                </Box>
+              )}
+              {editField === 'contactPerson' ? (
+                <Input
+                  name="contactPerson"
+                  label="Contact Person Name"
+                  value={formData.contactPerson}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <Box className="input-box">
+                  <label>Contact Person Name</label>
+                  <Typography className="input-like" onClick={() => handleEditClick('contactPerson')}>{formData.contactPerson}</Typography>
+                </Box>
+              )}
+              {editField === 'contactPersonRole' ? (
+                <Input
+                  name="contactPersonRole"
+                  label="Contact Person Position"
+                  value={formData.contactPersonRole}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <Box className="input-box">
+                  <label>Contact Person Position</label>
+                  <Typography className="input-like" onClick={() => handleEditClick('contactPersonRole')}>{formData.contactPersonRole}</Typography>
+                </Box>
+              )}
             </div>
             <Button type='submit' variant="black" label="Submit" className='mt-5' />
         </form>
