@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // import * as Assets from '@video-cv/assets';
 import { Button, DashboardCard } from '@video-cv/ui-components';
@@ -6,7 +6,11 @@ import { Button, DashboardCard } from '@video-cv/ui-components';
 import ProfileVisitsChart from '../../components/dashboard/PatientActivityChart';
 import JobVacancyChart from '../../components/dashboard/MonthlyRevenueChart';
 import { useNavigate } from 'react-router-dom';
+import { Modal } from '@mui/material';
+import CreateVideoConfirmationModal from '../VideoManagement/modals/CreateVideoConfirmationModal';
 // import queries from '../../services/queries/dashboard';
+
+type ModalTypes = null | 'uploadModal' | 'confirmationModal' | 'paymentModal';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -14,6 +18,18 @@ const Dashboard = () => {
   // const { isLoading, data: DashboardSummary } = useGetDashboardSummary(
   //   `/dashboard-manager/superadmin/cards`
   // );
+  const queryParams = new URLSearchParams(location.search);
+  const [openModal, setOpenModal] = useState<ModalTypes>(null);
+
+  const closeModal = () => setOpenModal(null);
+  const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
+
+  useEffect(() => {
+    const uploadModalParam = queryParams.get('uploadModal');
+    if (uploadModalParam === 'true') {
+      openSetModalFn('uploadModal');
+    }
+  }, [queryParams]);
 
   return (
     <section className="ce-px ce-py grid xl:grid-cols-[1fr_auto] gap-5">
@@ -37,10 +53,7 @@ const Dashboard = () => {
           <Button
             variant='custom'
             label="Upload your Video"
-            onClick={() => {
-              navigate('/candidate/video-management');
-              // openSetModalFn('confirmationModal')
-            }}
+            onClick={() => openSetModalFn('confirmationModal')}
           />
         </div>
         <div className="grid mt-5 gap-4 grid-cols-1 md:grid-cols-2 2xl:grid-cols-4">
@@ -65,6 +78,10 @@ const Dashboard = () => {
             figure={({} as any)?.manageEquip ?? 0}
           />
         </div>
+
+        <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
+          <CreateVideoConfirmationModal onClose={closeModal}/>
+        </Modal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 mt-5 gap-5">
           <ProfileVisitsChart />

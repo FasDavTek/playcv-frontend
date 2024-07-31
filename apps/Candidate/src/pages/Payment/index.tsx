@@ -163,10 +163,7 @@ const Payment = () => {
       </Modal>
 
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
-        <CreateVideoConfirmationModal
-          onClose={closeModal}
-          // onAccept={() => openSetModalFn('uploadModal')}
-        />
+        <CreateVideoConfirmationModal onClose={closeModal}/>
       </Modal>
     </div>
   );
