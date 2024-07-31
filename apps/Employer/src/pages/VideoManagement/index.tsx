@@ -52,7 +52,7 @@ const data = [
     grade: '1st class',
   },
   {
-    fullname: 'John Smith',
+    fullname: 'Johnson Smith',
     email: 'john.smith@example.com',
     courseOfStudy: 'Mathematics',
     gender: 'Male',
@@ -163,7 +163,7 @@ const columns = [
   }),
   columnHelper.accessor('action', {
     cell: ({ row: { original } }) => {
-      return <Button label="View Profile" />;
+      return <Button variant='custom' label="View Profile" />;
     },
     header: 'Action',
   }),
@@ -208,16 +208,6 @@ const VideoManagement = () => {
   }
   return (
     <section className="ce-px ce-py">
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-        >
-          <Tab label="Personal Information" {...a11yProps(0)} />
-        </Tabs>
-      </Box>
-      <CustomTabPanel value={value} index={0}>
         {/* Table comes here */}
         {/* filter logic comes here */}
         <Table
@@ -226,7 +216,6 @@ const VideoManagement = () => {
           columns={columns}
           tableHeading="All Payments"
         />
-      </CustomTabPanel>
     </section>
   );
 };

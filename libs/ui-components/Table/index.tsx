@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -6,8 +6,12 @@ import {
 } from '@tanstack/react-table';
 import type { ColumnDef } from '@tanstack/react-table';
 
+import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+
 import TableSkeleton from '../TableSkeleton';
 import * as Assets from '../../assets';
+import Button from '../Button';
 
 interface ReactTableProps<T extends object> {
   data: T[];
@@ -26,17 +30,42 @@ const Table: React.FC<any> = <T extends object>({
   tableHeadingColorClassName = '!bg-ce-lgreen',
   tableRowOnclickFunction = () => {},
 }: ReactTableProps<T>) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return data;
+    return data.filter((item) =>
+      JSON.stringify(item).toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [data, searchQuery]);
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filteredData.slice(startIndex, endIndex);
+  }, [filteredData, currentPage, pageSize]);
+
+  
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+
+
   if (loading) {
     return <TableSkeleton />;
   }
   return (
     <div className="mt-10 ce-table-holder">
       <h5 className="table-heading px-4">{tableHeading}</h5>
+      <div className="flex justify-between items-center px-4 mb-2">
+        <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="border rounded-lg outline-none p-2"/>
+      </div>
       <table>
         <thead className={tableHeadingColorClassName}>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -62,7 +91,7 @@ const Table: React.FC<any> = <T extends object>({
             </tr>
           ))}
         </thead>
-        {data.length > 0 && (
+        {paginatedData.length > 0 && (
           <tbody className="">
             {table.getRowModel().rows.map((row) => (
               <tr
@@ -80,7 +109,7 @@ const Table: React.FC<any> = <T extends object>({
           </tbody>
         )}
       </table>
-      {data.length === 0 && (
+      {filteredData.length === 0 && (
         <table className="">
           <tbody className="flex items-center justify-center border py-10 w-full">
             <tr className="flex flex-col items-center justify-center w-full !bg-transparent">
@@ -92,6 +121,14 @@ const Table: React.FC<any> = <T extends object>({
           </tbody>
         </table>
       )}
+      <div className='flex justify-end gap-2 px-4'>
+        <Button variant='custom' icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+          Previous
+        </Button>
+        <Button variant='custom' icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
+          Next
+        </Button>
+      </div>
     </div>
   );
 };
