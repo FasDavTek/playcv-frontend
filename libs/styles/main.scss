@@ -29,7 +29,7 @@
 
 // table
 .ce-table-holder {
-  @apply border-[#E5E5E5] border border-solid bg-[#FBFBFB] rounded-[20px] p-[16px];
+  @apply border-[#E5E5E5] border border-solid bg-[#FBFBFB] rounded-[20px] py-[16px];
   overflow-x: auto;
 
   .table-heading {

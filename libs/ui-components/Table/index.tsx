@@ -36,7 +36,7 @@ const Table: React.FC<any> = <T extends object>({
   }
   return (
     <div className="mt-10 ce-table-holder">
-      <h5 className="table-heading">{tableHeading}</h5>
+      <h5 className="table-heading px-4">{tableHeading}</h5>
       <table>
         <thead className={tableHeadingColorClassName}>
           {table.getHeaderGroups().map((headerGroup) => (
