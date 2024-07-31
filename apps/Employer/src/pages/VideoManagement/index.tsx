@@ -218,20 +218,6 @@ const VideoManagement = () => {
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        <form onSubmit={(e) => handleSubmit(e)}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <Input label="First Name" placeholder="First Name" />
-            <Input label="Middle Name" placeholder="Middle Name" />
-            <Input label="Surname" placeholder="Surname" />
-          </div>
-          <div className="grid grid-cols-2 gap-5">
-            <TextArea label="Label" />
-            <TextArea label="Label" />
-          </div>
-          <div className="flex justify-end gap-5 mt-5">
-            <Button label="Update" />
-          </div>
-        </form>
         {/* Table comes here */}
         {/* filter logic comes here */}
         <Table

@@ -30,7 +30,7 @@ const CandidateRoutes = [
   {
     name: 'Vacancies',
     img: Icons.Vacancy,
-    route: ROUTES.CANDIDATE_VACANCIES,
+    route: ROUTES.JOB_BOARD,
     pageName: 'Job Listing',
   },
   {
@@ -58,10 +58,16 @@ const EmployerRoutes: any = [
     pageName: 'Dashboard',
   },
   {
-    name: 'VideoCV Guideline',
+    name: 'Profile',
+    img: Icons.User,
+    route: ROUTES.EMPLOYER_PROFILE,
+    pageName: 'Profile',
+  },
+  {
+    name: 'Video Management',
     img: Icons.Guideline,
-    route: ROUTES.EMPLOYER_GUIDELINE,
-    pageName: 'Video CV GuideLine',
+    route: ROUTES.EMPLOYER_VIDEO_MANAGEMENT,
+    pageName: 'Video Management',
   },
   {
     name: 'Advertisement',
@@ -72,14 +78,8 @@ const EmployerRoutes: any = [
   {
     name: 'Video Warehouse',
     img: Icons.VideoWareHouse,
-    route: ROUTES.EMPLOYER_VIDEO_MANAGEMENT,
+    route: ROUTES.TALENT_GALLERY,
     pageName: 'Video Warehouse',
-  },
-  {
-    name: 'Profile',
-    img: Icons.User,
-    route: ROUTES.EMPLOYER_PROFILE,
-    pageName: 'Profile',
   },
 ];
 

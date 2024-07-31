@@ -43,7 +43,7 @@ const Profile = () => {
 
   return (
     <Box sx={{ width: '90%', marginInline: 'auto' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Box >
         <form onSubmit={(e) => handleSubmit(e)}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Input name='businessName' label="Business Name" placeholder="Business Name" onChange={handleInputChange} />
