@@ -5,9 +5,11 @@ import { Button, DashboardCard } from '@video-cv/ui-components';
 
 import ProfileVisitsChart from '../../components/dashboard/PatientActivityChart';
 import JobVacancyChart from '../../components/dashboard/MonthlyRevenueChart';
+import { useNavigate } from 'react-router-dom';
 // import queries from '../../services/queries/dashboard';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   // const { useGetDashboardSummary } = queries;
   // const { isLoading, data: DashboardSummary } = useGetDashboardSummary(
   //   `/dashboard-manager/superadmin/cards`
@@ -33,8 +35,10 @@ const Dashboard = () => {
           </div>
 
           <Button
-            label="GET STARTED UPLOAD VIDEOCV"
+            variant='custom'
+            label="Upload your Video"
             onClick={() => {
+              navigate('/candidate/video-management');
               // openSetModalFn('confirmationModal')
             }}
           />
@@ -62,7 +66,7 @@ const Dashboard = () => {
           />
         </div>
 
-        <div className="grid grid-cols-1 2xl:grid-cols-2 mt-5 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 mt-5 gap-5">
           <ProfileVisitsChart />
           <JobVacancyChart />
         </div>

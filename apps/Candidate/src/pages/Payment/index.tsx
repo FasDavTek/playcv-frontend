@@ -120,7 +120,7 @@ const columns = [
       // const cb = (e: React.MouseEvent<HTMLButtonElement>) => {
       //   // console.log('e', e);
       // };
-      return <Button label="Generate Invoice" />;
+      return <Button variant='custom' label="Generate Invoice" />;
     },
     header: 'Action',
   }),
@@ -136,7 +136,8 @@ const Payment = () => {
       <div className="flex justify-end">
         {/* TODO: This should open up a payment modal */}
         <Button
-          label="GET STARTED UPLOAD VIDEOCV"
+          variant='custom'
+          label="Pay f"
           onClick={() => {
             setOpenModal('paymentModal');
           }}
