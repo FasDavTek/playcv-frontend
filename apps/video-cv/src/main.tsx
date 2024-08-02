@@ -9,6 +9,7 @@ import CartProvider from './context/CartProvider';
 import AuthProvider from './context/AuthProvider';
 import './styles.scss'
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
