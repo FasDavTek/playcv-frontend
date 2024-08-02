@@ -6,7 +6,7 @@ import { ROUTES } from '../../libs/ui-components/shared/routes';
 import AppLayout from '../../apps/video-cv/src/layouts/AppLayout';
 import AuthLayout from '../../apps/video-cv/src/layouts/AuthLayout';
 import ErrorBoundary from '../../apps/video-cv/src/routes/ErrorBoundary';
-import { Layout } from '@video-cv/ui-components';
+import { Layout } from '../ui-components';
 // import { routes } from "../constants";
 
 const Home = lazy(() => import('../../apps/video-cv/src/pages/Home'));
