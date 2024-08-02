@@ -97,6 +97,12 @@ const AdminRoutes: any = [
     pageName: 'User Management',
   },
   {
+    name: 'Video management',
+    img: Icons.Guideline,
+    route: ROUTES.ADMIN_VIDEO_MANAGEMENT,
+    pageName: 'Video management',
+  },
+  {
     name: 'Content management',
     img: Icons.Content,
     route: ROUTES.ADMIN_CONTENT_MANAGEMENT,

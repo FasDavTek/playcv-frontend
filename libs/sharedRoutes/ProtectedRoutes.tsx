@@ -37,6 +37,7 @@ const AdvertisementManagement = lazy(
 );
 const OrderManagement = lazy(() => import('../../apps/Admin/src/pages/OrderManagement'));
 const OrderManagementById = lazy(() => import('../../apps/Admin/src/pages/OrderManagement/id'));
+const Management = lazy(() => import('../../apps/Admin/src/pages/VideoManagement'))
 
 // CANDIDATE ROUTES
 const CandidateHome = lazy(() => import('../../apps/Candidate/src/pages/Home'));
@@ -159,6 +160,10 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.ADMIN_CONTENT_MANAGEMENT,
                 element: <ContentManagement />,
+            },
+            {
+                path: ROUTES.ADMIN_VIDEO_MANAGEMENT,
+                element: <Management />,
             },
             {
                 path: ROUTES.ADMIN_ADVERTISEMENT_MANAGEMENT,
