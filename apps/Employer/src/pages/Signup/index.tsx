@@ -41,17 +41,18 @@ const index = () => {
             <p className='text-lg mb-7 text-center md:text-left text-neutral-300'>Create Your Business Profile</p>
             <form onSubmit={(e) => handleSubmit(e)}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <Input name="firstName" label="First Name" placeholder="First Name" onChange={handleInputChange} />
+                    <Input name="middleName" label="Middle Name" placeholder="Middle Name" onChange={handleInputChange} />
+                    <Input name="surname" label="Surname" placeholder="Surname" onChange={handleInputChange} />
                     <Input name='businessName' label="Business Name" placeholder="Business Name" onChange={handleInputChange} />
                     <Input name='businessPhoneNumber' label="Phone Number" placeholder="Phone Number" onChange={handleInputChange} />
-                    <Select name="businessSector" label="Industry" options={[{ value: 'product', label: 'Product' }]} onChange={handleInputChange} />
-                    <Input name="businessEmail" label="Emmail" placeholder="Emmail" onChange={handleInputChange} />
-                    <Input name="businessWebsite" label="Website Url (Optional)" placeholder="Website Url (Optional)" onChange={handleInputChange} />
-                    <Input name="businessSocialMedia" label="Social Media Page Link" placeholder="Social Media Page Link" onChange={handleInputChange} />
-                    <Input name="businessAddress" label="Office Address" placeholder="Office Address" onChange={handleInputChange} />
-                    <Input name="contactPerson" label="Contact person name" placeholder="Contact person name" onChange={handleInputChange} />
-                    <Input name="contactPersonRole" label="Contact person position" placeholder="Contact person position" onChange={handleInputChange} />
+                    <Input name="businessEmail" label="Email" placeholder="Email" onChange={handleInputChange} />
+                    <Input name="password" type='password' label="Password" placeholder="Enter Password" onChange={handleInputChange}  />
+                    <Input name="confirmPassword" type='password' label="Confirm Password" placeholder="Confirm Password" onChange={handleInputChange}  />
                 </div>
-                <Button type='submit' variant="black" label="Submit" className='mt-5' />
+                <div className="flex justify-center gap-5 mt-5">
+                    <Button type='submit' variant="black" label="Sign Up" className='w-[60%]' />
+                </div>
             </form>
         </div>
     </div>
