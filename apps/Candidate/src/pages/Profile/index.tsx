@@ -14,11 +14,17 @@ import {
 } from '@video-cv/ui-components';
 import { Controller, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
+import { Snackbar, Alert, SnackbarOrigin, IconButton } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+}
+
+interface State extends SnackbarOrigin {
+  open: boolean;
 }
 
 function CustomTabPanel(props: TabPanelProps) {
@@ -52,6 +58,7 @@ const Profile = () => {
   const [value, setValue] = React.useState(0);
   const [editField, setEditField] = useState<string | null>(null);
   const { register, handleSubmit, control, formState: { errors } } = useForm();
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     firstName: 'John',
     middleName: 'Doe',
@@ -72,6 +79,12 @@ const Profile = () => {
     businessProfile: 'Business profile content',
   });
 
+  const [state, setState] = React.useState<State>({
+    open: true,
+    vertical: 'bottom',
+    horizontal: 'right',
+  });
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -90,8 +103,17 @@ const Profile = () => {
     console.log('Form submitted', formData);
   };
 
+  const handleSnackbarClick = () => {
+    setOpen(true);
+  };
+
+  const handleAlertClose = () => {
+    setOpen(false);
+  };
+
+
   return (
-    <Box sx={{ width: '90%', marginInline: 'auto' }}>
+    <Box sx={{ width: '90%', marginInline: 'auto' }} >
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={value}
@@ -264,6 +286,12 @@ const Profile = () => {
               <Button type='submit' variant='black' label="Update and Continue" />
             </div>
           </form>
+
+          <Snackbar open={state.open} onClose={() => setState({ ...state, open: false })} anchorOrigin={{ vertical: state.vertical, horizontal: state.horizontal }} action={<IconButton color='info' onClick={handleSnackbarClick}><InfoIcon /></IconButton>} message="Click the icon for more details" >
+            <Alert onClick={handleSnackbarClick} onClose={handleAlertClose} variant="filled" severity="info" sx={{ width: '100%', cursor: 'pointer' }} >
+              Please click on each field to edit it. Note that some fields are not editable.
+            </Alert>
+          </Snackbar>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -317,6 +345,12 @@ const Profile = () => {
             <Button type='submit' variant='black' label="Update" />
           </div>
         </form>
+
+        <Snackbar open={state.open} onClose={() => setState({ ...state, open: false })} anchorOrigin={{ vertical: state.vertical, horizontal: state.horizontal }} action={<IconButton color='info' onClick={handleSnackbarClick}><InfoIcon /></IconButton>} message="Click the icon for more details" >
+          <Alert onClick={handleSnackbarClick} onClose={handleAlertClose} variant="filled" severity="info" sx={{ width: '100%', cursor: 'pointer' }} >
+            Please click on each field to edit it. Note that some fields are not editable.
+          </Alert>
+        </Snackbar>
       </CustomTabPanel>
     </Box>
   );
