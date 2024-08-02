@@ -12,6 +12,8 @@ import {
   TextArea,
   Button,
 } from '@video-cv/ui-components';
+import { Controller, useForm } from 'react-hook-form';
+import dayjs from 'dayjs';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -49,6 +51,7 @@ function a11yProps(index: number) {
 const Profile = () => {
   const [value, setValue] = React.useState(0);
   const [editField, setEditField] = useState<string | null>(null);
+  const { register, handleSubmit, control, formState: { errors } } = useForm();
   const [formData, setFormData] = useState({
     firstName: 'John',
     middleName: 'Doe',
@@ -56,8 +59,8 @@ const Profile = () => {
     nyscStateCode: 'AB1234',
     phoneNumber: '+234123456789',
     emailAddress: 'john.doe@example.com',
-    nyscStartYear: '2020-01-01',
-    nyscEndYear: '2021-01-01',
+    nyscStartYear: dayjs('2020-01-01'),
+    nyscEndYear: dayjs('2021-01-01'),
     courseOfStudy: 'Computer Science',
     degreeAwarded: 'B.Sc',
     institutionAttended: 'University of XYZ',
@@ -73,21 +76,16 @@ const Profile = () => {
     setValue(newValue);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleDateChange = (name: string, date: any) => {
-    setFormData({ ...formData, [name]: date });
-  };
-
   const handleEditClick = (fieldName: string) => {
     setEditField(fieldName);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = (data: any) => {
+    setFormData({
+      ...data,
+      nyscStartYear: dayjs(data.nyscStartYear),
+      nyscEndYear: dayjs(data.nyscEndYear),
+    });
     setEditField(null);
     console.log('Form submitted', formData);
   };
@@ -105,7 +103,7 @@ const Profile = () => {
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Box className="input-box">
                 <label>First Name</label>
@@ -113,10 +111,9 @@ const Profile = () => {
               </Box>
               {editField === 'middleName' ? (
                 <Input
-                  name="middleName"
+                  {...register('middleName')}
                   label="Middle Name"
                   value={formData.middleName}
-                  onChange={handleInputChange}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('middleName')}>
@@ -134,10 +131,9 @@ const Profile = () => {
               </Box>
               {editField === 'nyscStateCode' ? (
                 <Input
-                  name="nyscStateCode"
+                  {...register('nyscStateCode')}
                   label="NYSC State Code"
                   value={formData.nyscStateCode}
-                  onChange={handleInputChange}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('nyscStateCode')}>
@@ -147,10 +143,9 @@ const Profile = () => {
               )}
               {editField === 'phoneNumber' ? (
                 <Input
-                  name="phoneNumber"
+                  {...register('phoneNumber')}
                   label="Phone Number"
                   value={formData.phoneNumber}
-                  onChange={handleInputChange}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('phoneNumber')}>
@@ -159,37 +154,50 @@ const Profile = () => {
                 </Box>
               )}
               {editField === 'nyscStartYear' ? (
-                <DatePicker
+                <Controller
                   name="nyscStartYear"
-                  label="NYSC Service year (start)"
-                  value={formData.nyscStartYear}
-                  onChange={(date) => handleDateChange('nyscStartYear', date)}
+                  control={control}
+                  defaultValue={formData.nyscStartYear}
+                  render={({ field }) => (
+                    <DatePicker
+                      {...field}
+                      label="NYSC Service year (start)"
+                      value={field.value}
+                      onChange={(date) => field.onChange(date)}
+                    />
+                  )}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('nyscStartYear')}>
                   <label>NYSC Service Year (Start)</label>
-                  <Typography className="input-like">{formData.nyscStartYear}</Typography>
+                  <Typography className="input-like">{formData.nyscStartYear.format('YYYY-MM-DD')}</Typography>
                 </Box>
               )}
               {editField === 'nyscEndYear' ? (
-                <DatePicker
-                  name="nyscEndYear"
-                  label="NYSC Service year (end)"
-                  value={formData.nyscEndYear}
-                  onChange={(date) => handleDateChange('nyscEndYear', date)}
-                />
+                <Controller
+                name="nyscEndYear"
+                control={control}
+                defaultValue={formData.nyscStartYear}
+                render={({ field }) => (
+                  <DatePicker
+                    {...field}
+                    label="NYSC Service year (end)"
+                    value={field.value}
+                    onChange={(date) => field.onChange(date)}
+                  />
+                )}
+              />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('nyscEndYear')}>
                   <label>NYSC Service Year (End)</label>
-                  <Typography className="input-like">{formData.nyscEndYear}</Typography>
+                  <Typography className="input-like">{formData.nyscEndYear.format('YYYY-MM-DD')}</Typography>
                 </Box>
               )}
               {editField === 'courseOfStudy' ? (
                 <Input
-                  name="courseOfStudy"
+                  {...register('courseOfStudy')}
                   label="Course of Study"
                   value={formData.courseOfStudy}
-                  onChange={handleInputChange}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('courseOfStudy')}>
@@ -199,10 +207,9 @@ const Profile = () => {
               )}
               {editField === 'degreeAwarded' ? (
                 <Input
-                  name="degreeAwarded"
+                  {...register('degreeAwarded')}
                   label="Degree / Certificate Awarded"
                   value={formData.degreeAwarded}
-                  onChange={handleInputChange}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('degreeAwarded')}>
@@ -212,10 +219,9 @@ const Profile = () => {
               )}
               {editField === 'institutionAttended' ? (
                 <Input
-                  name="institutionAttended"
+                  {...register('institutionAttended')}
                   label="Institution Attended"
                   value={formData.institutionAttended}
-                  onChange={handleInputChange}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('institutionAttended')}>
@@ -225,7 +231,7 @@ const Profile = () => {
               )}
               {editField === 'classOfDegree' ? (
                 <Select
-                  name="classOfDegree"
+                  {...register('classOfDegree')}
                   label="Class of Degree"
                   value={formData.classOfDegree}
                   options={[
@@ -233,7 +239,6 @@ const Profile = () => {
                     { value: 'secondClassUpper', label: 'Second Class Upper' },
                     { value: 'secondClassLower', label: 'Second Class Lower' },
                   ]}
-                  onChange={handleInputChange}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('classOfDegree')}>
@@ -243,10 +248,9 @@ const Profile = () => {
               )}
               {editField === 'coverLetter' ? (
                 <TextArea
-                  name="coverLetter"
+                  {...register('coverLetter')}
                   label="Cover Letter"
                   value={formData.coverLetter}
-                  onChange={handleInputChange}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('coverLetter')}>
@@ -262,7 +266,7 @@ const Profile = () => {
           </form>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <form onSubmit={(e) => handleSubmit(e)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Box className="input-box" onClick={() => handleEditClick('businessName')}>
                 <label>Business Name</label>
@@ -270,10 +274,9 @@ const Profile = () => {
               </Box>
               {editField === 'businessPhoneNumber' ? (
                 <Input
-                  name="businessPhoneNumber"
+                  {...register('businessPhoneNumber')}
                   label="Business Phone Number"
                   value={formData.businessPhoneNumber}
-                  onChange={handleInputChange}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('businessPhoneNumber')}>
@@ -283,14 +286,13 @@ const Profile = () => {
               )}
               {editField === 'businessSector' ? (
                 <Select
-                  name="businessSector"
+                  {...register('businessSector')}
                   label="Business Sector"
                   value={formData.businessSector}
                   options={[
                     { value: 'product', label: 'Product' },
                     { value: 'service', label: 'Service' },
                   ]}
-                  onChange={handleInputChange}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('businessSector')}>
@@ -300,10 +302,9 @@ const Profile = () => {
               )}
               {editField === 'businessProfile' ? (
                 <TextArea
-                  name="businessProfile"
+                  {...register('businessProfile')}
                   label="Business Profile"
                   value={formData.businessProfile}
-                  onChange={handleInputChange}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('businessProfile')}>

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { DatePicker, DatePickerProps } from '@mui/x-date-pickers/DatePicker';
 import cx from 'classnames';
 import { FieldError } from 'react-hook-form';
