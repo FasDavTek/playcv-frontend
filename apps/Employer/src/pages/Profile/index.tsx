@@ -11,9 +11,16 @@ import {
   Select,
   Button,
 } from '@video-cv/ui-components';
+import { Snackbar, Alert, SnackbarOrigin, IconButton } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+
+interface State extends SnackbarOrigin {
+  open: boolean;
+}
 
 const Profile = () => {
   const [editField, setEditField] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     businessName: 'Doe Enterprises',
     businessPhoneNumber: '+234987654321',
@@ -26,10 +33,16 @@ const Profile = () => {
     contactPersonRole: 'Manager',
   });
 
-  const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
-    // Disable click and keydown behavior
-    noClick: true,
-    noKeyboard: true,
+  // const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
+  //   // Disable click and keydown behavior
+  //   noClick: true,
+  //   noKeyboard: true,
+  // });
+
+  const [state, setState] = React.useState<State>({
+    open: true,
+    vertical: 'bottom',
+    horizontal: 'right',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -45,6 +58,14 @@ const Profile = () => {
     e.preventDefault();
     setEditField(null);
     console.log('Form submitted', formData);
+  };
+
+  const handleSnackbarClick = () => {
+    setOpen(true);
+  };
+
+  const handleAlertClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -154,6 +175,12 @@ const Profile = () => {
               )}
             </div>
             <Button type='submit' variant="black" label="Submit" className='mt-5' />
+
+            <Snackbar open={state.open} onClose={() => setState({ ...state, open: false })} anchorOrigin={{ vertical: state.vertical, horizontal: state.horizontal }} action={<IconButton color='info' onClick={handleSnackbarClick}><InfoIcon /></IconButton>} message="Click the icon for more details" >
+              <Alert onClick={handleSnackbarClick} onClose={handleAlertClose} variant="filled" severity="info" sx={{ width: '100%', cursor: 'pointer' }} >
+                Please click on each field to edit it. Note that some fields are not editable.
+              </Alert>
+            </Snackbar>
         </form>
       </Box>
     </Box>
