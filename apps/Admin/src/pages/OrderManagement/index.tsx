@@ -63,7 +63,7 @@ const columns = [
       const navigate = useNavigate();
       return (
         <Button
-          onClick={() => navigate('/order-management/123')}
+          onClick={() => navigate('/admin/order-management/123')}
           label="View"
         />
       );
