@@ -1,6 +1,6 @@
 [build]
   command = "yarn build-landing && yarn build-candidate && yarn build-admin"
-  publish = "dist/apps/video-cv"
+  publish = "dist/apps/video-cv && dist/apps/Candidate && dist/apps/Admin"
 
 [context.production.environment]
   GENERATE_SOURCEMAP = "true"
