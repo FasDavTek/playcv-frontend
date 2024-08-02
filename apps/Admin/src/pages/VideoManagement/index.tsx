@@ -1,6 +1,7 @@
 import { Stack } from '@mui/material';
 import { Button, Table } from '@video-cv/ui-components'
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify';
 
 interface Video {
   videoTitle: string;
@@ -81,39 +82,54 @@ const index = () => {
 
 
 
-  useEffect(() => {
-    // Simulate receiving a new video notification
-    const newVideo = {
-      videoTitle: 'New Video Title',
-      uploaderName: 'New Uploader',
-      uploadDate: '2024-07-30',
-      videoStatus: 'Pending',
-      action: 'Approve/Reject',
-    };
-    // toast.info(`New video uploaded: ${newVideo.videoTitle} by ${newVideo.uploaderName}`);
-    setVideos(prevVideos => [...prevVideos, newVideo]);
-  }, []);
+  // useEffect(() => {
+  //   // Simulate receiving a new video notification
+  //   const newVideo = {
+  //     videoTitle: 'New Video Title',
+  //     uploaderName: 'New Uploader',
+  //     uploadDate: '2024-07-30',
+  //     videoStatus: 'Pending',
+  //     action: 'Approve/Reject',
+  //   };
+  //   toast.info(`New video uploaded: ${newVideo.videoTitle} by ${newVideo.uploaderName}`);
+  //   setVideos(prevVideos => [...prevVideos, newVideo]);
+  // }, []);
 
 
 
+  const notifyCandidate = async (videoTitle: string, status: string) => {
+    // Simulate an API call
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve(`Notification sent to candidate: ${videoTitle} is ${status}`);
+      }, 1000);
+    });
+  };
 
 
-  const handleApprove = (videoTitle: string) => {
+
+  const handleApprove = async (videoTitle: string) => {
     console.log(`Approving video: ${videoTitle}`);
     setVideos(prevVideos => 
       prevVideos.map(video => 
         video.videoTitle === videoTitle ? { ...video, videoStatus: 'Approved' } : video
       )
     );
+    toast.success(`Video "${videoTitle}" has been approved.`);
+    const notification = await notifyCandidate(videoTitle, 'approved');
+    console.log(notification);
   };
 
-  const handleReject = (videoTitle: string, reason: string) => {
+  const handleReject = async (videoTitle: string, reason: string) => {
     console.log(`Rejecting video: ${videoTitle}`);
     setVideos(prevVideos => 
       prevVideos.map(video => 
         video.videoTitle === videoTitle ? { ...video, videoStatus: 'Rejected' } : video
       )
     );
+    toast.error(`Video "${videoTitle}" has been rejected.`);
+    const notification = await notifyCandidate(videoTitle, 'rejected');
+    console.log(notification);
   };
 
   const columns = [

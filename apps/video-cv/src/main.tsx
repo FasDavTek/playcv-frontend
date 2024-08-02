@@ -8,6 +8,7 @@ import Routes from './routes';
 import CartProvider from './context/CartProvider';
 import AuthProvider from './context/AuthProvider';
 import './styles.scss'
+import { ToastContainer } from 'react-toastify';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -16,6 +17,7 @@ root.render(
   <>
     {/* <StrictMode> */}
     <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <ToastContainer />
       <AuthProvider>
         <CartProvider>
           <Routes />
