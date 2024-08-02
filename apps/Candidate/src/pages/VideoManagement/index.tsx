@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Button } from '@video-cv/ui-components';
 import { VideoLinks } from '@video-cv/constants';
-import { Videos } from '../../components';
+import { VideoCard, Videos } from '../../components';
 import { CreateVideoConfirmationModal, UploadVideoModal } from './modals';
 import { routes } from '../../routes/routes';
 
@@ -17,6 +17,9 @@ const Dashboard = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
+  const [videos, setVideos] = useState([]);
+  const [approvedVideos, setApprovedVideos] = useState([]);
+  const [pendingVideos, setPendingVideos] = useState([]);
 
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
@@ -26,6 +29,15 @@ const Dashboard = () => {
     if (uploadModalParam === 'true') {
       openSetModalFn('uploadModal');
     }
+
+    // const fetchedVideos: any = [];
+    // setVideos(fetchedVideos);
+
+    // const approved = fetchedVideos.filter((video: { status: string; }) => video.status === 'approved');
+    // const pending = fetchedVideos.filter((video: { status: string; }) => video.status === 'pending');
+    // setApprovedVideos(approved);
+    // setPendingVideos(pending);
+
   }, [queryParams]);
   
 
@@ -40,16 +52,19 @@ const Dashboard = () => {
           />
         </div>
         {/* VIDEO CARDS SECTION */}
-        <div className={` items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-
-          
+        <div>
+          <h3 className="mb-4">Videos Awaiting Approval</h3>
+          <div className={`grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+            {/* {pendingVideos.map(video => <VideoCard key={video.id} video={video} />)} */}
+          </div>
+          <h3 className="mt-8 mb-4">Approved Videos</h3>
+          <div className={`grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+            {/* {approvedVideos.map(video => <VideoCard key={video.id} video={video} />)} */}
+          </div>
         </div>
       </div>
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
-        <CreateVideoConfirmationModal
-          onClose={closeModal}
-          // onAccept={() => openSetModalFn('uploadModal')}
-        />
+        <CreateVideoConfirmationModal onClose={closeModal} />
       </Modal>
       {/* TODO: Add tags field and video upload field */}
       <Modal open={openModal === 'uploadModal'} onClose={closeModal}>
