@@ -21,7 +21,7 @@ const Login = () => {
     setTimeout(() => {
       setLoading(false);
       handleLogin();
-      navigate(location.state?.from || '/');
+      // navigate(location.state?.from || '/');
       return;
     }, 1500);
   };
