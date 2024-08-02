@@ -82,7 +82,7 @@ const index = () => {
         e.preventDefault();
         // Add your API request logic here
         console.log('Form submitted', formData);
-        navigate('/');
+        // navigate('/');
     };
   
   return (

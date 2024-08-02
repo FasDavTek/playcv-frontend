@@ -18,6 +18,7 @@ import {
   TextArea,
   Button,
 } from '@video-cv/ui-components';
+import { Typography } from '@mui/material';
 
 type faqType = z.infer<typeof faqSchema>;
 
@@ -69,12 +70,13 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen p-6 flex flex-col gap-10">
-      <section className="bg-white p-5 rounded-md flex flex-col gap-2">
+      <Typography variant='h4'>What can we help you find?</Typography>
+      <section className="bg-transparent p-5 rounded-md grid grid-cols-1 md:grid-cols-2 gap-2">
         {FAQs.map(({ title, id, content }) => {
           return (
-            <Accordion key={id}>
+            <Accordion key={id} sx={{ borderRadius: '8px', boxShadow: 'lg' }}>
               <AccordionSummary
-                className="bg-primary-100"
+                className="bg-primary-100 rounded-xl"
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls={`${id}-content`}
                 id={`${id}-header`}

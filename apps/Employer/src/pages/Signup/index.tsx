@@ -17,20 +17,20 @@ const index = () => {
       });
     
     const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
-    // Disable click and keydown behavior
-    noClick: true,
-    noKeyboard: true,
+      // Disable click and keydown behavior
+      noClick: true,
+      noKeyboard: true,
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+      const { name, value } = e.target;
+      setFormData({ ...formData, [name]: value });
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Add your API request logic here
-    console.log('Form submitted', formData);
+      e.preventDefault();
+      // Add your API request logic here
+      console.log('Form submitted', formData);
     };
 
   return (
