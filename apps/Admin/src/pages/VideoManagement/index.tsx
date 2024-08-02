@@ -82,18 +82,18 @@ const index = () => {
 
 
 
-  // useEffect(() => {
-  //   // Simulate receiving a new video notification
-  //   const newVideo = {
-  //     videoTitle: 'New Video Title',
-  //     uploaderName: 'New Uploader',
-  //     uploadDate: '2024-07-30',
-  //     videoStatus: 'Pending',
-  //     action: 'Approve/Reject',
-  //   };
-  //   toast.info(`New video uploaded: ${newVideo.videoTitle} by ${newVideo.uploaderName}`);
-  //   setVideos(prevVideos => [...prevVideos, newVideo]);
-  // }, []);
+  useEffect(() => {
+    // Simulate receiving a new video notification
+    const newVideo = {
+      videoTitle: 'New Video Title',
+      uploaderName: 'New Uploader',
+      uploadDate: '2024-07-30',
+      videoStatus: 'Pending',
+      action: 'Approve/Reject',
+    };
+    toast.info(`New video uploaded: ${newVideo.videoTitle} by ${newVideo.uploaderName}`);
+    setVideos(prevVideos => [...prevVideos, newVideo]);
+  }, []);
 
 
 
@@ -142,8 +142,8 @@ const index = () => {
     ) },
     { header: 'Actions', accessorKey: 'actions', cell: ({ row }: any) => (
       <Stack direction='row' spacing={2}>
-        <Button variant='success' label='Approve' className='text-white' onClick={() => handleApprove(row.original.id)} >Approve</Button>
-        <Button variant='red' label='Reject' onClick={() => handleReject(row.original.id, 'Provide rejection reason')} >Reject</Button>
+        <Button variant='success' label='Approve' className='text-white' onClick={() => handleApprove(row.original.videoTitle)} >Approve</Button>
+        <Button variant='red' label='Reject' onClick={() => handleReject(row.original.videoTitle, 'Provide rejection reason')} >Reject</Button>
       </Stack>
     ) },
   ];
