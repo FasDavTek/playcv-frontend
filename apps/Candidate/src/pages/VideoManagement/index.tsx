@@ -40,7 +40,10 @@ const Dashboard = () => {
           />
         </div>
         {/* VIDEO CARDS SECTION */}
-        
+        <div className={` items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+
+          
+        </div>
       </div>
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
         <CreateVideoConfirmationModal
