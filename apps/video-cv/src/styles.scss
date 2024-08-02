@@ -1,5 +1,14 @@
 @import url(../../../libs/styles/main.scss);
 
+@layer components {
+  .text-primary-100 {
+    color: theme('colors.primary.100');
+  }
+  .border-primary-100 {
+    color: theme('colors.primary.100');
+  }
+}
+
 html,
 body {
   margin: 0;
