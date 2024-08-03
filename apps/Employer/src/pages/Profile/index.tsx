@@ -13,6 +13,7 @@ import {
 } from '@video-cv/ui-components';
 import { Snackbar, Alert, SnackbarOrigin, IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
+import SaveAsOutlinedIcon from '@mui/icons-material/SaveAsOutlined';
 
 interface State extends SnackbarOrigin {
   open: boolean;
@@ -88,6 +89,9 @@ const Profile = () => {
                 <Box className="input-box">
                   <label>Phone Number</label>
                   <Typography className="input-like" onClick={() => handleEditClick('businessPhoneNumber')}>{formData.businessPhoneNumber}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'businessSector' ? (
@@ -102,6 +106,9 @@ const Profile = () => {
                 <Box className="input-box">
                   <label>Industry</label>
                   <Typography className="input-like" onClick={() => handleEditClick('businessSector')}>{formData.businessSector}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessSector')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               <Box className="input-box">
@@ -119,6 +126,9 @@ const Profile = () => {
                 <Box className="input-box">
                   <label>Website URL (Optional)</label>
                   <Typography className="input-like" onClick={() => handleEditClick('businessWebsite')}>{formData.businessWebsite}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessWebsite')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'businessSocialMedia' ? (
@@ -132,6 +142,9 @@ const Profile = () => {
                 <Box className="input-box">
                   <label>Social Media Page Link</label>
                   <Typography className="input-like" onClick={() => handleEditClick('businessSocialMedia')}>{formData.businessSocialMedia}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessSocialMedia')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'businessAddress' ? (
@@ -145,6 +158,9 @@ const Profile = () => {
                 <Box className="input-box">
                   <label>Office Address</label>
                   <Typography className="input-like" onClick={() => handleEditClick('businessAddress')}>{formData.businessAddress}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessAddress')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'contactPerson' ? (
@@ -158,6 +174,9 @@ const Profile = () => {
                 <Box className="input-box">
                   <label>Contact Person Name</label>
                   <Typography className="input-like" onClick={() => handleEditClick('contactPerson')}>{formData.contactPerson}</Typography>
+                  <IconButton onClick={() => handleEditClick('contactPerson')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'contactPersonRole' ? (
@@ -171,13 +190,16 @@ const Profile = () => {
                 <Box className="input-box">
                   <label>Contact Person Position</label>
                   <Typography className="input-like" onClick={() => handleEditClick('contactPersonRole')}>{formData.contactPersonRole}</Typography>
+                  <IconButton onClick={() => handleEditClick('contactPersonRole')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
             </div>
             <Button type='submit' variant="black" label="Submit" className='mt-5' />
 
             <Snackbar open={state.open} onClose={() => setState({ ...state, open: false })} anchorOrigin={{ vertical: state.vertical, horizontal: state.horizontal }} action={<IconButton color='info' onClick={handleSnackbarClick}><InfoIcon /></IconButton>} message="Click the icon for more details" >
-              <Alert onClick={handleSnackbarClick} onClose={handleAlertClose} variant="filled" severity="info" sx={{ width: '100%', cursor: 'pointer' }} >
+              <Alert onClick={handleSnackbarClick} variant="filled" severity="info" sx={{ width: '100%', cursor: 'pointer' }} >
                 Please click on each field to edit it. Note that some fields are not editable.
               </Alert>
             </Snackbar>
