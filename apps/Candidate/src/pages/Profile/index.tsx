@@ -16,6 +16,7 @@ import { Controller, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
 import { Snackbar, Alert, SnackbarOrigin, IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
+import SaveAsOutlinedIcon from '@mui/icons-material/SaveAsOutlined';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -141,6 +142,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('middleName')}>
                   <label>Middle Name</label>
                   <Typography className="input-like">{formData.middleName}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               <Box className="input-box">
@@ -161,6 +165,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('nyscStateCode')}>
                   <label>NYSC State Code</label>
                   <Typography className="input-like">{formData.nyscStateCode}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'phoneNumber' ? (
@@ -173,6 +180,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('phoneNumber')}>
                   <label>Phone Number</label>
                   <Typography className="input-like">{formData.phoneNumber}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'nyscStartYear' ? (
@@ -193,6 +203,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('nyscStartYear')}>
                   <label>NYSC Service Year (Start)</label>
                   <Typography className="input-like">{formData.nyscStartYear.format('YYYY-MM-DD')}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'nyscEndYear' ? (
@@ -213,6 +226,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('nyscEndYear')}>
                   <label>NYSC Service Year (End)</label>
                   <Typography className="input-like">{formData.nyscEndYear.format('YYYY-MM-DD')}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'courseOfStudy' ? (
@@ -225,6 +241,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('courseOfStudy')}>
                   <label>Course of Study</label>
                   <Typography className="input-like">{formData.courseOfStudy}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'degreeAwarded' ? (
@@ -237,6 +256,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('degreeAwarded')}>
                   <label>Degree / Certificate Awarded</label>
                   <Typography className="input-like">{formData.degreeAwarded}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'institutionAttended' ? (
@@ -249,6 +271,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('institutionAttended')}>
                   <label>Institution Attended</label>
                   <Typography className="input-like">{formData.institutionAttended}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'classOfDegree' ? (
@@ -266,6 +291,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('classOfDegree')}>
                   <label>Class of Degree</label>
                   <Typography className="input-like">{formData.classOfDegree}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'coverLetter' ? (
@@ -278,6 +306,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('coverLetter')}>
                   <label>Cover Letter</label>
                   <Typography className="input-like">{formData.coverLetter}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
             </div>
@@ -288,7 +319,7 @@ const Profile = () => {
           </form>
 
           <Snackbar open={state.open} onClose={() => setState({ ...state, open: false })} anchorOrigin={{ vertical: state.vertical, horizontal: state.horizontal }} action={<IconButton color='info' onClick={handleSnackbarClick}><InfoIcon /></IconButton>} message="Click the icon for more details" >
-            <Alert onClick={handleSnackbarClick} onClose={handleAlertClose} variant="filled" severity="info" sx={{ width: '100%', cursor: 'pointer' }} >
+            <Alert onClick={handleSnackbarClick} variant="filled" severity="info" sx={{ width: '100%', cursor: 'pointer' }} >
               Please click on each field to edit it. Note that some fields are not editable.
             </Alert>
           </Snackbar>
@@ -310,6 +341,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('businessPhoneNumber')}>
                   <label>Business Phone Number</label>
                   <Typography className="input-like">{formData.businessPhoneNumber}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'businessSector' ? (
@@ -326,6 +360,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('businessSector')}>
                   <label>Business Sector</label>
                   <Typography className="input-like">{formData.businessSector}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
               {editField === 'businessProfile' ? (
@@ -338,6 +375,9 @@ const Profile = () => {
                 <Box className="input-box" onClick={() => handleEditClick('businessProfile')}>
                   <label>Business Profile</label>
                   <Typography className="input-like">{formData.businessProfile}</Typography>
+                  <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
           </div>
