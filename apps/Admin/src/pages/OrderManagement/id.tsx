@@ -12,7 +12,7 @@ const Id = () => {
         <Button
           variant="neutral"
           label="< Back"
-          onClick={() => navigate('/order-management')}
+          onClick={() => navigate(-1)}
         />
       </div>
       <div className="grid grid-cols-3 gap-4">
