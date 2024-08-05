@@ -19,7 +19,7 @@ export const ROUTES = {
     ADMIN_VIDEO_MANAGEMENT: "video-management",
     ADMIN_ADVERTISEMENT_MANAGEMENT: "advertisement-management",
     ADMIN_ORDER_MANAGEMENT: "order-management",
-    ADMIN_ORDER_MANAGEMENT_BY_ID: "order-management",
+    ADMIN_ORDER_MANAGEMENT_BY_ID: "order-management/:id",
     ADMIN_GUIDELINE: "video-guideline",
     CANDIDATE: "/candidate",
     CANDIDATE_DASHBOARD: "dashboard",
