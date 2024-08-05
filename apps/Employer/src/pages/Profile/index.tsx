@@ -42,8 +42,8 @@ const Profile = () => {
 
   const [state, setState] = React.useState<State>({
     open: true,
-    vertical: 'bottom',
-    horizontal: 'right',
+    vertical: 'top',
+    horizontal: 'center',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

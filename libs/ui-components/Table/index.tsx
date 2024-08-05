@@ -47,14 +47,26 @@ const Table: React.FC<any> = <T extends object>({
     return filteredData.slice(startIndex, endIndex);
   }, [filteredData, currentPage, pageSize]);
 
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+
+  const numberedColumns = useMemo<ColumnDef<T, any>[]>(() => [
+    {
+      id: 'rowNumber',
+      header: 'S/N',
+      cell: (info) => {
+        const rowIndex = info.row.index;
+        const rowNumber = (currentPage - 1) * pageSize + rowIndex + 1;
+        return rowNumber;
+      },
+    },
+    ...columns // Spread your existing columns here
+  ], [currentPage, pageSize, columns]);
   
   const table = useReactTable({
-    data,
-    columns,
+    data: paginatedData,
+    columns: numberedColumns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  const totalPages = Math.ceil(filteredData.length / pageSize);
 
 
   if (loading) {
