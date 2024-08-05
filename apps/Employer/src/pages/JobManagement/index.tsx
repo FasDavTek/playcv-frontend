@@ -4,6 +4,7 @@ import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import styles
 import { Input, Button } from '@video-cv/ui-components';
+import { toast } from 'react-toastify';
 
 const JobManagement = () => {
   const [jobTitle, setJobTitle] = useState('');
@@ -33,6 +34,8 @@ const JobManagement = () => {
       companyEmail,
       applyLink,
     });
+
+    toast.success('Job posted successfully!');
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { createColumnHelper } from '@tanstack/react-table';
 import { Modal } from '@mui/material';
@@ -6,6 +6,7 @@ import { Modal } from '@mui/material';
 import { Button, Table } from '@video-cv/ui-components';
 import { CategoryModal } from './modals';
 import { formatDate } from '@video-cv/utils';
+import { toast } from 'react-toastify';
 
 type ModalTypes = null | 'createCategory';
 
@@ -51,7 +52,7 @@ const columns = [
   }),
   columnHelper.accessor('action', {
     cell: ({ row: { original } }) => {
-      return <Button label="View" />;
+      return <Button variant='custom' label="View" />;
     },
     header: 'Action',
   }),
@@ -62,11 +63,17 @@ const ContentManagement = () => {
 
   const closeModal = () => setOpenModal(null);
 
+  useEffect(() => {
+    // Simulate a new content notification
+    toast.info('A new job has been added!');
+  }, []);
+
   return (
     <div className="min-h-screen px-3 md:px-10 py-10">
       <div className="flex justify-end">
         {/* TODO: This should open up a payment modal */}
         <Button
+          variant='black'
           label="Create Video Category"
           onClick={() => {
             setOpenModal('createCategory');
