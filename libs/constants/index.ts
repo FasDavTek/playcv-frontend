@@ -70,6 +70,12 @@ const EmployerRoutes: any = [
     pageName: 'Video Management',
   },
   {
+    name: 'Job Management',
+    img: Icons.Vacancy,
+    route: ROUTES.EMPLOYER_JOB_MANAGEMENT,
+    pageName: 'Job Management',
+  },
+  {
     name: 'Advertisement',
     img: Icons.Advert,
     route: ROUTES.EMPLOYER_ADVERTISEMENT,
