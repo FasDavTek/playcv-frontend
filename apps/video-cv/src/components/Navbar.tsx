@@ -58,7 +58,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`flex items-center px-3 md:px-10 sticky bg-white top-0 justify-center z-20 navbar`}
+      className={`flex items-center px-3 md:px-7 sticky bg-white top-0 justify-center z-20 navbar`}
     >
       <div className="w-full mx-auto flex items-center justify-between">
         <Link

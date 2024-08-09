@@ -118,6 +118,7 @@ const VideoDetails = () => {
     });
   };
 
+
   const handleReadMoreClick = () => {
     const isBusinessAccount = user?.userType === 'business' || user?.userType === 'employer';
     const hasPaidForVideo = false;
@@ -133,11 +134,12 @@ const VideoDetails = () => {
     }
   };
 
+
   return (
-    <Stack direction={{ xs: 'column', sm: 'row' }} gap={3} className="min-h-screen mx-auto py-9 px-3 md:px-9 max-w-8xl">    
-      <Stack direction="column" spacing={3}>
+    <Stack direction={{ sm: 'column', md: 'row' }} gap={3} className="min-h-screen flex-col md:flex-row mx-auto py-9 px-3 md:px-7 max-w-8xl">
+      <Stack direction="column" flex={4} spacing={3}>
         <Box className="rounded-lg">
-          <Stack direction="column" flex={4} spacing={4}>
+          <Stack mx='auto' direction="column" spacing={4}>
             <Box className="w-full top-24 rounded-3xl">
               <ReactPlayer url={`https://www.youtube.com/watch?v=${id}`} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} />
             </Box>
@@ -158,9 +160,22 @@ const VideoDetails = () => {
                   <Button variant='custom' className='text-blue-600 hover:text-blue-500' icon={<EmailIcon />} onClick={() => shareViaEmail(`https://www.youtube.com/watch?v=${id}`)} />
                 </Stack>
               </Stack>
+              <Box flex={1} className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex lg:hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-28'}`}>
+                {isExpanded ? (
+                  <Typography variant="body2">
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
+                  </Typography>
+                ) : (
+                  <Stack direction={'column'}>
+                    <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
+                      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
+                    </ClampedText>
+                    <Button onClick={handleReadMoreClick} label='Read More' variant="custom" className='video-description' ></Button>
+                  </Stack>
+                )}
+              </Box>
             </Box>
           </Stack>
-          
         </Box>
         <Box className="flex-1 flex-grow overflow-auto flex items-start px-1 md:px-8">
           <Stack direction="column" className=" w-full items-start md:items-center justify-start overflow-hidden space-y-1">
@@ -211,18 +226,18 @@ const VideoDetails = () => {
         <JobBoard jobs={mockJobs.slice(0, 3)} />
       </Stack>
 
-      <Box flex={1} className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-28'}`}>
+      <Box className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm lg:flex hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-28'}`}>
         {isExpanded ? (
-          <Typography variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
+          <Typography variant="body2">
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
           </Typography>
         ) : (
-          <>
-            <ClampedText variant="body2">
+          <Stack direction={'column'}>
+            <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
               Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
             </ClampedText>
             <Button onClick={handleReadMoreClick} label='Read More' variant="custom" className='video-description' ></Button>
-          </>
+          </Stack>
         )}
       </Box>
     </Stack>
