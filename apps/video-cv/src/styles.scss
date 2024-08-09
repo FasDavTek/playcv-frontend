@@ -94,6 +94,14 @@ a {
   font-size: small !important;
 }
 
+.video-description {
+  border-radius: 25px !important;
+  padding: .175rem .5rem !important;
+  font-size: small !important;
+  margin: auto;
+  display: flex;
+}
+
 @media screen and (max-width: 900px) {
   .category-btn {
     margin: 10px;
