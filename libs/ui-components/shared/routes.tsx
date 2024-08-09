@@ -1,7 +1,7 @@
 export const ROUTES = {
     LANDINGPAGE: "/",
     TALENT_GALLERY: "/talents",
-    VIDEO_DETAILS: "/video",
+    VIDEO_DETAILS: "/video/:id",
     JOB_BOARD: "/job-board",
     CART: "/cart",
     JOB_DETAIL: "/job-board/:id",
