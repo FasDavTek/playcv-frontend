@@ -3,7 +3,7 @@ import ReactPlayer from 'react-player';
 import { Box, Stack, Typography, Card, CardMedia, CardContent, Paper } from '@mui/material';
 import { useCart } from '../../context/CartProvider';
 import { Button } from '@video-cv/ui-components';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
@@ -13,12 +13,26 @@ import { Images } from '@video-cv/assets';
 import './../../styles.scss';
 import { JobBoard } from '../../components';
 import { mockJobs } from '../../utils/jobs';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../context/AuthProvider';
 
 const ClampedText = styled(Typography)({
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
   overflow: 'hidden',
   WebkitLineClamp: 2,
+  position: 'relative',
+  maxHeight: '3em',
+  '&:after': {
+    content: '""',
+    position: 'absolute',
+    bottom: -15,
+    left: 0,
+    right: 0,
+    height: '1em',
+    background: 'linear-gradient(to top, rgba(0,0,0,0.1), transparent)',
+    WebkitFilter: 'blur(5px)',
+  },
 });
 
 const TabPanel = ({ children, value, index }: any) => {
@@ -36,6 +50,7 @@ const TabPanel = ({ children, value, index }: any) => {
 const VideoDetails = () => {
   const id = 'GDa8kZLNhJ4';
   const location = useLocation();
+  const navigate = useNavigate();
   const video = location.state as {
     uploaderName: string;
     imageSrc: string;
@@ -48,6 +63,7 @@ const VideoDetails = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [isInWishlist, setIsInWishlist] = useState(false);
+  const { user, isAuthenticated } = useAuth();
 
   const itemsPerPage = 4;
 
@@ -102,11 +118,26 @@ const VideoDetails = () => {
     });
   };
 
+  const handleReadMoreClick = () => {
+    const isBusinessAccount = user?.userType === 'business' || user?.userType === 'employer';
+    const hasPaidForVideo = false;
+
+    if (!isAuthenticated) {
+      navigate('/auth/login');
+    } else if (!isBusinessAccount) {
+      toast('You cannot make a payment for this video. Please sign up with a business/employer account.');
+    } else if (!hasPaidForVideo) {
+      navigate('/cart');
+    } else {
+      setIsExpanded(true);
+    }
+  };
+
   return (
-    <Box className="min-h-screen mx-auto py-9 px-3 md:px-9 max-w-7xl">
+    <Stack direction={{ xs: 'column', sm: 'row' }} gap={3} className="min-h-screen mx-auto py-9 px-3 md:px-9 max-w-8xl">    
       <Stack direction="column" spacing={3}>
         <Box className="rounded-lg">
-          <Stack direction="column" spacing={4}>
+          <Stack direction="column" flex={4} spacing={4}>
             <Box className="w-full top-24 rounded-3xl">
               <ReactPlayer url={`https://www.youtube.com/watch?v=${id}`} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} />
             </Box>
@@ -121,25 +152,15 @@ const VideoDetails = () => {
                 <Typography variant="body1" gutterBottom>
                   Lorem Ipsum.
                 </Typography>
+                <Typography variant="subtitle2">views</Typography>
                 <Stack direction='row' spacing={1}>
                   <Button variant="custom" className='text-green-600 hover:text-green-500' icon={<WhatsAppIcon />} onClick={() => shareOnWhatsApp(`https://www.youtube.com/watch?v=${id}`)} />
                   <Button variant='custom' className='text-blue-600 hover:text-blue-500' icon={<EmailIcon />} onClick={() => shareViaEmail(`https://www.youtube.com/watch?v=${id}`)} />
                 </Stack>
               </Stack>
-              <Box className="bg-gray-700 p-4 rounded-xl text-white backdrop-blur-sm">
-                <Typography variant="subtitle2">views</Typography>
-                {isExpanded ? (
-                  <Typography variant="body2">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
-                  </Typography>
-                ) : (
-                  <ClampedText variant="body2">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
-                  </ClampedText>
-                )}
-              </Box>
             </Box>
           </Stack>
+          
         </Box>
         <Box className="flex-1 flex-grow overflow-auto flex items-start px-1 md:px-8">
           <Stack direction="column" className=" w-full items-start md:items-center justify-start overflow-hidden space-y-1">
@@ -189,7 +210,22 @@ const VideoDetails = () => {
         
         <JobBoard jobs={mockJobs.slice(0, 3)} />
       </Stack>
-    </Box>
+
+      <Box flex={1} className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-28'}`}>
+        {isExpanded ? (
+          <Typography variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
+          </Typography>
+        ) : (
+          <>
+            <ClampedText variant="body2">
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
+            </ClampedText>
+            <Button onClick={handleReadMoreClick} label='Read More' variant="custom" className='video-description' ></Button>
+          </>
+        )}
+      </Box>
+    </Stack>
   );
 };
 
