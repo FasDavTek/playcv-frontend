@@ -17,7 +17,7 @@ const Cart = () => {
   const { payButtonFn } = usePaystack(
     () => {
       console.log('onSuccess callback');
-      navigate('/dashboard');
+      navigate('/employer/video-management');
     },
     () => {
       console.log('onFailure callback');
