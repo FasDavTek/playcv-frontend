@@ -144,29 +144,39 @@ const VideoDetails = () => {
               <ReactPlayer url={`https://www.youtube.com/watch?v=${id}`} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} />
             </Box>
             <Box className="flex flex-col gap-1">
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography variant="h4" gutterBottom>
-                  Frontend Developer
-                </Typography>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" p={1}>
+                <Typography variant="subtitle2">views</Typography>
                 <Button onClick={handleAddToCart} variant="custom" className="text-[#5c6bc0] hover:text-[#2e3a86] animate-bounce" icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />} />
               </Stack>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={8}>
-                <Typography variant="body1" gutterBottom>
-                  Lorem Ipsum.
-                </Typography>
-                <Typography variant="subtitle2">views</Typography>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" p={1} spacing={8}>
                 <Stack direction='row' spacing={1}>
                   <Button variant="custom" className='text-green-600 hover:text-green-500' icon={<WhatsAppIcon />} onClick={() => shareOnWhatsApp(`https://www.youtube.com/watch?v=${id}`)} />
                   <Button variant='custom' className='text-blue-600 hover:text-blue-500' icon={<EmailIcon />} onClick={() => shareViaEmail(`https://www.youtube.com/watch?v=${id}`)} />
                 </Stack>
               </Stack>
-              <Box flex={1} className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex lg:hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-28'}`}>
+              <Box flex={1} className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex lg:hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-44'}`}>
                 {isExpanded ? (
-                  <Typography variant="body2">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
-                  </Typography>
+                  <Stack direction="column" alignItems="center" justifyContent="space-between">
+                    <Typography variant="h4" gutterBottom>
+                      Frontend Developer
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                      Lorem Ipsum.
+                    </Typography>
+                    <label></label>
+                    <Typography variant="body2">
+                      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
+                    </Typography>
+                  </Stack>
                 ) : (
-                  <Stack direction={'column'}>
+                  <Stack direction={'column'} alignItems="center" justifyContent="space-between">
+                    <Typography variant="h4" gutterBottom>
+                      Frontend Developer
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                      Lorem Ipsum.
+                    </Typography>
+                    <label></label>
                     <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
                       Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
                     </ClampedText>
@@ -226,13 +236,29 @@ const VideoDetails = () => {
         <JobBoard jobs={mockJobs.slice(0, 3)} />
       </Stack>
 
-      <Box className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm lg:flex hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-28'}`}>
+      <Box className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm lg:flex hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-44'}`}>
         {isExpanded ? (
-          <Typography variant="body2">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
-          </Typography>
+          <Stack direction="column" alignItems="start" justifyContent="space-between">
+            <Typography variant="h5" gutterBottom>
+              Frontend Developer
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Lorem Ipsum.
+            </Typography>
+            <label></label>
+            <Typography variant="body2">
+              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
+            </Typography>
+          </Stack>
         ) : (
-          <Stack direction={'column'}>
+          <Stack direction={'column'} alignItems="start" justifyContent="space-between">
+            <Typography variant="h5" gutterBottom>
+              Frontend Developer
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Lorem Ipsum.
+            </Typography>
+            <label></label>
             <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
               Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
             </ClampedText>

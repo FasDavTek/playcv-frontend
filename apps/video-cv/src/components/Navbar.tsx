@@ -6,6 +6,10 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 
 import { logo } from '../utils/constants';
 import { SearchBar } from '.';
+import { styled } from '@mui/material/styles';
+import Badge, { BadgeProps } from '@mui/material/Badge';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
 import { useCart } from '../context/CartProvider';
 import * as Assets from '@video-cv/assets';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -24,6 +28,17 @@ const Hamburger = () => (
     </g>
   </svg>
 );
+
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -3,
+    top: 3,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+    backgroundColor: '#616161',
+    color: '#fff',
+  },
+}));
 
 const Navbar = () => {
   const { cartState } = useCart();
@@ -164,19 +179,11 @@ const Navbar = () => {
             {(isAuthenticated && user?.userType === 'employer') || !isAuthenticated ? (
               <li>
                 {/* TODO: Show logged in if user is logged in */}
-                <button
-                  onClick={handleCartClick}
-                  className="rounded-full h-fit w-fit px-1 py-1 flex gap-2 items-center relative"
-                >
-                  <img
-                    alt=""
-                    src={Assets.Icons.Cart}
-                    className="w-[25px] h-[25px]"
-                  />
-                  <div className='py-0 px-1.5 bg-neutral-200 text-white text-sm absolute -top-1.5 left-4 rounded-full'>
-                    {cartState.cart.length}
-                  </div>
-                </button>
+                <IconButton aria-label="cart" onClick={handleCartClick}>
+                  <StyledBadge badgeContent={cartState.cart.length} >
+                    <ShoppingCartIcon />
+                  </StyledBadge>
+                </IconButton>
               </li>
             ) :
               null
