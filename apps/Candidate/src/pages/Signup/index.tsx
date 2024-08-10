@@ -54,7 +54,7 @@ const index = () => {
                         <Input name="password" type='password' label="Password" placeholder="Enter Password" onChange={handleInputChange}  />
                         <Input name="confirmPassword" type='password' label="Confirm Password" placeholder="Confirm Password" onChange={handleInputChange}  />
                     </div>
-                    <div className="flex justify-center gap-5 mt-5">
+                    <div className="flex justify-start gap-5 mt-5">
                         <Button type='submit' variant="black" label="Sign Up" className='w-[60%]' />
                     </div>
                 </form>
