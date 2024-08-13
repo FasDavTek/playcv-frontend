@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@video-cv/ui-components';
 import { usePaystack } from '@video-cv/payment';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const VideoUploadTypes = () => {
   const navigate = useNavigate();
@@ -9,34 +9,44 @@ const VideoUploadTypes = () => {
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get('type');
   const [price, setPrice] = useState<number>(0);
-  
+  const [triggerPayment, setTriggerPayment] = useState<boolean>(false);
+
+  const calculatePrice = useCallback(() => {
+    if (type === 'pinned') {
+      setPrice(5000);
+    } else {
+      setPrice(2000);
+    }
+  }, [type]);
+
+  useEffect(() => {
+    calculatePrice();
+  }, [type, calculatePrice]);
+
   const { payButtonFn } = usePaystack(
+    price,
     () => {
       console.log('Payment successful');
-    //   navigate('/candidate/video-management/confirmation');
+      navigate(`/candidate/video-management/confirmation`, { state: { videoType: type } });
     },
     () => {
       console.log('Payment failed');
     }
   );
 
+  useEffect(() => {
+    if (triggerPayment) {
+      payButtonFn();
+      setTriggerPayment(false);
+    }
+  }, [price, triggerPayment, payButtonFn]);
 
   const handlePayment = (type: 'pinned' | 'regular') => {
-    payButtonFn();
-    navigate(`/candidate/video-management/confirmation`, { state: { videoType: type } });
+    const selectedPrice = type === 'pinned' ? 5000 : 2000;
+    setPrice(selectedPrice);
+    setTriggerPayment(true); // Trigger the payment in the useEffect
   };
 
-  const calculatePrice = () => {
-    if (type === 'pinned') {
-      setPrice(5000);
-    } else {
-      setPrice(2000);
-    }
-  };
-
-  useEffect(() => {
-    calculatePrice();
-  }, [type]);
 
   return (
     <div className="p-5">

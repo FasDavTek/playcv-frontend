@@ -10,11 +10,12 @@ import { usePaystack } from '@video-cv/payment';
 import { useAuth } from '../../context/AuthProvider';
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 
-const Cart = () => {
+const Cart = ({ totalAmount }: { totalAmount: number }) => {
   const navigate = useNavigate();
   const { cartState, dispatch } = useCart();
   const isAuthenticated = useAuth();
   const { payButtonFn } = usePaystack(
+    totalAmount,
     () => {
       console.log('onSuccess callback');
       navigate('/employer/video-management');
