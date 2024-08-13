@@ -15,7 +15,10 @@ const CreateVideConfirmationModal = ({
   // onAccept: (e: ModalTypes) => void;
 }) => {
   const navigate = useNavigate();
+  const [price, setPrice] = useState<number>(0);
+
   const { payButtonFn } = usePaystack(
+    price,
     () => {
       console.log('onSuccess callback');
       navigate('/video-management?uploadModal=true');
