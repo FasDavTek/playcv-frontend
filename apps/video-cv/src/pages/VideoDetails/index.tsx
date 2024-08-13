@@ -11,10 +11,15 @@ import EmailIcon from '@mui/icons-material/Email';
 import styled from '@emotion/styled';
 import { Images } from '@video-cv/assets';
 import './../../styles.scss';
-import { JobBoard } from '../../components';
+import { JobBoard, VideoCard } from '../../components';
 import { mockJobs } from '../../utils/jobs';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthProvider';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import SwiperCore from 'swiper';
 
 const ClampedText = styled(Typography)({
   display: '-webkit-box',
@@ -64,6 +69,12 @@ const VideoDetails = () => {
   const [tabValue, setTabValue] = useState(0);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const { user, isAuthenticated } = useAuth();
+  const [videoDetails, setVideoDetails] = useState(null);
+  const [relatedVideos, setRelatedVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const isFromTalentGallery = location.state?.fromTalentGallery;
+  const searchParams = location.state?.searchParams;
 
   const itemsPerPage = 4;
 
@@ -95,6 +106,24 @@ const VideoDetails = () => {
       });
     }
   };
+
+
+  const getVideoDetails = async (id: any) => {
+    // Replace with actual API call or data fetching logic
+    const response = await fetch(`/api/videos/${id}`);
+    if (!response.ok) throw new Error('Failed to fetch video details');
+    return response.json();
+  };
+
+
+  const getRelatedVideos = async (searchParams: any) => {
+    // Replace with actual API call or data fetching logic
+    const query = new URLSearchParams(searchParams).toString();
+    const response = await fetch(`/api/videos/related?${query}`);
+    if (!response.ok) throw new Error('Failed to fetch related videos');
+    return response.json();
+  };
+
 
   const shareOnWhatsApp = (videoUrl: string) => {
     const message = `Check out my video: ${videoUrl}`;
@@ -133,6 +162,37 @@ const VideoDetails = () => {
       setIsExpanded(true);
     }
   };
+
+
+  useEffect(() => {
+    // Fetch video details based on videoId
+    const fetchVideoDetails = async () => {
+      try {
+        const details = await getVideoDetails(id);
+        setVideoDetails(details);
+        setLoading(false);
+      } catch (err: any) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+    fetchVideoDetails();
+  }, [id]);
+
+  useEffect(() => {
+    if (isFromTalentGallery && searchParams) {
+      // Fetch related videos based on searchParams
+      const fetchRelatedVideos = async () => {
+        try {
+          const videos = await getRelatedVideos(searchParams);
+          setRelatedVideos(videos);
+        } catch (err: any) {
+          setError(err.message);
+        }
+      };
+      fetchRelatedVideos();
+    }
+  }, [isFromTalentGallery, searchParams]);
 
 
   return (
@@ -187,58 +247,29 @@ const VideoDetails = () => {
             </Box>
           </Stack>
         </Box>
-        <Box className="flex-1 flex-grow overflow-auto flex items-start px-1 md:px-8">
-          <Stack direction="column" className=" w-full items-start md:items-center justify-start overflow-hidden space-y-1">
-            <div className="flex overflow-auto hide-scrollbar gap-2 my-1 bg-gray-200 px-3 py-2 rounded-lg">
-              {['Cart1', 'Cart2', 'Cart3', 'Cart4', 'Cart5', 'Cart6', 'Cart7', 'Cart8', 'Cart9'].map((label, index) => (
-                <button
-                  key={index}
-                  onClick={() => setTabValue(index)}
-                  className={`flex items-center text-gray-800 hover:text-blue-700 px-4 py-2 rounded-full focus:outline-none focus:ring-1 focus:ring-neutral-500 ${tabValue === index ? 'bg-gray-400' : 'bg-gray-200'} ${index === 0 ? 'flex-shrink-0' : ''}`}
-                >
-                  {label} <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">3</span>
-                </button>
-              ))}
-            </div>
-            {Array(9)
-              .fill('')
-              .map((_, index) => (
-                <TabPanel key={index} value={tabValue} index={index} s>
-                  <Stack direction='column' width='100%' overflow='auto' p={2} className='hide-scrollbar'>
-                   <Card elevation={2} sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, width: '100%', maxWidth: '50rem', margin: 'auto' }} className='rounded-xl'>
-                     <CardMedia
-                      component="img"
-                      sx={{ width: { xs: 'full', md: 251 } }}
-                      image={Images.HeroImage}
-                      alt="Live from space album cover"
-                    />
-                    <CardContent sx={{ flex: '1 0 auto', display: 'grid', gap: '.875rem' }}>
-                      <Typography component="div" variant="h6">
-                        Live From Space
-                      </Typography>
-                      <Typography variant="subtitle1" color="text.secondary" component="div">
-                        Mac Miller
-                      </Typography>
-                      <Stack direction='row' alignItems='center' justifyContent='space-between'>
-                        <Typography variant="subtitle2" color="text.secondary" component="div">
-                          views
-                        </Typography>
-                        <Button onClick={handleAddToCart} variant="custom" className="text-[#5c6bc0] hover:text-[#2e3a86]" icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />} />
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                </Stack>
-                </TabPanel>
-              ))}
-          </Stack>
-        </Box>
+        {/* CART ITEM STARTS */}
+        {isFromTalentGallery && relatedVideos && (
+          <Swiper spaceBetween={10} slidesPerView={1} pagination={{ clickable: true }} navigation>
+            {relatedVideos.map((video, index) => (
+              <SwiperSlide key={index}>
+                {/* Render each related video here */}
+                <div className="video-card">
+                  {/* <img src={video.thumbnailUrl} alt={video.title} /> */}
+                  {/* <h3>{video.title}</h3> */}
+                  {/* Add other video details here */}
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
+        {/* CART ITEM ENDS */}
         
         <JobBoard jobs={mockJobs.slice(0, 3)} />
       </Stack>
 
-      <Box className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm lg:flex hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-44'}`}>
+      <Box className={`flex-col w-[30%] gap-4 lg:flex hidden`}>
         {isExpanded ? (
-          <Stack direction="column" alignItems="start" justifyContent="space-between">
+          <Stack direction="column" alignItems="start" justifyContent="space-between" className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex-col lg:flex hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-aut0'}`}>
             <Typography variant="h5" gutterBottom>
               Frontend Developer
             </Typography>
@@ -251,7 +282,7 @@ const VideoDetails = () => {
             </Typography>
           </Stack>
         ) : (
-          <Stack direction={'column'} alignItems="start" justifyContent="space-between">
+          <Stack direction={'column'} alignItems="start" justifyContent="space-between" className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex-col lg:flex hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-auto'}`}>
             <Typography variant="h5" gutterBottom>
               Frontend Developer
             </Typography>
@@ -264,6 +295,18 @@ const VideoDetails = () => {
             </ClampedText>
             <Button onClick={handleReadMoreClick} label='Read More' variant="custom" className='video-description' ></Button>
           </Stack>
+        )}
+
+        {/* ITEM SHOULD BE HERE */}
+        {isFromTalentGallery && relatedVideos.length > 0 && (
+          <Box className="related-videos">
+            <Typography variant='h6'>Related Videos</Typography>
+            <div className="grid grid-cols-1 gap-4">
+              {relatedVideos.map(video => (
+                <VideoCard key={id} video={video} />
+              ))}
+            </div>
+          </Box>
         )}
       </Box>
     </Stack>

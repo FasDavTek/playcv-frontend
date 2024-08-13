@@ -11,6 +11,7 @@ import { VideoCard, Videos } from '../../components';
 import { videoCVs } from '../../utils/videoCVs';
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { useNavigate } from 'react-router-dom';
 
 const heroImages = [Images.HeroImage6, Images.HeroImage7, Images.HeroImage8, Images.HeroImage9, Images.HeroImage9];
 
@@ -22,6 +23,7 @@ const index = () => {
     const [searchText, setSearchText] = useState('');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [isFilterApplied, setIsFilterApplied] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleResize = () => {
@@ -88,6 +90,10 @@ const index = () => {
         setSearchText('');
         setSelectedCategories([]);
         setIsFilterApplied(false);
+    };
+
+    const handleVideoClick = (videoId: any, searchParams: any) => {
+        navigate(`/video-details/${videoId}`, { state: { fromTalentGallery: true, searchParams } });
     };
 
 
