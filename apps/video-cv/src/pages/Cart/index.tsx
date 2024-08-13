@@ -10,10 +10,13 @@ import { usePaystack } from '@video-cv/payment';
 import { useAuth } from '../../context/AuthProvider';
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 
-const Cart = ({ totalAmount }: { totalAmount: number }) => {
+const Cart = () => {
   const navigate = useNavigate();
   const { cartState, dispatch } = useCart();
   const isAuthenticated = useAuth();
+  const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [triggerPayment, setTriggerPayment] = useState<boolean>(false);
+
   const { payButtonFn } = usePaystack(
     totalAmount,
     () => {
@@ -37,6 +40,15 @@ const Cart = ({ totalAmount }: { totalAmount: number }) => {
     }
   }, [selectAll, cartState.cart]);
 
+
+  useEffect(() => {
+    const newTotalPrice = cartState.cart
+      .filter(item => selectedItems.includes(item.id))
+      .reduce((acc, item) => acc + item.price, 0);
+    setTotalAmount(newTotalPrice);
+  }, [selectedItems, cartState.cart]);
+
+
   const handleRemoveFromCart = (id: string) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: { id } });
   };
@@ -58,6 +70,13 @@ const Cart = ({ totalAmount }: { totalAmount: number }) => {
     //   navigate('/auth/login');
     // }
   };
+
+  useEffect(() => {
+    if (triggerPayment) {
+      payButtonFn();
+      setTriggerPayment(false);
+    }
+  }, [totalAmount, triggerPayment, payButtonFn]);
 
   const ClampedText = styled(Typography)({
     display: '-webkit-box',
@@ -82,10 +101,6 @@ const Cart = ({ totalAmount }: { totalAmount: number }) => {
     setSelectedItems([]);
     setSelectAll(false);
   };
-
-  const totalPrice = cartState.cart
-    .filter(item => selectedItems.includes(item.id))
-    .reduce((acc, item) => acc + item.price, 0);
 
   // TODO: onCheckout, login if not already logged in
 
@@ -159,7 +174,7 @@ const Cart = ({ totalAmount }: { totalAmount: number }) => {
             <div className="flex justify-between px-1 py-0.5">
               <p className="px-1 py-0.5">Subtotal</p>
               <p className="">
-                ₦{' '}{totalPrice}
+                ₦{totalAmount}
               </p>
             </div>
             <div className="px-1 py-0.5">
@@ -183,7 +198,7 @@ const Cart = ({ totalAmount }: { totalAmount: number }) => {
           <div className="flex justify-between px-1 py-0.5">
             <p className="px-1 py-0.5">Subtotal</p>
             <p className="">
-              ₦{' '}{totalPrice}
+              ₦{totalAmount}
             </p>
           </div>
           <div className="px-1 py-0.5">
