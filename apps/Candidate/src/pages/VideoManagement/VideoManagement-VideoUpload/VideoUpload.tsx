@@ -14,13 +14,14 @@ import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Box, Chip, Stack } from '@mui/material';
+import { VideoUploadWidget } from '@video-cv/ui-components'
 
 interface IForm {
   name: string;
   description: string;
   category: string[];
   tags: string[];
-  video: File | null;
+  media: string | null;
   videoTranscript: string;
 }
 
@@ -63,24 +64,29 @@ const VideoUpload = ({
   const { field: categoryField } = useController({ name: 'category', control });
 
   const handleFileUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'your_upload_preset'); // Replace with your Cloudinary upload preset
+    const resourceType = file.type.startsWith('image/') ? 'image' : 'video';
+    const cloudName = 'dht1fkhxb';
+    const uploadPreset = 'ml_default';
 
     try {
-      const response = await axios.post('https://api.cloudinary.com/v1_1/your_cloud_name/video/upload', formData); // Replace with your Cloudinary URL
-      return response.data.secure_url;
+      const mediaUrl = await VideoUploadWidget({
+        cloudName,
+        uploadPreset,
+        file,
+        resourceType,
+      });
+      return mediaUrl;
     } catch (error) {
-      console.error('Error uploading to Cloudinary:', error);
+      console.error('Failed to upload media:', error);
       throw error;
     }
   };
 
   const onSubmitHandler = async (data: IForm) => {
     try {
-      if (data.video) {
-        const videoUrl = await handleFileUpload(data.video);
-        data.video = videoUrl as any;
+      if (data.media) {
+        const mediaUrl = await handleFileUpload(data.media as unknown as File);
+        data.media = mediaUrl as any;
       }
       onSubmit(data);
     } catch (error) {
@@ -128,8 +134,18 @@ const VideoUpload = ({
               uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
               containerClass=""
               uploadLabel="Drag and Drop or Browse"
-              {...register('video', { required: true })}
-              setFile={(file: File | null) => setValue('video', file)}
+              {...register('media', { required: true })}
+              setFile={(file: File | null) => 
+                { 
+                  if (file) {
+                    handleFileUpload(file).then(url => {
+                      { setValue('media', url)}
+                    }).catch(err => {
+                      console.error('Error uploading file:', err);
+                    })
+                  }
+                }
+              }
             />
           </div>
           <Button type='submit' variant='black' className="w-full md:w-28" label="Submit" />
