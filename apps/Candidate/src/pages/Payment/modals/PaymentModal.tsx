@@ -31,17 +31,20 @@ const UploadVideoModal = ({
   onSubmit?: () => void;
 }) => {
   const { register, handleSubmit, watch, setValue, control } = useForm<IForm>();
-  const { payButtonFn } = usePaystack(
-    () => {
-      console.log('onSuccess callback');
-    },
-    () => {
-      console.log('onFailure callback');
-    },
-    {
-      amount: watch('type') === 'pinned' ? 10000 * 100 : 5000 * 100,
-    }
-  );
+  const [amount, setAmount] = useState<number>(0);
+
+  const handleTypeChange = (value: 'pinned' | 'upload') => {
+    const newAmount = value === 'pinned' ? 10000 * 100 : 5000 * 100;
+    setAmount(newAmount);
+    setValue('type', value);
+  };
+
+  const { payButtonFn } = usePaystack(amount, () => {
+    console.log('onSuccess callback');
+    onSubmit?.();
+  }, () => {
+    console.log('onFailure callback');
+  });
 
   return (
     <form
