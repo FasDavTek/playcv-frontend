@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { usePaystackPayment } from 'react-paystack';
 import { HookConfig } from 'react-paystack/dist/types';
@@ -6,10 +6,12 @@ import { toast } from 'react-toastify';
 
 const usePaystack = (
   amount: number,
-  onCompleteCB?: () => void,
+  onCompleteCB?: (reference: string) => void,
   onCloseCB?: () => void,
   options: Partial<HookConfig> = {}
 ) => {
+  const [paymentReference, setPaymentReference] = useState<string | null>(null);
+
   const config: HookConfig = {
     reference: new Date().getTime().toString(),
     email: 'user@example.com',
@@ -20,9 +22,12 @@ const usePaystack = (
   };
 
   const onSuccess = (reference: string) => {
+    setPaymentReference(reference);
     // console.log('Payment successful:', reference);
     toast.success('Payment Successful');
-    onCompleteCB?.();
+    if (onCompleteCB) {
+      onCompleteCB(reference);
+    }
   };
 
   const onClose = () => {
@@ -32,7 +37,7 @@ const usePaystack = (
   };
   const initializePayment = usePaystackPayment(config);
   const payButtonFn = () => initializePayment({ onSuccess, onClose });
-  return { payButtonFn };
+  return { payButtonFn, paymentReference };
 };
 
 export default usePaystack;
