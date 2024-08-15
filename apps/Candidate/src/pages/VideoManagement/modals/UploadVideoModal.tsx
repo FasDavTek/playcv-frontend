@@ -22,11 +22,12 @@ interface IForm {
   tags: string[];
   video: File | null;
   videoTranscript: string;
+  videoType: 'pinVideo' | 'regularVideo';
 }
 
 const UploadVideoModal = ({
   onClose,
-  onSubmit = () => '',
+  onSubmit = (data: IForm) => '',
 }: {
   onClose: (e?: any) => void;
   onSubmit?: (data: IForm) => void;
@@ -40,13 +41,17 @@ const UploadVideoModal = ({
   //   onClose();
   // };
 
+  const videoType = watch('videoType');
+  const amount = videoType === 'pinVideo' ? 10000 * 100 : 5000 * 100;
+
   const { payButtonFn } = usePaystack(
+    amount,
     () => {
-      console.log('onSuccess callback');
+      console.log('Payment successful');
       navigate('/candidate/video-management');
     },
     () => {
-      console.log('onFailure callback');
+      console.log('Payment failed');
     }
   );
 
