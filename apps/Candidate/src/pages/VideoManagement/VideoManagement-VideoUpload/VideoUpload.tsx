@@ -14,7 +14,8 @@ import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Box, Chip, Stack } from '@mui/material';
-import { VideoUploadWidget } from '@video-cv/ui-components'
+import { VideoUploadWidget } from '@video-cv/ui-components';
+import { toast } from 'react-toastify';
 
 interface IForm {
   name: string;
@@ -75,10 +76,12 @@ const VideoUpload = ({
         file,
         resourceType,
       });
+      toast.success('Upload Successful');
       return mediaUrl;
-    } catch (error) {
-      console.error('Failed to upload media:', error);
-      throw error;
+    } catch (err) {
+      // console.error('Failed to upload media:', err);
+      toast.error(`Failed to upload media: ${err}`);
+      throw err;
     }
   };
 

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { usePaystackPayment } from 'react-paystack';
 import { HookConfig } from 'react-paystack/dist/types';
+import { toast } from 'react-toastify';
 
 const usePaystack = (
   amount: number,
@@ -12,23 +13,21 @@ const usePaystack = (
   const config: HookConfig = {
     reference: new Date().getTime().toString(),
     email: 'user@example.com',
-    amount: amount * 100, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
+    amount: amount * 100,
     publicKey: 'pk_test_1507a32eacc6e969e3c63d30052f77e12f29f78f',
     currency: 'ngn',
     ...options,
   };
 
-  // you can call this function anything
   const onSuccess = (reference: string) => {
-    // Implementation for whatever you want to do with reference and after success call.
-    console.log('Payment successful:', reference);
+    // console.log('Payment successful:', reference);
+    toast.success('Payment Successful');
     onCompleteCB?.();
   };
 
-  // you can call this function anything
   const onClose = () => {
-    // implementation for  whatever you want to do when the Paystack dialog closed.
     console.log('Payment dialog closed');
+    toast.success('Payment dialog closed');
     onCloseCB?.();
   };
   const initializePayment = usePaystackPayment(config);
