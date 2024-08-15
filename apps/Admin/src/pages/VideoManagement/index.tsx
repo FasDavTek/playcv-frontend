@@ -72,12 +72,10 @@ const index = () => {
   // };
 
   useEffect(() => {
-    console.log('Setting videos:', mockData);
     setVideos(mockData);
   }, []);
 
   useEffect(() => {
-    console.log('Videos state:', videos);
   }, [videos]);
 
 
@@ -102,6 +100,7 @@ const index = () => {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(`Notification sent to candidate: ${videoTitle} is ${status}`);
+        toast.info(`Notification sent to candidate: ${videoTitle} is ${status}`);
       }, 1000);
     });
   };
