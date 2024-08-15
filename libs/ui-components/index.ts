@@ -14,3 +14,4 @@ export { default as TableSkeleton } from './TableSkeleton';
 
 export { default as Layout } from './Layout';
 export { default as VacancyCard } from './shared/vacancyCard';
+export { default as VideoUploadWidget } from './VideoUploadWidget'
