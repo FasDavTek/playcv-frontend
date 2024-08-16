@@ -1,4 +1,4 @@
-import { forwardRef, useState } from 'react';
+import React, { forwardRef, useState, ReactNode } from 'react';
 
 import cx from 'classnames';
 import { FieldError, UseFormRegister } from 'react-hook-form';
@@ -13,16 +13,19 @@ interface InputProps<T extends object>
   containerClass?: string;
   register?: UseFormRegister<T>;
   error?: FieldError;
+  startAdornment?: React.ReactNode;
 }
 
 const FormInput = forwardRef<HTMLInputElement, InputProps<any>>(
-  ({ className, label, id, containerClass, error, type, ...rest }, ref) => {
+  ({ className, label, id, containerClass, error, type, startAdornment, ...rest }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
     };
+
+    const inputPaddingLeft = startAdornment ? 'pl-10' : 'pl-3';
     
     return (
       <div
@@ -46,13 +49,18 @@ const FormInput = forwardRef<HTMLInputElement, InputProps<any>>(
             ref={ref}
             type={type === 'password' && showPassword ? 'text' : type}
             className={cx(
-              'py-2.5 pr-2 pl-3 rounded-xl focus:outline-none w-full h-12 border',
+              `py-2.5 pr-2 ${inputPaddingLeft} rounded-xl focus:outline-none w-full h-12 border`,
               className,
               { 'outline-red-500 border border-red-500': error }
             )}
             id={id}
             {...rest}
           />
+          {startAdornment && (
+            <InputAdornment position="start" className="absolute left-3 top-1/2 transform -translate-y-1/2">
+              {startAdornment}
+            </InputAdornment>
+          )}
           {type === 'password' && (
             <InputAdornment position="end" className="absolute right-3 top-1/2 transform -translate-y-1/2">
               <IconButton
