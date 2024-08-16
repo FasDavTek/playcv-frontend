@@ -23,7 +23,7 @@ const PriceFields: React.FC<PriceFieldsProps> = ({ label, value, onChange }) => 
   );
 };
 
-const PaymentManagement: React.FC = () => {
+const index: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [pinnedVideoPrice, setPinnedVideoPrice] = useState<number>(0);
   const [regularVideoPrice, setRegularVideoPrice] = useState<number>(0);
@@ -35,7 +35,6 @@ const PaymentManagement: React.FC = () => {
   };
 
   const handleSave = () => {
-    // Implement save logic here (e.g., sending data to the server)
     console.log({
       pinnedVideoPrice,
       regularVideoPrice,
@@ -80,4 +79,4 @@ const PaymentManagement: React.FC = () => {
   );
 };
 
-export default PaymentManagement;
+export default index;
