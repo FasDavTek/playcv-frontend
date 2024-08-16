@@ -17,6 +17,7 @@ export const ROUTES = {
     ADMIN_DASHBOARD: "dashboard",
     ADMIN_USER_MANAGEMENT: "user-management",
     ADMIN_CONTENT_MANAGEMENT: "content-management",
+    ADMIN_PRICE_MANAGEMENT: "price-management",
     ADMIN_VIDEO_MANAGEMENT: "video-management",
     ADMIN_ADVERTISEMENT_MANAGEMENT: "advertisement-management",
     ADMIN_ORDER_MANAGEMENT: "order-management",

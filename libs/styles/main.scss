@@ -79,6 +79,19 @@
   filter: invert(21%) sepia(78%) saturate(3395%) hue-rotate(188deg) brightness(94%) contrast(96%);
 }
 
+/* Chrome, Safari, Edge, Opera */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+
 // .dashboard-table-holder {
 //   overflow-x: auto;
 

@@ -71,7 +71,7 @@ const Layout = ({
         <div className="">
           <Outlet />.
         </div>
-        <footer className="py-5 px-10 text-center flex gap-3 justify-center  bottom-0 left-0 right-0 relative">
+        <footer className="py-5 px-10 text-center flex gap-3 justify-center bottom-0 left-0 right-0 fixed">
           <a href="https://facebook.com/" className="">
             <img
               src={Assets.Icons.FacebookLink}
