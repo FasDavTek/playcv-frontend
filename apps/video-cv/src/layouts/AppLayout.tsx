@@ -25,7 +25,7 @@ export default function AppLayout(): React.ReactElement {
           <Suspense fallback={<h1>Loading...</h1>}>
             <Outlet />
           </Suspense>
-          <footer className="py-5 flex-1 px-10 text-center flex gap-3 justify-center bottom-0 left-0 right-0 fixed">
+          <footer className="bg-[#F6F9F8] py-5 flex-1 px-10 text-center flex gap-3 justify-center bottom-0 left-0 right-0 sticky">
             <a href="https://facebook.com/" className="">
               <img
                 src={Assets.Icons.FacebookLink}

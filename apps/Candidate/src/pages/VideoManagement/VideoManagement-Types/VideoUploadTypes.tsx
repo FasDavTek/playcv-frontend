@@ -11,11 +11,14 @@ const VideoUploadTypes = () => {
   const [price, setPrice] = useState<number>(0);
   const [triggerPayment, setTriggerPayment] = useState<boolean>(false);
 
+  const storedPinnedPrice = parseFloat(localStorage.getItem('pinnedVideoPrice') || '5000');
+  const storedRegularPrice = parseFloat(localStorage.getItem('regularVideoPrice') || '2000');
+
   const calculatePrice = useCallback(() => {
     if (type === 'pinned') {
-      setPrice(5000);
+      setPrice(storedPinnedPrice);
     } else {
-      setPrice(2000);
+      setPrice(storedRegularPrice);
     }
   }, [type]);
 
@@ -42,7 +45,7 @@ const VideoUploadTypes = () => {
   }, [price, triggerPayment, payButtonFn]);
 
   const handlePayment = (type: 'pinned' | 'regular') => {
-    const selectedPrice = type === 'pinned' ? 5000 : 2000;
+    const selectedPrice = type === 'pinned' ? storedPinnedPrice : storedRegularPrice;
     setPrice(selectedPrice);
     setTriggerPayment(true); // Trigger the payment in the useEffect
   };
@@ -57,7 +60,7 @@ const VideoUploadTypes = () => {
           <strong>Benefit:</strong> Pinned videos are showcased prominently at the top of search results, ensuring greater visibility and a higher chance of being seen by potential clients or employers.
         </p>
         <p className="mb-4">
-          <strong>Price:</strong> 5,000 NGN. This includes a higher fee for the increased visibility and priority placement.
+          <strong>Price:</strong> {storedPinnedPrice} NGN. This includes a higher fee for the increased visibility and priority placement.
         </p>
         <img
           src="/images/pinned-video-example.jpg" // Replace with actual image path
@@ -72,7 +75,7 @@ const VideoUploadTypes = () => {
           <strong>Benefit:</strong> Regular videos are listed in the standard search results. This option is suitable for general visibility and standard placement.
         </p>
         <p className="mb-4">
-          <strong>Price:</strong> 2,000 NGN. This option has a lower fee compared to pinned videos but provides good visibility.
+          <strong>Price:</strong> {storedRegularPrice} NGN. This option has a lower fee compared to pinned videos but provides good visibility.
         </p>
         <img
           src="/images/regular-video-example.jpg" // Replace with actual image path
