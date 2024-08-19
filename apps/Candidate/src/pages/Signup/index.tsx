@@ -39,13 +39,13 @@ const index = () => {
     };
   
   return (
-    <div className="min-h-screen flex">
-        <div className="border w-0 md:flex-1 min-h-screen" style={{ backgroundImage: `url(${Images.AuthBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', height: '100%', }}></div>
-        <div className="flex-1 flex flex-col p-2 md:px-8">
+    <div className="overflow-hidden flex">
+        <div className="border w-0 md:flex-1 min-h-screen" style={{ backgroundImage: `url(${Images.AuthBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', }}></div>
+        <div className="flex-1 flex flex-col my-auto p-2 md:px-8 overflow-y-auto">
             <h2 className='font-semibold text-center md:text-left text-xl md:text-lg mb-1'>Create Account</h2>
             <p className='text-lg mb-7 text-center md:text-left text-neutral-300'>Create Your Professional Profile</p>
                 <form onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <Input name="firstName" label="First Name" placeholder="First Name" onChange={handleInputChange} />
                         <Input name="middleName" label="Middle Name" placeholder="Middle Name" onChange={handleInputChange} />
                         <Input name="surname" label="Surname" placeholder="Surname" onChange={handleInputChange} />
