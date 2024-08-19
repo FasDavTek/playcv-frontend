@@ -216,9 +216,9 @@ const Navbar = () => {
                   </p>
                 </DialogContentText>
                 <Stack mx='auto' direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                  <Button variant="black" className='text-sm' label='Sign up as Professional' onClick={() => navigate('/candidate/profile/:id')} >
+                  <Button variant="black" className='text-sm' label='Sign up as Professional' onClick={() => navigate('/candidate/profile')} >
                   </Button>
-                  <Button variant="black" className='text-sm' label='Sign up as Employer' onClick={() => navigate('/employer/profile/:id')} >
+                  <Button variant="black" className='text-sm' label='Sign up as Employer' onClick={() => navigate('/employer/profile')} >
                   </Button>
                 </Stack>
               </DialogContent>
