@@ -37,6 +37,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps<any>>(
             className,
             { 'outline-red-500 border border-red-500': error }
           )}
+          style={{ resize: 'none' }}
           id={id}
           {...rest}
         />
