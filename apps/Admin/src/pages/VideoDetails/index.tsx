@@ -1,52 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { Box, Stack, Typography, Card, CardMedia, CardContent, Paper } from '@mui/material';
-import { Button } from '@video-cv/ui-components';
+// import { Button } from '@video-cv/ui-components';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import EmailIcon from '@mui/icons-material/Email';
+// import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+// import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+// import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+// import EmailIcon from '@mui/icons-material/Email';
 import styled from '@emotion/styled';
-import { Images } from '@video-cv/assets';
+// import { Images } from '@video-cv/assets';
 import './../../styles.scss';
-import { toast } from 'react-toastify';
-import { Swiper, SwiperSlide } from 'swiper/react';
+// import { toast } from 'react-toastify';
+// import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import SwiperCore from 'swiper';
+// import SwiperCore from 'swiper';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
-const ClampedText = styled(Typography)({
-  display: '-webkit-box',
-  WebkitBoxOrient: 'vertical',
-  overflow: 'hidden',
-  WebkitLineClamp: 2,
-  position: 'relative',
-  maxHeight: '3em',
-  '&:after': {
-    content: '""',
-    position: 'absolute',
-    bottom: -15,
-    left: 0,
-    right: 0,
-    height: '1em',
-    background: 'linear-gradient(to top, rgba(0,0,0,0.1), transparent)',
-    WebkitFilter: 'blur(5px)',
-  },
-});
+// const ClampedText = styled(Typography)({
+//   display: '-webkit-box',
+//   WebkitBoxOrient: 'vertical',
+//   overflow: 'hidden',
+//   WebkitLineClamp: 2,
+//   position: 'relative',
+//   maxHeight: '3em',
+//   '&:after': {
+//     content: '""',
+//     position: 'absolute',
+//     bottom: -15,
+//     left: 0,
+//     right: 0,
+//     height: '1em',
+//     background: 'linear-gradient(to top, rgba(0,0,0,0.1), transparent)',
+//     WebkitFilter: 'blur(5px)',
+//   },
+// });
 
-const TabPanel = ({ children, value, index }: any) => {
-  return (
-    <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} style={{ width: '100%' }}>
-      {value === index && (
-        <Box sx={{ width: '100%' }} className="p-4 w-full">
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-};
+// const TabPanel = ({ children, value, index }: any) => {
+//   return (
+//     <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} style={{ width: '100%' }}>
+//       {value === index && (
+//         <Box sx={{ width: '100%' }} className="p-4 w-full">
+//           <Typography>{children}</Typography>
+//         </Box>
+//       )}
+//     </div>
+//   );
+// };
 
 const VideoDetails = () => {
   const id = 'GDa8kZLNhJ4';
@@ -81,72 +82,78 @@ const VideoDetails = () => {
   };
 
 
-  const getRelatedVideos = async (searchParams: any) => {
-    // Replace with actual API call or data fetching logic
-    const query = new URLSearchParams(searchParams).toString();
-    const response = await fetch(`/api/videos/related?${query}`);
-    if (!response.ok) throw new Error('Failed to fetch related videos');
-    return response.json();
+  // const getRelatedVideos = async (searchParams: any) => {
+  //   // Replace with actual API call or data fetching logic
+  //   const query = new URLSearchParams(searchParams).toString();
+  //   const response = await fetch(`/api/videos/related?${query}`);
+  //   if (!response.ok) throw new Error('Failed to fetch related videos');
+  //   return response.json();
+  // };
+
+
+  // const shareOnWhatsApp = (videoUrl: string) => {
+  //   const message = `Check out my video: ${videoUrl}`;
+  //   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+  //   window.open(whatsappUrl, '_blank');
+  // }
+
+  // const shareViaEmail = (videoUrl: string) => {
+  //   const subject = `Check out my video`;
+  //   const body = `Here is the link: ${videoUrl}`;
+  //   const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  //   window.location.href = mailtoUrl;
+  // };
+
+  // const getTabs = (items: string[]) => {
+  //   const numberOfTabs = Math.ceil(items.length / itemsPerPage);
+  //   return Array.from({ length: numberOfTabs }, (_, index) => {
+  //     const start = index * itemsPerPage;
+  //     const end = start + itemsPerPage;
+  //     return items.slice(start, end);
+  //   });
+  // };
+
+
+  // useEffect(() => {
+  //   // Fetch video details based on videoId
+  //   const fetchVideoDetails = async () => {
+  //     try {
+  //       const details = await getVideoDetails(id);
+  //       setVideoDetails(details);
+  //       setLoading(false);
+  //     } catch (err: any) {
+  //       setError(err.message);
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchVideoDetails();
+  // }, [id]);
+
+  // useEffect(() => {
+  //   if (isFromTalentGallery && searchParams) {
+  //     // Fetch related videos based on searchParams
+  //     const fetchRelatedVideos = async () => {
+  //       try {
+  //         const videos = await getRelatedVideos(searchParams);
+  //         setRelatedVideos(videos);
+  //       } catch (err: any) {
+  //         setError(err.message);
+  //       }
+  //     };
+  //     fetchRelatedVideos();
+  //   }
+  // }, [isFromTalentGallery, searchParams]);
+
+
+  const handleBackClick = () => {
+    navigate(-1);
   };
-
-
-  const shareOnWhatsApp = (videoUrl: string) => {
-    const message = `Check out my video: ${videoUrl}`;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-  }
-
-  const shareViaEmail = (videoUrl: string) => {
-    const subject = `Check out my video`;
-    const body = `Here is the link: ${videoUrl}`;
-    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoUrl;
-  };
-
-  const getTabs = (items: string[]) => {
-    const numberOfTabs = Math.ceil(items.length / itemsPerPage);
-    return Array.from({ length: numberOfTabs }, (_, index) => {
-      const start = index * itemsPerPage;
-      const end = start + itemsPerPage;
-      return items.slice(start, end);
-    });
-  };
-
-
-  useEffect(() => {
-    // Fetch video details based on videoId
-    const fetchVideoDetails = async () => {
-      try {
-        const details = await getVideoDetails(id);
-        setVideoDetails(details);
-        setLoading(false);
-      } catch (err: any) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-    fetchVideoDetails();
-  }, [id]);
-
-  useEffect(() => {
-    if (isFromTalentGallery && searchParams) {
-      // Fetch related videos based on searchParams
-      const fetchRelatedVideos = async () => {
-        try {
-          const videos = await getRelatedVideos(searchParams);
-          setRelatedVideos(videos);
-        } catch (err: any) {
-          setError(err.message);
-        }
-      };
-      fetchRelatedVideos();
-    }
-  }, [isFromTalentGallery, searchParams]);
 
 
   return (
-    <Stack direction={{ sm: 'column', md: 'row' }} gap={3} className="min-h-screen flex-col md:flex-row mx-auto py-9 px-3 md:px-7 max-w-8xl">
+    <Stack direction={{ sm: 'column', md: 'row' }} gap={3} className="min-h-screen flex-col md:flex-row mx-auto py-4 px-3 md:px-7 max-w-8xl">
       <Stack direction="column" flex={4} spacing={3}>
+        <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-0 p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
         <Box className="rounded-lg">
           <Stack mx='auto' direction="column" spacing={4}>
             <Box className="w-full top-24 rounded-3xl">
