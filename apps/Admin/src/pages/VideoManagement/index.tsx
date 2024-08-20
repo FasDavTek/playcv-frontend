@@ -5,10 +5,16 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
+interface Uploader {
+  id: number;
+  name: string;
+  email: string;
+}
 interface Video {
   id: number;
   videoTitle: string;
   uploaderName: string;
+  // uploader: Uploader;
   uploadDate: string;
   videoStatus: string;
   action: string;
@@ -66,6 +72,16 @@ const index = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('/api/videos');
+      const data = await response.json();
+      setVideos(data);
+    };
+  
+    fetchData();
+  }, []);
+
   // const { fetchVideos, approveVideo, rejectVideo } = useAdminApi();
 
   // useEffect(() => {
@@ -113,41 +129,41 @@ const index = () => {
     navigate(`/admin/video-management/:${videoId}`);
   };
 
-  const notifyCandidate = async (videoId: number, videoTitle: string, status: string) => {
+  const notifyCandidate = async (videoId: number, videoTitle: string, status: string, /* uploaderId: any, */ reason?: string) => {
     // Simulate an API call
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(`Notification sent to candidate: ${videoId} is ${status}`);
-        toast.info(`Notification sent to candidate: ${videoId} is ${status}`);
+        toast.info(`Notification sent to candidate: ${videoTitle} is ${status}`);
       }, 1000);
     });
   };
 
 
 
-  const handleApprove = async (videoId: number, videoTitle: string) => {
+  const handleApprove = async (videoId: number, videoTitle: string, status: 'approved', /* uploaderId: any */ ) => {
     console.log(`Approving video: ${videoId}`);
     setVideos(prevVideos => 
       prevVideos.map(video => 
         video.id === videoId ? { ...video, videoStatus: 'Approved' } : video
       )
     );
-    toast.success(`Video "${videoTitle}", '${videoId}' has been approved.`);
-    const notification = await notifyCandidate(videoId, videoTitle, 'approved');
+    toast.success(`Video "${videoTitle}" has been approved.`);
+    const notification = await notifyCandidate(videoId, videoTitle, status, /* uploaderId */);
     console.log(notification);
   };
 
 
 
-  const handleReject = async (videoId: number, videoTitle: string, reason: string) => {
+  const handleReject = async (videoId: number, videoTitle: string, status: 'rejected', reason: string,  /* uploaderId: any */) => {
     console.log(`Rejecting video: ${videoId}`);
     setVideos(prevVideos => 
       prevVideos.map(video => 
         video.id === videoId ? { ...video, videoStatus: 'Rejected' } : video
       )
     );
-    toast.error(`Video "${videoTitle}", '${videoId}' has been rejected.`);
-    const notification = await notifyCandidate(videoId, videoTitle, 'rejected');
+    toast.error(`Video "${videoTitle}" has been rejected.`);
+    const notification = await notifyCandidate(videoId, videoTitle, status, reason, /* uploaderId */ );
     console.log(notification);
   };
 
@@ -165,7 +181,7 @@ const index = () => {
   
   const handleConfirmReject = () => {
     if (selectedVideoId !== null) {
-      handleReject(selectedVideoId, selectedVideoTitle, reason);
+      handleReject(selectedVideoId, selectedVideoTitle, 'rejected', /*  uploaderId, */ reason);
     }
     setReason('');
     setOpen(false);
@@ -183,7 +199,7 @@ const index = () => {
     ) },
     { header: 'Actions', accessorKey: 'actions', cell: ({ row }: any) => (
       <Stack direction='row' spacing={2}>
-        <Button variant='success' label='Approve' type='submit' className='text-white' onClick={() => handleApprove(row.original.id, row.original.videoTitle)} ></Button>
+        <Button variant='success' label='Approve' type='submit' className='text-white' onClick={() => handleApprove(row.original.id, row.original.videoTitle, row.original.status /*, row.original.uploaderId */ )} ></Button>
         <Button variant='red' label='Reject' type='submit' onClick={() => handleOpenRejectDialog(row.original.id, row.original.videoTitle)} ></Button>
       </Stack>
     ) },
