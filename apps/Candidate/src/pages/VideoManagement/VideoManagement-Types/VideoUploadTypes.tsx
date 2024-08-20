@@ -30,7 +30,6 @@ const VideoUploadTypes = () => {
     price,
     () => {
       console.log('Payment successful');
-      navigate(`/candidate/video-management/confirmation`, { state: { videoType: type } });
     },
     () => {
       console.log('Payment failed');
@@ -44,10 +43,15 @@ const VideoUploadTypes = () => {
     }
   }, [price, triggerPayment, payButtonFn]);
 
-  const handlePayment = (type: 'pinned' | 'regular') => {
-    const selectedPrice = type === 'pinned' ? storedPinnedPrice : storedRegularPrice;
+  const handlePayment = (type: 'Pinned' | 'Regular') => {
+    const selectedPrice = type === 'Pinned' ? storedPinnedPrice : storedRegularPrice;
     setPrice(selectedPrice);
-    setTriggerPayment(true); // Trigger the payment in the useEffect
+    setTriggerPayment(true);
+
+    localStorage.setItem('videoType', type);
+    localStorage.setItem('videoPrice', selectedPrice.toString());
+
+    navigate(`/candidate/video-management/confirmation`, { state: { videoType: type.charAt(0).toUpperCase(), price: selectedPrice } });
   };
 
 
@@ -60,14 +64,14 @@ const VideoUploadTypes = () => {
           <strong>Benefit:</strong> Pinned videos are showcased prominently at the top of search results, ensuring greater visibility and a higher chance of being seen by potential clients or employers.
         </p>
         <p className="mb-4">
-          <strong>Price:</strong> {storedPinnedPrice} NGN. This includes a higher fee for the increased visibility and priority placement.
+          <strong>Price:</strong> {storedPinnedPrice.toFixed(2)} NGN. This includes a higher fee for the increased visibility and priority placement.
         </p>
         <img
           src="/images/pinned-video-example.jpg" // Replace with actual image path
           alt="Pinned Video Example"
           className="w-full h-auto mb-4"
         />
-        <Button variant='black' label="Choose Pinned Video" onClick={() => handlePayment('pinned')} />
+        <Button variant='black' label="Choose Pinned Video" onClick={() => handlePayment('Pinned')} />
       </div>
       <div className="my-4 p-4 border rounded-lg shadow-md">
         <h3 className="text-xl font-semibold mb-2">Regular Video</h3>
@@ -75,14 +79,14 @@ const VideoUploadTypes = () => {
           <strong>Benefit:</strong> Regular videos are listed in the standard search results. This option is suitable for general visibility and standard placement.
         </p>
         <p className="mb-4">
-          <strong>Price:</strong> {storedRegularPrice} NGN. This option has a lower fee compared to pinned videos but provides good visibility.
+          <strong>Price:</strong> {storedRegularPrice.toFixed(2)} NGN. This option has a lower fee compared to pinned videos but provides good visibility.
         </p>
         <img
           src="/images/regular-video-example.jpg" // Replace with actual image path
           alt="Regular Video Example"
           className="w-full h-auto mb-4"
         />
-        <Button variant='black' label="Choose Regular Video" onClick={() => handlePayment('regular')} />
+        <Button variant='black' label="Choose Regular Video" onClick={() => handlePayment('Regular')} />
       </div>
       <div className="my-4 p-4 border rounded-lg shadow-md bg-gray-100">
         <h3 className="text-xl font-semibold mb-2">Additional Notes</h3>

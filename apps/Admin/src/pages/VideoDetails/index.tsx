@@ -220,7 +220,7 @@ const VideoDetails = () => {
         {/* <JobBoard jobs={mockJobs.slice(0, 3)} /> */}
       </Stack>
 
-      <Box className={`flex-col w-[30%] gap-4 lg:flex hidden`}>
+      <Box className={`flex-col w-[30%] gap-4 mt-[3.25rem] lg:flex hidden`}>
         {/* {isExpanded ? ( */}
           <Stack direction="column" alignItems="start" justifyContent="space-between" className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex-col lg:flex hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-aut0'}`}>
             <Typography variant="h5" gutterBottom>
