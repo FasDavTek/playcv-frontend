@@ -1,15 +1,9 @@
 import { useState } from 'react';
 import { useForm, useController } from 'react-hook-form';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
-import {
-  Button,
-  Input,
-  TextArea,
-  FileUpload,
-  Select,
-} from '@video-cv/ui-components';
+import { Button, Input, TextArea, FileUpload, Select, } from '@video-cv/ui-components';
 import { usePaystack } from '@video-cv/payment';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -20,10 +14,13 @@ import { toast } from 'react-toastify';
 interface IForm {
   name: string;
   description: string;
-  category: string[];
+  // category: string[];
   tags: string[];
   media: string | null;
   videoTranscript: string;
+  Category: string | string[];
+  videoType?: string;
+  price?: number;
 }
 
 const SelectChip = ({ label, options, value, onChange }: any) => {
@@ -62,7 +59,11 @@ const VideoUpload = ({
   onSubmit?: (data: IForm) => void;
 }) => {
   const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<IForm>();
-  const { field: categoryField } = useController({ name: 'category', control });
+  const navigate = useNavigate();
+  const location = useLocation();
+  const videoType = (location.state as any)?.videoType ?? '';
+  const price = (location.state as any)?.price ?? 0;
+  // const { field: categoryField } = useController({ name: 'category', control });
 
   const handleFileUpload = async (file: File) => {
     const resourceType = file.type.startsWith('image/') ? 'image' : 'video';
@@ -91,6 +92,8 @@ const VideoUpload = ({
         const mediaUrl = await handleFileUpload(data.media as unknown as File);
         data.media = mediaUrl as any;
       }
+      data['videoType'] = videoType.toUpperCase();
+      data['price'] = price;
       onSubmit(data);
     } catch (error) {
       console.error('Failed to upload video:', error);
@@ -110,6 +113,11 @@ const VideoUpload = ({
             label="Video Name"
             {...register('name', { required: true })}
           />
+          <Input
+            label="Video Type"
+            value={`${videoType} video upload`}
+            disabled
+          />
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
             Video Description
           </label>
@@ -128,7 +136,16 @@ const VideoUpload = ({
             onChange={(value) => setValue('videoTranscript', value)}
             placeholder="Add transcript for your video"
           />
-          <SelectChip label="Category"  options={[{ value: 'category1', label: 'Category 1' }, { value: 'category2', label: 'Category 2' }]} value={categoryField.value || []} onChange={categoryField.onChange} />
+          <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
+            Video Category
+          </label>
+          <ReactQuill
+            className='custom-quill'
+            value={watch('Category')}
+            onChange={(value) => setValue('Category', value)}
+            placeholder="Add your video preferred category"
+          />
+          {/* <SelectChip label="Category"  options={[{ value: 'category1', label: 'Category 1' }, { value: 'category2', label: 'Category 2' }]} value={categoryField.value || []} onChange={categoryField.onChange} /> */}
           <div className="">
             <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
               Video CV

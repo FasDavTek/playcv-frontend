@@ -7,14 +7,16 @@ const VideoUploadConfirmation = () => {
   const navigate = useNavigate();
 
   const handleUploadNow = () => {
-    navigate('/candidate/video-management/upload');
+    const videoType = localStorage.getItem('videoType');
+    const videoPrice = localStorage.getItem('videoPrice');
+
+    navigate('/candidate/video-management/upload', { state: { videoType, videoPrice } });
   };
 
   const handleUploadLater = async () => {
     try {
-      // Assume we have the userId and videoId available
-      const userId = 'user-id'; // Replace with actual user ID
-      const videoId = 'video-id'; // Replace with actual video ID
+      const userId = 'user-id';
+      const videoId = 'video-id';
 
       await axios.post('/api/video-drafts', { userId, videoId });
 
