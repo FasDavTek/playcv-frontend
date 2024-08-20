@@ -6,6 +6,7 @@ import { Button, Input } from '@video-cv/ui-components';
 import { Images } from '@video-cv/assets';
 import { useAuth } from '../../context/AuthProvider';
 import { Stack } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,12 +19,17 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    handleLogin();
     setTimeout(() => {
       setLoading(false);
-      handleLogin();
       // navigate(location.state?.from || '/');
+      navigate(-1);
       return;
     }, 1500);
+  };
+
+  const handleBackClick = () => {
+    navigate(-1);
   };
 
   return (
@@ -39,6 +45,7 @@ const Login = () => {
         }}
       ></div>
       <div className="border flex-1">
+        <ChevronLeftIcon className="cursor-pointer text-base ml-2 top-2 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
         <form onSubmit={handleSubmit} className="w-[90%] md:w-7/12 mx-auto mt-14">
           <h5 className="font-bold text-3xl">Login</h5>
           <p className="">Enter your login details to Sign in</p>
