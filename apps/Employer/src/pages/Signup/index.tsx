@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Images } from '@video-cv/assets';
+import { useNavigate } from 'react-router-dom';
 
 import { Input, Select, Button, } from '@video-cv/ui-components';
 import { useDropzone } from 'react-dropzone';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 const index = () => {
     const [formData, setFormData] = useState({
@@ -16,6 +18,9 @@ const index = () => {
         contactPersonRole: '',
       });
     
+    
+    const navigate = useNavigate();
+
     const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
       // Disable click and keydown behavior
       noClick: true,
@@ -33,10 +38,15 @@ const index = () => {
       console.log('Form submitted', formData);
     };
 
+    const handleBackClick = () => {
+      navigate(-1);
+    };
+
   return (
     <div className="overflow-hidden flex">
         <div className="border w-0 md:flex-1 min-h-screen" style={{ backgroundImage: `url(${Images.AuthBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', height: '100%', }}></div>
         <div className="flex-1 flex flex-col my-auto py-8 md:py-0 px-4 md:px-8 overflow-y-auto">
+            <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
             <h2 className='font-semibold text-center md:text-left text-xl md:text-lg mb-1'>Create Business</h2>
             <p className='text-lg mb-7 text-center md:text-left text-neutral-300'>Create Your Business Profile</p>
             <form onSubmit={(e) => handleSubmit(e)}>
