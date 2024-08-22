@@ -8,14 +8,13 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 const index = () => {
     const [formData, setFormData] = useState({
-        businessName: '',
-        businessPhoneNumber: '',
-        businessSector: '',
-        businessEmail: '',
-        businessWebsite: '',
-        businessSocialMedia: '',
-        contactPerson: '',
-        contactPersonRole: '',
+        firstName: '',
+        middleName: '',
+        surname: '',
+        phoneNumber: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
       });
     
     
@@ -35,7 +34,13 @@ const index = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       // Add your API request logic here
-      console.log('Form submitted', formData);
+      try {
+        console.log('Form submitted', formData);
+        navigate('/employer/profile')
+      }
+      catch (err) {
+
+      }
     };
 
     const handleBackClick = () => {
@@ -54,9 +59,9 @@ const index = () => {
                     <Input name="firstName" label="First Name" placeholder="First Name" onChange={handleInputChange} />
                     <Input name="middleName" label="Middle Name" placeholder="Middle Name" onChange={handleInputChange} />
                     <Input name="surname" label="Surname" placeholder="Surname" onChange={handleInputChange} />
-                    <Input name='businessName' label="Business Name" placeholder="Business Name" onChange={handleInputChange} />
-                    <Input name='businessPhoneNumber' label="Phone Number" placeholder="Phone Number" onChange={handleInputChange} />
-                    <Input name="businessEmail" label="Email" placeholder="Email" onChange={handleInputChange} />
+                    {/* <Input name='businessName' label="Business Name" placeholder="Business Name" onChange={handleInputChange} /> */}
+                    <Input name='phoneNumber' label="Phone Number" placeholder="Phone Number" onChange={handleInputChange} />
+                    <Input name="email" label="Email" placeholder="Email" onChange={handleInputChange} />
                     <Input name="password" type='password' label="Password" placeholder="Enter Password" onChange={handleInputChange}  />
                     <Input name="confirmPassword" type='password' label="Confirm Password" placeholder="Confirm Password" onChange={handleInputChange}  />
                 </div>
