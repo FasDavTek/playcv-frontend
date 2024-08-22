@@ -49,7 +49,7 @@ const FormInput = forwardRef<HTMLInputElement, InputProps<any>>(
             ref={ref}
             type={type === 'password' && showPassword ? 'text' : type}
             className={cx(
-              `py-2.5 pr-2 ${inputPaddingLeft} rounded-xl focus:outline-none w-full h-12 border`,
+              `py-2.5 pr-2 ${inputPaddingLeft} rounded-xl focus:outline-none w-full outline-none border`,
               className,
               { 'outline-red-500 border border-red-500': error }
             )}
