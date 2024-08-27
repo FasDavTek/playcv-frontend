@@ -17,7 +17,7 @@ const variants = {
   neutral:
     'bg-white hover:opacity-85 border border-primary-100 hover:border-primary-100 text-primary-100 !rounded-md',
   tertiary: 'bg-primary-200 hover:opacity-85 text-black',
-  success: 'bg-green-500',
+  success: 'bg-green-500 text-white',
   custom: 'bg-transparent hover:opacity-85 border border-neutral-100 hover:text-violet-700 !rounded-md' ,
   blue: 'bg-violet-700 border border-neuytral-100 text-white hover:bg-transparent hover:text-violet-600 !rounded-md',
   red: 'bg-red-500 text-white',

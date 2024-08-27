@@ -18,6 +18,7 @@ const index = () => {
         confirmPassword: '',
     });
 
+    const [termsAccepted, setTermsAccepted] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -29,9 +30,16 @@ const index = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTermsAccepted(e.target.checked);
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Add your API request logic here
+        if (!termsAccepted) {
+            alert("Please accept the Terms of Service to proceed.");
+            return;
+        }
         console.log('Form submitted', formData);
         // navigate('/');
     };
@@ -56,6 +64,17 @@ const index = () => {
                         <Input name="emailAddress" label="Email Address" placeholder="Email Address" onChange={handleInputChange} />
                         <Input name="password" type='password' label="Password" placeholder="Enter Password" onChange={handleInputChange}  />
                         <Input name="confirmPassword" type='password' label="Confirm Password" placeholder="Confirm Password" onChange={handleInputChange}  />
+                    </div>
+                    <div className="mt-5">
+                        <label className="inline-flex items-center">
+                            <input 
+                                type="checkbox" 
+                                className="form-checkbox" 
+                                checked={termsAccepted} 
+                                onChange={handleCheckboxChange} 
+                            />
+                            <span className="ml-2 text-sm text-neutral-300">I agree to the <a href="/terms" className="text-green-500 underline">Terms of Service</a></span>
+                        </label>
                     </div>
                     <div className="flex justify-start gap-5 mt-5">
                         <Button type='submit' variant="black" label="Sign Up" className='w-[60%]' />
