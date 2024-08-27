@@ -3,14 +3,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
 
-import {
-  Button,
-  Input,
-  TextArea,
-  FileUpload,
-  SelectChip,
-  Select,
-} from '@video-cv/ui-components';
+import { Button, Input, TextArea, FileUpload, SelectChip, Select, } from '@video-cv/ui-components';
 import { usePaystack } from '@video-cv/payment';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -20,7 +13,7 @@ interface IForm {
   description: string;
   category: string[];
   tags: string[];
-  video: File | null;
+  video: File[] | File | null;
   videoTranscript: string;
   videoType: 'pinVideo' | 'regularVideo';
 }
@@ -79,7 +72,11 @@ const UploadVideoModal = ({
 
   const onSubmitHandler = async (data: IForm) => {
     try {
-      if (data.video) {
+      if (Array.isArray(data.video)) {
+        const uploadPromises = data.video.map(handleFileUpload);
+        const videoUrls = await Promise.all(uploadPromises);
+        data.video = videoUrls as any;
+      } else if (data.video) {
         const videoUrl = await handleFileUpload(data.video);
         data.video = videoUrl as any;
       }
@@ -137,7 +134,7 @@ const UploadVideoModal = ({
             containerClass=""
             uploadLabel="Drag and Drop or Browse"
             {...register('video', { required: true })}
-            setFile={(file: File[] | null) => setValue('video', file)}
+            setFile={(files) => setValue('video', files)}
           />
         </div>
 
