@@ -82,7 +82,7 @@ interface FileUploadProps {
   uploadRestrictionText?: string;
   borderWidth?: number;
   color?: string;
-  setFile?: (file: File | null) => void;
+  setFile?: (file: File[] | null) => void;
   setVideoUrl?: (url: string) => void;
 }
 
@@ -100,25 +100,22 @@ const FileUpload = ({
 }: FileUploadProps) => {
   const [files, setFiles] = useState<File[]>([]);
 
-  const onDrop = useCallback( 
-    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+  const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (rejectedFiles.length) {
         // TODO: Add alert to handle rejection
         console.log('rejectedFiles', rejectedFiles);
         return;
       }
     
-      setFiles(
-        acceptedFiles.map((file: File) => {
-          setFile(file);
-          return Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          });
-        })
-      );
-    },
-    [setFile]
-  )
+      const newFiles = acceptedFiles.map((file: File) => {
+        return Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        });
+      });
+  
+      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+      setFiles([...files, ...newFiles]);
+    }, [files, setFiles]);
 
   const {
     getRootProps,
@@ -131,15 +128,15 @@ const FileUpload = ({
     // isFileDialogActive,
   } = useDropzone({
     onDrop,
-    accept: { 'video/*': [] },
+    accept: { 'image/*': [], 'video/*': [] },
     maxFiles: 1,
     maxSize: 8388608,
   });
 
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setFiles([]);
-    setFile(null);
-    e.stopPropagation();
+  const handleDelete = (fileToDelete: File) => {
+    const updatedFiles = files.filter((file) => file !== fileToDelete);
+    setFiles(updatedFiles);
+    setFiles(updatedFiles);
   };
 
   // const handleSubmit = async () => {
@@ -180,8 +177,8 @@ const FileUpload = ({
       <div style={thumbInner} className="">
         <button
           className="absolute text-sm text-red-600 top-0 right-0 z-10 border bg-white p-0.5 rounded"
-          onClick={handleDelete}
-          title="delete image"
+          onClick={() => handleDelete(file)}
+          title="delete file"
         >
           X
         </button>

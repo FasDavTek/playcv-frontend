@@ -1,9 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, useReactTable, } from '@tanstack/react-table';
 import type { ColumnDef } from '@tanstack/react-table';
 
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
@@ -12,6 +8,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import TableSkeleton from '../TableSkeleton';
 import * as Assets from '../../assets';
 import Button from '../Button';
+
 
 interface ReactTableProps<T extends object> {
   data: T[];
@@ -37,7 +34,9 @@ const Table: React.FC<any> = <T extends object>({
   const filteredData = useMemo(() => {
     if (!searchQuery) return data;
     return data.filter((item) =>
-      JSON.stringify(item).toLowerCase().includes(searchQuery.toLowerCase())
+      Object.values(item).some((value) =>
+        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+      )
     );
   }, [data, searchQuery]);
 
@@ -73,7 +72,7 @@ const Table: React.FC<any> = <T extends object>({
     return <TableSkeleton />;
   }
   return (
-    <div className="mt-10 ce-table-holder">
+    <div className="mt-5 ce-table-holder">
       <h5 className="table-heading px-4">{tableHeading}</h5>
       <div className="flex justify-between items-center px-4 mb-2">
         <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="border rounded-lg outline-none p-2"/>
