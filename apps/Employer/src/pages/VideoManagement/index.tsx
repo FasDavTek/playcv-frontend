@@ -5,6 +5,7 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { createColumnHelper } from '@tanstack/react-table';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Input,
@@ -34,6 +35,7 @@ interface IVideoManagementTable {
 
 const data = [
   {
+    id: '1',
     fullname: 'John Smith',
     email: 'john.smith@example.com',
     courseOfStudy: 'Mathematics',
@@ -43,24 +45,37 @@ const data = [
     grade: '1st class',
   },
   {
+    id: '2',
     fullname: 'John Smith',
     email: 'john.smith@example.com',
-    courseOfStudy: 'Mathematics',
+    courseOfStudy: 'Zoology',
     gender: 'Male',
     phone: '1234567890',
     stateOfOrigin: 'California',
     grade: '1st class',
   },
   {
+    id: '3',
     fullname: 'Johnson Smith',
     email: 'john.smith@example.com',
-    courseOfStudy: 'Mathematics',
+    courseOfStudy: 'Plant Biology',
     gender: 'Male',
     phone: '1234567890',
     stateOfOrigin: 'California',
     grade: '1st class',
   },
   {
+    id: '4',
+    fullname: 'John Smith',
+    email: 'john.smith@example.com',
+    courseOfStudy: 'Mechanical Engineering',
+    gender: 'Male',
+    phone: '1234567890',
+    stateOfOrigin: 'California',
+    grade: '1st class',
+  },
+  {
+    id: '5',
     fullname: 'John Smith',
     email: 'john.smith@example.com',
     courseOfStudy: 'Mathematics',
@@ -70,6 +85,7 @@ const data = [
     grade: '1st class',
   },
   {
+    id: '6',
     fullname: 'John Smith',
     email: 'john.smith@example.com',
     courseOfStudy: 'Mathematics',
@@ -79,6 +95,7 @@ const data = [
     grade: '1st class',
   },
   {
+    id: '7',
     fullname: 'John Smith',
     email: 'john.smith@example.com',
     courseOfStudy: 'Mathematics',
@@ -88,45 +105,40 @@ const data = [
     grade: '1st class',
   },
   {
+    id: '8',
     fullname: 'John Smith',
     email: 'john.smith@example.com',
-    courseOfStudy: 'Mathematics',
+    courseOfStudy: 'Physics',
     gender: 'Male',
     phone: '1234567890',
     stateOfOrigin: 'California',
     grade: '1st class',
   },
   {
+    id: '9',
     fullname: 'John Smith',
     email: 'john.smith@example.com',
-    courseOfStudy: 'Mathematics',
+    courseOfStudy: 'English',
     gender: 'Male',
     phone: '1234567890',
     stateOfOrigin: 'California',
     grade: '1st class',
   },
   {
+    id: '10',
     fullname: 'John Smith',
     email: 'john.smith@example.com',
-    courseOfStudy: 'Mathematics',
+    courseOfStudy: 'Geology',
     gender: 'Male',
     phone: '1234567890',
     stateOfOrigin: 'California',
     grade: '1st class',
   },
   {
+    id: '11',
     fullname: 'John Smith',
     email: 'john.smith@example.com',
-    courseOfStudy: 'Mathematics',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-  {
-    fullname: 'John Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'Mathematics',
+    courseOfStudy: 'Civil Engineering',
     gender: 'Male',
     phone: '1234567890',
     stateOfOrigin: 'California',
@@ -136,41 +148,10 @@ const data = [
 
 const columnHelper = createColumnHelper<IVideoManagementTable>();
 
-const columns = [
-  columnHelper.accessor('fullname', {
-    header: 'Full Name',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('email', {
-    header: 'Email',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('courseOfStudy', {
-    header: 'Course of Study',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('grade', {
-    header: 'Grade',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('gender', {
-    header: 'Gender',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('phone', {
-    header: 'Phone',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('action', {
-    cell: ({ row: { original } }) => {
-      return <Button variant='custom' label="View Profile" />;
-    },
-    header: 'Action',
-  }),
-];
-
 const VideoManagement = () => {
   const [value, setValue] = React.useState(0);
+
+  const navigate = useNavigate();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -179,6 +160,43 @@ const VideoManagement = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
+
+  const handleView = (videoId: number) => {
+    navigate(`/employer/video-management/:${videoId}`);
+  };
+
+  const columns = [
+    columnHelper.accessor('fullname', {
+      header: 'Full Name',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('email', {
+      header: 'Email',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('courseOfStudy', {
+      header: 'Course of Study',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('grade', {
+      header: 'Grade',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('gender', {
+      header: 'Gender',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('phone', {
+      header: 'Phone',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('action', {
+      cell: ({ row }: any) => {
+        return <Button variant='custom' onClick={() => handleView(row.original.id)} label="View Profile" />;
+      },
+      header: 'Action',
+    }),
+  ];
 
   function CustomTabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
@@ -214,7 +232,7 @@ const VideoManagement = () => {
           loading={false}
           data={data}
           columns={columns}
-          tableHeading="All Payments"
+          tableHeading="All Video CV"
         />
     </section>
   );

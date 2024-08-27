@@ -24,9 +24,10 @@ const EmployerSignup = lazy(() => import('../../apps/Employer/src/pages/Signup')
 const Dashboard = lazy(() => import('../../apps/Employer/src/pages/Dashboard'));
 const Profile = lazy(() => import('../../apps/Employer/src/pages/Profile'));
 const Advertisement = lazy(() => import('../../apps/Employer/src/pages/Advertisement'));
+const CreateAdverts = lazy(() => import('../../apps/Employer/src/pages/Advertisement/CreateAdverts/CreateAds'));
 const ManageAdvertisement = lazy(() => import('../../apps/Employer/src/pages/Advertisement/manage'));
 const VideoManagement = lazy(() => import('../../apps/Employer/src/pages/VideoManagement'));
-const JobManagement = lazy(() => import('../../apps/Employer/src/pages/JobManagement'));
+const EmployerManagementById = lazy(() => import('../../apps/Employer/src/pages/VideoDetails'));
 
 // ADMIN ROUTES
 const AdminDashboard = lazy(() => import('../../apps/Admin/src/pages/Dashboard'));
@@ -40,7 +41,8 @@ const OrderManagement = lazy(() => import('../../apps/Admin/src/pages/OrderManag
 const OrderManagementById = lazy(() => import('../../apps/Admin/src/pages/OrderManagement/id'));
 const Management = lazy(() => import('../../apps/Admin/src/pages/VideoManagement'));
 const ManagementById = lazy(() => import('../../apps/Admin/src/pages/VideoDetails'));
-const PriceManagement = lazy(() => import('../../apps/Admin/src/pages/PriceManagement'))
+const PriceManagement = lazy(() => import('../../apps/Admin/src/pages/PriceManagement'));
+const JobManagement = lazy(() => import('../../apps/Admin/src/pages/JobManagement'));
 
 // CANDIDATE ROUTES
 const CandidateHome = lazy(() => import('../../apps/Candidate/src/pages/Home'));
@@ -189,6 +191,10 @@ const router = createBrowserRouter([
                 element: <OrderManagementById />,
             },
             {
+                path: ROUTES.ADMIN_JOB_MANAGEMENT,
+                element: <JobManagement />,
+            },
+            {
                 path: ROUTES.ADMIN_GUIDELINE,
                 element: <div className="h-[500px]">Video CV guideline</div>,
             },
@@ -211,16 +217,20 @@ const router = createBrowserRouter([
                 element: <Advertisement />,
             },
             {
+                path: ROUTES.EMPLOYER_ADVERTISEMENT_CREATE,
+                element: <CreateAdverts />,
+            },
+            {
                 path: ROUTES.EMPLOYER_ADVERTISEMENT_MANAGE,
                 element: <ManageAdvertisement />,
             },
             {
-                path: ROUTES.EMPLOYER_JOB_MANAGEMENT,
-                element: <JobManagement />,
-            },
-            {
                 path: ROUTES.EMPLOYER_VIDEO_MANAGEMENT,
                 element: <VideoManagement />,
+            },
+            {
+                path: ROUTES.EMPLOYER_VIDEO_MANAGEMENT_BY_ID,
+                element: <EmployerManagementById />,
             },
             {
                 path: ROUTES.EMPLOYER_GUIDELINE,

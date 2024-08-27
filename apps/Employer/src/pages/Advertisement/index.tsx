@@ -10,19 +10,20 @@ import CreateAdvertModal from './modals/CreateAdvert';
 
 const Advertisement = () => {
   const [openModal, setOpenModal] = useState<'createAdvert' | null>(null);
+  const navigate = useNavigate();
 
   const closeModal = () => {
     setOpenModal(null);
   };
 
   const openModalFn = () => {
-    setOpenModal('createAdvert');
+    navigate('/employer/advertisement/create');
   };
 
   return (
     <section className="ce-px ce-py">
       <div className="">
-        <Button onClick={openModalFn} label="Add Advert" />
+        <Button onClick={openModalFn} variant='black' label="Add Advert" />
       </div>
       {/* TODO: add filters */}
       <div className="p-4 grid md:grid-cols-4 gap-4">
@@ -64,8 +65,9 @@ const AdvertCard = () => {
       <CardContent sx={{ backgroundColor: '#1E1E1E', height: '106px' }}>
         <Link to={'#'}>
           <Typography variant="subtitle1" fontWeight="bold" color="#FFF">
-            {`demoVideoTitle.slice(0, 30)`}{' '}
+            {"Sample Video Title".slice(0, 30)}
           </Typography>
+
         </Link>
         <div className="flex justify-end mt-2 gap-2">
           <Button
