@@ -5,7 +5,15 @@ import UploadFile from '@mui/icons-material/UploadFileOutlined';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Button, Input, TextArea, FileUpload, DatePicker, Select, } from '@video-cv/ui-components';
+import {
+  Button,
+  Input,
+  TextArea,
+  FileUpload,
+  DatePicker,
+  Select,
+} from '@video-cv/ui-components';
+
 import { advertSchema } from './../../../../../video-cv/src/schema/formValidations/Advert.schema';
 
 // interface IForm {
@@ -24,7 +32,7 @@ const options = [
 
 type faqType = z.infer<typeof advertSchema>;
 
-const CreateAds = () => {
+const CreateAdvertModal = () => {
   const {
     register,
     handleSubmit,
@@ -80,8 +88,7 @@ const CreateAds = () => {
         </div>
       </form>
     </div>
-    
   );
 };
 
-export default CreateAds;
+export default CreateAdvertModal;

@@ -37,6 +37,9 @@ const ContentManagement = lazy(() => import('../../apps/Admin/src/pages/ContentM
 const AdvertisementManagement = lazy(
   () => import('../../apps/Admin/src/pages/AdvertisementManagement')
 );
+const CreateAdvertisement = lazy(
+    () => import('../../apps/Admin/src/pages/AdvertisementManagement/CreateAdverts/CreateAdvert')
+  );
 const OrderManagement = lazy(() => import('../../apps/Admin/src/pages/OrderManagement'));
 const OrderManagementById = lazy(() => import('../../apps/Admin/src/pages/OrderManagement/id'));
 const Management = lazy(() => import('../../apps/Admin/src/pages/VideoManagement'));
@@ -181,6 +184,10 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.ADMIN_ADVERTISEMENT_MANAGEMENT,
                 element: <AdvertisementManagement />,
+            },
+            {
+                path: ROUTES.ADMIN_ADVERTISEMENT_CREATE,
+                element: <CreateAdvertisement />,
             },
             {
                 path: ROUTES.ADMIN_ORDER_MANAGEMENT,
