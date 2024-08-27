@@ -6,6 +6,7 @@ import { Modal } from '@mui/material';
 import { formatDate } from '@video-cv/utils';
 import { Button, Table } from '@video-cv/ui-components';
 import { UserModal } from './modals';
+import { useNavigate } from 'react-router-dom';
 
 type ReportTableColumns = {
   adName: string;
@@ -59,6 +60,7 @@ const columns = [
 
 const Payment = () => {
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
+  const navigate = useNavigate();
 
   const closeModal = () => setOpenModal(null);
 
@@ -68,9 +70,7 @@ const Payment = () => {
         {/* TODO: This should open up a payment modal */}
         <Button
           label="Create Ad Video"
-          onClick={() => {
-            setOpenModal('createAds');
-          }}
+          onClick={() => navigate('/admin/advertisement-management/create')}
         />
       </div>
       {/* Create Payment */}
@@ -80,9 +80,7 @@ const Payment = () => {
         columns={columns}
         tableHeading="All Ads"
       />
-      <Modal open={openModal === 'createAds'} onClose={closeModal}>
-        <UserModal onClose={closeModal} />
-      </Modal>
+      
     </div>
   );
 };

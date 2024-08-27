@@ -32,13 +32,13 @@ const Advertisement = () => {
         <AdvertCard />
         <AdvertCard />
       </div>
-      <Modal
+      {/* <Modal
         className="overflow-scroll pt-[50px] block"
         open={openModal === 'createAdvert'}
         onClose={closeModal}
       >
         <CreateAdvertModal onClose={closeModal} />
-      </Modal>
+      </Modal> */}
     </section>
   );
 };
