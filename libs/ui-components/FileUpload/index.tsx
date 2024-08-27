@@ -82,7 +82,7 @@ interface FileUploadProps {
   uploadRestrictionText?: string;
   borderWidth?: number;
   color?: string;
-  setFile?: (file: File[] | null) => void;
+  setFile?: (file: File[] | File | null) => void;
   setVideoUrl?: (url: string) => void;
 }
 
