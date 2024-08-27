@@ -70,6 +70,7 @@ const Payment = () => {
         {/* TODO: This should open up a payment modal */}
         <Button
           label="Create Ad Video"
+          variant='black'
           onClick={() => navigate('/admin/advertisement-management/create')}
         />
       </div>
