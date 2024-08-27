@@ -155,16 +155,27 @@ const VideoUpload = ({
               containerClass=""
               uploadLabel="Drag and Drop or Browse"
               {...register('media', { required: true })}
-              setFile={(files: File[] | null) => {
-                if (files && files.length > 0) {
-                  const file = files[0]; // Assuming you only want to handle the first file
-                  handleFileUpload(file)
-                    .then((url) => {
-                      setValue('media', url);
-                    })
-                    .catch((err) => {
-                      console.error('Error uploading file:', err);
-                    });
+              setFile={(files: File | File[] | null) => {
+                if (files) {
+                  if (Array.isArray(files)) {
+                    const file = files[0]; // Assuming you only want to handle the first file
+                    handleFileUpload(file)
+                      .then((url) => {
+                        setValue('media', url);
+                      })
+                      .catch((err) => {
+                        console.error('Error uploading file:', err);
+                      });
+                  } else {
+                    // Handle single file case
+                    handleFileUpload(files)
+                      .then((url) => {
+                        setValue('media', url);
+                      })
+                      .catch((err) => {
+                        console.error('Error uploading file:', err);
+                      });
+                  }
                 }
               }}
             />
