@@ -137,7 +137,7 @@ const UploadVideoModal = ({
             containerClass=""
             uploadLabel="Drag and Drop or Browse"
             {...register('video', { required: true })}
-            setFile={(file: File | null) => setValue('video', file)}
+            setFile={(file: File[] | null) => setValue('video', file)}
           />
         </div>
 
