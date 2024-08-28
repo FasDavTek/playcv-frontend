@@ -66,10 +66,10 @@ const columns = [
     header: 'Email',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('role', {
-    header: 'Role',
-    cell: (info) => info.getValue(),
-  }),
+  // columnHelper.accessor('role', {
+  //   header: 'Role',
+  //   cell: (info) => info.getValue(),
+  // }),
   columnHelper.accessor('price', {
     header: 'Price',
     cell: (info) => `₦${info.getValue().toFixed(2)}`,
