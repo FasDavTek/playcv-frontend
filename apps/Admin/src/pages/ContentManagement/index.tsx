@@ -131,6 +131,11 @@ const ContentPage = () => {
     setOpenModal('add');
   };
 
+  const handleEdit = (item: ContentColumns) => {
+    setSelectedItem(item);
+    setOpenModal('edit');
+  };
+
   const columns = [
     columnHelper.accessor('name', {
       header: 'Name',
@@ -142,14 +147,11 @@ const ContentPage = () => {
     }),
     columnHelper.accessor('actions', {
       cell: ({ row: { original } }) => {
-        const handleEdit = () => {
-          setSelectedItem(original);
-          setOpenModal('edit');
-        };
+        const handleEditClick = () => handleEdit(original);
 
         return (
           <div className="flex gap-2">
-            <Button variant="custom" label="Edit" onClick={handleEdit} />
+            <Button variant="custom" label="Edit" onClick={handleEditClick} />
           </div>
         );
       },
@@ -194,7 +196,7 @@ const ContentPage = () => {
         />
       </div>
       
-      <CategoryModal open={openModal === 'add' || openModal === 'edit'} selectedItem={selectedItem} onClose={closeModal}></CategoryModal>
+      <CategoryModal open={openModal === 'add' || openModal === 'edit'} selectedItem={selectedItem} onClose={closeModal} onSubmit={(data) => { console.log('Submitted Data:', data); closeModal(); }} currentTab={activeTab}></CategoryModal>
     </div>
   );
 };
