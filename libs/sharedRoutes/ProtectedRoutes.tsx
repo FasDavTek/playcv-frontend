@@ -33,6 +33,9 @@ const EmployerManagementById = lazy(() => import('../../apps/Employer/src/pages/
 const AdminDashboard = lazy(() => import('../../apps/Admin/src/pages/Dashboard'));
 const NotFound = lazy(() => import('../../apps/Admin/src/pages/Home'));
 const UserManagement = lazy(() => import('../../apps/Admin/src/pages/UserManagement'));
+const ViewSubAdminUser = lazy(() => import('../../apps/Admin/src/pages/UserManagement/SubAdmin/userDetails'));
+const ViewProfessionalUser = lazy(() => import('../../apps/Admin/src/pages/UserManagement/Professional/userDetails'));
+const ViewEmployerUser = lazy(() => import('../../apps/Admin/src/pages/UserManagement/Employer/userDetails'));
 const ContentManagement = lazy(() => import('../../apps/Admin/src/pages/ContentManagement'));
 const AdvertisementManagement = lazy(() => import('../../apps/Admin/src/pages/AdvertisementManagement'));
 const CreateAdvertisement = lazy(() => import('../../apps/Admin/src/pages/AdvertisementManagement/CreateAdverts/CreateAdvert'));
@@ -161,6 +164,18 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.ADMIN_USER_MANAGEMENT,
                 element: <UserManagement />,
+            },
+            {
+                path: ROUTES.ADMIN_VIEW_SUBADMIN_USER,
+                element: <ViewSubAdminUser />,
+            },
+            {
+                path: ROUTES.ADMIN_VIEW_EMPLOYER_USER,
+                element: <ViewEmployerUser />,
+            },
+            {
+                path: ROUTES.ADMIN_VIEW_PROFESSIONAL_USER,
+                element: <ViewProfessionalUser />,
             },
             {
                 path: ROUTES.ADMIN_CONTENT_MANAGEMENT,
