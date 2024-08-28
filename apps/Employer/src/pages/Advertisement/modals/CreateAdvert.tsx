@@ -15,6 +15,8 @@ import {
 } from '@video-cv/ui-components';
 
 import { advertSchema } from './../../../../../video-cv/src/schema/formValidations/Advert.schema';
+import { useNavigate } from 'react-router-dom';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 // interface IForm {
 //   name: string;
@@ -44,11 +46,15 @@ const CreateAdvertModal = () => {
     resolver: zodResolver(advertSchema),
   });
   console.log('errors', errors);
+
+  const navigate = useNavigate();
+
   const onSubmit = (data: faqType) => {
     console.log('Form Data:', data);
   };
   return (
     <div className='p-10 overflow-hidden bg-white'>
+      <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 fixed p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/employer/advertisement')} />
       <h3 className="text-center font-semibold text-xl">Add Advert</h3>
       <form onSubmit={handleSubmit(onSubmit, (err) => console.log('err', err))} className="bg-white mt-[50px] md:mt-0 p-10 lg:p-14 centered-modal-md rounded-lg">
         <h3 className="text-center font-bold text-xl">Add Advert</h3>
