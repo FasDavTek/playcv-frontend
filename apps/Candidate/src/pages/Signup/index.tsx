@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Input, Button, } from '@video-cv/ui-components';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { toast } from 'react-toastify';
 
 const index = () => {
     const [value, setValue] = React.useState(0);
@@ -37,7 +38,7 @@ const index = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!termsAccepted) {
-            alert("Please accept the Terms of Service to proceed.");
+            toast.info("Please accept the Terms of Service to proceed.");
             return;
         }
         console.log('Form submitted', formData);
