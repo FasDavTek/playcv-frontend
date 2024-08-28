@@ -206,7 +206,7 @@ const index = () => {
   ];
   
   return (
-    <div className='p-4'>
+    <div className='p-4 mb-8'>
         {videos.length > 0 ? (
           <Table loading={false} columns={columns} data={videos} />
         ) : (
