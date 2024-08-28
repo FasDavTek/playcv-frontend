@@ -68,7 +68,7 @@ const Layout = ({
           // navbarConfig={navbarConfig}
         />
 
-        <div className="min-h-screen bg-red-500 flex-1 overflow-auto">
+        <div className="min-h-screen flex-1 overflow-auto">
           <Outlet />.
         </div>
         <footer className="bg-[#F6F9F8] py-1 md:py-5 px-3 md:px-10 text-center flex gap-3 justify-center bottom-0 left-0 right-0 fixed">
