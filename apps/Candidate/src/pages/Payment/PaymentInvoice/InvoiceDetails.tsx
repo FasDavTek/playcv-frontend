@@ -113,31 +113,31 @@ const InvoiceDetails = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 mb-8">
         <ChevronLeftIcon className="cursor-pointer text-base mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/candidate/payment')} />
       <div className="mx-auto bg-white shadow-lg rounded-lg">
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-4 lg:p-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">Invoice Details</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h3 className="text-lg font-medium text-gray-600">Video Name:</h3>
-              <p className="text-md text-gray-900">{invoice.videoName}</p>
+              <h3 className="text-md md:text-lg font-medium text-gray-600">Video Name:</h3>
+              <p className="text-sm md:text-md text-gray-900">{invoice.videoName}</p>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-600">Quantity:</h3>
-              <p className="text-md text-gray-900">{invoice.quantity}</p>
+              <h3 className="text-md md:text-lg font-medium text-gray-600">Quantity:</h3>
+              <p className="text-sm md:text-md text-gray-900">{invoice.quantity}</p>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-600">Price:</h3>
-              <p className="text-md text-gray-900">₦{invoice.price}</p>
+              <h3 className="text-md md:text-lg font-medium text-gray-600">Price:</h3>
+              <p className="text-sm md:text-md text-gray-900">₦{invoice.price}</p>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-gray-600">Subtotal:</h3>
-              <p className="text-md text-gray-900">₦{invoice.subTotal}</p>
+              <h3 className="text-md md:text-lg font-medium text-gray-600">Subtotal:</h3>
+              <p className="text-sm md:text-md text-gray-900">₦{invoice.subTotal}</p>
             </div>
             <div className="col-span-1 sm:col-span-2">
-              <h3 className="text-lg font-medium text-gray-600">Type:</h3>
-              <p className="text-md text-gray-900">
+              <h3 className="text-md md:text-lg font-medium text-gray-600">Type:</h3>
+              <p className="text-sm md:text-md text-gray-900">
                 {invoice.type === 'upload' ? 'Upload' : 'Pinned'}
               </p>
             </div>
