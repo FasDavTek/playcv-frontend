@@ -26,15 +26,15 @@ const PriceFields: React.FC<PriceFieldsProps> = ({ label, value, onChange }) => 
 };
 
 const index: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState<'videoUploadPrices' | 'adsPrices' | 'buyVideoPrices'>('videoUploadPrices');;
   const [pinnedVideoPrice, setPinnedVideoPrice] = useState<number | undefined>();
   const [regularVideoPrice, setRegularVideoPrice] = useState<number | undefined>();
   const [videoAdsPrice, setVideoAdsPrice] = useState<number | undefined>();
   const [imageAdsPrice, setImageAdsPrice] = useState<number | undefined>();
   const [buyVideoPrice, setBuyVideoPrice] = useState<number | undefined>();
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
+  const handleTabChange = (tab: 'videoUploadPrices' | 'adsPrices' | 'buyVideoPrices') => {
+    setActiveTab(tab);
   };
 
   const formatCurrency = (value: number): string => {
@@ -88,29 +88,44 @@ const index: React.FC = () => {
   return (
     <Container>
       <Box sx={{ my: 4 }}>
-        <Box className='bg-neutral-100 p-1 items-center rounded-lg'>
-          <Tabs value={activeTab} onChange={handleTabChange} TabIndicatorProps={{ sx: { display: 'none', color: 'none', height: '100%', borderRadius: 2, zIndex: -1, }, }} sx={{ borderColor: 'divider', '& .MuiTab-root': { textTransform: 'none', minWidth: 100, fontWeight: 'semibold', borderRadius: 2, '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.8)', color: 'white' } }, '& .MuiTabs-flexContainer': { gap: 2 }, }}>
-            <Tab label="Video Upload Prices" />
-            <Tab label="Ads Prices" />
-            <Tab label="Buy Video Prices" />
-          </Tabs>
+        <Box className='bg-neutral-100 items-center rounded-lg'>
+          <div className="flex p-1">
+            <button
+              className={`py-2 px-4 text-sm font-medium ${activeTab === 'videoUploadPrices' ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}
+              onClick={() => handleTabChange('videoUploadPrices')}
+            >
+              Video Upload Prices
+            </button>
+            <button
+              className={`py-2 px-4 text-sm font-medium ${activeTab === 'adsPrices' ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}
+              onClick={() => handleTabChange('adsPrices')}
+            >
+              Ads Prices
+            </button>
+            <button
+              className={`py-2 px-4 text-sm font-medium ${activeTab === 'buyVideoPrices' ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}
+              onClick={() => handleTabChange('buyVideoPrices')}
+            >
+              Buy Video Prices
+            </button>
+          </div>
         </Box>
 
-        {activeTab === 0 && (
+        {activeTab === 'videoUploadPrices' && (
           <Stack direction={{ xs: 'column', md: 'row'}} gap={4} mt={4}>
             <PriceFields label="Pinned Video Upload Price" value={pinnedVideoPrice} onChange={setPinnedVideoPrice} />
             <PriceFields label="Regular Video Upload Price" value={regularVideoPrice} onChange={setRegularVideoPrice} />
           </Stack>
         )}
 
-        {activeTab === 1 && (
+        {activeTab === 'adsPrices' && (
           <Stack direction={{ xs: 'column', md: 'row'}} gap={4} mt={4} >
             <PriceFields label="VideoAds Price" value={videoAdsPrice} onChange={setVideoAdsPrice} />
             <PriceFields label="Image Ads Price" value={imageAdsPrice} onChange={setImageAdsPrice} />
           </Stack>
         )}
 
-        {activeTab === 2 && (
+        {activeTab === 'buyVideoPrices' && (
           <Box mt={4} maxWidth='sm'>
             <PriceFields label="Buy Video Price" value={buyVideoPrice} onChange={setBuyVideoPrice} />
           </Box>

@@ -47,7 +47,7 @@ type ModalTypes = null | 'userManagement';
 
 const columnHelper = createColumnHelper<ReportTableColumns>();
 
-const Payment = () => {
+const UserManagement = () => {
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
   const [selectedUser, setSelectedUser] = useState<ReportTableColumns | null>(null);
   const [data, setData] = useState(initialData);
@@ -171,4 +171,4 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default UserManagement;
