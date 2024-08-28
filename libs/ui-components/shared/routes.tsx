@@ -42,6 +42,7 @@ export const ROUTES = {
     CANDIDATE_PROFILE: "profile",
     CANDIDATE_FAQ: "faq",
     CANDIDATE_PAYMENT: "payment",
+    CANDIDATE_PAYMENT_RECORD: "payment/details/:id",
     CANDIDATE_VIDEO_GUIDELINE: "video-guideline",
     RESET_PASSWORD: "/reset-password",
     HOME: "/Home",

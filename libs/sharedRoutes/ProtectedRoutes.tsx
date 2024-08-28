@@ -59,6 +59,7 @@ const Vacancies = lazy(() => import('../../apps/Candidate/src/pages/Vacancies'))
 const CandidateProfile = lazy(() => import('../../apps/Candidate/src/pages/Profile'));
 const FAQ = lazy(() => import('../../apps/Candidate/src/pages/FAQ'));
 const Payment = lazy(() => import('../../apps/Candidate/src/pages/Payment'));
+const PaymentRecords = lazy(() => import('../../apps/Candidate/src/pages/Payment/PaymentInvoice/InvoiceDetails'));
 const CandidateLogin = lazy(() => import('../../apps/Candidate/src/pages/Login'));
 
 
@@ -138,6 +139,10 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.CANDIDATE_PAYMENT,
                 element: <Payment />,
+            },
+            {
+                path: ROUTES.CANDIDATE_PAYMENT_RECORD,
+                element: <PaymentRecords />,
             },
             {
                 path: ROUTES.CANDIDATE_VIDEO_DETAIL,
