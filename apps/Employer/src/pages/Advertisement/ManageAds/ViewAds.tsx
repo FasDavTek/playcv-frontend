@@ -55,8 +55,6 @@ const ViewAds = () => {
     const { id } = useParams<{ id: string }>();
     const [adDetails, setAdDetails] = useState<AdDetails | null>(null);
     const [loading, setLoading] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-    const [editedAdDetails, setEditedAdDetails] = useState<AdDetails | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -65,7 +63,6 @@ const ViewAds = () => {
                 const data = mockAdData.find(ad => ad.id === id);
                 if (data) {
                     setAdDetails(data);
-                    setEditedAdDetails(data);
                 } else {
                     console.error('Ad not found');
                 }
@@ -77,32 +74,6 @@ const ViewAds = () => {
         };
         getAdDetails();
     }, [id]);
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        if (editedAdDetails) {
-            setEditedAdDetails({
-                ...editedAdDetails,
-                [e.target.name]: e.target.value,
-            });
-        }
-    };
-
-    const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (editedAdDetails) {
-            setEditedAdDetails({
-                ...editedAdDetails,
-                adType: e.target.checked ? 'Video' : 'Image',
-            });
-        }
-    };
-
-    const handleSaveChanges = () => {
-        if (editedAdDetails) {
-            setAdDetails(editedAdDetails);
-            setIsEditing(false);
-            // Here you would normally send the updated details to the server
-        }
-    };
 
     if (loading) {
         return (
@@ -121,11 +92,7 @@ const ViewAds = () => {
       <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/advertisement-management')} />
       
       <div className="bg-white p-10 shadow-lg rounded-2xl transform transition-all duration-300 hover:shadow-2xl">
-        <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-semibold text-gray-700">{adDetails.adName}</h1>
-            <Button variant={isEditing? 'red' : 'black'} label={isEditing ? 'Cancel' : 'Edit'} onClick={() => setIsEditing(!isEditing)} />
-        </div>
-        
+        <h1 className="text-4xl font-semibold text-gray-700 mb-6">{adDetails.adName}</h1>
         <p className="mb-8 text-lg text-gray-700 leading-relaxed">{adDetails.description}</p>
         
         <div className="mb-6">

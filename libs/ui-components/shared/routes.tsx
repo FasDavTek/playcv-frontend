@@ -10,7 +10,7 @@ export const ROUTES = {
     EMPLOYER_PROFILE: "profile",
     EMPLOYER_ADVERTISEMENT: "advertisement",
     EMPLOYER_ADVERTISEMENT_CREATE: "advertisement/create",
-    EMPLOYER_ADVERTISEMENT_MANAGE: "advertisement/manage",
+    EMPLOYER_ADVERTISEMENT_MANAGE: "advertisement/view/:id",
     EMPLOYER_VIDEO_MANAGEMENT: "video-management",
     EMPLOYER_VIDEO_MANAGEMENT_BY_ID: "video-management/:id",
     EMPLOYER_GUIDELINE: "video-guideline",

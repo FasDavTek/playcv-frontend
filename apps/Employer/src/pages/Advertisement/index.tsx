@@ -71,7 +71,7 @@ const AdvertCard = () => {
         </Link>
         <div className="flex justify-end mt-2 gap-2">
           <Button
-            onClick={() => navigate('/advertisement/manage/1')}
+            onClick={() => navigate('/advertisement/view/1')}
             variant="success"
             label="manage"
             className="!px-1 !py-1.5 text-white"
