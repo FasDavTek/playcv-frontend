@@ -49,7 +49,7 @@ const Id = () => {
       <div className="bg-white shadow-md rounded-lg p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="flex flex-col">
-            <h5 className="font-semibold text-lg text-gray-700">Customer Name</h5>
+            <h5 className="font-semibold text-lg text-gray-700">Name</h5>
             <p className="">{user.name}</p>
           </div>
           <div className="flex flex-col">
