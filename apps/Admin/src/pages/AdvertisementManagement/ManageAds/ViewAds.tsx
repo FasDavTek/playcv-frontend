@@ -174,7 +174,7 @@ const ViewAds = () => {
                 <Input
                     label="Redirect URL"
                     name="redirectUrl"
-                    className='mb-3'
+                    className='mb-6'
                     value={editedAdDetails?.redirectUrl || ''}
                     onChange={handleInputChange}
                 />
@@ -201,7 +201,7 @@ const ViewAds = () => {
                     color="primary"
                     label="Ad Type"
                     options={options}
-                    className='mb-3'
+                    className='mt-3 mb-3'
                 />
                 <FileUpload
                     containerClass="mt-3"
