@@ -127,7 +127,7 @@ const AdminRoutes: any = [
     pageName: 'Advertisement management',
   },
   {
-    name: 'Order',
+    name: 'Payment Order',
     img: Icons.OrderManagement,
     route: ROUTES.ADMIN_ORDER_MANAGEMENT,
     pageName: 'Order management',
