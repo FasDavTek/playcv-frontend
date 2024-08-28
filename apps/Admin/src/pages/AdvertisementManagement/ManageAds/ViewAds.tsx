@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { CircularProgress, Grid } from '@mui/material';
 import { formatDate } from '@video-cv/utils';
 // import { fetchAdById } from './api';
-import { Button } from '@video-cv/ui-components';
+import dayjs from 'dayjs';
+import { Button, DatePicker, Input, Select, TextArea } from '@video-cv/ui-components';
 import { ArrowBack } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
@@ -123,47 +124,104 @@ const ViewAds = () => {
       <div className="bg-white p-10 shadow-lg rounded-2xl transform transition-all duration-300 hover:shadow-2xl">
         <div className="flex justify-between items-center mb-8">
             <h1 className="text-4xl font-semibold text-gray-700">{adDetails.adName}</h1>
-            <Button variant={isEditing? 'red' : 'black'} label={isEditing ? 'Cancel' : 'Edit'} onClick={() => setIsEditing(!isEditing)} />
+            <Button variant={isEditing? 'red' : 'success'} label={isEditing ? 'Cancel' : 'Edit'} onClick={() => setIsEditing(!isEditing)} />
         </div>
         
-        <p className="mb-8 text-lg text-gray-700 leading-relaxed">{adDetails.description}</p>
-        
-        <div className="mb-6">
-            <span className="font-semibold text-gray-800">Ad Type:</span> <span className="text-gray-600">{adDetails.adType}</span>
-        </div>
-        <div className="mb-6">
-            <span className="font-semibold text-gray-800">Redirect URL:</span>
-            <a href={adDetails.redirectUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 ml-2 underline transition duration-200 hover:text-blue-800">
-                {adDetails.redirectUrl}
-            </a>
-        </div>
-        <div className="mb-6">
-            <span className="font-semibold text-gray-800">Start Date:</span> <span className="text-gray-600">{formatDate(adDetails.startDate)}</span>
-        </div>
-        <div className="mb-6">
-            <span className="font-semibold text-gray-800">End Date:</span> <span className="text-gray-600">{formatDate(adDetails.endDate)}</span>
-        </div>
+        {isEditing ? (
+            <>
+                <Input
+                    label="Ad Name"
+                    name="adName"
+                    className='mt-3'
+                    value={editedAdDetails?.adName || ''}
+                    onChange={handleInputChange}
+                />
+                <TextArea
+                    label="Description"
+                    name="description"
+                    className='mt-3'
+                    rows={4}
+                    value={editedAdDetails?.description || ''}
+                    onChange={handleInputChange}
+                />
+                <Input
+                    label="Redirect URL"
+                    name="redirectUrl"
+                    className='mt-3'
+                    value={editedAdDetails?.redirectUrl || ''}
+                    onChange={handleInputChange}
+                />
+                <DatePicker
+                    label="Start Date"
+                    name="startDate"
+                    className='mt-3'
+                    value={dayjs(editedAdDetails?.startDate)}
+                    onChange={handleInputChange}
+                />
+                <DatePicker
+                    label="End Date"
+                    name="endDate"
+                    className='mt-3'
+                    value={dayjs(editedAdDetails?.endDate)}
+                    onChange={handleInputChange}
+                />
+                <Select
+                    checked={editedAdDetails?.adType === 'Video'}
+                    onChange={handleSwitchChange}
+                    name="adType"
+                    color="primary"
+                    label="Ad Type (Video)"
+                    className='mt-3'
+                />
 
-        <h2 className="text-2xl font-semibold mt-10 mb-6 text-gray-800">Media</h2>
-        <Grid container spacing={4}>
-            {adDetails.media.map((item, index) => (
-                <Grid item xs={12} md={6} key={index}>
-                    {item.type === 'image' ? (
-                        <img
-                            src={item.url}
-                            alt={`Ad media ${index + 1}`}
-                            className="w-full h-auto rounded-xl p-1 transition-transform duration-300 hover:scale-105"
-                        />
-                    ) : (
-                        <video
-                            controls
-                            src={item.url}
-                            className="w-full h-auto rounded-xl p-1 transition-transform duration-300 hover:scale-105"
-                        />
-                    )}
-                </Grid>
-            ))}
-        </Grid>
+                <Button
+                    variant="success"
+                    color="primary"
+                    onClick={handleSaveChanges}
+                    label='Save Changes'
+                    className='mt-3'
+                ></Button>
+            </>
+            ) : (
+                <>
+                    <p className="mb-8 text-lg text-gray-700 leading-relaxed">{adDetails.description}</p>
+                    <div className="mb-6">
+                        <span className="font-semibold text-gray-800">Ad Type:</span> <span className="text-gray-600">{adDetails.adType}</span>
+                    </div>
+                    <div className="mb-6">
+                        <span className="font-semibold text-gray-800">Redirect URL:</span>
+                        <a href={adDetails.redirectUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 ml-2 underline transition duration-200 hover:text-blue-800">
+                            {adDetails.redirectUrl}
+                        </a>
+                    </div>
+                    <div className="mb-6">
+                        <span className="font-semibold text-gray-800">Start Date:</span> <span className="text-gray-600">{formatDate(adDetails.startDate)}</span>
+                    </div>
+                    <div className="mb-6">
+                        <span className="font-semibold text-gray-800">End Date:</span> <span className="text-gray-600">{formatDate(adDetails.endDate)}</span>
+                    </div>
+                    <h2 className="text-2xl font-semibold mt-10 mb-6 text-gray-800">Media</h2>
+                    <Grid container spacing={4}>
+                        {adDetails.media.map((item, index) => (
+                            <Grid item xs={12} md={6} key={index}>
+                                {item.type === 'image' ? (
+                                    <img
+                                        src={item.url}
+                                        alt={`Ad Media ${index + 1}`}
+                                        className="rounded-lg shadow-md"
+                                    />
+                                ) : (
+                                    <video
+                                        src={item.url}
+                                        controls
+                                        className="rounded-lg shadow-md"
+                                    />
+                                )}
+                            </Grid>
+                        ))}
+                    </Grid>
+                </>
+            )}
       </div>
 
     </div>
