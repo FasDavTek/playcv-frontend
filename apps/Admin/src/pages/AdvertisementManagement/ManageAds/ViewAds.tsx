@@ -150,8 +150,7 @@ const ViewAds = () => {
       <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/advertisement-management')} />
       
       <div className="bg-white p-10 shadow-lg rounded-2xl transform transition-all duration-300 hover:shadow-2xl">
-        <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-semibold text-gray-700">{adDetails.adName}</h1>
+        <div className="flex justify-end items-center mb-4">
             <Button variant={isEditing? 'red' : 'success'} label={isEditing ? 'Cancel' : 'Edit Advert'} onClick={() => setIsEditing(!isEditing)} />
         </div>
         
@@ -221,20 +220,23 @@ const ViewAds = () => {
             </>
             ) : (
                 <>
-                    <p className="mb-8 text-lg text-gray-700 leading-relaxed">{adDetails.description}</p>
-                    <div className="mb-6">
+                    <h1 className="text-3xl font-semibold text-gray-700 mb-4">{adDetails.adName}</h1>
+                    <div className="mb-3">
+                        <span className="font-semibold text-gray-800">Description:</span> <span className="text-gray-600 text-lg leading-relaxed">{adDetails.description}</span>
+                    </div>
+                    <div className="mb-3">
                         <span className="font-semibold text-gray-800">Ad Type:</span> <span className="text-gray-600">{adDetails.adType}</span>
                     </div>
-                    <div className="mb-6">
+                    <div className="mb-3">
                         <span className="font-semibold text-gray-800">Redirect URL:</span>
                         <a href={adDetails.redirectUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 ml-2 underline transition duration-200 hover:text-blue-800">
                             {adDetails.redirectUrl}
                         </a>
                     </div>
-                    <div className="mb-6">
+                    <div className="mb-3">
                         <span className="font-semibold text-gray-800">Start Date:</span> <span className="text-gray-600">{formatDate(adDetails.startDate)}</span>
                     </div>
-                    <div className="mb-6">
+                    <div className="mb-3">
                         <span className="font-semibold text-gray-800">End Date:</span> <span className="text-gray-600">{formatDate(adDetails.endDate)}</span>
                     </div>
                     <h2 className="text-xl font-semibold mt-10 mb-6 text-gray-800">Media</h2>
