@@ -121,23 +121,23 @@ const InvoiceDetails = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <h3 className="text-lg font-medium text-gray-600">Video Name:</h3>
-              <p className="text-lg text-gray-900">{invoice.videoName}</p>
+              <p className="text-md text-gray-900">{invoice.videoName}</p>
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-600">Quantity:</h3>
-              <p className="text-lg text-gray-900">{invoice.quantity}</p>
+              <p className="text-md text-gray-900">{invoice.quantity}</p>
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-600">Price:</h3>
-              <p className="text-lg text-gray-900">₦{invoice.price}</p>
+              <p className="text-md text-gray-900">₦{invoice.price}</p>
             </div>
             <div>
               <h3 className="text-lg font-medium text-gray-600">Subtotal:</h3>
-              <p className="text-lg text-gray-900">₦{invoice.subTotal}</p>
+              <p className="text-md text-gray-900">₦{invoice.subTotal}</p>
             </div>
             <div className="col-span-1 sm:col-span-2">
               <h3 className="text-lg font-medium text-gray-600">Type:</h3>
-              <p className="text-lg text-gray-900">
+              <p className="text-md text-gray-900">
                 {invoice.type === 'upload' ? 'Upload' : 'Pinned'}
               </p>
             </div>
