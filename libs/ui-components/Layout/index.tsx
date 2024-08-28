@@ -68,7 +68,7 @@ const Layout = ({
           // navbarConfig={navbarConfig}
         />
 
-        <div className="">
+        <div className="h-screen">
           <Outlet />.
         </div>
         <footer className="bg-[#F6F9F8] py-5 px-10 text-center flex gap-3 justify-center bottom-0 left-0 right-0 fixed">
