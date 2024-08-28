@@ -77,7 +77,7 @@ const CreateAdvertModal = () => {
           />
           <div className="">
             <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
-              Advert Upload (Multiple Files)
+              Media Upload (Multiple Files)
             </label>
             <FileUpload
               uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
