@@ -1,13 +1,8 @@
 import { useEffect, useState } from 'react';
-
 import { useForm, Controller } from 'react-hook-form';
-import {
-  Button,
-  Input,
-  TextArea,
-  FileUpload,
-  Select,
-} from '@video-cv/ui-components';
+import { Button, Input, TextArea, FileUpload, Select, } from '@video-cv/ui-components';
+import { IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface IForm {
   category?: string;
@@ -19,6 +14,7 @@ interface CategoryModalProps {
   onClose: () => void;
   onSubmit?: (data: IForm) => void;
   selectedItem?: IForm | null;
+  currentTab: string;
 }
 
 const CategoryModal = ({
@@ -26,6 +22,7 @@ const CategoryModal = ({
   onClose,
   onSubmit = () => {},
   selectedItem = null,
+  currentTab,
 }: CategoryModalProps) => {
   const { register, handleSubmit, watch, setValue, control } = useForm<IForm>();
 
@@ -38,24 +35,64 @@ const CategoryModal = ({
 
   if (!open) return null;
 
+  const getLabel = () => {
+    switch (currentTab) {
+      case 'faq':
+        return { category: 'Question', role: 'Answer' };
+      case 'state':
+        return { category: 'State Name', role: 'Abbreviation' };
+      case 'institutions':
+        return { category: 'Institution Name', role: 'Location' };
+      case 'courses':
+        return { category: 'Course Title', role: 'Duration' };
+      case 'industries':
+        return { category: 'Industry Name', role: 'Description' };
+      case 'specialization':
+        return { category: 'Specialization Name', role: 'Description' };
+      case 'jobFunctions':
+        return { category: 'Job Function', role: 'Description' };
+      case 'marketplaceCategories':
+        return { category: 'Category Name', role: 'Description' };
+      case 'qualifications':
+        return { category: 'Qualification', role: 'Description' };
+      case 'siteTestimonials':
+        return { category: 'Name', role: 'Testimonial' };
+      case 'degreeClass':
+        return { category: 'Degree Class', role: 'Description' };
+      default:
+        return { category: 'Category', role: 'Role' };
+    }
+  };
+
+  const labels = getLabel();
+
+  const handleFormSubmit = (data: IForm) => {
+    console.log('Current Tab:', currentTab);
+    onSubmit(data);
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="bg-white p-10 lg:p-14 centered-modal-md rounded-lg"
-    >
-      <h3 className="text-center font-bold text-xl">Create New Category</h3>
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="relative bg-white p-10 lg:p-14 centered-modal-md rounded-lg">
+      <CloseIcon className='absolute cursor-pointer hover:rounded-full hover:bg-gray-400 hover:text-white top-4 right-6' onClick={onClose} />
+        
+      <h3 className="text-center font-semibold text-xl">{selectedItem ? 'Edit Category' : 'Create New Category'}</h3>
       <div className="my-5 flex flex-col gap-5">
         <Input
-          label="Category"
+          label={labels.category}
           {...register('category')}
           // error={}
+        />
+        <TextArea
+          label={labels.role}
+          {...register('role')}
         />
         <Button
           onClick={() => {
             ('');
           }}
+          type="submit"
           className="w-full"
-          label="Create Category"
+          label={selectedItem ? 'Update Category' : 'Create Category'}
         />
       </div>
     </form>
