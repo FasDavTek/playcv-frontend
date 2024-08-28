@@ -34,12 +34,9 @@ const AdminDashboard = lazy(() => import('../../apps/Admin/src/pages/Dashboard')
 const NotFound = lazy(() => import('../../apps/Admin/src/pages/Home'));
 const UserManagement = lazy(() => import('../../apps/Admin/src/pages/UserManagement'));
 const ContentManagement = lazy(() => import('../../apps/Admin/src/pages/ContentManagement'));
-const AdvertisementManagement = lazy(
-  () => import('../../apps/Admin/src/pages/AdvertisementManagement')
-);
-const CreateAdvertisement = lazy(
-    () => import('../../apps/Admin/src/pages/AdvertisementManagement/CreateAdverts/CreateAdvert')
-  );
+const AdvertisementManagement = lazy(() => import('../../apps/Admin/src/pages/AdvertisementManagement'));
+const CreateAdvertisement = lazy(() => import('../../apps/Admin/src/pages/AdvertisementManagement/CreateAdverts/CreateAdvert'));
+const ViewAdvertisement = lazy(() => import('../../apps/Admin/src/pages/AdvertisementManagement/ManageAds/ViewAds'));
 const OrderManagement = lazy(() => import('../../apps/Admin/src/pages/OrderManagement'));
 const OrderManagementById = lazy(() => import('../../apps/Admin/src/pages/OrderManagement/id'));
 const Management = lazy(() => import('../../apps/Admin/src/pages/VideoManagement'));
@@ -188,6 +185,10 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.ADMIN_ADVERTISEMENT_CREATE,
                 element: <CreateAdvertisement />,
+            },
+            {
+                path: ROUTES.ADMIN_ADVERTISEMENT_VIEW,
+                element: <ViewAdvertisement />,
             },
             {
                 path: ROUTES.ADMIN_ORDER_MANAGEMENT,
