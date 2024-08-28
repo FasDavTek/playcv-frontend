@@ -4,7 +4,7 @@ import { CircularProgress, Grid } from '@mui/material';
 import { formatDate } from '@video-cv/utils';
 // import { fetchAdById } from './api';
 import dayjs from 'dayjs';
-import { Button, DatePicker, Input, Select, TextArea } from '@video-cv/ui-components';
+import { Button, DatePicker, FileUpload, Input, Select, TextArea } from '@video-cv/ui-components';
 import { ArrowBack } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
@@ -18,6 +18,12 @@ type AdDetails = {
     endDate: string;
     media: { type: 'image' | 'video'; url: string }[];
 };
+
+type FileUploadProps = {
+    setFile?: (files: File[] | File | null) => void;
+    // other props
+};
+
 
 const mockAdData: AdDetails[] = [
     {
@@ -52,12 +58,18 @@ const mockAdData: AdDetails[] = [
     },
 ];
 
+const options = [
+    { value: 'video', label: 'Video' },
+    { value: 'image', label: 'Image' },
+];
+
 const ViewAds = () => {
     const { id } = useParams<{ id: string }>();
     const [adDetails, setAdDetails] = useState<AdDetails | null>(null);
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [editedAdDetails, setEditedAdDetails] = useState<AdDetails | null>(null);
+    const [newMedia, setNewMedia] = useState<{ type: 'image' | 'video'; url: string }[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -99,11 +111,27 @@ const ViewAds = () => {
 
     const handleSaveChanges = () => {
         if (editedAdDetails) {
-            setAdDetails(editedAdDetails);
+            setAdDetails({
+                ...editedAdDetails,
+                media: [...(adDetails?.media || []), ...newMedia]
+            });
             setIsEditing(false);
             // Here you would normally send the updated details to the server
         }
     };
+
+    const handleFileUpload = (files: File[] | File | null) => {
+        if (files) {
+            const newFiles = Array.isArray(files) ? files : [files];
+            const mappedFiles = newFiles.map((file) => ({
+                type: file.type.startsWith('image/') ? 'image' : 'video',
+                url: URL.createObjectURL(file),
+            })) as { type: 'image' | 'video'; url: string }[];
+            setNewMedia(mappedFiles);
+        }
+    };
+    
+    
 
     if (loading) {
         return (
@@ -123,8 +151,8 @@ const ViewAds = () => {
       
       <div className="bg-white p-10 shadow-lg rounded-2xl transform transition-all duration-300 hover:shadow-2xl">
         <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-semibold text-gray-700">{adDetails.adName}</h1>
-            <Button variant={isEditing? 'red' : 'success'} label={isEditing ? 'Cancel' : 'Edit'} onClick={() => setIsEditing(!isEditing)} />
+            <h1 className="text-3xl font-semibold text-gray-700">{adDetails.adName}</h1>
+            <Button variant={isEditing? 'red' : 'success'} label={isEditing ? 'Cancel' : 'Edit Advert'} onClick={() => setIsEditing(!isEditing)} />
         </div>
         
         {isEditing ? (
@@ -139,7 +167,7 @@ const ViewAds = () => {
                 <TextArea
                     label="Description"
                     name="description"
-                    className='mt-3'
+                    className='mb-3'
                     rows={4}
                     value={editedAdDetails?.description || ''}
                     onChange={handleInputChange}
@@ -147,31 +175,40 @@ const ViewAds = () => {
                 <Input
                     label="Redirect URL"
                     name="redirectUrl"
-                    className='mt-3'
+                    className='mb-3'
                     value={editedAdDetails?.redirectUrl || ''}
                     onChange={handleInputChange}
                 />
-                <DatePicker
-                    label="Start Date"
-                    name="startDate"
-                    className='mt-3'
-                    value={dayjs(editedAdDetails?.startDate)}
-                    onChange={handleInputChange}
-                />
-                <DatePicker
-                    label="End Date"
-                    name="endDate"
-                    className='mt-3'
-                    value={dayjs(editedAdDetails?.endDate)}
-                    onChange={handleInputChange}
-                />
+                <>
+                    <DatePicker
+                        label="Start Date"
+                        name="startDate"
+                        className='mb-10'
+                        value={dayjs(editedAdDetails?.startDate)}
+                        onChange={handleInputChange}
+                    />
+                    <DatePicker
+                        label="End Date"
+                        name="endDate"
+                        className='mb-10'
+                        value={dayjs(editedAdDetails?.endDate)}
+                        onChange={handleInputChange}
+                    />
+                </>
                 <Select
                     checked={editedAdDetails?.adType === 'Video'}
                     onChange={handleSwitchChange}
                     name="adType"
                     color="primary"
-                    label="Ad Type (Video)"
-                    className='mt-3'
+                    label="Ad Type"
+                    options={options}
+                    className='mb-3'
+                />
+                <FileUpload
+                    containerClass="mt-3"
+                    uploadLabel="Drag and drop files here, or click to select files"
+                    uploadRestrictionText="Accepted formats: images, videos (max size: 8MB)"
+                    setFile={handleFileUpload}
                 />
 
                 <Button
@@ -200,9 +237,9 @@ const ViewAds = () => {
                     <div className="mb-6">
                         <span className="font-semibold text-gray-800">End Date:</span> <span className="text-gray-600">{formatDate(adDetails.endDate)}</span>
                     </div>
-                    <h2 className="text-2xl font-semibold mt-10 mb-6 text-gray-800">Media</h2>
+                    <h2 className="text-xl font-semibold mt-10 mb-6 text-gray-800">Media</h2>
                     <Grid container spacing={4}>
-                        {adDetails.media.map((item, index) => (
+                        {[...adDetails.media, ...newMedia].map((item, index) => (
                             <Grid item xs={12} md={6} key={index}>
                                 {item.type === 'image' ? (
                                     <img
