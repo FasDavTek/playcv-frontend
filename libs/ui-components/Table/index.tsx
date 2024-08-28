@@ -24,7 +24,7 @@ const Table: React.FC<any> = <T extends object>({
   columns,
   loading = true,
   tableHeading,
-  tableHeadingColorClassName = '!bg-ce-lgreen',
+  tableHeadingColorClassName = 'bg-gray-200',
   tableRowOnclickFunction = () => {},
 }: ReactTableProps<T>) => {
   const [searchQuery, setSearchQuery] = useState('');
