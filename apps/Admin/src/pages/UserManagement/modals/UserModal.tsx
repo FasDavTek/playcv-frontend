@@ -2,32 +2,29 @@ import { useState } from 'react';
 
 import { useForm, Controller } from 'react-hook-form';
 
-import {
-  Button,
-  Input,
-  TextArea,
-  FileUpload,
-  Select,
-} from '@video-cv/ui-components';
+import { Button, Input, TextArea, FileUpload, Select, } from '@video-cv/ui-components';
 
 interface IForm {
+  name: string;
   email: string;
   role: string;
+  phoneNumber: string;
+  address: string;
+  profilePicture: FileList | null;
 }
 
 const options = [
   { value: 'admin', label: 'Admin' },
   { value: 'user', label: 'User' },
+  { value: 'manager', label: 'Manager' },
 ];
 
-const UploadVideoModal = ({
+const UserModal = ({
   onClose,
-  onSubmit = () => {
-    ('');
-  },
+  onSubmit = () => {},
 }: {
   onClose: (e: any) => void;
-  onSubmit?: () => void;
+  onSubmit?: (data: IForm) => void;
 }) => {
   const { register, handleSubmit, watch, setValue, control } = useForm<IForm>();
 
@@ -42,6 +39,11 @@ const UploadVideoModal = ({
           label="Email"
           {...register('email')}
           // error={}
+        />
+        <Input
+          label="Email"
+          type="email"
+          {...register('email', { required: 'Email is required' })}
         />
         <Controller
           name="role"
@@ -59,10 +61,19 @@ const UploadVideoModal = ({
             />
           )}
         />
+        <Input
+          label="Phone Number"
+          type="tel"
+          {...register('phoneNumber')}
+        />
+        <TextArea
+          label="Address"
+          {...register('address')}
+        />
         <Button
-          onClick={() => {
-            ('');
-          }}
+          onClick={() => {}}
+          type="submit"
+          variant='black'
           className="w-full"
           label="Create User"
         />
@@ -71,4 +82,4 @@ const UploadVideoModal = ({
   );
 };
 
-export default UploadVideoModal;
+export default UserModal;
