@@ -91,7 +91,7 @@ const AdminRoutes: any = [
     pageName: 'Dashboard',
   },
   {
-    name: 'All User',
+    name: 'All Users',
     img: Icons.UserMagnagement,
     route: ROUTES.ADMIN_USER_MANAGEMENT,
     pageName: 'User Management',
