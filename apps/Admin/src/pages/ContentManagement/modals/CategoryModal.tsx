@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useForm, Controller } from 'react-hook-form';
-
 import {
   Button,
   Input,
@@ -11,25 +10,33 @@ import {
 } from '@video-cv/ui-components';
 
 interface IForm {
-  category: string;
-  role: string;
+  category?: string;
+  role?: string;
 }
 
-const options = [
-  { value: 'admin', label: 'Admin' },
-  { value: 'user', label: 'User' },
-];
+interface CategoryModalProps {
+  open: boolean;
+  onClose: () => void;
+  onSubmit?: (data: IForm) => void;
+  selectedItem?: IForm | null;
+}
 
-const UploadVideoModal = ({
+const CategoryModal = ({
+  open,
   onClose,
-  onSubmit = () => {
-    ('');
-  },
-}: {
-  onClose: (e: any) => void;
-  onSubmit?: () => void;
-}) => {
+  onSubmit = () => {},
+  selectedItem = null,
+}: CategoryModalProps) => {
   const { register, handleSubmit, watch, setValue, control } = useForm<IForm>();
+
+  useEffect(() => {
+    if (selectedItem) {
+      setValue('category', selectedItem.category || '');
+      setValue('role', selectedItem.role || '');
+    }
+  }, [selectedItem, setValue]);
+
+  if (!open) return null;
 
   return (
     <form
@@ -55,4 +62,4 @@ const UploadVideoModal = ({
   );
 };
 
-export default UploadVideoModal;
+export default CategoryModal;
