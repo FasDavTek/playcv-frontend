@@ -16,7 +16,7 @@ const CandidateRoutes = [
     pageName: 'Profile',
   },
   {
-    name: 'Video',
+    name: 'My CV Warehouse',
     img: Icons.VideoManagement,
     route: ROUTES.CANDIDATE_VIDEO_MANAGEMENT,
     pageName: 'My Videos',
@@ -34,7 +34,7 @@ const CandidateRoutes = [
     pageName: 'Job Listing',
   },
   {
-    name: 'Payment',
+    name: 'All Payments',
     img: Icons.Payment,
     route: ROUTES.CANDIDATE_PAYMENT,
     pageName: 'Payment History',
@@ -64,7 +64,7 @@ const EmployerRoutes: any = [
     pageName: 'Profile',
   },
   {
-    name: 'Video',
+    name: 'My CV Warehouse',
     img: Icons.Guideline,
     route: ROUTES.EMPLOYER_VIDEO_MANAGEMENT,
     pageName: 'Video Management',
