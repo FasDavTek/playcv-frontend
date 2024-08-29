@@ -2,11 +2,7 @@ import React from 'react';
 
 import cx from 'classnames';
 import { MenuItem, Select } from '@mui/material';
-import {
-  ControllerRenderProps,
-  FieldError,
-  FieldValues,
-} from 'react-hook-form';
+import { ControllerRenderProps, FieldError, FieldValues, } from 'react-hook-form';
 
 interface SelectProps<T extends string>
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -24,7 +20,7 @@ const SelectDropdown: React.FC<any> = <T extends string>({
   id,
   containerClass,
   options = [],
-  placeholder,
+  placeholder = 'Select an option',
   disabled,
   field,
   withLabelDescription = false,
@@ -66,6 +62,7 @@ const SelectDropdown: React.FC<any> = <T extends string>({
         disabled={disabled}
         size="small"
         {...field}
+        displayEmpty
       >
         <MenuItem disabled value="">
           <em>{placeholder}</em>

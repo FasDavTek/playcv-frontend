@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Button, Table } from '@video-cv/ui-components';
 import { useNavigate } from 'react-router-dom';
+import JobStatusModal from './modal/jobStatusModal';
 
 type Vacancy = {
   id: number;
@@ -154,6 +155,8 @@ const generateSampleVacancies = (type: 'active' | 'pending') => {
 
 const JobManagement = () => {
   const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<Vacancy | null>(null);
   const navigate = useNavigate();
 
   const columns = [
@@ -242,15 +245,20 @@ const JobManagement = () => {
           console.log(`Editing vacancy ID: ${original.id}`);
         };
 
-        const handleManage = () => {
-          // Handle manage action
+        const handleManage = (job: Vacancy) => {
+          setSelectedJob(job);
+          navigate(`/admin/job-management/manage/${original.id}`, {
+            state: { job },
+          });
+          // setSelectedJob(original);
+          // setModalOpen(true);
           console.log(`Managing vacancy ID: ${original.id}`);
         };
 
         return (
           <div className="flex gap-2">
             <Button variant="success" label="Edit" onClick={handleEdit} />
-            <Button variant="custom" label="Manage" onClick={handleManage} />
+            <Button variant="custom" label="Manage" onClick={() => handleManage(original)} />
           </div>
         );
       },
@@ -260,7 +268,11 @@ const JobManagement = () => {
   const data = generateSampleVacancies(activeTab);
 
   const handleAddVacancy = () => {
-    navigate('/admin/job-management/add-vacancy')
+    navigate('/admin/job-management/vacancy')
+  };
+
+  const handleUpdate = async (id: number, updates: { status: string }) => {
+    // Implement update logic here
   };
 
   return (
@@ -296,6 +308,13 @@ const JobManagement = () => {
           }`}
         />
       </div>
+
+      <JobStatusModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        job={selectedJob!}
+        onUpdate={handleUpdate}
+      />
     </div>
   );
 };
