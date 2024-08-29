@@ -72,7 +72,7 @@ const Table: React.FC<any> = <T extends object>({
     return <TableSkeleton />;
   }
   return (
-    <div className="mt-5 ce-table-holder">
+    <div className="relative mt-5 ce-table-holder hide-scrollbar">
       <h5 className="table-heading px-4">{tableHeading}</h5>
       <div className="flex justify-between items-center px-4 mb-2">
         <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="border rounded-lg outline-none p-2"/>
@@ -132,7 +132,7 @@ const Table: React.FC<any> = <T extends object>({
           </tbody>
         </table>
       )}
-      <div className='flex justify-end gap-2 px-4'>
+      <div className='sticky left-0 right-0 mt-2 flex justify-end gap-2 px-4'>
         <Button variant='custom' icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
           Previous
         </Button>

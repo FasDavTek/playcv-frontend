@@ -8,6 +8,11 @@ type Vacancy = {
   startDate: string;
   location: string;
   employerName: string;
+  companyImage: string;
+  jobDetails: string;
+  qualifications: string;
+  keyResponsibilities: string;
+  companyEmail: string;
   status: 'Active' | 'Expired' | 'Pending' | 'Rejected';
   jobUrl: string;
   actions: 'actions';
@@ -16,46 +21,131 @@ type Vacancy = {
 const columnHelper = createColumnHelper<Vacancy>();
 
 const generateSampleVacancies = (type: 'active' | 'pending') => {
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short', // You can use 'long' for full month names
+      year: 'numeric',
+    });
+  };
+
   if (type === 'active') {
     return [
       {
         id: 1,
         title: 'Software Engineer',
-        startDate: '2024-09-01',
+        startDate: formatDate('2024-09-01'),
         location: 'San Francisco, CA',
         employerName: 'TechCorp Inc.',
+        companyImage: '/images/techcorp.png',
+        jobDetails: 'Developing and maintaining software applications.',
+        qualifications: 'BSc in Computer Science or related field.',
+        keyResponsibilities: 'Writing clean, scalable code.',
+        companyEmail: 'hr@techcorp.com',
         status: 'Active',
         jobUrl: 'https://techcorp.com/jobs/123',
       },
       {
         id: 2,
         title: 'Product Manager',
-        startDate: '2024-08-15',
+        startDate: formatDate('2024-08-15'),
         location: 'New York, NY',
         employerName: 'BizSolutions',
+        companyImage: '/images/bizsolutions.png',
+        jobDetails: 'Overseeing product development and strategy.',
+        qualifications: 'MBA or equivalent experience.',
+        keyResponsibilities: 'Defining product vision and strategy.',
+        companyEmail: 'contact@bizsolutions.com',
         status: 'Expired',
         jobUrl: 'https://bizsolutions.com/jobs/456',
+      },
+      {
+        id: 3,
+        title: 'Data Analyst',
+        startDate: formatDate('2024-08-05'),
+        location: 'Austin, TX',
+        employerName: 'DataCorp',
+        companyImage: '/images/datacorp.png',
+        jobDetails: 'Analyzing and interpreting complex data.',
+        qualifications: 'Experience with SQL and Python.',
+        keyResponsibilities: 'Generating actionable insights from data.',
+        companyEmail: 'jobs@datacorp.com',
+        status: 'Active',
+        jobUrl: 'https://datacorp.com/jobs/789',
+      },
+      {
+        id: 4,
+        title: 'HR Specialist',
+        startDate: formatDate('2024-07-30'),
+        location: 'Seattle, WA',
+        employerName: 'HRTech',
+        companyImage: '/images/hrtech.png',
+        jobDetails: 'Managing recruitment and employee relations.',
+        qualifications: 'Experience in HR management.',
+        keyResponsibilities: 'Developing HR policies and procedures.',
+        companyEmail: 'hr@hrtech.com',
+        status: 'Expired',
+        jobUrl: 'https://hrtech.com/jobs/1011',
       },
     ];
   } else {
     return [
       {
-        id: 3,
+        id: 5,
         title: 'Graphic Designer',
-        startDate: '2024-07-20',
+        startDate: formatDate('2024-07-20'),
         location: 'Los Angeles, CA',
         employerName: 'CreativeWorks',
+        companyImage: '/images/creativeworks.png',
+        jobDetails: 'Designing creative assets for marketing campaigns.',
+        qualifications: 'Proficiency in Adobe Creative Suite.',
+        keyResponsibilities: 'Creating visual content for digital platforms.',
+        companyEmail: 'design@creativeworks.com',
         status: 'Pending',
         jobUrl: 'https://creativeworks.com/jobs/789',
       },
       {
-        id: 4,
+        id: 6,
         title: 'Marketing Specialist',
-        startDate: '2024-06-10',
+        startDate: formatDate('2024-06-10'),
         location: 'Chicago, IL',
         employerName: 'MarketLeads',
+        companyImage: '/images/marketleads.png',
+        jobDetails: 'Executing marketing strategies and campaigns.',
+        qualifications: 'Experience in digital marketing.',
+        keyResponsibilities: 'Developing marketing materials.',
+        companyEmail: 'marketing@marketleads.com',
         status: 'Rejected',
         jobUrl: 'https://marketleads.com/jobs/1011',
+      },
+      {
+        id: 7,
+        title: 'Sales Manager',
+        startDate: formatDate('2024-05-15'),
+        location: 'Miami, FL',
+        employerName: 'SalesCorp',
+        companyImage: '/images/salescorp.png',
+        jobDetails: 'Managing the sales team and driving revenue.',
+        qualifications: 'Experience in sales management.',
+        keyResponsibilities: 'Achieving sales targets.',
+        companyEmail: 'sales@salescorp.com',
+        status: 'Pending',
+        jobUrl: 'https://salescorp.com/jobs/1213',
+      },
+      {
+        id: 8,
+        title: 'Operations Manager',
+        startDate: formatDate('2024-04-25'),
+        location: 'Dallas, TX',
+        employerName: 'OpsGlobal',
+        companyImage: '/images/opsglobal.png',
+        jobDetails: 'Overseeing daily operations and logistics.',
+        qualifications: 'Experience in operations management.',
+        keyResponsibilities: 'Streamlining operational processes.',
+        companyEmail: 'ops@opsglobal.com',
+        status: 'Rejected',
+        jobUrl: 'https://opsglobal.com/jobs/1415',
       },
     ];
   }
@@ -66,16 +156,16 @@ const JobManagement = () => {
 
   const columns = [
     columnHelper.accessor('title', {
-      header: 'Title',
+      header: 'Job Title',
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('employerName', {
       header: 'Employer/Organization Name',
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('location', {
-      header: 'Location',
-      cell: (info) => info.getValue(),
+    columnHelper.accessor('companyEmail', {
+      header: 'Company Email',
+      cell: (info) => <a href={`mailto:${info.getValue()}`}>{info.getValue()}</a>,
     }),
     columnHelper.accessor('jobUrl', {
       header: 'Job URL',
@@ -84,6 +174,22 @@ const JobManagement = () => {
           {info.getValue()}
         </a>
       ),
+    }),
+    columnHelper.accessor('qualifications', {
+      header: 'Qualifications',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('jobDetails', {
+      header: 'Job Details',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('location', {
+      header: 'Location',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('keyResponsibilities', {
+      header: 'Key Responsibilities',
+      cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('startDate', {
       header: 'Start Date',
@@ -194,153 +300,3 @@ const JobManagement = () => {
 };
 
 export default JobManagement;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useState } from 'react';
-// import { Grid, Typography, Container } from '@mui/material';
-// import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
-// import ReactQuill from 'react-quill';
-// import 'react-quill/dist/quill.snow.css'; // import styles
-// import { Input, Button } from '@video-cv/ui-components';
-// import { toast } from 'react-toastify';
-
-// const JobManagement = () => {
-//   const [jobTitle, setJobTitle] = useState('');
-//   const [companyImage, setCompanyImage] = useState(null);
-//   const [companyName, setCompanyName] = useState('');
-//   const [companyLocation, setCompanyLocation] = useState('');
-//   const [jobDetails, setJobDetails] = useState('');
-//   const [qualifications, setQualifications] = useState('');
-//   const [keyResponsibilities, setKeyResponsibilities] = useState('');
-//   const [companyEmail, setCompanyEmail] = useState('');
-//   const [applyLink, setApplyLink] = useState('');
-
-//   const handleImageUpload = (event: any) => {
-//     setCompanyImage(event.target.files[0]);
-//   };
-
-//   const handleSubmit = () => {
-//     // Handle the submission of form data
-//     console.log({
-//       jobTitle,
-//       companyImage,
-//       companyName,
-//       companyLocation,
-//       jobDetails,
-//       qualifications,
-//       keyResponsibilities,
-//       companyEmail,
-//       applyLink,
-//     });
-
-//     toast.success('Job posted successfully!');
-//   };
-
-//   return (
-//     <Container maxWidth="md" className='py-3'>
-//       <Typography variant="h4" gutterBottom>
-//         Content Management
-//       </Typography>
-//       <Grid container spacing={3}>
-//         <Grid item xs={12}>
-//           <Input
-//             className='rounded-xl'
-//             label="Job Title"
-//             value={jobTitle}
-//             onChange={(e) => setJobTitle(e.target.value)}
-//           />
-//         </Grid>
-//         <Grid item xs={12}>
-//           <Button
-//             variant="black"
-//             label='Upload Company Image'
-//             icon={<CloudUploadIcon />}
-//           >
-//             Upload Company Image
-//             <input
-//               type="file"
-//               hidden
-//               onChange={handleImageUpload}
-//             />
-//           </Button>
-//           {companyImage && <Typography></Typography>}
-//         </Grid>
-//         <Grid item xs={12}>
-//           <Input
-//             className='rounded-xl'
-//             label="Company Name"
-//             value={companyName}
-//             onChange={(e) => setCompanyName(e.target.value)}
-//           />
-//         </Grid>
-//         <Grid item xs={12}>
-//           <Input
-//             className='rounded-xl'
-//             label="Company Location"
-//             value={companyLocation}
-//             onChange={(e) => setCompanyLocation(e.target.value)}
-//           />
-//         </Grid>
-//         <Grid item xs={12}>
-//           <Typography variant="h6">Job Details</Typography>
-//           <ReactQuill className='custom-quill' value={jobDetails} onChange={setJobDetails} />
-//         </Grid>
-//         <Grid item xs={12}>
-//           <Typography variant="h6">Qualifications</Typography>
-//           <ReactQuill className='custom-quill' value={qualifications} onChange={setQualifications} />
-//         </Grid>
-//         <Grid item xs={12}>
-//           <Typography variant="h6">Key Responsibilities</Typography>
-//           <ReactQuill className='custom-quill' value={keyResponsibilities} onChange={setKeyResponsibilities} />
-//         </Grid>
-//         <Grid item xs={12}>
-//           <Input
-//             className='rounded-xl'
-//             label="Company Email"
-//             value={companyEmail}
-//             onChange={(e) => setCompanyEmail(e.target.value)}
-//           />
-//         </Grid>
-//         <Grid item xs={12}>
-//           <Input
-//             className='rounded-xl'
-//             label="Link to Apply"
-//             value={applyLink}
-//             onChange={(e) => setApplyLink(e.target.value)}
-//           />
-//         </Grid>
-//         <Grid item xs={12}>
-//           <Button variant="black" label='Submit' color="primary" onClick={handleSubmit}></Button>
-//         </Grid>
-//       </Grid>
-//     </Container>
-//   );
-// };
-
-// export default JobManagement;
