@@ -46,6 +46,7 @@ const ManageJob: React.FC  = () => {
       setError('No job data provided');
     } else {
       setLoading(false);
+      setJob(location.state?.job);
       setStatus(job.status);
     }
   }, [job]);
@@ -59,7 +60,7 @@ const ManageJob: React.FC  = () => {
     try {
       // Simulate saving job data
       console.log('Job data saved:', { ...job, status });
-      navigate('/admin/job-management'); // Redirect after saving
+      navigate('/admin/job-management', { state: { updatedJob: { ...job, status } }, });
     } catch (err) {
       setError('Failed to update job details');
     } finally {

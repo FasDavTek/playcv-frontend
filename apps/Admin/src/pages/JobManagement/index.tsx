@@ -248,7 +248,7 @@ const JobManagement = () => {
         const handleManage = (job: Vacancy) => {
           setSelectedJob(job);
           navigate(`/admin/job-management/manage/${original.id}`, {
-            state: { job },
+            state: { job, status: job.status },
           });
           // setSelectedJob(original);
           // setModalOpen(true);
