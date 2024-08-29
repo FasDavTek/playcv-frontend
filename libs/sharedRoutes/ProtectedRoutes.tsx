@@ -46,6 +46,7 @@ const Management = lazy(() => import('../../apps/Admin/src/pages/VideoManagement
 const ManagementById = lazy(() => import('../../apps/Admin/src/pages/VideoDetails'));
 const PriceManagement = lazy(() => import('../../apps/Admin/src/pages/PriceManagement'));
 const JobManagement = lazy(() => import('../../apps/Admin/src/pages/JobManagement'));
+const AddNewJob = lazy(() => import('../../apps/Admin/src/pages/JobManagement/AddVacancy/Vacancies'));
 
 // CANDIDATE ROUTES
 const CandidateHome = lazy(() => import('../../apps/Candidate/src/pages/Home'));
@@ -221,6 +222,10 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.ADMIN_JOB_MANAGEMENT,
                 element: <JobManagement />,
+            },
+            {
+                path: ROUTES.ADMIN_ADD_JOB,
+                element: <AddNewJob />,
             },
             {
                 path: ROUTES.ADMIN_GUIDELINE,

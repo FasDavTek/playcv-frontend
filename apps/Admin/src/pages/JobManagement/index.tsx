@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Button, Table } from '@video-cv/ui-components';
+import { useNavigate } from 'react-router-dom';
 
 type Vacancy = {
   id: number;
@@ -153,6 +154,7 @@ const generateSampleVacancies = (type: 'active' | 'pending') => {
 
 const JobManagement = () => {
   const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active');
+  const navigate = useNavigate();
 
   const columns = [
     columnHelper.accessor('title', {
@@ -258,8 +260,7 @@ const JobManagement = () => {
   const data = generateSampleVacancies(activeTab);
 
   const handleAddVacancy = () => {
-    // Handle the "Add Vacancy" action
-    console.log('Adding a new vacancy...');
+    navigate('/admin/job-management/add-vacancy')
   };
 
   return (
