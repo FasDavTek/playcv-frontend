@@ -40,7 +40,7 @@ const Button: React.FC<ButtonProps> = ({
       disabled={loading}
       type={type}
       className={`
-      px-3 py-2 md:px-2 md:py-2 max-h-fit w-fit font-manrope 
+      px-3 py-1 md:px-2 md:py-1 text-center max-h-fit w-fit font-manrope 
       !rounded-md font-light text-sm md:text-base  shadow-buttonShadow hover:shadow-lg hover:opacity-85 ${
         loading ? 'cursor-progress opacity-85' : 'cursor-pointer'
       } ${variants[variant]} ${className} ${

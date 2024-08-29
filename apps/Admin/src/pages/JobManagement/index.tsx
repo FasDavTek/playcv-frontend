@@ -77,6 +77,14 @@ const JobManagement = () => {
       header: 'Location',
       cell: (info) => info.getValue(),
     }),
+    columnHelper.accessor('jobUrl', {
+      header: 'Job URL',
+      cell: (info) => (
+        <a href={info.getValue()} target="_blank" rel="noopener noreferrer">
+          {info.getValue()}
+        </a>
+      ),
+    }),
     columnHelper.accessor('startDate', {
       header: 'Start Date',
       cell: (info) => info.getValue(),
@@ -118,14 +126,6 @@ const JobManagement = () => {
         );
       },
     }),
-    columnHelper.accessor('jobUrl', {
-      header: 'Job URL',
-      cell: (info) => (
-        <a href={info.getValue()} target="_blank" rel="noopener noreferrer">
-          {info.getValue()}
-        </a>
-      ),
-    }),
     columnHelper.accessor('actions', {
       header: 'Actions',
       cell: ({ row: { original } }) => {
@@ -142,7 +142,7 @@ const JobManagement = () => {
         return (
           <div className="flex gap-2">
             <Button variant="success" label="Edit" onClick={handleEdit} />
-            <Button variant="blue" label="Manage" onClick={handleManage} />
+            <Button variant="custom" label="Manage" onClick={handleManage} />
           </div>
         );
       },
