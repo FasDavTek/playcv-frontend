@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Typography, Container } from '@mui/material';
 import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import styles
 import { Input, Button } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 const Vacancies = () => {
@@ -20,6 +20,22 @@ const Vacancies = () => {
   const [applyLink, setApplyLink] = useState('');
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const job = location.state?.job;
+
+  useEffect(() => {
+    if (job) {
+      setJobTitle(job.title);
+      setCompanyImage(job.companyImage);
+      setCompanyName(job.employerName);
+      setCompanyLocation(job.location);
+      setJobDetails(job.jobDetails);
+      setQualifications(job.qualifications);
+      setKeyResponsibilities(job.keyResponsibilities);
+      setCompanyEmail(job.companyEmail);
+      setApplyLink(job.jobUrl);
+    }
+  }, [job]);
 
   const handleImageUpload = (event: any) => {
     setCompanyImage(event.target.files[0]);
