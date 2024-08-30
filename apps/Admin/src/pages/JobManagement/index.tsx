@@ -240,8 +240,10 @@ const JobManagement = () => {
     columnHelper.accessor('actions', {
       header: 'Actions',
       cell: ({ row: { original } }) => {
-        const handleEdit = () => {
-          // Handle edit action
+        const handleEdit = (job: Vacancy) => {
+          navigate(`/admin/job-management/vacancy`, {
+            state: { job },
+          });
           console.log(`Editing vacancy ID: ${original.id}`);
         };
 
@@ -257,7 +259,7 @@ const JobManagement = () => {
 
         return (
           <div className="flex gap-2">
-            <Button variant="success" label="Edit" onClick={handleEdit} />
+            <Button variant="success" label="Edit" onClick={() => handleEdit(original)} />
             <Button variant="custom" label="Manage" onClick={() => handleManage(original)} />
           </div>
         );
