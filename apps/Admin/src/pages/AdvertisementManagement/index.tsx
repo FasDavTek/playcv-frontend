@@ -14,6 +14,7 @@ type ReportTableColumns = {
   adName: string;
   fileUrl: string;
   createdAt: string;
+  userFullname: string;
   action: 'action';
 };
 
@@ -23,6 +24,7 @@ const initialData = [
     adName: 'Summer Sale',
     fileUrl: 'https://example.com/summer-sale.png',
     createdAt: '2024-06-01T10:00:00Z',
+    userFullname: 'John Doe',
     status: 'active',
   },
   {
@@ -30,6 +32,7 @@ const initialData = [
     adName: 'Winter Collection',
     fileUrl: 'https://example.com/winter-collection.png',
     createdAt: '2024-11-15T12:00:00Z',
+    userFullname: 'Jane Smith',
     status: 'suspended',
   },
   {
@@ -37,6 +40,7 @@ const initialData = [
     adName: 'Spring Promo',
     fileUrl: 'https://example.com/spring-promo.png',
     createdAt: '2024-03-21T09:30:00Z',
+    userFullname: 'Alice Johnson',
     status: 'active',
   },
 ];
@@ -65,6 +69,10 @@ const Payment = () => {
   const columns = [
     columnHelper.accessor('adName', {
       header: 'Ad Name',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('userFullname', {
+      header: 'User Fullname',
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('fileUrl', {

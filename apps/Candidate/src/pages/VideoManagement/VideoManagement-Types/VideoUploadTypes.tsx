@@ -96,7 +96,7 @@ const VideoUploadTypes = () => {
           <li className="mb-2">Ensure that your video complies with our content guidelines to avoid any issues during the upload process.</li>
         </ul>
         <p className="mt-4">If you have any questions or need assistance, please contact our support team.</p>
-        <p className='text-red-500 mt-6'><span className='font-semibold'>NOTE: </span>By uploading your videoCV on this playfom, you have read the videoCV guideline thoroughly and you agree to this platform's Terms and Conditions</p>
+        <p className='text-red-500 mt-6'><span className='font-semibold'>NOTE: </span>By uploading your videoCV on this platfom, you have read the videoCV guideline thoroughly and you agree to this platform's Terms and Conditions</p>
       </div>
     </div>
   );

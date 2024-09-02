@@ -59,6 +59,8 @@ const CategoryModal = ({
         return { category: 'Name', role: 'Testimonial' };
       case 'degreeClass':
         return { category: 'Degree Class', role: 'Description' };
+      case 'cvUploadGuideline':
+        return { category: 'Guideline', role: 'Description' };
       default:
         return { category: 'Category', role: 'Role' };
     }
@@ -75,7 +77,7 @@ const CategoryModal = ({
     <form onSubmit={handleSubmit(handleFormSubmit)} className="relative bg-white p-10 lg:p-14 centered-modal-md rounded-lg">
       <CloseIcon className='absolute cursor-pointer hover:rounded-full hover:bg-gray-400 hover:text-white top-4 right-6' onClick={onClose} />
         
-      <h3 className="text-center font-semibold text-xl">{selectedItem ? 'Edit Category' : 'Create New Category'}</h3>
+      <h3 className="text-center font-semibold text-xl">{selectedItem ? `Edit ${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}` : `Create New ${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}`}</h3>
       <div className="my-5 flex flex-col gap-5">
         <Input
           label={labels.category}
@@ -90,9 +92,10 @@ const CategoryModal = ({
           onClick={() => {
             ('');
           }}
+          variant='black'
           type="submit"
           className="w-full"
-          label={selectedItem ? 'Update Category' : 'Create Category'}
+          label={selectedItem ? `Update ${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}` : `Create ${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}`}
         />
       </div>
     </form>
