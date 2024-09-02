@@ -17,14 +17,17 @@ type ReportTableColumns = {
   datePaid: string;
   phone: string;
   paymentType: string;
+  paymentDescription: string;
   action: 'action';
 };
 
 const generateReports = () => {
   const roles = ['Admin', 'User', 'Manager', 'Editor', 'Viewer'];
   const paymentTypes = ['Credit Card', 'PayPal', 'Bank Transfer', 'Cash'];
+  const paymentDescriptions = [ 'Pinned Video Upload', 'Regular Video Upload', 'Video Advert', 'Image Advert', ];
   const getRandomRole = () => roles[Math.floor(Math.random() * roles.length)];
   const getRandomPaymentType = () => paymentTypes[Math.floor(Math.random() * paymentTypes.length)];
+  const getRandomPaymentDescription = () => paymentDescriptions[Math.floor(Math.random() * paymentDescriptions.length)];
 
   const users = [
     { id: 1, name: 'Alice Johnson', email: 'alice.johnson@example.com', price: 150.00, datePaid: '2024-08-01', phone: '+1234567890', paymentType: 'Credit Card' },
@@ -48,6 +51,7 @@ const generateReports = () => {
     datePaid: new Date().toLocaleDateString(),
     phone: user.phone,
     paymentType: getRandomPaymentType(),
+    paymentDescription: getRandomPaymentDescription(),
   }));
 };
 
@@ -57,53 +61,62 @@ type ModalTypes = null | 'viewPurchase';
 
 const columnHelper = createColumnHelper<ReportTableColumns>();
 
-const columns = [
-  columnHelper.accessor('userName', {
-    header: 'Name',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('userEmail', {
-    header: 'Email',
-    cell: (info) => info.getValue(),
-  }),
-  // columnHelper.accessor('role', {
-  //   header: 'Role',
-  //   cell: (info) => info.getValue(),
-  // }),
-  columnHelper.accessor('price', {
-    header: 'Price',
-    cell: (info) => `₦${info.getValue().toFixed(2)}`,
-  }),
-  columnHelper.accessor('datePaid', {
-    header: 'Date Paid',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('phone', {
-    header: 'Phone',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('paymentType', {
-    header: 'Payment Type',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('action', {
-    cell: ({ row: { original } }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const navigate = useNavigate();
-      return (
-        <Button
-          onClick={() => navigate(`/admin/order-management/${original.id}`)}
-          label="View"
-          variant='custom'
-        />
-      );
-    },
-    header: 'Action',
-  }),
-];
-
 const Orders = () => {
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
+  const [selectedOrder, setSelectedOrder] = useState<ReportTableColumns | null>(null);
+  const navigate = useNavigate();
+
+  const columns = [
+    columnHelper.accessor('userName', {
+      header: 'Name',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('userEmail', {
+      header: 'Email',
+      cell: (info) => info.getValue(),
+    }),
+    // columnHelper.accessor('role', {
+    //   header: 'Role',
+    //   cell: (info) => info.getValue(),
+    // }),
+    columnHelper.accessor('price', {
+      header: 'Price',
+      cell: (info) => `₦${info.getValue().toFixed(2)}`,
+    }),
+    columnHelper.accessor('datePaid', {
+      header: 'Date Paid',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('phone', {
+      header: 'Phone',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('paymentType', {
+      header: 'Payment Type',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('paymentDescription', {
+      header: 'Payment Description',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('action', {
+      cell: ({ row: { original } }) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const handleView = (order: ReportTableColumns) => {
+          navigate(`/admin/order-management/${original.id}`, { state: { order }, })
+        }
+        
+        return (
+          <Button
+            onClick={() => handleView(original)}
+            label="View"
+            variant='custom'
+          />
+        );
+      },
+      header: 'Action',
+    }),
+  ];
 
   const closeModal = () => setOpenModal(null);
 

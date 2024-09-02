@@ -369,6 +369,14 @@ type Professional = {
   cvUrl: string;
   status: string;
   location: string;
+  nyscStateCode: string;
+  qualification: string;
+  courseOfStudy: string;
+  nyscStartDate: string;
+  nyscEndDate: string;
+  businessName: string;
+  businessSector: string;
+  businessPhone: string;
 };
 
 type Employer = {
@@ -400,11 +408,16 @@ const UserManagement = () => {
   ];
 
   const professionalData = [
-    { id: 1, name: 'John Doe', email: 'johndoe@example.com', phoneNumber: '123-456-7890', dateOfBirth: '1990-01-01', gender: 'Male', institution: 'Harvard University', cvUrl: 'https://example.com/cv/johndoe', status: 'Active', location: 'Cambridge, MA' },
-    { id: 2, name: 'Jane Smith', email: 'janesmith@example.com', phoneNumber: '234-567-8901', dateOfBirth: '1985-05-15', gender: 'Female', institution: 'Stanford University', cvUrl: 'https://example.com/cv/janesmith', status: 'Suspended', location: 'Stanford, CA' },
-    { id: 3, name: 'Alice Wong', email: 'alicewong@example.com', phoneNumber: '345-678-9012', dateOfBirth: '1992-11-22', gender: 'Female', institution: 'MIT', cvUrl: 'https://example.com/cv/alicewong', status: 'Active', location: 'Cambridge, MA' },
-    { id: 4, name: 'Bob Jones', email: 'bobjones@example.com', phoneNumber: '456-789-0123', dateOfBirth: '1988-07-30', gender: 'Male', institution: 'Oxford University', cvUrl: 'https://example.com/cv/bobjones', status: 'Active', location: 'Oxford, UK' },
-    { id: 5, name: 'Carol Lee', email: 'carollee@example.com', phoneNumber: '567-890-1234', dateOfBirth: '1995-09-09', gender: 'Female', institution: 'Yale University', cvUrl: 'https://example.com/cv/carollee', status: 'Suspended', location: 'New Haven, CT' },
+    { id: 1, name: 'John Doe', email: 'johndoe@example.com', phoneNumber: '123-456-7890', dateOfBirth: '1990-01-01', gender: 'Male', institution: 'Harvard University', cvUrl: 'https://example.com/cv/johndoe', status: 'Active', location: 'Cambridge, MA', nyscStateCode: 'LA12345', qualification: 'B.Sc. Computer Science', courseOfStudy: 'Computer Science', nyscStartDate: '2012-03-01', nyscEndDate: '2013-02-28', businessName: 'Tech Innovators Inc.', businessSector: 'Technology', businessPhone: '234-801-123-4567' },
+    { id: 2, name: 'Jane Smith', email: 'janesmith@example.com', phoneNumber: '234-567-8901', dateOfBirth: '1985-05-15', gender: 'Female', institution: 'Stanford University', cvUrl: 'https://example.com/cv/janesmith', status: 'Suspended', location: 'Stanford, CA', nyscStateCode: 'AB67890', qualification: 'M.Sc. Data Science', courseOfStudy: 'Data Science', nyscStartDate: '2010-07-15', nyscEndDate: '2011-06-14', businessName: 'Data Experts LLC', businessSector: 'Analytics', businessPhone: '234-802-234-5678' },
+    { id: 3, name: 'Alice Wong', email: 'alicewong@example.com', phoneNumber: '345-678-9012', dateOfBirth: '1992-11-22', gender: 'Female', institution: 'MIT', cvUrl: 'https://example.com/cv/alicewong', status: 'Active', location: 'Cambridge, MA', nyscStateCode: 'OY34567', qualification: 'B.Sc. Mechanical Engineering', courseOfStudy: 'Mechanical Engineering', nyscStartDate: '2013-09-01', nyscEndDate: '2014-08-31', businessName: 'Innovative Solutions', businessSector: 'Engineering', businessPhone: '234-803-345-6789' },
+    { id: 4, name: 'Bob Jones', email: 'bobjones@example.com', phoneNumber: '456-789-0123', dateOfBirth: '1988-07-30', gender: 'Male', institution: 'Oxford University', cvUrl: 'https://example.com/cv/bobjones', status: 'Active', location: 'Oxford, UK', nyscStateCode: 'KN89012', qualification: 'Ph.D. Philosophy', courseOfStudy: 'Philosophy', nyscStartDate: '2009-05-10', nyscEndDate: '2010-04-09', businessName: 'Philosophy Insights', businessSector: 'Education', businessPhone: '234-804-456-7890' },
+    { id: 5, name: 'Carol Lee', email: 'carollee@example.com', phoneNumber: '567-890-1234', dateOfBirth: '1995-09-09', gender: 'Female', institution: 'Yale University', cvUrl: 'https://example.com/cv/carollee', status: 'Suspended', location: 'New Haven, CT', nyscStateCode: 'EN90123', qualification: 'LL.M. International Law', courseOfStudy: 'Law', nyscStartDate: '2015-11-20', nyscEndDate: '2016-10-19', businessName: 'Global Law Firm', businessSector: 'Legal', businessPhone: '234-805-567-8901' },
+    { id: 6, name: 'David Brown', email: 'davidbrown@example.com', phoneNumber: '678-901-2345', dateOfBirth: '1991-03-10', gender: 'Male', institution: 'Princeton University', cvUrl: 'https://example.com/cv/davidbrown', status: 'Active', location: 'Princeton, NJ', nyscStateCode: 'IM67890', qualification: 'M.A. Economics', courseOfStudy: 'Economics', nyscStartDate: '2011-02-14', nyscEndDate: '2012-01-13', businessName: 'Economy Solutions Ltd.', businessSector: 'Finance', businessPhone: '234-806-678-9012' },
+    { id: 7, name: 'Emma Wilson', email: 'emmawilson@example.com', phoneNumber: '789-012-3456', dateOfBirth: '1989-06-25', gender: 'Female', institution: 'University of California, Berkeley', cvUrl: 'https://example.com/cv/emmawilson', status: 'Suspended', location: 'Berkeley, CA', nyscStateCode: 'LA01234', qualification: 'B.A. Sociology', courseOfStudy: 'Sociology', nyscStartDate: '2014-04-10', nyscEndDate: '2015-03-09', businessName: 'Sociology Research Group', businessSector: 'Research', businessPhone: '234-807-789-0123' },
+    { id: 8, name: 'Frank Harris', email: 'frankharris@example.com', phoneNumber: '890-123-4567', dateOfBirth: '1987-02-14', gender: 'Male', institution: 'University of Chicago', cvUrl: 'https://example.com/cv/frankharris', status: 'Active', location: 'Chicago, IL', nyscStateCode: 'KD45678', qualification: 'B.Sc. Mathematics', courseOfStudy: 'Mathematics', nyscStartDate: '2010-08-18', nyscEndDate: '2011-07-17', businessName: 'Math Solutions', businessSector: 'Education', businessPhone: '234-808-890-1234' },
+    { id: 9, name: 'Grace Lee', email: 'gracelee@example.com', phoneNumber: '901-234-5678', dateOfBirth: '1993-12-05', gender: 'Female', institution: 'Columbia University', cvUrl: 'https://example.com/cv/gracelee', status: 'Active', location: 'New York, NY', nyscStateCode: 'KN78901', qualification: 'M.Sc. Computer Engineering', courseOfStudy: 'Computer Engineering', nyscStartDate: '2013-12-01', nyscEndDate: '2014-11-30', businessName: 'Tech Solutions Inc.', businessSector: 'Technology', businessPhone: '234-809-901-2345' },
+    { id: 10, name: 'Henry Clark', email: 'henryclark@example.com', phoneNumber: '012-345-6789', dateOfBirth: '1990-04-18', gender: 'Male', institution: 'University of Cambridge', cvUrl: 'https://example.com/cv/henryclark', status: 'Suspended', location: 'Cambridge, UK', nyscStateCode: 'AN34567', qualification: 'B.A. History', courseOfStudy: 'History', nyscStartDate: '2014-06-12', nyscEndDate: '2015-05-11', businessName: 'History Scholars Ltd.', businessSector: 'Education', businessPhone: '234-810-012-3456' },
   ];
 
   const employerData = [
@@ -511,6 +524,38 @@ const UserManagement = () => {
     }),
     professionalColumnHelper.accessor('location', {
       header: 'Location',
+      cell: (info) => info.getValue(),
+    }),
+    professionalColumnHelper.accessor('nyscStateCode', {
+      header: 'NYSC State Code',
+      cell: (info) => info.getValue(),
+    }),
+    professionalColumnHelper.accessor('qualification', {
+      header: 'Degree Awarded',
+      cell: (info) => info.getValue(),
+    }),
+    professionalColumnHelper.accessor('courseOfStudy', {
+      header: 'Course of Study',
+      cell: (info) => info.getValue(),
+    }),
+    professionalColumnHelper.accessor('nyscStartDate', {
+      header: 'NYSC Start Date',
+      cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+    }),
+    professionalColumnHelper.accessor('nyscEndDate', {
+      header: 'NYSC End Date',
+      cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+    }),
+    professionalColumnHelper.accessor('businessName', {
+      header: 'Business Name',
+      cell: (info) => info.getValue(),
+    }),
+    professionalColumnHelper.accessor('businessSector', {
+      header: 'Business Sector',
+      cell: (info) => info.getValue(),
+    }),
+    professionalColumnHelper.accessor('businessPhone', {
+      header: 'Business Phone',
       cell: (info) => info.getValue(),
     }),
     professionalColumnHelper.accessor('status', {

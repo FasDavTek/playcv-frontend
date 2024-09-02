@@ -311,12 +311,12 @@ const JobManagement = () => {
         />
       </div>
 
-      <JobStatusModal
+      {/* <JobStatusModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         job={selectedJob!}
         onUpdate={handleUpdate}
-      />
+      /> */}
     </div>
   );
 };

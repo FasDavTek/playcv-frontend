@@ -106,13 +106,21 @@ const generateSampleData = (type: string) => {
         { id: 4, name: 'Third Class', description: 'Basic degree classification.' },
         { id: 5, name: 'Pass', description: 'Minimum passing degree classification.' }
       ];
+    case 'cvUploadGuideline':
+      return [
+        { id: 1, name: 'File Format', description: 'Accepted formats: PDF, DOCX' },
+        { id: 2, name: 'File Size', description: 'Maximum size: 5MB' },
+        { id: 3, name: 'Content', description: 'Include your personal details, work experience, and education.' },
+        { id: 4, name: 'Layout', description: 'Use a clean and professional layout.' },
+        { id: 5, name: 'File Naming', description: 'Use your full name as the file name.' }
+      ];
     default:
       return [];
   }
 };
 
 const ContentPage = () => {
-  const [activeTab, setActiveTab] = useState<'faq' | 'state' | 'institutions' | 'courses' | 'industries' | 'specialization' | 'jobFunctions' | 'marketplaceCategories' | 'qualifications' | 'siteTestimonials' | 'degreeClass'>('faq');
+  const [activeTab, setActiveTab] = useState<'faq' | 'state' | 'institutions' | 'courses' | 'industries' | 'specialization' | 'jobFunctions' | 'marketplaceCategories' | 'qualifications' | 'siteTestimonials' | 'degreeClass' | 'cvUploadGuideline'>('faq');
   const [openModal, setOpenModal] = useState<'add' | 'edit' | null>(null);
   const [selectedItem, setSelectedItem] = useState<ContentColumns | null>(null);
   const [data, setData] = useState(() => generateSampleData(activeTab));
@@ -172,7 +180,7 @@ const ContentPage = () => {
 
       <div className="bg-gray-300 border-b border-gray-200 rounded-lg">
         <div className="flex p-1 overflow-auto gap-3">
-          {['faq', 'state', 'institutions', 'courses', 'industries', 'specialization', 'jobFunctions', 'marketplaceCategories', 'qualifications', 'siteTestimonials', 'degreeClass'].map((tab) => (
+          {['faq', 'state', 'institutions', 'courses', 'industries', 'specialization', 'jobFunctions', 'marketplaceCategories', 'qualifications', 'siteTestimonials', 'degreeClass', 'cvUploadGuideline'].map((tab) => (
             <button
               key={tab}
               className={`py-2 px-4 text-sm font-medium ${activeTab === tab ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}

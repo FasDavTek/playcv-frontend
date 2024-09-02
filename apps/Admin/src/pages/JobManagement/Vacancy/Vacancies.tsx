@@ -104,16 +104,16 @@ const Vacancies = () => {
                 />
                 </Grid>
                 <Grid item xs={12}>
-                <Typography variant="h6">Job Details</Typography>
-                <ReactQuill className='custom-quill' value={jobDetails} onChange={setJobDetails} />
+                  <Typography variant="h6">Job Details</Typography>
+                  <ReactQuill className='custom-quill' value={jobDetails} onChange={setJobDetails} />
                 </Grid>
                 <Grid item xs={12}>
-                <Typography variant="h6">Qualifications</Typography>
-                <ReactQuill className='custom-quill' value={qualifications} onChange={setQualifications} />
+                  <Typography variant="h6">Key Responsibilities</Typography>
+                  <ReactQuill className='custom-quill' value={keyResponsibilities} onChange={setKeyResponsibilities} />
                 </Grid>
                 <Grid item xs={12}>
-                <Typography variant="h6">Key Responsibilities</Typography>
-                <ReactQuill className='custom-quill' value={keyResponsibilities} onChange={setKeyResponsibilities} />
+                  <Typography variant="h6">Qualifications</Typography>
+                  <ReactQuill className='custom-quill' value={qualifications} onChange={setQualifications} />
                 </Grid>
                 <Grid item xs={12}>
                 <Input
