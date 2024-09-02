@@ -387,6 +387,12 @@ type Employer = {
   companyUrl: string;
   location: string;
   status: string;
+  businessAddress: string;
+  contactPersonName: string;
+  contactPersonPosition: string;
+  contactPersonPhoneNumber: string;
+  socialMediaLink: string;
+  industry: string;
 };
 
 const subAdminColumnHelper = createColumnHelper<SubAdmin>();
@@ -421,11 +427,12 @@ const UserManagement = () => {
   ];
 
   const employerData = [
-    { id: 1, name: 'Google LLC', email: 'contact@google.com', phoneNumber: '650-253-0000', companyUrl: 'https://www.google.com', location: 'Mountain View, CA', status: 'Active' },
-    { id: 2, name: 'Microsoft Corporation', email: 'contact@microsoft.com', phoneNumber: '425-882-8080', companyUrl: 'https://www.microsoft.com', location: 'Redmond, WA', status: 'Active' },
-    { id: 3, name: 'Amazon.com, Inc.', email: 'contact@amazon.com', phoneNumber: '206-266-1000', companyUrl: 'https://www.amazon.com', location: 'Seattle, WA', status: 'Active' },
-    { id: 4, name: 'Facebook, Inc.', email: 'contact@facebook.com', phoneNumber: '650-543-4800', companyUrl: 'https://www.facebook.com', location: 'Menlo Park, CA', status: 'Suspended' },
-    { id: 5, name: 'Apple Inc.', email: 'contact@apple.com', phoneNumber: '408-996-1010', companyUrl: 'https://www.apple.com', location: 'Cupertino, CA', status: 'Active' },
+    { id: 1, name: 'Google LLC', email: 'contact@google.com', phoneNumber: '650-253-0000', companyUrl: 'https://www.google.com', location: 'Mountain View, CA', status: 'Active', businessAddress: '1600 Amphitheatre Parkway, Mountain View, CA 94043', contactPersonName: 'Sundar Pichai', contactPersonPosition: 'CEO', contactPersonPhoneNumber: '650-253-0000', socialMediaLink: 'https://twitter.com/google', industry: 'Technology' },
+    { id: 2, name: 'Microsoft Corporation', email: 'contact@microsoft.com', phoneNumber: '425-882-8080', companyUrl: 'https://www.microsoft.com', location: 'Redmond, WA', status: 'Active', businessAddress: 'One Microsoft Way, Redmond, WA 98052', contactPersonName: 'Satya Nadella', contactPersonPosition: 'CEO', contactPersonPhoneNumber: '425-882-8080', socialMediaLink: 'https://twitter.com/Microsoft', industry: 'Technology' },
+    { id: 3, name: 'Amazon.com, Inc.', email: 'contact@amazon.com', phoneNumber: '206-266-1000', companyUrl: 'https://www.amazon.com', location: 'Seattle, WA', status: 'Active', businessAddress: '410 Terry Ave N, Seattle, WA 98109', contactPersonName: 'Andy Jassy', contactPersonPosition: 'CEO', contactPersonPhoneNumber: '206-266-1000', socialMediaLink: 'https://twitter.com/amazon', industry: 'E-commerce' },
+    { id: 4, name: 'Facebook, Inc.', email: 'contact@facebook.com', phoneNumber: '650-543-4800', companyUrl: 'https://www.facebook.com', location: 'Menlo Park, CA', status: 'Suspended', businessAddress: '1 Hacker Way, Menlo Park, CA 94025', contactPersonName: 'Mark Zuckerberg', contactPersonPosition: 'CEO', contactPersonPhoneNumber: '650-543-4800', socialMediaLink: 'https://twitter.com/Facebook', industry: 'Social Media' },
+    { id: 5, name: 'Apple Inc.', email: 'contact@apple.com', phoneNumber: '408-996-1010', companyUrl: 'https://www.apple.com', location: 'Cupertino, CA', status: 'Active', businessAddress: '1 Apple Park Way, Cupertino, CA 95014', contactPersonName: 'Tim Cook', contactPersonPosition: 'CEO', contactPersonPhoneNumber: '408-996-1010', socialMediaLink: 'https://twitter.com/Apple', industry: 'Technology' },
+
   ];
 
   // Manage data state
@@ -622,6 +629,30 @@ const UserManagement = () => {
     }),
     employerColumnHelper.accessor('location', {
       header: 'Location',
+      cell: (info) => info.getValue(),
+    }),
+    employerColumnHelper.accessor('businessAddress', {
+      header: 'Address',
+      cell: (info) => info.getValue(),
+    }),
+    employerColumnHelper.accessor('contactPersonName', {
+      header: 'Contact Person',
+      cell: (info) => info.getValue(),
+    }),
+    employerColumnHelper.accessor('contactPersonPosition', {
+      header: 'Contact Person Position',
+      cell: (info) => info.getValue(),
+    }),
+    employerColumnHelper.accessor('contactPersonPhoneNumber', {
+      header: 'Contact Person Phone Number',
+      cell: (info) => info.getValue(),
+    }),
+    employerColumnHelper.accessor('socialMediaLink', {
+      header: 'Social Media',
+      cell: (info) => <a href={info.getValue()} target="_blank" rel="noopener noreferrer">{info.getValue()}</a>,
+    }),
+    employerColumnHelper.accessor('industry', {
+      header: 'Industry',
       cell: (info) => info.getValue(),
     }),
     employerColumnHelper.accessor('status', {
