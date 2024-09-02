@@ -50,29 +50,13 @@ const generateSampleData = (type: string) => {
         { id: 4, name: 'Machine Learning', description: '14 weeks' },
         { id: 5, name: 'Web Development', description: '6 weeks' }
       ];
-    case 'industries':
+    case 'industry/Sector':
       return [
         { id: 1, name: 'Technology', description: 'Industry focused on technology and innovations.' },
         { id: 2, name: 'Healthcare', description: 'Industry focused on health services and products.' },
         { id: 3, name: 'Finance', description: 'Industry focused on financial services and investments.' },
         { id: 4, name: 'Education', description: 'Industry focused on educational institutions and services.' },
         { id: 5, name: 'Retail', description: 'Industry focused on consumer goods and services.' }
-      ];
-    case 'specialization':
-      return [
-        { id: 1, name: 'Software Engineering', description: 'Specialization in software development and engineering.' },
-        { id: 2, name: 'Data Science', description: 'Specialization in data analysis and machine learning.' },
-        { id: 3, name: 'Cybersecurity', description: 'Specialization in securing systems and data.' },
-        { id: 4, name: 'Digital Marketing', description: 'Specialization in online marketing and SEO.' },
-        { id: 5, name: 'Project Management', description: 'Specialization in managing projects and teams.' }
-      ];
-    case 'jobFunctions':
-      return [
-        { id: 1, name: 'Software Developer', description: 'Responsible for developing software applications.' },
-        { id: 2, name: 'Project Manager', description: 'Oversees project development and management.' },
-        { id: 3, name: 'Data Analyst', description: 'Analyzes and interprets data to inform decisions.' },
-        { id: 4, name: 'Marketing Specialist', description: 'Develops and implements marketing strategies.' },
-        { id: 5, name: 'Sales Representative', description: 'Manages sales and customer relationships.' }
       ];
     case 'marketplaceCategories':
       return [
@@ -120,7 +104,7 @@ const generateSampleData = (type: string) => {
 };
 
 const ContentPage = () => {
-  const [activeTab, setActiveTab] = useState<'faq' | 'state' | 'institutions' | 'courses' | 'industries' | 'specialization' | 'jobFunctions' | 'marketplaceCategories' | 'qualifications' | 'siteTestimonials' | 'degreeClass' | 'cvUploadGuideline'>('faq');
+  const [activeTab, setActiveTab] = useState<'faq' | 'state' | 'institutions' | 'courses' | 'industry/Sector' | 'marketplaceCategories' | 'qualifications' | 'siteTestimonials' | 'degreeClass' | 'cvUploadGuideline'>('faq');
   const [openModal, setOpenModal] = useState<'add' | 'edit' | null>(null);
   const [selectedItem, setSelectedItem] = useState<ContentColumns | null>(null);
   const [data, setData] = useState(() => generateSampleData(activeTab));
@@ -180,7 +164,7 @@ const ContentPage = () => {
 
       <div className="bg-gray-300 border-b border-gray-200 rounded-lg">
         <div className="flex p-1 overflow-auto gap-3">
-          {['faq', 'state', 'institutions', 'courses', 'industries', 'specialization', 'jobFunctions', 'marketplaceCategories', 'qualifications', 'siteTestimonials', 'degreeClass', 'cvUploadGuideline'].map((tab) => (
+          {['faq', 'state', 'institutions', 'courses', 'industry/Sector', 'marketplaceCategories', 'qualifications', 'siteTestimonials', 'degreeClass', 'cvUploadGuideline'].map((tab) => (
             <button
               key={tab}
               className={`py-2 px-4 text-sm font-medium ${activeTab === tab ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}
