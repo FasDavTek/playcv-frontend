@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form';
-import { Button, Input, Select, } from '@video-cv/ui-components';
+import { Button, Input, Select, TextArea, } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
+import ReactQuill from 'react-quill';
 
 interface IForm {
     amount?: number;
+    description?: string;
     type?: any;
 }
 
@@ -18,7 +20,7 @@ interface PriceProps {
 }
 
 const Price = ({ open, onClose, onSubmit = () => {}, modalType, item = null, currentTab, }: PriceProps) => {
-    const { register, control, handleSubmit, setValue } = useForm<IForm>();
+    const { register, control, watch, handleSubmit, setValue } = useForm<IForm>();
 
     const [amount, setAmount] = useState<number | undefined>(item?.amount || 0);
     const [type, setType] = useState<string>(item?.type || '');
@@ -111,6 +113,12 @@ const Price = ({ open, onClose, onSubmit = () => {}, modalType, item = null, cur
                 onChange={handleAmountChange}
                 // error={}
             />
+            <TextArea
+                label={`${currentTab === 'videoUploadPrices' ? 'Video Upload' : currentTab === 'adsPrices' ? 'Ad' : 'Buy Video'} Description`}
+                placeholder={`${currentTab === 'videoUploadPrices' ? 'Video upload' : currentTab === 'adsPrices' ? 'Ad' : 'Buy video'} description`}
+                {...register('description', { required: true })}
+                // error={}
+            />
             <Controller
                 name="type"
                 control={control}
@@ -128,11 +136,11 @@ const Price = ({ open, onClose, onSubmit = () => {}, modalType, item = null, cur
                 )}
             />
             <Button
-            onClick={() => {}}
-            type="submit"
-            variant='black'
-            className="w-full"
-            label={modalType === 'edit' ? 'Edit Price' : 'Add Price'}
+                onClick={() => {}}
+                type="submit"
+                variant='black'
+                className="w-full"
+                label={modalType === 'edit' ? 'Edit Price' : 'Add Price'}
             />
         </div>
     </form>
