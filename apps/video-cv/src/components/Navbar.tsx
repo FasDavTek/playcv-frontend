@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Stack } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -45,6 +45,8 @@ const Navbar = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  const navbarRef = useRef<HTMLDivElement | null>(null);
+
   const [showNavbar, setShowNavbar] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const theme = useTheme();
@@ -71,8 +73,26 @@ const Navbar = () => {
     setOpenModal(false);
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (navbarRef.current && !navbarRef.current.contains(event.target as Node)) {
+      setShowNavbar(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showNavbar) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNavbar]);
+
   return (
     <div
+      ref={navbarRef}
       className={`flex items-center px-3 md:px-7 sticky bg-white top-0 justify-center z-20 navbar`}
     >
       <div className="w-full mx-auto flex items-center justify-between">
