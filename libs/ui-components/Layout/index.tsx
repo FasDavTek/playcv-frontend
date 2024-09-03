@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
+import { useState, useEffect, useRef, } from 'react';
 
 import { Outlet } from 'react-router-dom';
 import { Modal } from '@mui/material';
@@ -27,6 +26,8 @@ const Layout = ({
     Admin: AdminRoutes,
   };
 
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+
   const openLogoutModal = () => {
     setLogoutMOdalOpen(true);
   };
@@ -41,9 +42,28 @@ const Layout = ({
     setLogoutMOdalOpen(true);
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+      setSidebarOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [sidebarOpen]);
+
   return (
     <>
       <Sidebar
+        ref={sidebarRef}
         onLogout={handleLogout}
         toggleSidebarExpanded={toggleSidebarExpanded}
         sidebarExpanded={sidebarExpanded}
