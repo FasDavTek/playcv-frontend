@@ -10,18 +10,23 @@ import 'react-quill/dist/quill.snow.css';
 import { Box, Chip, Stack } from '@mui/material';
 import { VideoUploadWidget } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
+import { videoUploadSchema } from './../../../../../video-cv/src/schema/videoUploadSchema';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-interface IForm {
-  name: string;
-  description: string;
-  // category: string[];
-  tags: string[];
-  media: string | null;
-  videoTranscript: string;
-  Category: string | string[];
-  videoType?: string;
-  price?: number;
-}
+// interface IForm {
+//   name: string;
+//   description: string;
+//   // category: string[];
+//   tags: string[];
+//   media: string | null;
+//   videoTranscript: string;
+//   Category: string | string[];
+//   videoType?: string;
+//   price?: number;
+// }
+
+type faqType = z.infer<typeof videoUploadSchema>;
 
 const SelectChip = ({ label, options, value, onChange }: any) => {
   const handleChipClick = (optionValue: string) => {
@@ -53,12 +58,9 @@ const SelectChip = ({ label, options, value, onChange }: any) => {
 
 const VideoUpload = ({
   // onClose,
-  onSubmit = () => '',
-}: {
-  // onClose: (e?: any) => void;
-  onSubmit?: (data: IForm) => void;
 }) => {
-  const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<IForm>();
+  const [isUploading, setIsUploading] = useState(false);
+  const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<faqType>({resolver: zodResolver(videoUploadSchema)});
   const navigate = useNavigate();
   const location = useLocation();
   const videoType = (location.state as any)?.videoType ?? '';
@@ -67,15 +69,19 @@ const VideoUpload = ({
 
   const handleFileUpload = async (file: File) => {
     const resourceType = file.type.startsWith('image/') ? 'image' : 'video';
-    const cloudName = 'dht1fkhxb';
-    const uploadPreset = 'ml_default';
 
     try {
       const mediaUrl = await VideoUploadWidget({
-        cloudName,
-        uploadPreset,
         file,
         resourceType,
+        context: {
+          videoName: watch('name'),
+          videoType: videoType.toUpperCase(),
+          description: watch('description'),
+          price: price.toString(),
+          videoTranscript: watch('videoTranscript'),
+          videoCategory: watch('Category'),
+        }
       });
       toast.success('Upload Successful');
       return mediaUrl;
@@ -86,15 +92,28 @@ const VideoUpload = ({
     }
   };
 
-  const onSubmitHandler = async (data: IForm) => {
+  const onSubmitHandler = async (data: faqType) => {
     try {
       if (data.media) {
-        const mediaUrl = await handleFileUpload(data.media as unknown as File);
-        data.media = mediaUrl as any;
+        const files = Array.isArray(data.media) ? data.media : [data.media];
+      
+        setIsUploading(true);
+
+        // Upload each file and gather the URLs
+        const uploadedUrls = await Promise.all(
+          files.map(async ({ file }) => {
+            const resourceType = file.type.startsWith('image/') ? 'image' : 'video';
+            const url = await handleFileUpload(file as File);
+            return url;
+          })
+        );
+
+        setIsUploading(false);
+
+        console.log('Uploaded URLs:', uploadedUrls);
       }
       data['videoType'] = videoType.toUpperCase();
       data['price'] = price;
-      onSubmit(data);
     } catch (error) {
       console.error('Failed to upload video:', error);
     }
@@ -158,19 +177,10 @@ const VideoUpload = ({
               setFile={(files: File | File[] | null) => {
                 if (files) {
                   if (Array.isArray(files)) {
-                    const file = files[0]; // Assuming you only want to handle the first file
-                    handleFileUpload(file)
+                    const file = Array.isArray(files) ? files[0] : files; // Ensure we handle one file
+                    handleFileUpload(file as File)
                       .then((url) => {
-                        setValue('media', url);
-                      })
-                      .catch((err) => {
-                        console.error('Error uploading file:', err);
-                      });
-                  } else {
-                    // Handle single file case
-                    handleFileUpload(files)
-                      .then((url) => {
-                        setValue('media', url);
+                        setValue('media', url); // Set the URL or file path in the form state
                       })
                       .catch((err) => {
                         console.error('Error uploading file:', err);
@@ -180,7 +190,7 @@ const VideoUpload = ({
               }}
             />
           </div>
-          <Button type='submit' variant='black' className="w-full md:w-28" label="Submit" />
+          <Button type='submit' variant='black' className="w-full md:w-28" disabled={isUploading} label={isUploading ? "Uploading..." : "Submit"} />
         </div>
       </form>
     </div>

@@ -1,23 +1,43 @@
 import axios from 'axios';
 
 interface CloudinaryUploadOptions {
-  cloudName: string;
-  uploadPreset: string;
   file: File;
   resourceType: 'image' | 'video';
+  context: {
+    videoType?: string;
+    price?: string;
+    description?: string;
+    advertType?: string;
+    adRedirectURL?: string;
+    startDate?: any;
+    endDate?: any;
+    adName?: string;
+    videoName?: string;
+    videoTranscript?: string;
+    videoCategory?: string;
+  };
 }
 
+const cloudName = 'dht1fkhxb';
+const   uploadPreset = 'ml_default';
+
 const index = async ({
-  cloudName,
-  uploadPreset,
   file,
   resourceType,
+  context,
 }: CloudinaryUploadOptions): Promise<string> => {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', uploadPreset);
-  formData.append('folder', resourceType === 'image' ? 'images_folder' : 'videosCVs'); // Specify folder based on resourceType
+  formData.append('folder', resourceType === 'image' ? 'images_folder' : 'videos_folder');
   formData.append('resource_type', resourceType);
+
+  // Adding context data
+  for (const [key, value] of Object.entries(context)) {
+    if (value) {
+      formData.append(`context[${key}]`, value);
+    }
+  }
 
   try {
     const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, formData);

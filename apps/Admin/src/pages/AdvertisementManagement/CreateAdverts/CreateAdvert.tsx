@@ -12,6 +12,7 @@ import {
   FileUpload,
   DatePicker,
   Select,
+  VideoUploadWidget,
 } from '@video-cv/ui-components';
 
 import { advertSchema } from './../../../../../video-cv/src/schema/formValidations/Advert.schema';
@@ -35,6 +36,8 @@ const options = [
 type faqType = z.infer<typeof advertSchema>;
 
 const CreateAdvertModal = () => {
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadUrls, setUploadUrls] = useState<string[]>([]);
   const {
     register,
     handleSubmit,
@@ -47,10 +50,43 @@ const CreateAdvertModal = () => {
   });
   console.log('errors', errors);
 
+  const adType = watch('adType');
+
   const navigate = useNavigate();
 
-  const onSubmit = (data: faqType) => {
-    console.log('Form Data:', data);
+  const onSubmit = async (data: faqType) => {
+    try {
+      const files = data.files;
+      setIsUploading(true);
+
+      
+      const uploadedUrls = await Promise.all(
+        files.map(async ({ file }) => {
+          const resourceType = file.type.startsWith('image') ? 'image' : 'video';
+          const url = await VideoUploadWidget({ 
+            file,
+            resourceType,
+            context: {
+              adName: data.adName,
+              advertType: data.adType,
+              adRedirectURL: data.adUrl,
+              startDate: data.startDate,
+              endDate: data.endDate,
+              description: data.adDescription,
+            },
+          });
+          return url;
+        })
+      );
+
+      setIsUploading(false);
+      setUploadUrls(uploadedUrls);
+      console.log('Uploaded URLs:', uploadedUrls);
+    }
+    catch (err) {
+      setIsUploading(false);
+      console.log('Error during file upload:', err);
+    }
   };
 
   return (
@@ -91,7 +127,7 @@ const CreateAdvertModal = () => {
           <DatePicker label="End Date" {...register('endDate')} error={errors.endDate} />
 
           {/* categories, tags, file upload */}
-          <Button type="submit" variant='black' className="w-full" label="Submit" />
+          <Button type="submit" variant='black' className="w-full" disabled={isUploading} label={isUploading ? "Uploading..." : "Submit"} />
         </div>
       </form>
     </div>
