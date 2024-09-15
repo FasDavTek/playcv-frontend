@@ -5,7 +5,7 @@ import UploadFile from '@mui/icons-material/UploadFileOutlined';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Button, Input, TextArea, FileUpload, DatePicker, Select, } from '@video-cv/ui-components';
+import { Button, Input, TextArea, FileUpload, DatePicker, Select, VideoUploadWidget } from '@video-cv/ui-components';
 import { advertSchema } from './../../../../../video-cv/src/schema/formValidations/Advert.schema';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useNavigate } from 'react-router-dom';
@@ -19,14 +19,16 @@ import { useNavigate } from 'react-router-dom';
 //   videoTranscript: string;
 // }
 
+type faqType = z.infer<typeof advertSchema>;
+
 const options = [
   { value: 'video', label: 'Video', price: '$200' },
   { value: 'image', label: 'Image', price: '$200' },
 ];
 
-type faqType = z.infer<typeof advertSchema>;
-
 const CreateAds = () => {
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadUrls, setUploadUrls] = useState<string[]>([]);
   const {
     register,
     handleSubmit,
@@ -39,11 +41,45 @@ const CreateAds = () => {
   });
   console.log('errors', errors);
 
+  const adType = watch('adType');
+
   const navigate = useNavigate();
 
-  const onSubmit = (data: faqType) => {
-    console.log('Form Data:', data);
+  const onSubmit = async (data: faqType) => {
+    try {
+      const files = data.files;
+      setIsUploading(true);
+
+      
+      const uploadedUrls = await Promise.all(
+        files.map(async ({ file }) => {
+          const resourceType = file.type.startsWith('image') ? 'image' : 'video';
+          const url = await VideoUploadWidget({ 
+            file,
+            resourceType,
+            context: {
+              adName: data.adName,
+              advertType: data.adType,
+              adRedirectURL: data.adUrl,
+              startDate: data.startDate,
+              endDate: data.endDate,
+              description: data.adDescription,
+            },
+          });
+          return url;
+        })
+      );
+
+      setIsUploading(false);
+      setUploadUrls(uploadedUrls);
+      console.log('Uploaded URLs:', uploadedUrls);
+    }
+    catch (err) {
+      setIsUploading(false);
+      console.log('Error during file upload:', err);
+    }
   };
+
   return (
     <div className='p-10 overflow-hidden bg-white'>
       <ChevronLeftIcon className="cursor-pointer text-base mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/employer/advertisement')} />
@@ -82,7 +118,7 @@ const CreateAds = () => {
           <DatePicker label="End Date" {...register('endDate')} error={errors.endDate} />
 
           {/* categories, tags, file upload */}
-          <Button type="submit" variant='black' className="w-full" label="Submit" />
+          <Button type="submit" variant='black' className="w-full" disabled={isUploading} label={isUploading ? "Uploading..." : "Submit"} />
         </div>
       </form>
     </div>
