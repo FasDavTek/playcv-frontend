@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { FileRejection, useDropzone } from 'react-dropzone';
 
@@ -82,11 +82,17 @@ interface FileUploadProps {
   uploadRestrictionText?: string;
   borderWidth?: number;
   color?: string;
-  setFile?: (file: File[] | File | null) => void;
+  setFile?: (file: File | File[]) => void;
+  onFilesChange?: (files: File[] | File) => void;
   setVideoUrl?: (url: string) => void;
 }
 
-const FileUpload = ({
+interface PreviewFile extends File {
+  preview: string;
+}
+
+
+const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
   containerClass,
   borderColor = '#9ABDDC',
   borderStyle = 'dashed',
@@ -96,9 +102,10 @@ const FileUpload = ({
   color = '#9ABDDC',
   borderWidth = 2,
   setFile = () => {},
+  onFilesChange = () => {},
   setVideoUrl = () => {},
-}: FileUploadProps) => {
-  const [files, setFiles] = useState<File[]>([]);
+}, ref) => {
+  const [files, setFiles] = useState<PreviewFile[]>([]);
 
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (rejectedFiles.length) {
@@ -107,15 +114,18 @@ const FileUpload = ({
         return;
       }
     
-      const newFiles = acceptedFiles.map((file: File) => {
-        return Object.assign(file, {
-          preview: URL.createObjectURL(file),
+      if (acceptedFiles.length === 1) {
+        // Single file upload
+        setFile(acceptedFiles[0]); // Pass the original File object
+      } else {
+        // Multiple file upload
+        const newFiles = acceptedFiles.map((file: File) => {
+          return Object.assign(file, { preview: URL.createObjectURL(file) }) as PreviewFile;
         });
-      });
-  
-      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-      setFiles([...files, ...newFiles]);
-    }, [files, setFiles]);
+        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+        onFilesChange(newFiles);
+      }
+    }, [onFilesChange, setFiles]);
 
   const {
     getRootProps,
@@ -133,11 +143,18 @@ const FileUpload = ({
     maxSize: 8388608,
   });
 
-  const handleDelete = (fileToDelete: File) => {
+  const handleDelete = (fileToDelete: PreviewFile) => {
     const updatedFiles = files.filter((file) => file !== fileToDelete);
     setFiles(updatedFiles);
     setFiles(updatedFiles);
   };
+
+  useEffect(() => {
+    // Cleanup file preview URLs to avoid memory leaks
+    return () => {
+      files.forEach((file) => URL.revokeObjectURL(file.preview));
+    };
+  }, [files]);
 
   // const handleSubmit = async () => {
   //   if (files.length === 0) {
@@ -172,9 +189,9 @@ const FileUpload = ({
     [borderColor, borderStyle, borderWidth, color, isFocused, isDragAccept, isDragReject]
   );
 
-  const thumbs = files.map((file: File & any) => (
-    <div style={thumb} key={file.name} className="relative">
-      <div style={thumbInner} className="">
+  const thumbs = files.map((file: PreviewFile) => (
+    <div style={{ display: 'inline-flex', margin: '8px', width: '100px', height: '100px' }} key={file.name} className="relative">
+      <div style={{ display: 'flex', minWidth: 0, overflow: 'hidden' }} className="">
         <button
           className="absolute text-sm text-red-600 top-0 right-0 z-10 border bg-white p-0.5 rounded"
           onClick={() => handleDelete(file)}
@@ -213,6 +230,6 @@ const FileUpload = ({
       </div>
     </div>
   );
-};
+});
 
 export default FileUpload;

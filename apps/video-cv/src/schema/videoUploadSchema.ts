@@ -27,11 +27,18 @@ export const videoUploadSchema = z.object({
   }).optional(),
   media: z.union([
     z.instanceof(File).refine(
-      (file) => file.size <= MAX_FILE_SIZE,
-      `Max video file size is ${MAX_FILE_SIZE / (1024 * 1024)}MB.`
+      (file) => file instanceof File,
+      'Input not instance of file'
+    ).refine(
+      (file) =>{ return !file || file.size <= MAX_FILE_SIZE; },
+      `Max video file size is ${MAX_FILE_SIZE}MB.`
     ).refine(
       (file) => ACCEPTED_VIDEO_TYPES.includes(file.type),
       "Only .mp4, .webm, and .ogg video files are accepted."
+    ),
+    z.array(z.instanceof(File)).refine(
+      (files) => files.every((file) => file instanceof File),
+      'Input not instance of file'
     ),
     z.string().url("Invalid URL for media")
   ]).refine((value) => value !== undefined && value !== null, {
