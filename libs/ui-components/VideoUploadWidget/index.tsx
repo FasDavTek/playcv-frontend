@@ -40,7 +40,11 @@ const index = async ({
   }
 
   try {
-    const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, formData);
+    const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, formData, {
+      params: {
+        context: JSON.stringify(context),
+      },
+    });
     return response.data.secure_url;
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);

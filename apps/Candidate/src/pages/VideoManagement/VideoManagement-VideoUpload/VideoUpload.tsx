@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useController } from 'react-hook-form';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
-import { Button, Input, TextArea, FileUpload, Select, } from '@video-cv/ui-components';
+import { Button, Input, TextArea, FileUpload, Select, RichTextEditor } from '@video-cv/ui-components';
 import { usePaystack } from '@video-cv/payment';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -60,64 +60,148 @@ const VideoUpload = ({
   // onClose,
 }) => {
   const [isUploading, setIsUploading] = useState(false);
-  const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<faqType>({resolver: zodResolver(videoUploadSchema)});
-  const navigate = useNavigate();
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<faqType>({resolver: zodResolver(videoUploadSchema),});
+  // const navigate = useNavigate();
   const location = useLocation();
   const videoType = (location.state as any)?.videoType ?? '';
   const price = (location.state as any)?.price ?? 0;
   // const { field: categoryField } = useController({ name: 'category', control });
 
-  const handleFileUpload = async (file: File) => {
-    const resourceType = file.type.startsWith('image/') ? 'image' : 'video';
+  console.log();
+  console.log(errors);
 
+  const options = [
+    { value: 'education', label: 'Education' },
+    { value: 'technology', label: 'Technology' },
+    { value: 'business', label: 'Business' },
+  ];
+
+  useEffect(() => {
+    setValue('videoType', videoType);
+    setValue('price', price);
+  }, [setValue, videoType, price]);
+
+  // const handleFileUpload = async (file: File) => {
+  //   console.log('Form Received!');
+  //   const resourceType = file.type.startsWith('image/') ? 'image' : 'video';
+
+  //   try {
+  //     const mediaUrl = await VideoUploadWidget({
+  //       file,
+  //       resourceType,
+  //       context: {
+  //         videoName: watch('name'),
+  //         videoType: videoType.toUpperCase(),
+  //         description: watch('description'),
+  //         price: price.toString(),
+  //         videoTranscript: watch('videoTranscript'),
+  //         videoCategory: watch('Category'),
+  //       }
+  //     });
+  //     toast.success('Upload Successful');
+  //     return mediaUrl;
+  //   } catch (err) {
+  //     // console.error('Failed to upload media:', err);
+  //     toast.error(`Failed to upload media: ${err}`);
+  //     throw err;
+  //   }
+  // };
+
+  const handleFileUpload = async (file: File) => {
     try {
+      // Check if the file exists and ensure it is being processed correctly
+      if (!file) throw new Error('File is not defined.');
+      
       const mediaUrl = await VideoUploadWidget({
         file,
-        resourceType,
+        resourceType: 'video',
         context: {
           videoName: watch('name'),
-          videoType: videoType.toUpperCase(),
+          videoType: watch('videoType')?.toUpperCase(),
           description: watch('description'),
-          price: price.toString(),
+          price: watch('price')?.toString(),
           videoTranscript: watch('videoTranscript'),
           videoCategory: watch('Category'),
         }
       });
-      toast.success('Upload Successful');
+      toast.success('Upload successful');
+      console.log('Upload successful:', mediaUrl);
       return mediaUrl;
     } catch (err) {
-      // console.error('Failed to upload media:', err);
-      toast.error(`Failed to upload media: ${err}`);
+      toast.error(`Upload Failed: ${err}`);
+      console.error('Upload failed:', err);
       throw err;
     }
   };
+  
+
+  // const onSubmitHandler = async (data: faqType) => {
+  //   console.log('Form Submitted!');
+  //   try {
+  //     setIsUploading(true);
+
+  //     if (data.media) {
+  //       const files = Array.isArray(data.media) ? data.media : [data.media];
+
+  //       // Upload each file and gather the URLs
+  //       const uploadedUrls = await Promise.all(
+  //         files.map(async ({ file }) => {
+  //           const resourceType = file.type.startsWith('image/') ? 'image' : 'video';
+  //           const url = await handleFileUpload(file as File);
+                // setValue('media', url);
+  //           return url;
+  //         })
+  //       );
+
+  //       setIsUploading(false);
+
+  //       data.media = uploadedUrls[0];
+
+  //       console.log('Uploaded URLs:', uploadedUrls);
+  //     }
+  //     data['videoType'] = videoType.toUpperCase();
+  //     data['price'] = price;
+
+  //     console.log("Final form data:", data); 
+
+  //   } catch (error) {
+  //     console.error('Failed to upload video:', error);
+  //   }
+  // };
+
+
 
   const onSubmitHandler = async (data: faqType) => {
     try {
-      if (data.media) {
-        const files = Array.isArray(data.media) ? data.media : [data.media];
-      
-        setIsUploading(true);
-
-        // Upload each file and gather the URLs
-        const uploadedUrls = await Promise.all(
-          files.map(async ({ file }) => {
-            const resourceType = file.type.startsWith('image/') ? 'image' : 'video';
-            const url = await handleFileUpload(file as File);
-            return url;
-          })
-        );
-
-        setIsUploading(false);
-
-        console.log('Uploaded URLs:', uploadedUrls);
+      console.log('Submitting data:', data);
+      setIsUploading(true);
+  
+      // File upload logic
+      if (data.media instanceof File || typeof data.media === 'object') {
+        const file = Array.isArray(data.media) ? data.media[0] : data.media;
+        if (file) {
+          const uploadedUrl = await handleFileUpload(file);
+          console.log('Uploaded URL:', uploadedUrl);
+        } else {
+          toast.warning('No file selected')
+          console.warn('No file selected');
+        }
       }
-      data['videoType'] = videoType.toUpperCase();
-      data['price'] = price;
-    } catch (error) {
-      console.error('Failed to upload video:', error);
+
+      setIsUploading(false);
+  
+      // After file upload, check if data was submitted correctly
+      console.log('Final form data:', data);
+    } catch (err) {
+      toast.warning(`Error during submission: ${err}`)
+      console.error('Error during submission:', err);
+    }
+    finally {
+      setIsUploading(false);
     }
   };
+  
+  
   
 
   return (
@@ -135,13 +219,13 @@ const VideoUpload = ({
           <Input
             label="Video Type"
             value={`${videoType} video upload`}
+            {...register('videoType')}
             disabled
           />
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
             Video Description
           </label>
-          <ReactQuill
-            className='custom-quill'
+          <RichTextEditor
             value={watch('description')}
             onChange={(value) => setValue('description', value)}
             placeholder="Add description for your video"
@@ -149,8 +233,7 @@ const VideoUpload = ({
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
             Video Transcript
           </label>
-          <ReactQuill
-            className='custom-quill'
+          <RichTextEditor
             value={watch('videoTranscript')}
             onChange={(value) => setValue('videoTranscript', value)}
             placeholder="Add transcript for your video"
@@ -158,11 +241,17 @@ const VideoUpload = ({
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
             Video Category
           </label>
-          <ReactQuill
-            className='custom-quill'
+          {/* <RichTextEditor
             value={watch('Category')}
             onChange={(value) => setValue('Category', value)}
             placeholder="Add your video preferred category"
+          /> */}
+          <Select
+            label="Select your video category"
+            options={options}
+            value={watch('Category')}
+            onChange={(value) => setValue('Category', value)}
+            // placeholder="Select your video category"
           />
           {/* <SelectChip label="Category"  options={[{ value: 'category1', label: 'Category 1' }, { value: 'category2', label: 'Category 2' }]} value={categoryField.value || []} onChange={categoryField.onChange} /> */}
           <div className="">
@@ -177,14 +266,11 @@ const VideoUpload = ({
               setFile={(files: File | File[] | null) => {
                 if (files) {
                   if (Array.isArray(files)) {
-                    const file = Array.isArray(files) ? files[0] : files; // Ensure we handle one file
-                    handleFileUpload(file as File)
-                      .then((url) => {
-                        setValue('media', url); // Set the URL or file path in the form state
-                      })
-                      .catch((err) => {
-                        console.error('Error uploading file:', err);
-                      });
+                    const file = files[0]; // Ensure we handle one file
+                    setValue('media', file);
+                  }
+                  else {
+                    setValue('media', files);
                   }
                 }
               }}
