@@ -12,6 +12,9 @@ interface IDatePickerProps extends DatePickerProps<Dayjs | any> {
   className?: string;
   maxDate?: any;
   error?: FieldError;
+  value?: Dayjs | any;
+  onChange?: (value: Dayjs | any) => void;
+  defaultValue?: Dayjs | any;
 }
 
 const DatePickerComponent: React.FC<IDatePickerProps> = ({
@@ -20,6 +23,9 @@ const DatePickerComponent: React.FC<IDatePickerProps> = ({
   containerClass,
   maxDate,
   error,
+  value,
+  onChange,
+  defaultValue,
   ...rest
 }) => {
   return (
@@ -41,6 +47,8 @@ const DatePickerComponent: React.FC<IDatePickerProps> = ({
         )}
         format="DD/MM/YYYY"
         maxDate={maxDate}
+        value={value !== undefined ? value : null}
+        onChange={onChange}
         {...rest}
       />
       {!!error && <p className="text-red-500 text-sm">{error?.message}</p>}
