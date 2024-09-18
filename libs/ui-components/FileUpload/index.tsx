@@ -215,15 +215,27 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
     <div className={containerClass}>
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
-        {thumbs.length > 0 ? (
-          <div style={thumbsContainer}>{thumbs}</div>
+        {files.length > 0 ? (
+          <div style={thumbsContainer}>
+            {files.map((file: PreviewFile) => (
+              <div key={file.name} className="relative">
+                <div className="">
+                  <button
+                    className="absolute text-sm text-red-600 top-0 right-0 z-10 border bg-white p-0.5 rounded"
+                    onClick={() => handleDelete(file)}
+                    title="delete file"
+                  >
+                    X
+                  </button>
+                  <img src={file.preview} style={img} />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : (
           <>
             {uploadIcon && uploadIcon}
-            <p
-              dangerouslySetInnerHTML={{ __html: uploadLabel }}
-              className="mt-2"
-            />
+            <p dangerouslySetInnerHTML={{ __html: uploadLabel }} className="mt-2" />
             <p className="text-secondary-300">{uploadRestrictionText}</p>
           </>
         )}
