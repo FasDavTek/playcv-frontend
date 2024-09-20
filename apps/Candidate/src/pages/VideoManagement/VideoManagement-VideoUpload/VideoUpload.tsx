@@ -173,7 +173,7 @@ const VideoUpload = ({
 
   const onSubmitHandler = async (data: faqType) => {
     try {
-      console.log('Submitting data:', data);
+      toast.info('Uploading files...');
       setIsUploading(true);
   
       // File upload logic

@@ -12,9 +12,13 @@ type ReportTableColumns = {
   id: string;
   status: string;
   adName: string;
-  fileUrl: string;
+  adUrl: string;
+  adType: string;
   createdAt: string;
   userFullname: string;
+  description: string;
+  startDate: string;
+  endDate: string;
   action: 'action';
 };
 
@@ -22,26 +26,38 @@ const initialData = [
   {
     id: '1',
     adName: 'Summer Sale',
-    fileUrl: 'https://example.com/summer-sale.png',
+    adUrl: 'https://example.com/summer-sale.png',
     createdAt: '2024-06-01T10:00:00Z',
     userFullname: 'John Doe',
     status: 'active',
+    description: 'This is a summer sale ad',
+    startDate: '2024-06-01T10:00:00Z',
+    endDate: '2024-06-30T10:00:00Z',
+    adType: 'image',
   },
   {
     id: '2',
     adName: 'Winter Collection',
-    fileUrl: 'https://example.com/winter-collection.png',
+    adUrl: 'https://example.com/winter-collection.png',
     createdAt: '2024-11-15T12:00:00Z',
     userFullname: 'Jane Smith',
     status: 'suspended',
+    description: 'This is a winter collection ad',
+    startDate: '2024-11-15T12:00:00Z',
+    endDate: '2024-12-31T12:00:00Z',
+    adType: 'image',
   },
   {
     id: '3',
     adName: 'Spring Promo',
-    fileUrl: 'https://example.com/spring-promo.png',
+    adUrl: 'https://example.com/spring-promo.png',
     createdAt: '2024-03-21T09:30:00Z',
     userFullname: 'Alice Johnson',
     status: 'active',
+    description: 'This is a spring promo ad',
+    startDate: '2024-03-21T09:30:00Z',
+    endDate: '2024-04-30T09:30:00Z',
+    adType: 'video',
   },
 ];
 
@@ -75,12 +91,28 @@ const Payment = () => {
       header: 'User Fullname',
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('fileUrl', {
+    columnHelper.accessor('adUrl', {
       header: 'Ad Link',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('adType', {
+      header: 'Ad Type',
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('createdAt', {
       header: 'Date Created',
+      cell: (info) => formatDate(info.getValue()),
+    }),
+    columnHelper.accessor('description', {
+      header: 'Description',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('startDate', {
+      header: 'Start Date',
+      cell: (info) => formatDate(info.getValue()),
+    }),
+    columnHelper.accessor('endDate', {
+      header: 'End Date',
       cell: (info) => formatDate(info.getValue()),
     }),
     columnHelper.accessor('status', {
@@ -99,7 +131,7 @@ const Payment = () => {
       cell: ({ row: { original } }) => {
         const handleView = () => {
           console.log(`Viewing ad "${original.adName}".`);
-          navigate(`/admin/advertisement-management/view/${original.id}`);
+          navigate(`/admin/advertisement-management/view/${original.id}`, { state: { ad: original }});
         };
 
         const handleStatusClick = () => {
@@ -125,7 +157,7 @@ const Payment = () => {
     <div className="min-h-screen px-3 md:px-10 py-10">
       <div className="flex justify-end">
         <Button
-          label="Create Ad Video"
+          label="Create Ad"
           variant="black"
           onClick={() => navigate('/admin/advertisement-management/create')}
         />

@@ -800,7 +800,9 @@ const UserManagement = () => {
       </div>
 
       <Modal open={openModal === 'userManagement'} onClose={closeModal}>
-        <UserModal onClose={closeModal} />
+        <>
+          <UserModal onClose={closeModal} />
+        </>
       </Modal>
     </div>
   );

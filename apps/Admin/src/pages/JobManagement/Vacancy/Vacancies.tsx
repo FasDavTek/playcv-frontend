@@ -3,7 +3,7 @@ import { Grid, Typography, Container } from '@mui/material';
 import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import styles
-import { Input, Button } from '@video-cv/ui-components';
+import { Input, Button, RichTextEditor } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -104,16 +104,16 @@ const Vacancies = () => {
                 />
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography variant="h6">Job Details</Typography>
-                  <ReactQuill className='custom-quill' value={jobDetails} onChange={setJobDetails} />
+                  <Typography variant="subtitle2">Job Details</Typography>
+                  <RichTextEditor value={jobDetails} onChange={setJobDetails} placeholder={'Enter job details'} />
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography variant="h6">Key Responsibilities</Typography>
-                  <ReactQuill className='custom-quill' value={keyResponsibilities} onChange={setKeyResponsibilities} />
+                  <Typography variant="subtitle2">Key Responsibilities</Typography>
+                  <RichTextEditor value={keyResponsibilities} onChange={setKeyResponsibilities} placeholder={'Enter responsibilities'} />
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography variant="h6">Qualifications</Typography>
-                  <ReactQuill className='custom-quill' value={qualifications} onChange={setQualifications} />
+                  <Typography variant="subtitle2">Qualifications</Typography>
+                  <RichTextEditor value={qualifications} onChange={setQualifications} placeholder={'Enter qualifications'} />
                 </Grid>
                 <Grid item xs={12}>
                 <Input

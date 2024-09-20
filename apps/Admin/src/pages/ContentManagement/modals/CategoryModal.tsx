@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Button, Input, TextArea, FileUpload, Select, } from '@video-cv/ui-components';
+import { Button, Input, TextArea, FileUpload, Select, RichTextEditor, } from '@video-cv/ui-components';
 import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 interface IForm {
-  category?: string;
-  role?: string;
+  name?: string;
+  description?: string;
 }
 
 interface CategoryModalProps {
@@ -28,8 +28,8 @@ const CategoryModal = ({
 
   useEffect(() => {
     if (selectedItem) {
-      setValue('category', selectedItem.category || '');
-      setValue('role', selectedItem.role || '');
+      setValue('name', selectedItem.name || '');
+      setValue('description', selectedItem.description || '');
     }
   }, [selectedItem, setValue]);
 
@@ -38,31 +38,31 @@ const CategoryModal = ({
   const getLabel = () => {
     switch (currentTab) {
       case 'faq':
-        return { category: 'Question', role: 'Answer' };
+        return { name: 'Question', description: 'Response' };
       case 'state':
-        return { category: 'State Name', role: 'Abbreviation' };
+        return { name: 'State Name', description: 'Abbreviation' };
       case 'institutions':
-        return { category: 'Institution Name', role: 'Location' };
+        return { name: 'Institution Name', description: 'Location' };
       case 'courses':
-        return { category: 'Course Title', role: 'Duration' };
+        return { name: 'Course Title', description: 'Duration' };
       case 'industries':
-        return { category: 'Industry Name', role: 'Description' };
+        return { name: 'Industry Name', description: 'Description' };
       case 'specialization':
-        return { category: 'Specialization Name', role: 'Description' };
+        return { name: 'Specialization Name', description: 'Description' };
       case 'jobFunctions':
-        return { category: 'Job Function', role: 'Description' };
+        return { name: 'Job Function', description: 'Description' };
       case 'marketplaceCategories':
-        return { category: 'Category Name', role: 'Description' };
+        return { name: 'Category Name', description: 'Description' };
       case 'qualifications':
-        return { category: 'Qualification', role: 'Description' };
+        return { name: 'Qualification', description: 'Description' };
       case 'siteTestimonials':
-        return { category: 'Name', role: 'Testimonial' };
+        return { name: 'Name', description: 'Testimonial' };
       case 'degreeClass':
-        return { category: 'Degree Class', role: 'Description' };
+        return { name: 'Degree Class', description: 'Description' };
       case 'cvUploadGuideline':
-        return { category: 'Guideline', role: 'Description' };
+        return { name: 'Guideline', description: 'Description' };
       default:
-        return { category: 'Category', role: 'Role' };
+        return { name: 'Category', description: 'Role' };
     }
   };
 
@@ -74,20 +74,30 @@ const CategoryModal = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="relative bg-white p-10 lg:p-14 centered-modal-md rounded-lg">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="relative bg-white p-10 lg:py-5 lg:px-14 centered-modal rounded-lg">
       <CloseIcon className='absolute cursor-pointer hover:rounded-full hover:bg-gray-400 hover:text-white top-4 right-6' onClick={onClose} />
         
       <h3 className="text-center font-semibold text-xl">{selectedItem ? `Edit ${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}` : `Create New ${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}`}</h3>
       <div className="my-5 flex flex-col gap-5">
         <Input
-          label={labels.category}
-          {...register('category')}
+          label={labels.name}
+          {...register('name')}
           // error={}
         />
-        <TextArea
-          label={labels.role}
-          {...register('role')}
-        />
+        {currentTab !== 'faq' && (
+          <TextArea
+            label={labels.description}
+            {...register('description')}
+          />
+        )}
+        {currentTab === 'faq' && (
+          <RichTextEditor
+            // value={watch('role')}
+            value={selectedItem?.description || ''}
+            onChange={(value: string) => setValue('description', value)}
+            placeholder='Enter your response'
+          />
+        )}
         <Button
           onClick={() => {
             ('');
