@@ -4,11 +4,15 @@ import { Link } from 'react-router-dom';
 import { Paper, Pagination } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
-import { Select, Radio } from '@video-cv/ui-components';
+import { Select, Radio, DatePicker } from '@video-cv/ui-components';
 import { useFilters } from '@video-cv/hooks';
+import dayjs from 'dayjs';
+import { Controller, useForm } from 'react-hook-form';
 
 const JobBoard = () => {
   const [jobs, setJobs] = useState([1, 2, 3, 4]);
+
+  const { control } = useForm();
 
   const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
     setJobs(e.target.value === 'all' ? [1, 2, 3, 4] : [3, 4]);
@@ -47,11 +51,16 @@ const JobBoard = () => {
             </p>
           </div>
           <div className="p-3 mx-auto flex flex-col gap-3">
-            <Select
-              options={[]}
-              label="Date Posted"
-              placeholder="Select Date"
-              containerClass="flex-1"
+            <Controller
+              name='datePosted'
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <DatePicker
+                  label="Date Posted"
+                  value={value}
+                  onChange={(newValue) => onChange(dayjs(newValue))}
+                />
+              )}
             />
 
             <Radio
