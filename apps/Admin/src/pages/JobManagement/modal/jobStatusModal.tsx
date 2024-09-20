@@ -50,8 +50,8 @@ const JobStatusModal: React.FC<JobStatusModalProps> = ({ open, onClose, job, onU
   const [status, setStatus] = useState<'Active' | 'Expired' | 'Pending' | 'Rejected'>(job.status);
   const [loading, setLoading] = useState(false);
 
-  const handleStatusChange = (event: SelectChangeEvent<'Active' | 'Expired' | 'Pending' | 'Rejected'>) => {
-    setStatus(event.target.value as 'Active' | 'Expired' | 'Pending' | 'Rejected');
+  const handleStatusChange = (value: string) => {
+    setStatus(value as 'Active' | 'Expired' | 'Pending' | 'Rejected');
   };
 
   const handleSubmit = async () => {
@@ -117,19 +117,17 @@ const JobStatusModal: React.FC<JobStatusModalProps> = ({ open, onClose, job, onU
 
             <FormControl size='medium' margin="normal" variant="outlined">
                 <Select
-                    labelId="status-label"
-                    id="status-select"
                     value={status}
                     onChange={handleStatusChange}
                     options={statusOptions}
                     label="Status"
-                    className=" bg-white border-gray-300 rounded-md w-48"
+                    // className=" bg-white border-gray-300 rounded-md w-48"
                 >
-                    {statusOptions.map((option) => (
+                    {/* {statusOptions.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                         {option.label}
                     </MenuItem>
-                    ))}
+                    ))} */}
                 </Select>
             </FormControl>
           </Box>

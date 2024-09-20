@@ -47,15 +47,14 @@ const UploadVideoModal = ({
           name="role"
           control={control}
           rules={{ required: 'Role is required' }}
-          render={({ field }) => (
+          render={({ field: { onChange, value } }) => (
             <Select
               label="Role"
-              id="role"
-              placeholder="Select role"
-              containerClass="flex-1"
               options={options}
+              onChange={onChange}
+              value={value}
               // onChange={(e: any) => console.log('e', e)}
-              {...{ field }}
+              // {...{ field }}
             />
           )}
         />

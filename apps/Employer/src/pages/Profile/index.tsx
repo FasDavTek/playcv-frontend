@@ -14,6 +14,7 @@ import {
 import { Snackbar, Alert, SnackbarOrigin, IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import SaveAsOutlinedIcon from '@mui/icons-material/SaveAsOutlined';
+import { Controller, useForm } from 'react-hook-form';
 
 interface State extends SnackbarOrigin {
   open: boolean;
@@ -21,6 +22,7 @@ interface State extends SnackbarOrigin {
 
 const Profile = () => {
   const [editField, setEditField] = useState<string | null>(null);
+  const { register, handleSubmit, control, formState: { errors } } = useForm();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -62,8 +64,12 @@ const Profile = () => {
     setEditField(fieldName);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = (data: any) => {
+    setFormData({
+      ...data,
+      // nyscStartYear: dayjs(data.nyscStartYear),
+      // nyscEndYear: dayjs(data.nyscEndYear),
+    });
     setEditField(null);
     console.log('Form submitted', formData);
   };
@@ -79,7 +85,7 @@ const Profile = () => {
   return (
     <Box sx={{ width: '90%', marginInline: 'auto' }}>
       <Box >
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-8">
               {editField === 'firstName' ? (
                   <Input
@@ -194,12 +200,17 @@ const Profile = () => {
                   </Box>
                 )}
                 {editField === 'businessSector' ? (
-                  <Select
-                    name="businessSector"
-                    label="Industry"
-                    value={formData.businessSector}
-                    options={[{ value: 'product', label: 'Product' }]}
-                    onChange={handleInputChange}
+                  <Controller
+                    name='businessSector'
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <Select
+                        label="Industry"
+                        value={formData.businessSector}
+                        options={[{ value: 'product', label: 'Product' }]}
+                        onChange={(value) => onChange('classOfDegree', value)}
+                      />
+                    )}
                   />
                 ) : (
                   <Box className="input-box">

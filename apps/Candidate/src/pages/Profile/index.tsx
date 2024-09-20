@@ -11,13 +11,13 @@ import {
   Select,
   TextArea,
   Button,
+  RichTextEditor,
 } from '@video-cv/ui-components';
 import { Controller, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
 import { Snackbar, Alert, SnackbarOrigin, IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import SaveAsOutlinedIcon from '@mui/icons-material/SaveAsOutlined';
-import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 interface TabPanelProps {
@@ -279,15 +279,21 @@ const Profile = () => {
                 </Box>
               )}
               {editField === 'classOfDegree' ? (
-                <Select
-                  {...register('classOfDegree')}
-                  label="Class of Degree"
-                  value={formData.classOfDegree}
-                  options={[
-                    { value: 'firstClass', label: 'First Class' },
-                    { value: 'secondClassUpper', label: 'Second Class Upper' },
-                    { value: 'secondClassLower', label: 'Second Class Lower' },
-                  ]}
+                <Controller
+                  name='classOfDegree'
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <Select
+                      label="Class of Degree"
+                      value={formData.classOfDegree}
+                      options={[
+                        { value: 'firstClass', label: 'First Class' },
+                        { value: 'secondClassUpper', label: 'Second Class Upper' },
+                        { value: 'secondClassLower', label: 'Second Class Lower' },
+                      ]}
+                      onChange={(value) => onChange('classOfDegree', value)}
+                    />
+                  )}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('classOfDegree')}>
@@ -304,11 +310,10 @@ const Profile = () => {
                   control={control}
                   defaultValue={formData.coverLetter}
                   render={({ field }) => (
-                    <ReactQuill
-                      className='custom-quill'
-                      theme="snow"
+                    <RichTextEditor
                       value={field.value}
                       onChange={field.onChange}
+                      placeholder='Write cover letter'
                     />
                   )}
                 />
@@ -357,14 +362,20 @@ const Profile = () => {
                 </Box>
               )}
               {editField === 'businessSector' ? (
-                <Select
-                  {...register('businessSector')}
-                  label="Business Sector"
-                  value={formData.businessSector}
-                  options={[
-                    { value: 'product', label: 'Product' },
-                    { value: 'service', label: 'Service' },
-                  ]}
+                <Controller
+                  name='businessSector'
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <Select
+                      label="Business Sector"
+                      value={formData.classOfDegree}
+                      options={[
+                        { value: 'product', label: 'Product' },
+                        { value: 'service', label: 'Service' },
+                      ]}
+                      onChange={(value) => onChange('businessSector', value)}
+                    />
+                  )}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('businessSector')}>

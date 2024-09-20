@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Paper, Pagination, Box, Stack, Typography } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
-import { Select, Radio, Input } from '@video-cv/ui-components';
+import { Select, Radio, Input, DatePicker } from '@video-cv/ui-components';
 import { useFilters } from '@video-cv/hooks';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -17,6 +17,8 @@ import { mockJobs } from '../../utils/jobs';
 import { JobCard } from '../../components';
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { Controller, FieldError, useForm } from 'react-hook-form';
+import dayjs from 'dayjs';
 
 
 const heroImages = [Images.HeroImage10, Images.HeroImage11, Images.HeroImage12, Images.HeroImage13, Images.HeroImage14];
@@ -24,6 +26,8 @@ const heroImages = [Images.HeroImage10, Images.HeroImage11, Images.HeroImage12, 
 const JobBoard = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const { control } = useForm();
 
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
@@ -92,13 +96,13 @@ const JobBoard = () => {
         setIsFilterApplied(true);
     };
     
-    const handleCategoryChange = (e: React.ChangeEvent<{ value: string[] }>) => {
-        setSelectedCategories(e.target.value);
+    const handleCategoryChange = (value: string) => {
+        setSelectedCategories([...selectedCategories, value]);
         setIsFilterApplied(true);
     };
 
-    const handleLocationChange = (e: ChangeEvent<{ value: string[] }>) => {
-      setSelectedLocations(e.target.value);
+    const handleLocationChange = (value: string) => {
+      setSelectedLocations([...selectedLocations, value]);
       setIsFilterApplied(true);
     };
   
@@ -182,34 +186,27 @@ const JobBoard = () => {
             <Select
               options={categoryOptions.map(option => ({ label: option, value: option }))} // Replace with actual options
               label="Categories"
-              placeholder="Select Category(s)"
-              containerClass="flex-1"
-              name="category"
-              multiple
-              value={selectedCategories}
+              value={selectedCategories.join(', ')}
               onChange={handleCategoryChange}
             />
 
             <Select
               options={[]} // Replace with actual options
               label="Location"
-              placeholder="Select Location"
-              containerClass="flex-1"
-              name="location"
-              multiple
-              value={selectedLocations}
+              value={selectedLocations.join(', ')}
               onChange={handleLocationChange}
             />
 
-            <Select
-              options={[]} // Replace with actual options
-              label="Date Posted"
-              placeholder="Select Date"
-              containerClass="flex-1"
-              name="datePosted"
-              multiple
-              value={selectedDates}
-              onChange={handleDateChange}
+            <Controller
+              name='datePosted'
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <DatePicker
+                  label="Date Posted"
+                  value={value}
+                  onChange={(newValue) => onChange(dayjs(newValue))}
+                />
+              )}
             />
 
             <Radio

@@ -51,8 +51,8 @@ const ManageJob: React.FC  = () => {
     }
   }, [job]);
 
-  const handleStatusChange = (event: SelectChangeEvent<'Active' | 'Expired' | 'Pending' | 'Rejected'>) => {
-    setStatus(event.target.value as 'Active' | 'Expired' | 'Pending' | 'Rejected');
+  const handleStatusChange = (value: string) => {
+    setStatus(value as 'Active' | 'Expired' | 'Pending' | 'Rejected');
   };
 
   const handleSave = async () => {
@@ -128,19 +128,17 @@ const ManageJob: React.FC  = () => {
 
           <FormControl size='medium' margin="normal" variant="outlined">
               <Select
-                  labelId="status-label"
-                  id="status-select"
                   value={status}
                   onChange={handleStatusChange}
                   options={statusOptions}
                   label="Status"
-                  className=" bg-white border-gray-300 rounded-md w-56"
+                  // className=" bg-white border-gray-300 rounded-md w-56"
               >
-                  {statusOptions.map((option) => (
+                  {/* {statusOptions.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                       {option.label}
                   </MenuItem>
-                  ))}
+                  ))} */}
               </Select>
           </FormControl>
 
