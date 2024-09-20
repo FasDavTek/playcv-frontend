@@ -70,11 +70,8 @@ const CreateAdvertModal = ({
         />
         <Select
           label="Advert Type"
-          id="adType"
-          placeholder="Select type"
-          containerClass="flex-1"
           options={options}
-          withLabelDescription={true}
+          value={watch('adType')}
           onChange={(e: any) => console.log('e', e)}
         />
         <div className="">

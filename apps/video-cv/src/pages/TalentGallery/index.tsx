@@ -81,8 +81,8 @@ const index = () => {
         setIsFilterApplied(true);
     };
     
-    const handleCategoryChange = (e: React.ChangeEvent<{ value: string[] }>) => {
-        setSelectedCategories(e.target.value);
+    const handleCategoryChange = (value: string) => {
+        setSelectedCategories([...selectedCategories, value]);
         setIsFilterApplied(true);
     };
     
@@ -149,10 +149,7 @@ const index = () => {
                     <Select
                         options={categoryOptions.map(option => ({ label: option, value: option }))}
                         label="Categories"
-                        placeholder="Select Category(s)"
-                        containerClass="flex-1"
-                        multiple
-                        value={selectedCategories}
+                        value={selectedCategories.join(', ')}
                         onChange={handleCategoryChange}
                     />
 

@@ -62,15 +62,13 @@ const UploadVideoModal = ({
           name="type"
           control={control}
           rules={{ required: 'Type is required' }}
-          render={({ field }) => (
+          render={({ field: { onChange, value } }) => (
             <Select
               label="Type"
-              id="type"
-              placeholder="Select type"
-              containerClass="flex-1"
               options={options}
               // onChange={(e: any) => console.log('e', e)}
-              {...{ field }}
+              onChange={onChange}
+              value={value}
             />
           )}
         />

@@ -60,8 +60,8 @@ const JobBoard = () => {
             <Select
               options={[]}
               label="Date Posted"
-              placeholder="Select Date"
-              containerClass="flex-1"
+              value={''}
+              onChange={(value) => console.log(value)}
             />
 
             <Radio
