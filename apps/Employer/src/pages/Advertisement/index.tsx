@@ -108,9 +108,13 @@ import { formatDate } from '@video-cv/utils';
 type Advert = {
   id: string;
   adName: string;
-  fileUrl: string;
+  adUrl: string;
+  adType: string;
   createdAt: string;
   status: string;
+  description: string;
+  startDate: string;
+  endDate: string;
   action: 'action';
 };
 
@@ -119,23 +123,35 @@ const initialData = [
   {
     id: '1',
     adName: 'Summer Sale',
-    fileUrl: 'https://example.com/summer-sale.png',
+    adUrl: 'https://example.com/summer-sale.png',
     createdAt: '2024-06-01T10:00:00Z',
     status: 'active',
+    description: 'This is a summer sale ad',
+    startDate: '2024-06-01T10:00:00Z',
+    endDate: '2024-06-30T10:00:00Z',
+    adType: 'image',
   },
   {
     id: '2',
     adName: 'Winter Collection',
-    fileUrl: 'https://example.com/winter-collection.png',
+    adUrl: 'https://example.com/winter-collection.png',
     createdAt: '2024-11-15T12:00:00Z',
     status: 'suspended',
+    description: 'This is a winter collection ad',
+    startDate: '2024-11-15T12:00:00Z',
+    endDate: '2024-12-31T12:00:00Z',
+    adType: 'image',
   },
   {
     id: '3',
     adName: 'Spring Promo',
-    fileUrl: 'https://example.com/spring-promo.png',
+    adUrl: 'https://example.com/spring-promo.png',
     createdAt: '2024-03-21T09:30:00Z',
     status: 'active',
+    description: 'This is a spring promo ad',
+    startDate: '2024-03-21T09:30:00Z',
+    endDate: '2024-04-30T09:30:00Z',
+    adType: 'video',
   },
 ];
 
@@ -160,12 +176,28 @@ const Advertisement = () => {
       header: 'Ad Name',
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('fileUrl', {
+    columnHelper.accessor('adUrl', {
       header: 'Ad Link',
-      cell: (info) => <a href={info.getValue()} target="_blank" rel="noopener noreferrer">View Ad</a>,
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('adType', {
+      header: 'Ad Type',
+      cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('createdAt', {
       header: 'Date Created',
+      cell: (info) => formatDate(info.getValue()),
+    }),
+    columnHelper.accessor('description', {
+      header: 'Description',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('startDate', {
+      header: 'Start Date',
+      cell: (info) => formatDate(info.getValue()),
+    }),
+    columnHelper.accessor('endDate', {
+      header: 'End Date',
       cell: (info) => formatDate(info.getValue()),
     }),
     columnHelper.accessor('status', {
@@ -183,7 +215,7 @@ const Advertisement = () => {
     columnHelper.accessor('action', {
       cell: ({ row: { original } }) => {
         const handleView = () => {
-          navigate(`/employer/advertisement/view/${original.id}`);
+          navigate(`/employer/advertisement/view/${original.id}`, { state: { ad: original }});
         };
 
         const handleStatusClick = () => {

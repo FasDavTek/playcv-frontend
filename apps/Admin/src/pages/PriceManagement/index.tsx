@@ -320,8 +320,10 @@ const index = () => {
           />
         </div>
 
-        <Modal open={openModal === 'add' || openModal === 'edit'} onClose={closeModal}>
-          <Price onClose={closeModal} currentTab={activeTab} item={selectedItem} open={true} modalType={'add'} />
+        <Modal open={openModal === 'add' || openModal === 'edit'} onClose={closeModal} sx={{ maxWidth: 'lg' }}>
+          <>
+            <Price onClose={closeModal} currentTab={activeTab} item={selectedItem} open={true} modalType={openModal === 'add' ? 'add' : 'edit'} />
+          </>
         </Modal>
       </Box>
     </Container>

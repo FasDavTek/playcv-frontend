@@ -31,13 +31,13 @@ const UserModal = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-white p-10 lg:p-14 centered-modal-md rounded-lg"
+      className="bg-white p-10 lg:p-14 centered-modal rounded-lg"
     >
       <h3 className="text-center font-bold text-xl">Create Sub Admin</h3>
       <div className="my-5 flex flex-col gap-5">
         <Input
-          label="Email"
-          {...register('email')}
+          label="Name"
+          {...register('name', { required: 'Name is required' })}
           // error={}
         />
         <Input
@@ -49,15 +49,14 @@ const UserModal = ({
           name="role"
           control={control}
           rules={{ required: 'Role is required' }}
-          render={({ field }) => (
+          render={({ field: { onChange, value } }) => (
             <Select
               label="Role"
-              id="role"
-              placeholder="Select role"
-              containerClass="flex-1"
               options={options}
+              value={value}
+              onChange={onChange}
               // onChange={(e: any) => console.log('e', e)}
-              {...{ field }}
+              // {...{ field }}
             />
           )}
         />

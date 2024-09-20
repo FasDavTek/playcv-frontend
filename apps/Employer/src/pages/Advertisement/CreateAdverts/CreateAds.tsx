@@ -99,7 +99,7 @@ const CreateAds = () => {
     }
     catch (err) {
       setIsUploading(false);
-      toast.error('Error during file upload!');
+      toast.error(`Error: ${err}`);
       console.log('Error during file upload:', err);
     }
   };
