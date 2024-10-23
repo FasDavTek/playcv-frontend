@@ -12,6 +12,16 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { toast } from 'react-toastify';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+
+const s3Client = new S3Client({
+  region: 'auto',
+  endpoint: `https://${import.meta.env.VITE_CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: import.meta.env.VITE_CLOUDFLARE_R2_ACCESS_KEY,
+    secretAccessKey: import.meta.env.VITE_CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+  },
+});
 
 // interface IForm {
 //   name: string;
@@ -37,6 +47,7 @@ const CreateAdvertModal = () => {
     handleSubmit,
     watch,
     setValue,
+    reset,
     control,
     formState: { errors },
   } = useForm<faqType>({
@@ -48,60 +59,59 @@ const CreateAdvertModal = () => {
 
   const navigate = useNavigate();
 
+  const handleFileUpload = async (file: File) => {
+    if (!file) throw new Error('File is not defined.');
+
+    try {
+      const fileName = `${Date.now()}-${file.name}`;
+      const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET;
+
+      const command = new PutObjectCommand({
+        Bucket: bucketName,
+        Key: fileName,
+        Body: file,
+        ContentType: file.type,
+      });
+
+      await s3Client.send(command);
+      const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`;
+      return uploadedUrl;
+    } catch (err) {
+      toast.error(`Upload Failed: ${err}`);
+      console.error('Upload failed:', err);
+      throw err;
+    }
+  };
+
   const onSubmit = async (data: faqType) => {
     try {
       toast.info('Uploading files...');
       const files = data.files;
       setIsUploading(true);
+      const uploadedUrls: string[] = [];
 
       if (Array.isArray(files)) {
-        const uploadedUrls = await Promise.all(
-          files.map(async (file) => {
-            const resourceType = file.type.startsWith('image') ? 'image' : 'video';
-            const url = await VideoUploadWidget({ 
-              file,
-              resourceType,
-              context: {
-                adName: data.adName,
-                advertType: data.adType,
-                adRedirectURL: data.adUrl,
-                startDate: data.startDate,
-                endDate: data.endDate,
-                description: data.adDescription,
-              },
-            });
-            console.log(url)
-            return url;
-          })
-        );
-  
-        setUploadUrls(uploadedUrls);
-        console.log('Uploaded URLs:', uploadedUrls);
+        for (const file of files) {
+          const uploadedUrl = await handleFileUpload(file);
+          uploadedUrls.push(uploadedUrl);
+        }
       } else {
-        const uploadedUrl = await VideoUploadWidget({ 
-          file: files,
-          resourceType: files.type.startsWith('image') ? 'image' : 'video',
-          context: {
-            adName: data.adName,
-            advertType: data.adType,
-            adRedirectURL: data.adUrl,
-            startDate: data.startDate,
-            endDate: data.endDate,
-            description: data.adDescription,
-          },
-        });
-        setUploadUrls([uploadedUrl]);
-
-        console.log('Uploaded URLs:', uploadedUrl);
+        const uploadedUrl = await handleFileUpload(files);
+        uploadedUrls.push(uploadedUrl);
       }
 
-      setIsUploading(false);
+      setUploadUrls(uploadedUrls);
       toast.success('Files uploaded successfully!');
-    }
-    catch (err) {
-      setIsUploading(false);
+      console.log('Uploaded URLs:', uploadedUrls);
+      // Optionally, you can reset the form or navigate to another page
+      reset();
+
+      navigate('/admin/advertisement-management');
+    } catch (err) {
       toast.error('Error during file upload!');
-      console.log('Error during file upload:', err);
+      console.error('Error during file upload:', err);
+    } finally {
+      setIsUploading(false);
     }
   };
 
