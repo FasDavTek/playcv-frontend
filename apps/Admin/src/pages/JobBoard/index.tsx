@@ -22,7 +22,7 @@ const JobBoard = () => {
     <div>
       <div className="h-[220px] px-10 border flex py-10 flex-col gap-3 bg-gray-100">
         <h3 className="font-bold text-3xl">Search for Job Listings </h3>
-        <p className="text-md text-gray-500 text-gray-500">
+        <p className="text-md text-gray-500">
           Looking for Jobs? Browse our latest job openings to view and apply to
           best jobs today!
         </p>

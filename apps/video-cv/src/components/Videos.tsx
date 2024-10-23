@@ -65,7 +65,10 @@ const Videos = ({ videos }: any) => {
           ))}
         </div>
 
-        <div className="flex justify-end gap-2 mt-4">
+        <div className="flex items-center justify-end gap-2 mt-4">
+          <Link to={'/talent'} className='mr-3 text-blue-600'>
+            <span>View more</span>
+          </Link>
           <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
           <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
         </div>

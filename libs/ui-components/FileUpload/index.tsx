@@ -108,24 +108,17 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
   const [files, setFiles] = useState<PreviewFile[]>([]);
 
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
-      if (rejectedFiles.length) {
-        // TODO: Add alert to handle rejection
-        console.log('rejectedFiles', rejectedFiles);
-        return;
-      }
-    
-      if (acceptedFiles.length === 1) {
-        // Single file upload
-        setFile(acceptedFiles[0]); // Pass the original File object
-      } else {
-        // Multiple file upload
-        const newFiles = acceptedFiles.map((file: File) => {
-          return Object.assign(file, { preview: URL.createObjectURL(file) }) as PreviewFile;
-        });
-        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-        onFilesChange(newFiles);
-      }
-    }, [onFilesChange, setFiles]);
+    if (rejectedFiles.length) {
+      console.log('rejectedFiles', rejectedFiles);
+      return;
+    }
+
+    const newFiles = acceptedFiles.map((file: File) => {
+      return Object.assign(file, { preview: (URL as any).createObjectURL(file) }) as PreviewFile;
+    });
+    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    onFilesChange(newFiles);
+  }, [onFilesChange, setFiles]);
 
   const {
     getRootProps,
@@ -139,7 +132,7 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
   } = useDropzone({
     onDrop,
     accept: { 'image/*': [], 'video/*': [] },
-    maxFiles: 1,
+    maxFiles: 10,
     maxSize: 8388608,
   });
 
@@ -150,9 +143,8 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
   };
 
   useEffect(() => {
-    // Cleanup file preview URLs to avoid memory leaks
     return () => {
-      files.forEach((file) => URL.revokeObjectURL(file.preview));
+      files.forEach((file) => (URL as any).revokeObjectURL(file.preview));
     };
   }, [files]);
 
@@ -190,8 +182,8 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
   );
 
   const thumbs = files.map((file: PreviewFile) => (
-    <div style={{ display: 'inline-flex', margin: '8px', width: '100px', height: '100px' }} key={file.name} className="relative">
-      <div style={{ display: 'flex', minWidth: 0, overflow: 'hidden' }} className="">
+    <div key={file.name} className="relative">
+      <div className="">
         <button
           className="absolute text-sm text-red-600 top-0 right-0 z-10 border bg-white p-0.5 rounded"
           onClick={() => handleDelete(file)}
@@ -199,14 +191,7 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
         >
           X
         </button>
-        <img
-          src={file.preview}
-          style={img}
-          // Revoke data uri after image is loaded
-          onLoad={() => {
-            URL.revokeObjectURL(file.preview);
-          }}
-        />
+        <img src={file.preview} style={{ display: 'block', width: 'auto', height: '100%' }} />
       </div>
     </div>
   ));
@@ -216,21 +201,8 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
         {files.length > 0 ? (
-          <div style={thumbsContainer}>
-            {files.map((file: PreviewFile) => (
-              <div key={file.name} className="relative">
-                <div className="">
-                  <button
-                    className="absolute text-sm text-red-600 top-0 right-0 z-10 border bg-white p-0.5 rounded"
-                    onClick={() => handleDelete(file)}
-                    title="delete file"
-                  >
-                    X
-                  </button>
-                  <img src={file.preview} style={img} />
-                </div>
-              </div>
-            ))}
+          <div style={{ display: 'flex', marginTop: 16 }}>
+            {thumbs}
           </div>
         ) : (
           <>
