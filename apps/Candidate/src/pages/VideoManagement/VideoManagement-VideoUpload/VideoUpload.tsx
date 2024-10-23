@@ -299,7 +299,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
@@ -319,10 +319,11 @@ type FormData = z.infer<typeof videoUploadSchema>;
 
 const VideoUpload: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(videoUploadSchema),
   });
   const location = useLocation();
+  const navigate = useNavigate();
   const videoType = (location.state as any)?.videoType ?? '';
   const price = (location.state as any)?.price ?? 0;
 
@@ -383,6 +384,8 @@ const VideoUpload: React.FC = () => {
       // Here you would typically send the form data to your backend
       console.log('Final form data:', data);
       toast.success('Form submitted successfully');
+      reset();
+      navigate('/candidate/video-management');
     } catch (err) {
       toast.error(`Error during submission: ${err}`);
       console.error('Error during submission:', err);
