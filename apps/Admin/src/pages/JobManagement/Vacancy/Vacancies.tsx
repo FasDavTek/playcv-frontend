@@ -72,6 +72,19 @@ const Vacancies = () => {
     }
   };
 
+  const clearForm = () => {
+    setJobTitle('');
+    setCompanyImages([]);
+    setCompanyImageFiles([]);
+    setCompanyName('');
+    setCompanyLocation('');
+    setJobDetails('');
+    setQualifications('');
+    setKeyResponsibilities('');
+    setCompanyEmail('');
+    setApplyLink('');
+  };
+
   const handleSubmit = async () => {
     try {
       const uploadedUrls = await Promise.all(
@@ -93,6 +106,7 @@ const Vacancies = () => {
       });
 
       toast.success('Job posted successfully!');
+      clearForm();
     } catch (error) {
       toast.error('Error posting job');
       console.error('Error posting job:', error);
@@ -133,7 +147,7 @@ const Vacancies = () => {
                       }}
                     />
                   </div>
-                  {companyImages && <Typography>Image uploaded successfully</Typography>}
+                  {companyImages && <Typography></Typography>}
                 </Grid>
                 <Grid item xs={12}>
                 <Input
