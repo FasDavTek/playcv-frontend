@@ -1,18 +1,18 @@
 import React from 'react';
 import { useState, MouseEvent, useEffect } from 'react';
 
-import { ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
+import { Avatar, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 // import { toggleSidebar } from '@video-cv/shared_store';
-import * as Assets from '@video-cv/assets';
+// import * as Assets from '@video-cv/assets';
 // import { IUser } from 'Models/auth.models';
 import {
   AdminRoutes,
   CandidateRoutes,
   EmployerRoutes,
-} from '@video-cv/constants';
+} from '../../constants';
 
 const Navbar = ({
   userDetails,
@@ -67,7 +67,7 @@ const Navbar = ({
   }, [location.pathname]);
 
   return (
-    <nav className="shadow sticky z-50 bg-[#F6F9F8] top-0 px-5 pt-4 md:px-6 md:pt-6 pb-2 flex justify-between">
+    <nav className="shadow sticky z-50 bg-red-700 top-0 px-5 pt-4 md:px-6 md:pt-6 pb-2 flex justify-between">
       <div className="flex">
         <button
           onClick={() => {
@@ -75,7 +75,8 @@ const Navbar = ({
           }}
           className="btn-icon lg:hidden"
         >
-          <img src={Assets.Icons.Hamburger} alt="" />
+          {/* <img src={Assets.Icons.Hamburger} alt="" /> */}
+          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
         </button>
 
         <div className="hidden md:flex items-center">
@@ -86,16 +87,19 @@ const Navbar = ({
       </div>
 
       <div className="flex items-center space-x-4">
-        <div className="flex items-center rounded-full bg-white justify-center w-12 h-12">
+        <div className="flex lg:hidden items-center rounded-full bg-white justify-center w-12 h-12">
           {/* <img src={Assets.Icons.NotificationBell} alt="" /> */}
+          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
         </div>
 
-        <div className="rounded-xl bg-white md:w-[300px] pl-8 pr-4 gap-3 py-2.5 flex items-center">
-          <img
+        <div className="rounded-xl bg-white md:w-[300px] pl-8 pr-4 gap-3 py-2.5 lg:flex hidden items-center">
+          {/* <img
             className="w-12 h-12 rounded-full"
             // src={Assets.Images.Temp.DummyUserIcon2}
             alt=""
-          />
+          /> */}
+
+          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
 
           <div className="flex-1">
             <p className="font-bold text-blackText">
