@@ -15,17 +15,17 @@ export default function AppLayout(): React.ReactElement {
   const location = useLocation();
 
   return (
-    <div className='h-[100dvh]'>
+    <div className='min-h-dvh'>
       {routesWithoutDashboardLayout.some(
         (route) =>
           location.pathname.includes(route) || location.pathname === '/'
       ) ? (
-        <Box sx={{ backgroundColor: '#fff' }}>
+        <Box className="flex-grow" sx={{ backgroundColor: '#fff', flex: '1 0 auto', display: 'flex', flexDirection: 'column' }}>
           <Navbar />
           <Suspense fallback={<h1>Loading...</h1>}>
             <Outlet />
           </Suspense>
-          <footer className="bg-[#F6F9F8] py-5 flex-1 px-10 text-center flex gap-3 justify-center bottom-0 left-0 right-0 fixed">
+          <footer className="bg-[#F6F9F8] py-5 flex-1 px-10 text-center flex gap-3 justify-center bottom-0 left-0 right-0 sticky">
             <a href="https://facebook.com/" className="">
               <img
                 src={Assets.Icons.FacebookLink}

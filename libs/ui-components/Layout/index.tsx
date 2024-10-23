@@ -75,7 +75,7 @@ const Layout = ({
       />
 
       <main
-        className={`bg-[#F6F9F8] min-h-screen w-full lg:w-[75%] duration-700 ${
+        className={`bg-[#F6F9F8] min-h-dvh w-full lg:w-[75%] duration-700 ${
           sidebarExpanded
             ? 'lg:ml-auto min-w-[calc(100%-300px)]'
             : 'lg:ml-auto min-w-[calc(100%-70px)]'
@@ -91,7 +91,7 @@ const Layout = ({
         <div className="min-h-screen flex-1 overflow-auto">
           <Outlet />.
         </div>
-        <footer className="bg-[#F6F9F8] py-1 md:py-5 px-3 md:px-10 text-center flex gap-3 justify-center bottom-0 left-0 right-0 fixed">
+        <footer className="bg-[#F6F9F8] py-1 md:py-5 px-3 md:px-10 text-center flex gap-3 justify-center bottom-0 left-0 right-0 sticky">
           <a href="https://facebook.com/" className="">
             <img
               src={Assets.Icons.FacebookLink}

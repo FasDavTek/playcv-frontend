@@ -155,7 +155,7 @@
 
 
 
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
 import { Button, Input, TextArea, FileUpload, SelectChip, Select } from '@video-cv/ui-components';
@@ -181,7 +181,7 @@ interface UploadVideoModalProps {
 const UploadVideoModal: React.FC<UploadVideoModalProps> = ({
   onClose,
   onSubmit = (data: IForm) => {},
-}) => {
+}, ref) => {
   const { control, handleSubmit, watch, setValue } = useForm<IForm>({
     defaultValues: {
       name: '',
@@ -248,6 +248,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmitHandler)}
+      ref={ref}
       className="bg-white p-10 lg:py-9 lg:px-14 centered-modal md:centered-modal-md xl:centered-modal-large rounded-lg"
     >
       <h3 className="text-center font-bold text-xl">Video CV Upload Modal</h3>

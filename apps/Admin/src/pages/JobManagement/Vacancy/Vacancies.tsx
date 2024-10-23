@@ -1,16 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Grid, Typography, Container } from '@mui/material';
-import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
+import { CloudUpload as CloudUploadIcon, UploadFile } from '@mui/icons-material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import styles
-import { Input, Button, RichTextEditor } from '@video-cv/ui-components';
+import { Input, Button, RichTextEditor, FileUpload } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+
+const s3Client = new S3Client({
+  region: 'auto',
+  endpoint: `https://${import.meta.env.VITE_CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: import.meta.env.VITE_CLOUDFLARE_R2_ACCESS_KEY,
+    secretAccessKey: import.meta.env.VITE_CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+  },
+});
 
 const Vacancies = () => {
   const [jobTitle, setJobTitle] = useState('');
-  const [companyImage, setCompanyImage] = useState(null);
+  const [companyImages, setCompanyImages] = useState<string[]>([]);
+  const [companyImageFiles, setCompanyImageFiles] = useState<File[]>([]);
   const [companyName, setCompanyName] = useState('');
   const [companyLocation, setCompanyLocation] = useState('');
   const [jobDetails, setJobDetails] = useState('');
@@ -26,7 +37,7 @@ const Vacancies = () => {
   useEffect(() => {
     if (job) {
       setJobTitle(job.title);
-      setCompanyImage(job.companyImage);
+      setCompanyImages(job.companyImages || []);
       setCompanyName(job.employerName);
       setCompanyLocation(job.location);
       setJobDetails(job.jobDetails);
@@ -37,25 +48,55 @@ const Vacancies = () => {
     }
   }, [job]);
 
-  const handleImageUpload = (event: any) => {
-    setCompanyImage(event.target.files[0]);
+  const handleImageUpload = async (file: File) => {
+    if (!file) throw new Error('File is not defined.');
+
+    try {
+      const fileName = `${Date.now()}-${file.name}`;
+      const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET;
+
+      const command = new PutObjectCommand({
+        Bucket: bucketName,
+        Key: fileName,
+        Body: file,
+        ContentType: file.type,
+      });
+
+      await s3Client.send(command);
+      const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`;
+      return uploadedUrl;
+    } catch (err) {
+      toast.error(`Image upload failed: ${err}`);
+      console.error('Upload failed:', err);
+      throw err;
+    }
   };
 
-  const handleSubmit = () => {
-    // Handle the submission of form data
-    console.log({
-      jobTitle,
-      companyImage,
-      companyName,
-      companyLocation,
-      jobDetails,
-      qualifications,
-      keyResponsibilities,
-      companyEmail,
-      applyLink,
-    });
+  const handleSubmit = async () => {
+    try {
+      const uploadedUrls = await Promise.all(
+        companyImageFiles.map(file => handleImageUpload(file))
+      );
+      setCompanyImages(uploadedUrls);
 
-    toast.success('Job posted successfully!');
+      // Handle the submission of form data
+      console.log({
+        jobTitle,
+        companyImages: uploadedUrls,
+        companyName,
+        companyLocation,
+        jobDetails,
+        qualifications,
+        keyResponsibilities,
+        companyEmail,
+        applyLink,
+      });
+
+      toast.success('Job posted successfully!');
+    } catch (error) {
+      toast.error('Error posting job');
+      console.error('Error posting job:', error);
+    }
   };
 
   return (
@@ -73,19 +114,26 @@ const Vacancies = () => {
                 />
                 </Grid>
                 <Grid item xs={12}>
-                <Button
-                    variant="black"
-                    label='Upload Company Image'
-                    icon={<CloudUploadIcon />}
-                >
-                    Upload Company Image
-                    <input
-                    type="file"
-                    hidden
-                    onChange={handleImageUpload}
+                  <div className="">
+                    <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
+                      Upload Company Image
+                    </label>
+                    <FileUpload
+                      uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
+                      containerClass=""
+                      uploadLabel="Drag and Drop or Browse"
+                      setFile={(files: File | File[] | null) => {
+                        if (files) {
+                          if (Array.isArray(files)) {
+                            handleImageUpload(files[0]);
+                          } else {
+                            handleImageUpload(files);
+                          }
+                        }
+                      }}
                     />
-                </Button>
-                {companyImage && <Typography></Typography>}
+                  </div>
+                  {companyImages && <Typography>Image uploaded successfully</Typography>}
                 </Grid>
                 <Grid item xs={12}>
                 <Input
@@ -116,23 +164,23 @@ const Vacancies = () => {
                   <RichTextEditor value={qualifications} onChange={setQualifications} placeholder={'Enter qualifications'} />
                 </Grid>
                 <Grid item xs={12}>
-                <Input
-                    className='rounded-xl'
-                    label="Company Email"
-                    value={companyEmail}
-                    onChange={(e) => setCompanyEmail(e.target.value)}
-                />
+                  <Input
+                      className='rounded-xl'
+                      label="Company Email"
+                      value={companyEmail}
+                      onChange={(e) => setCompanyEmail(e.target.value)}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                <Input
-                    className='rounded-xl'
-                    label="Link to Apply"
-                    value={applyLink}
-                    onChange={(e) => setApplyLink(e.target.value)}
-                />
+                  <Input
+                      className='rounded-xl'
+                      label="Link to Apply"
+                      value={applyLink}
+                      onChange={(e) => setApplyLink(e.target.value)}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                <Button type='submit' variant="black" label='Submit' color="primary" onClick={handleSubmit}></Button>
+                  <Button type='submit' variant="black" label='Submit' color="primary" onClick={handleSubmit}></Button>
                 </Grid>
             </Grid>
         </Container>
