@@ -32,10 +32,10 @@ const Feed = () => {
               ACCELERATE YOUR CAREER!
               <Typography variant='h3' className="font-bold text-base md:text-[38px] leading-[60px] md:leading-[72px] text-[#2c3e50]" fontSize={{ xs: '28px', md: '38px' }}>SHOWCASE YOUR SKILLS & QUALITIES!</Typography>
             </Typography>
-            <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+            <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>
               Discover the best job listings for young graduates tailored to your aspirations.
             </Typography>
-            <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.05rem' }}>
+            <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.05rem', marginBottom: '0.25rem' }}>
               STAND OUT! Let thousands of potential employers notice you via videoCV.
             </Typography>
             <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.05rem', marginBottom: '1.875rem' }}>
