@@ -56,7 +56,7 @@ const Dashboard = () => {
             onClick={() => openSetModalFn('confirmationModal')}
           />
         </div>
-        <div className="grid mt-5 gap-4 grid-cols-1 md:grid-cols-2 2xl:grid-cols-4">
+        <div className="grid mt-5 gap-4 grid-cols-1 md:grid-cols-3 2xl:grid-cols-4">
           <DashboardCard
             // icon={Assets.Icons.Dashboard.Calendar}
             text="Number of Downloads"
