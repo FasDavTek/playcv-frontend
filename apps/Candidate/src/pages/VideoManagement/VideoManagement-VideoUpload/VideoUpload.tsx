@@ -399,7 +399,7 @@ const VideoUpload: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmitHandler)} className="bg-white p-10 lg:py-9 lg:px-14">
         <div className="my-2 flex flex-col gap-5">
           <Input
-            label="Video Name"
+            label="Video Title"
             {...register('name')}
           />
           <Input
