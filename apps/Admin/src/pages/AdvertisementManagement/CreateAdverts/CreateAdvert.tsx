@@ -121,7 +121,7 @@ const CreateAdvertModal = () => {
       <h3 className="text-center font-semibold text-xl">Add Advert</h3>
       <form onSubmit={handleSubmit(onSubmit, (err) => console.log('err', err))} className="bg-white px-10">
         <div className="my-5 flex flex-col gap-5">
-          <Input label="Ad Name" {...register('adName', { required: true })} error={errors.adName} />
+          <Input label="Ad Title" {...register('adName', { required: true })} error={errors.adName} />
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
               Ad Description
           </label>

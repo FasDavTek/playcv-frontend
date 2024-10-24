@@ -116,7 +116,7 @@ const CreateAds = () => {
       <ChevronLeftIcon className="cursor-pointer text-base mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/employer/advertisement')} />
       <form onSubmit={handleSubmit(onSubmit, (err) => console.log('err', err))} className="bg-white px-10">
         <div className="my-5 flex flex-col gap-5">
-          <Input label="Ad Name" {...register('adName', { required: true })} error={errors.adName} />
+          <Input label="Ad Title" {...register('adName', { required: true })} error={errors.adName} />
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
               Ad Description
           </label>

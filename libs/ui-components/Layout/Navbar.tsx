@@ -1,18 +1,27 @@
 import React from 'react';
 import { useState, MouseEvent, useEffect } from 'react';
 
-import { Avatar, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
+import { Avatar, Box, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 // import { toggleSidebar } from '@video-cv/shared_store';
-// import * as Assets from '@video-cv/assets';
+import * as Assets from '../../assets';
 // import { IUser } from 'Models/auth.models';
 import {
   AdminRoutes,
   CandidateRoutes,
   EmployerRoutes,
 } from '../../constants';
+import { AccountMenu } from '../Account/AccountMenu';
+
+interface Account {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  userType: string;
+}
 
 const Navbar = ({
   userDetails,
@@ -25,30 +34,9 @@ const Navbar = ({
   toggleSidebar?: () => void;
   // navbarConfig: { name: string; path: string }[];
 }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
 
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
   const location = useLocation();
-
-  const viewProfile = () => {
-    handleClose();
-    navigate('/settings/general');
-  };
-
-  const logout = () => {
-    onLogout();
-    handleClose();
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const [currentPageName, setCurrentPageName] = useState('');
 
@@ -66,6 +54,34 @@ const Navbar = ({
     setCurrentPageName(getPageName(location.pathname) || '');
   }, [location.pathname]);
 
+  const currentAccount: Account = {
+    id: userDetails?.id || '1',
+    name: userDetails?.USER_FULLNAME || 'John Doe',
+    email: userDetails?.email || 'john@example.com',
+    avatar: userDetails?.avatar || '/static/images/avatar/1.jpg',
+    userType: userDetails?.userType || 'User',
+  };
+
+  const accounts: Account[] = [
+    currentAccount,
+    {
+      id: '2',
+      name: 'Jane Smith',
+      email: 'jane@example.com',
+      avatar: '/static/images/avatar/2.jpg',
+      userType: 'User'
+    },
+  ];
+
+  const handleSwitchAccount = (account: Account) => {
+    // Implement account switching logic here
+    console.log('Switching to account:', account);
+  };
+
+  const handleSignOut = () => {
+    onLogout();
+  };
+
   return (
     <nav className="shadow sticky z-50 bg-[#F6F9F8] top-0 px-5 pt-4 md:px-6 md:pt-6 pb-2 flex justify-between">
       <div className="flex">
@@ -75,57 +91,24 @@ const Navbar = ({
           }}
           className="btn-icon lg:hidden"
         >
-          {/* <img src={Assets.Icons.Hamburger} alt="" /> */}
-          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+          <img src={Assets.Icons.Hamburger} alt="" />
         </button>
 
         <div className="hidden md:flex items-center">
           <h3 className="text-xl ml-3">{currentPageName}</h3>
-
-          {/* <div className=""></div> */}
         </div>
       </div>
 
-      <div className="flex items-center space-x-4">
-        <div className="flex lg:hidden items-center rounded-full bg-white justify-center w-12 h-12">
-          {/* <img src={Assets.Icons.NotificationBell} alt="" /> */}
-          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-        </div>
-
-        <div className="rounded-xl bg-white md:w-[300px] pl-8 pr-4 gap-3 py-2.5 lg:flex hidden items-center">
-          {/* <img
-            className="w-12 h-12 rounded-full"
-            // src={Assets.Images.Temp.DummyUserIcon2}
-            alt=""
-          /> */}
-
-          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-
-          <div className="flex-1">
-            <p className="font-bold text-blackText">
-              {userDetails?.USER_FULLNAME}
-            </p>
-
-            <p className="text-greyText text-sm">{userDetails?.userType}</p>
-          </div>
-
-          <button onClick={handleClick} className="btn-icon">
-            {/* <img src={Assets.Icons.SolidArrowDown} alt="" /> */}
-          </button>
-        </div>
-      </div>
-
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-        <MenuItem onClick={() => viewProfile()}>
-          <ListItemText>My Profile</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={() => logout()}>
-          <ListItemIcon>
-            {/* {<img src={Assets.Icons.Logout} alt="" />} */}
-          </ListItemIcon>
-          <ListItemText>Logout</ListItemText>
-        </MenuItem>
-      </Menu>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+        <Box >
+          <AccountMenu
+            currentAccount={currentAccount}
+            accounts={accounts}
+            onSwitchAccount={handleSwitchAccount}
+            onSignOut={handleSignOut}
+          />
+        </Box>
+      </Box>
     </nav>
   );
 };
