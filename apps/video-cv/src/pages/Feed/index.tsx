@@ -30,9 +30,16 @@ const Feed = () => {
           <Box flex={2} width={['100%', '70%']}>
             <Typography variant="h3" className="font-bold text-lg md:text-[42px] leading-[60px] md:leading-[72px] text-[#2c3e50]" fontSize={{ xs: '32px', md: '42px' }} sx={{ marginBottom: '1.25rem' }}>
               ACCELERATE YOUR CAREER!
+              <Typography variant='h3' className="font-bold text-base md:text-[38px] leading-[60px] md:leading-[72px] text-[#2c3e50]" fontSize={{ xs: '28px', md: '38px' }}>SHOWCASE YOUR SKILLS & QUALITIES!</Typography>
             </Typography>
-            <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.2rem', marginBottom: '1.875rem' }}>
-              Announce your amazing business, inventions, products, and services as a young entrepreneur via your video profile
+            <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+              Discover the best job listings for young graduates tailored to your aspirations.
+            </Typography>
+            <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.05rem' }}>
+              STAND OUT! Let thousands of potential employers notice you via videoCV.
+            </Typography>
+            <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.05rem', marginBottom: '1.875rem' }}>
+              Announce your amazing business, inventions, products and services as a young entrepreneur via your video profile
             </Typography>
             <Box className="flex items-center gap-10" sx={{ marginBottom: '1.25rem' }}>
               <Button variant="blue" color="primary" label={'Explore Jobs'} onClick={() => navigate('/job-board')} className="text-lg"></Button>
