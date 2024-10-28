@@ -23,7 +23,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className="grid mt-5 gap-4 grid-cols-1 md:grid-cols-3 2xl:grid-cols-3">
+        <div className="grid mt-5 gap-4 grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
           <DashboardCard
             // icon={Assets.Icons.Dashboard.Calendar}
             text="Active ADs"

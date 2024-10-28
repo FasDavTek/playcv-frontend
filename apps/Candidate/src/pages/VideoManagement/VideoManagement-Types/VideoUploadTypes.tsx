@@ -1,15 +1,16 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@video-cv/ui-components';
 import { usePaystack } from '@video-cv/payment';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
-const VideoUploadTypes = () => {
+const VideoUploadTypes: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get('type');
   const [price, setPrice] = useState<number>(0);
-  const [triggerPayment, setTriggerPayment] = useState<boolean>(false);
+  const [selectedType, setSelectedType] = useState<'Pinned' | 'Regular' | null>(null);
 
   const storedPinnedPrice = parseFloat(localStorage.getItem('pinnedVideoPrice') || '5000');
   const storedRegularPrice = parseFloat(localStorage.getItem('regularVideoPrice') || '2000');
@@ -20,38 +21,54 @@ const VideoUploadTypes = () => {
     } else {
       setPrice(storedRegularPrice);
     }
-  }, [type]);
+  }, [type, storedPinnedPrice, storedRegularPrice]);
 
   useEffect(() => {
     calculatePrice();
-  }, [type, calculatePrice]);
+  }, [calculatePrice]);
+
+  const onPaymentSuccess = (reference: string) => {
+    // console.log('Payment successful:', reference);
+    // console.log('Amount paid:', price);
+    localStorage.setItem('videoType', selectedType || '');
+    localStorage.setItem('videoPrice', price.toString());
+    navigate(`/candidate/video-management/confirmation`, { 
+      state: { 
+        videoType: selectedType?.charAt(0).toUpperCase(), 
+        price: price 
+      } 
+    });
+  };
+
+  const onPaymentFailure = () => {
+    toast.error('Payment failed');
+    setSelectedType(null);
+  };
 
   const { payButtonFn } = usePaystack(
     price,
-    () => {
-      console.log('Payment successful');
-    },
-    () => {
-      console.log('Payment failed');
-    }
+    onPaymentSuccess,
+    onPaymentFailure
   );
 
-  useEffect(() => {
-    if (triggerPayment) {
-      payButtonFn();
-      setTriggerPayment(false);
-    }
-  }, [price, triggerPayment, payButtonFn]);
+  // useEffect(() => {
+  //   if (triggerPayment) {
+  //     payButtonFn();
+  //     setTriggerPayment(false);
+  //   }
+  // }, [price, triggerPayment, payButtonFn]);
 
   const handlePayment = (type: 'Pinned' | 'Regular') => {
     const selectedPrice = type === 'Pinned' ? storedPinnedPrice : storedRegularPrice;
     setPrice(selectedPrice);
-    setTriggerPayment(true);
+    setSelectedType(type);
+    // console.log('Initiating payment for amount:', selectedPrice);
+    payButtonFn();
 
-    localStorage.setItem('videoType', type);
-    localStorage.setItem('videoPrice', selectedPrice.toString());
+    // localStorage.setItem('videoType', type);
+    // localStorage.setItem('videoPrice', selectedPrice.toString());
 
-    navigate(`/candidate/video-management/confirmation`, { state: { videoType: type.charAt(0).toUpperCase(), price: selectedPrice } });
+    // navigate(`/candidate/video-management/confirmation`, { state: { videoType: type.charAt(0).toUpperCase(), price: selectedPrice } });
   };
 
 

@@ -3,7 +3,7 @@ import { Grid, Typography, Container } from '@mui/material';
 import { CloudUpload as CloudUploadIcon, UploadFile } from '@mui/icons-material';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import styles
-import { Input, Button, RichTextEditor, FileUpload } from '@video-cv/ui-components';
+import { Input, Button, RichTextEditor, FileUpload, SelectChip } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -18,6 +18,20 @@ const s3Client = new S3Client({
   },
 });
 
+const specialisations = [
+  'Software Development',
+  'Data Science',
+  'UI/UX Design',
+  'Project Management',
+  'Digital Marketing',
+  'Business Analysis',
+  'DevOps',
+  'Cybersecurity',
+  'Artificial Intelligence',
+  'Cloud Computing',
+];
+
+
 const Vacancies = () => {
   const [jobTitle, setJobTitle] = useState('');
   const [companyImages, setCompanyImages] = useState<string[]>([]);
@@ -29,6 +43,7 @@ const Vacancies = () => {
   const [keyResponsibilities, setKeyResponsibilities] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
   const [applyLink, setApplyLink] = useState('');
+  const [selectedSpecialisations, setSelectedSpecialisations] = useState<string[]>([]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,6 +60,7 @@ const Vacancies = () => {
       setKeyResponsibilities(job.keyResponsibilities);
       setCompanyEmail(job.companyEmail);
       setApplyLink(job.jobUrl);
+      setSelectedSpecialisations(job.specialisations || []);
     }
   }, [job]);
 
@@ -83,6 +99,7 @@ const Vacancies = () => {
     setKeyResponsibilities('');
     setCompanyEmail('');
     setApplyLink('');
+    setSelectedSpecialisations([]);
   };
 
   const handleSubmit = async () => {
@@ -103,6 +120,7 @@ const Vacancies = () => {
         keyResponsibilities,
         companyEmail,
         applyLink,
+        specialisations: selectedSpecialisations,
       });
 
       toast.success('Job posted successfully!');
@@ -176,6 +194,9 @@ const Vacancies = () => {
                 <Grid item xs={12}>
                   <Typography variant="subtitle2">Qualifications</Typography>
                   <RichTextEditor value={qualifications} onChange={setQualifications} placeholder={'Enter qualifications'} />
+                </Grid>
+                <Grid item xs={12}>
+                  <SelectChip label='Specialisation' id='specialization-select' options={specialisations} value={selectedSpecialisations} onChange={(value) => setSelectedSpecialisations(value)} />
                 </Grid>
                 <Grid item xs={12}>
                   <Input

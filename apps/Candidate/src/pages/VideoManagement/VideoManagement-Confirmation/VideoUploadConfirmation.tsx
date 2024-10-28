@@ -15,10 +15,10 @@ const VideoUploadConfirmation = () => {
 
   const handleUploadLater = async () => {
     try {
-      const userId = 'user-id';
-      const videoId = 'video-id';
+      // const userId = 'user-id';
+      // const videoId = 'video-id';
 
-      await axios.post('/api/video-drafts', { userId, videoId });
+      // await axios.post('/api/video-drafts', { userId, videoId });
 
       navigate('/candidate/video-management');
     } catch (error) {

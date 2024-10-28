@@ -95,7 +95,7 @@ const Navbar = () => {
       ref={navbarRef}
       className={`flex items-center px-3 md:px-7 sticky bg-white top-0 justify-center z-20 navbar`}
     >
-      <div className="w-full mx-auto flex items-center justify-between">
+      <div className="w-full mx-auto flex items-center justify-between h-dvh">
         <Link
           className=""
           to="/"
@@ -106,9 +106,12 @@ const Navbar = () => {
         </Link>
         {/* <SearchBar /> */}
         <div className="menu-icon" onClick={handleShowNavbar}>
-          {showNavbar ? <MenuOpenIcon sx={{ width: '1.75rem', height: '1.75rem' }} className='w-12 h-12' /> : <MenuIcon sx={{ width: '1.75rem', height: '1.75rem' }} className='w-12 h-12' />}
+          {showNavbar ? <MenuOpenIcon sx={{ width: '1.75rem', height: '1.75rem' }} className='w-12 h-12 z-50' /> : <MenuIcon sx={{ width: '1.75rem', height: '1.75rem' }} className='w-12 h-12 z-50' />}
         </div>
         <div className={`nav-elements ${showNavbar && 'active'} justify-start px-3`}>
+          <div className="mt-4 flex lg:hidden" onClick={handleShowNavbar}>
+            {showNavbar && <MenuOpenIcon sx={{ width: '1.75rem', height: '1.75rem' }} className='w-12 h-12 z-50 ml-auto sm:mr-0 md:mr-3' />}
+          </div>
           <ul>
             <li>
               <NavLink
@@ -199,7 +202,7 @@ const Navbar = () => {
             {(isAuthenticated && user?.userType === 'employer') || !isAuthenticated ? (
               <li>
                 {/* TODO: Show logged in if user is logged in */}
-                <IconButton aria-label="cart" onClick={handleCartClick}>
+                <IconButton aria-label="cart" onClick={handleCartClick} className='w-5 h-5 lg:w-10 lg:h-10'>
                   <StyledBadge badgeContent={cartState.cart.length} >
                     <ShoppingCartIcon />
                   </StyledBadge>
