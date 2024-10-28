@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { usePaystackPayment } from 'react-paystack';
 import { HookConfig } from 'react-paystack/dist/types';
@@ -21,22 +21,29 @@ const usePaystack = (
     ...options,
   };
 
-  const onSuccess = (reference: string) => {
-    setPaymentReference(reference);
-    // console.log('Payment successful:', reference);
-    toast.success('Payment Successful');
-    if (onCompleteCB) {
-      onCompleteCB(reference);
-    }
-  };
-
-  const onClose = () => {
-    console.log('Payment dialog closed');
-    toast.success('Payment dialog closed');
-    onCloseCB?.();
-  };
   const initializePayment = usePaystackPayment(config);
-  const payButtonFn = () => initializePayment({ onSuccess, onClose });
+  
+  const payButtonFn = useCallback(() => {
+    initializePayment({
+      ...config,
+      onSuccess: (reference: string) => {
+        setPaymentReference(reference);
+        toast.success('Payment Successful');
+        if (onCompleteCB) {
+          onCompleteCB(reference);
+        }
+      },
+      onClose: () => {
+        console.log('Payment dialog closed');
+        toast.success('Payment dialog closed');
+        if (onCloseCB) {
+          onCloseCB();
+        }
+      },
+    })
+   
+  }, [amount, onCompleteCB, onCloseCB, options]);
+
   return { payButtonFn, paymentReference };
 };
 

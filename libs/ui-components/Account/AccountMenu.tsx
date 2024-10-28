@@ -34,7 +34,7 @@ interface AccountMenuProps {
 }
 
 const AccountPreview: React.FC<{ account: Account }> = ({ account }) => (
-  <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+  <Box sx={{ px: 2, py: 1, display: 'flex', alignItems: 'center', gap: 2 }}>
     <Avatar src={account.avatar} alt={account.name} />
     <Box>
       <Typography variant="subtitle1" className='text-neutral-300'>{account.name}</Typography>
@@ -57,7 +57,6 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
-    console.log('clicking')
   };
 
   const handleClose = () => {
@@ -68,7 +67,9 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
     handleClose();
     const currentPath = location.pathname;
     const baseRoute = currentPath.split('/').slice(0, 2).join('/');
-    navigate(`${baseRoute}/profile`);
+    if (baseRoute !== '/admin') {
+      navigate(`${baseRoute}/profile`);
+    }
   };
 
   return (
@@ -121,28 +122,32 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
       >
         <AccountPreview account={currentAccount} />
         <Divider />
-        {accounts.filter(account => account.id !== currentAccount.id).map((account) => (
-          <MenuItem key={account.id} onClick={() => onSwitchAccount(account)}>
-            <Avatar src={account.avatar} alt={account.name} />
-            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                <Typography variant="subtitle2" className='text-neutral-300 capitalize'>{account.name}</Typography>
-                <Typography variant="subtitle2" className='text-neutral-300'>{account.email}</Typography>
-            </Box>
-          </MenuItem>
-        ))}
-        <Divider />
-        <MenuItem onClick={viewProfile}>
+        <MenuItem 
+          onClick={viewProfile}
+          sx={{
+            '&:hover': {
+              backgroundColor: 'grey',
+              '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+                color: 'common.white',
+              },
+              marginX: 0.35,
+              borderRadius: 1,
+            },
+            py: 1,
+            mt: 0.5,
+          }}
+        >
           <ListItemIcon>
             <AccountCircleIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Profile</ListItemText>
+          <ListItemText className='text-neutral-300'>Profile</ListItemText>
         </MenuItem>
         <Divider />
         <MenuItem 
             onClick={onSignOut}
             sx={{
                 '&:hover': {
-                  backgroundColor: 'error.main',
+                  backgroundColor: 'grey',
                   '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
                     color: 'common.white',
                   },
@@ -154,7 +159,7 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
           <ListItemIcon>
             <ExitToAppIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Sign out</ListItemText>
+          <ListItemText className='text-neutral-300'>Sign out</ListItemText>
         </MenuItem>
       </Menu>
     </>

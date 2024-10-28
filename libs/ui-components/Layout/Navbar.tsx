@@ -62,16 +62,7 @@ const Navbar = ({
     userType: userDetails?.userType || 'User',
   };
 
-  const accounts: Account[] = [
-    currentAccount,
-    {
-      id: '2',
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      avatar: '/static/images/avatar/2.jpg',
-      userType: 'User'
-    },
-  ];
+  const accounts: Account[] = [ currentAccount, ];
 
   const handleSwitchAccount = (account: Account) => {
     // Implement account switching logic here

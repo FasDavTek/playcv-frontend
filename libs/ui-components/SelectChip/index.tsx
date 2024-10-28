@@ -14,6 +14,9 @@ interface SelectChipProps {
   label: string;
   containerClass?: string;
   id: string;
+  options: string[];
+  value: string[];
+  onChange: (value: string[]) => void;
 }
 
 const ITEM_HEIGHT = 48;
@@ -26,19 +29,6 @@ const MenuProps = {
     },
   },
 };
-
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
 
 function getStyles(name: string, personName: readonly string[], theme: Theme) {
   return {
@@ -53,16 +43,17 @@ export default function MultipleSelectChip({
   label,
   containerClass,
   id,
+  options,
+  value,
+  onChange,
 }: SelectChipProps) {
   const theme = useTheme();
-  const [personName, setPersonName] = React.useState<string[]>([]);
 
-  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+  const handleChange = (event: SelectChangeEvent<typeof value>) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
+    onChange(
       typeof value === 'string' ? value.split(',') : value
     );
   };
@@ -78,14 +69,14 @@ export default function MultipleSelectChip({
       {label ? (
         <label
           htmlFor={id}
-          className="block font-manrope text-sm capitalize font-medium leading-[1.25rem] text-secondary-500"
+          className="block font-manrope text-sm capitalize font-medium leading-[1rem] text-secondary-500"
         >
           {label}
         </label>
       ) : null}
       <Select
         multiple
-        value={personName}
+        value={value}
         onChange={handleChange}
         input={
           <OutlinedInput
@@ -103,7 +94,7 @@ export default function MultipleSelectChip({
                 '&.Mui-focused fieldset': {
                   // focus state border
                   borderColor: 'grey', // Removes the border
-                  borderWidth: 2, // You can set this to '0' if you don't want any border change
+                  borderWidth: 1, // You can set this to '0' if you don't want any border change
                 },
               },
             }}
@@ -124,11 +115,11 @@ export default function MultipleSelectChip({
         )}
         MenuProps={MenuProps}
       >
-        {names.map((name) => (
+        {options.map((name) => (
           <MenuItem
             key={name}
             value={name}
-            style={getStyles(name, personName, theme)}
+            style={getStyles(name, value, theme)}
           >
             {name}
           </MenuItem>

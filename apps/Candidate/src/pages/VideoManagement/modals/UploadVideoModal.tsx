@@ -299,6 +299,7 @@ const UploadVideoModal: React.FC<UploadVideoModalProps> = ({
               label="Category"
               id="category"
               {...field}
+              options={[]}
               // error={error?.message}
             />
           )}
