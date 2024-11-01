@@ -305,6 +305,9 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
 import { Button, Input, FileUpload, Select, RichTextEditor } from '@video-cv/ui-components';
 import { videoUploadSchema } from './../../../../../video-cv/src/schema/videoUploadSchema';
+import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
+import CONFIG from './../../../../../../libs/utils/helpers/config';
+import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -371,6 +374,7 @@ const VideoUpload: React.FC = () => {
     }
   }, []);
 
+
   const onSubmitHandler = async (data: FormData) => {
     try {
       toast.info('Uploading files...');
@@ -381,11 +385,25 @@ const VideoUpload: React.FC = () => {
         data.media = uploadedUrl;
       }
 
-      // Here you would typically send the form data to your backend
-      console.log('Final form data:', data);
-      toast.success('Form submitted successfully');
-      reset();
-      navigate('/candidate/video-management');
+      const apiData = {
+        title: data.name,
+        typeId: data.videoType,
+        description: data.description,
+        transcript: data.videoTranscript,
+        categoryId: data.Category,
+        videoUrl: data.media,
+        action: 'upload',
+      };
+
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`);
+
+      if (response.isSuccess) {
+        toast.success('Video uploaded successfully');
+        reset();
+        navigate('/candidate/video-management');
+      } else {
+        throw new Error(response.message || 'Failed to upload video');
+      }
     } catch (err) {
       toast.error(`Error during submission: ${err}`);
       console.error('Error during submission:', err);
@@ -459,7 +477,7 @@ const VideoUpload: React.FC = () => {
             variant='black' 
             className="w-full md:w-28" 
             disabled={isUploading} 
-            label={isUploading ? "Uploading..." : "Submit"} 
+            label={isUploading ? "Uploading..." : "Upload"} 
           />
         </div>
       </form>

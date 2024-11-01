@@ -6,5 +6,6 @@ export enum apiEndpoints {
     UPDATE_PROFILE = '/api/v1/auth/user/profile/update',
 
     // video upload flow
-    CHECK_PENDING = '/api/v1/payment/check/upload-request',
+    VIDEO_STATUS = '/api/v1/payment/check/upload-request',
+    VIDEO_UPLOAD = '/api/v1/video/upload-edit',
 }
