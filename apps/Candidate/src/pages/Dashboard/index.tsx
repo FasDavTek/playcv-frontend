@@ -8,6 +8,10 @@ import JobVacancyChart from '../../components/dashboard/MonthlyRevenueChart';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '@mui/material';
 import CreateVideoConfirmationModal from '../VideoManagement/modals/CreateVideoConfirmationModal';
+import { getData } from './../../../../../libs/utils/apis/apiMethods';
+import CONFIG from './../../../../../libs/utils/helpers/config';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import { toast } from 'react-toastify';
 // import queries from '../../services/queries/dashboard';
 
 type ModalTypes = null | 'uploadModal' | 'confirmationModal' | 'paymentModal';
@@ -24,12 +28,35 @@ const Dashboard = () => {
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
-  useEffect(() => {
-    const uploadModalParam = queryParams.get('uploadModal');
-    if (uploadModalParam === 'true') {
-      openSetModalFn('uploadModal');
+  const checkPaymentStatus = async () => {
+    try {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}`);
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log(data);
+      
+      if (data) {
+        openSetModalFn('confirmationModal');
+      } else {
+        toast.info('You have an existing payment for video upload that you have not yet completed.');
+      }
+    } 
+    catch (error) {
+      console.error('Error checking payment status:', error);
+      toast.warning('There was an error checking your payment status. Please try again later.');
     }
-  }, [queryParams]);
+  };
+
+  // useEffect(() => {
+  //   const uploadModalParam = queryParams.get('uploadModal');
+  //   if (uploadModalParam === 'true') {
+  //     openSetModalFn('uploadModal');
+  //   }
+  // }, [queryParams]);
 
   return (
     <section className="ce-px ce-py grid xl:grid-cols-[1fr_auto] gap-5">
@@ -53,7 +80,8 @@ const Dashboard = () => {
           <Button
             variant='custom'
             label="Upload your Video"
-            onClick={() => openSetModalFn('confirmationModal')}
+            onClick={checkPaymentStatus}
+            // onClick={() => openSetModalFn('confirmationModal')}
           />
         </div>
         <div className="grid mt-5 gap-4 grid-cols-1 md:grid-cols-2 2xl:grid-cols-4">
