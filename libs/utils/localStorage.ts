@@ -1,4 +1,4 @@
-import { ICartItem } from "apps/video-cv/src/context/CartProvider";
+import { ICartItem } from './../../apps/video-cv/src/context/CartProvider';
 
 export const GetItemsFromLocalStorage = (key: string) => {
   const data = localStorage.getItem(key);
@@ -26,7 +26,17 @@ export const RemoveFromLocalStorage = (id: string, key: string) => {
 
 
 
-
+export enum LOCAL_STORAGE_KEYS {
+  TOKEN = "token",
+  USER = "user",
+  SUB_ACCOUNTS = "subaccounts",
+  USER_BIO_DATA_ID = "userBiodataId",
+  INSURED_USER_BIO_DATA_ID = "insuredUserBiodataId",
+  DETAILS = "details",
+  IS_USER_EXIST = "isUserExist",
+  PROFILE = "profile",
+  SIGNUP_DATA = "signupData",
+}
 
 
 

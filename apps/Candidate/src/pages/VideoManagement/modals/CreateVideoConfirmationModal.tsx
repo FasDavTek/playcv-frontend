@@ -69,12 +69,10 @@ import { Button } from '@video-cv/ui-components';
 import { PaymentTimingDeadlineInDays } from '@video-cv/constants';
 import { usePaystack } from '@video-cv/payment';
 
-// Define the props interface for the component
 interface CreateVideoConfirmationModalProps {
   onClose: (e?: any) => void;
 }
 
-// Use forwardRef to create the component
 const CreateVideConfirmationModal = forwardRef<HTMLDivElement, CreateVideoConfirmationModalProps>(
   ({ onClose }, ref: Ref<HTMLDivElement>) => {
     const navigate = useNavigate();
@@ -101,7 +99,7 @@ const CreateVideConfirmationModal = forwardRef<HTMLDivElement, CreateVideoConfir
     };
 
     return (
-      <div ref={ref} className="bg-white p-5 lg:py-10 px-7 centered-modal-md rounded-lg">
+      <div ref={ref} className="bg-white p-5 lg:py-10 px-7 centered-modal-md rounded-lg" tabIndex={0}>
         <p className="text-gray-500 text-lg my-4">
           You are about to upload a new video. Please note that the upload must be completed within {PaymentTimingDeadlineInDays} days from the time of your upload request.
           <br />
@@ -124,7 +122,6 @@ const CreateVideConfirmationModal = forwardRef<HTMLDivElement, CreateVideoConfir
   }
 );
 
-// Set a display name for better debugging
 CreateVideConfirmationModal.displayName = "CreateVideConfirmationModal";
 
 export default CreateVideConfirmationModal;

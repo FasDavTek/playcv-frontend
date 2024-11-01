@@ -205,6 +205,49 @@ a {
   background-color: #574c4c;
 }
 
+@media (max-width: 1024px) {
+  .menu-icon {
+    display: block;
+    cursor: pointer;
+    place-items: center;
+  }
+
+  .nav-elements {
+    position: fixed;
+    right: -270px;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    border-left: 1px solid rgb(168, 168, 168, 0.4);
+    width: 400px;
+    transition: all 0.3s ease-in;
+    overflow: hidden;
+    z-index: 30;
+    display: none;
+    .active-nav-link {
+      border-bottom: 0px !important;
+    }
+  }
+
+  .nav-elements.active {
+    display: block;
+    right: 0;
+    width: 50%;
+    height: 100dvh;
+  }
+
+  .nav-elements ul {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nav-elements ul li {
+    margin-right: unset;
+    margin-top: 22px;
+    padding-inline: 1rem;
+  }
+}
+
 @media (max-width: 768px) {
   .nav-elements ul li:not(:last-child) {
     margin-right: 30px;

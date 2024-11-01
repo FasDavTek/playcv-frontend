@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
@@ -17,7 +17,7 @@ interface IDatePickerProps extends DatePickerProps<Dayjs | any> {
   defaultValue?: Dayjs | any;
 }
 
-const DatePickerComponent: React.FC<IDatePickerProps> = ({
+const DatePickerComponent = forwardRef<HTMLInputElement, IDatePickerProps>(({
   label,
   className,
   containerClass,
@@ -27,7 +27,7 @@ const DatePickerComponent: React.FC<IDatePickerProps> = ({
   onChange,
   defaultValue,
   ...rest
-}) => {
+}, ref) => {
   return (
     <div
       className={cx(
@@ -49,11 +49,14 @@ const DatePickerComponent: React.FC<IDatePickerProps> = ({
         maxDate={maxDate}
         value={value !== undefined ? value : null}
         onChange={onChange}
+        ref={ref}
         {...rest}
       />
       {!!error && <p className="text-red-500 text-sm">{error?.message}</p>}
     </div>
   );
-};
+});
+
+DatePickerComponent.displayName = 'DatePickerComponent';
 
 export default DatePickerComponent;

@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { usePaystackPayment } from 'react-paystack';
 import { HookConfig } from 'react-paystack/dist/types';
 import { toast } from 'react-toastify';
+import CONFIG from '../utils/helpers/config';
 
 const usePaystack = (
   amount: number,
@@ -12,11 +13,16 @@ const usePaystack = (
 ) => {
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
 
+  const key = CONFIG.PAYSTACK;
+
+  const userData = localStorage.getItem('USER');
+  const email = userData ? JSON.parse(userData).email : 'user@example.com';
+
   const config: HookConfig = {
     reference: new Date().getTime().toString(),
-    email: 'user@example.com',
+    email: email,
     amount: amount * 100,
-    publicKey: 'pk_test_1507a32eacc6e969e3c63d30052f77e12f29f78f',
+    publicKey: key,
     currency: 'ngn',
     ...options,
   };

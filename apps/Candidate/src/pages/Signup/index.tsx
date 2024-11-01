@@ -6,43 +6,68 @@ import { useNavigate } from 'react-router-dom';
 import { Input, Button, } from '@video-cv/ui-components';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { toast } from 'react-toastify';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+
+const schema = z.object({
+    firstName: z.string().min(1, "First name is required"),
+    middleName: z.string().optional(),
+    surname: z.string().min(1, "Surname is required"),
+    businessName: z.string().optional(),
+    phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
+    email: z.string().email("Invalid email format"),
+    password: z.string()
+      .min(8, "Password must be at least 8 characters long")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(/[\W_]/, "Password must contain at least one special character"),
+    confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+});
+  
+type FormData = z.infer<typeof schema>;
 
 const index = () => {
-    const [value, setValue] = React.useState(0);
-    const [formData, setFormData] = useState({
-        firstName: '',
-        middleName: '',
-        surname: '',
-        phoneNumber: '',
-        emailAddress: '',
-        password: '',
-        confirmPassword: '',
+    const navigate = useNavigate();
+    const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+        resolver: zodResolver(schema),
     });
 
     const [termsAccepted, setTermsAccepted] = useState(false);
-    const navigate = useNavigate();
-
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+    const [loading, setLoading] = React.useState(false);
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTermsAccepted(e.target.checked);
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const onSubmit = async (data: FormData) => {
         if (!termsAccepted) {
             toast.info("Please accept the Terms of Service to proceed.");
             return;
         }
-        console.log('Form submitted', formData);
-        // navigate('/');
+
+        setLoading(true);
+
+        try {
+            localStorage.setItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA, JSON.stringify(data));
+            navigate('/candidate/profile');
+        } 
+        catch (err) {
+            console.error(err);
+            toast.error("An error occurred during signup");
+        } 
+        finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSignIn = () => {
+        navigate('/auth/login')
     };
 
     const handleBackClick = () => {
@@ -56,15 +81,16 @@ const index = () => {
             <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
             <h2 className='font-semibold text-center md:text-left text-xl md:text-lg mb-1'>Create Account</h2>
             <p className='text-lg mb-7 text-center md:text-left text-neutral-300'>Create Your Professional Profile</p>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <Input name="firstName" label="First Name" placeholder="First Name" onChange={handleInputChange} />
-                        <Input name="middleName" label="Middle Name" placeholder="Middle Name" onChange={handleInputChange} />
-                        <Input name="surname" label="Surname" placeholder="Surname" onChange={handleInputChange} />
-                        <Input name="phoneNumber" label="Phone Number" placeholder="+234123456789" onChange={handleInputChange} />
-                        <Input name="emailAddress" label="Email Address" placeholder="Email Address" onChange={handleInputChange} />
-                        <Input name="password" type='password' label="Password" placeholder="Enter Password" onChange={handleInputChange}  />
-                        <Input name="confirmPassword" type='password' label="Confirm Password" placeholder="Confirm Password" onChange={handleInputChange}  />
+                        <Input label="First Name" placeholder="First Name" error={errors.firstName} {...register('firstName')} />
+                        <Input label="Middle Name" placeholder="Middle Name" error={errors.middleName} {...register('middleName')} />
+                        <Input label="Surname" placeholder="Surname" error={errors.surname} {...register('surname')} />
+                        <Input type='text' label="Business Name" placeholder="Business Name" error={errors.businessName} {...register('businessName')} />
+                        <Input label="Phone Number" placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} />
+                        <Input label="Email Address" placeholder="Email Address" error={errors.email} {...register('email')} />
+                        <Input type='password' label="Password" placeholder="Enter Password" error={errors.password} {...register('password')}  />
+                        <Input type='password' label="Confirm Password" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')}  />
                     </div>
                     <div className="mt-5">
                         <label className="inline-flex items-center">
@@ -78,9 +104,10 @@ const index = () => {
                         </label>
                     </div>
                     <div className="flex justify-start gap-5 mt-5">
-                        <Button type='submit' variant="black" label="Sign Up" className='w-[60%]' />
+                        <Button type='submit' variant="black" label={loading ? "Proceeding..." : "Proceed"} className='w-[60%]' disabled={loading} />
                     </div>
                 </form>
+                <p className='text-lg mt-5 text-center text-neutral-300'>Already have an account? <span onClick={handleSignIn} className='text-blue-400 font-medium hover:underline cursor-pointer'>SignIn</span></p>
         </div>
     </div>
   )
