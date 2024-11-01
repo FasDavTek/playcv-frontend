@@ -114,7 +114,7 @@ const FAQ = () => {
               {...register('query')}
               error={errors.query}
             />
-            <Button className="mt-6" label="Send Question" />
+            <Button className="mt-6" variant='black' label="Send Question" />
           </div>
         </form>
       </section>

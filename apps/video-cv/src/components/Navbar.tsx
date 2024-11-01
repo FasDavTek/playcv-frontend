@@ -18,6 +18,7 @@ import { Button } from '@video-cv/ui-components';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useAuth } from '../context/AuthProvider';
+import { LOCAL_STORAGE_KEYS } from './../../../../libs/utils/localStorage';
 
 const Hamburger = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 52 24">
@@ -42,7 +43,6 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
 
 const Navbar = () => {
   const { cartState } = useCart();
-  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const navbarRef = useRef<HTMLDivElement | null>(null);
@@ -89,6 +89,25 @@ const Navbar = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showNavbar]);
+
+  const isAuthenticated = () => {
+    const user = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
+    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+    return user && token;
+  }
+
+  const getUserType = () => {
+    const user = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) || '{}');
+    return user.userType;
+  };
+
+  const handleAuthenticatedNavigation = (path: string) => {
+    if (isAuthenticated()) {
+      navigate(path);
+    } else {
+      navigate(path.includes('candidate') ? '/auth/professional-signup' : '/auth/employer-signup');
+    }
+  };
 
   return (
     <div
@@ -177,7 +196,7 @@ const Navbar = () => {
                       : 'nav-link'
                   }`
                 }
-                onClick={handleNavItemClick}
+                onClick={() => handleAuthenticatedNavigation('/candidate/dashboard')}
               >
                 Professional
               </NavLink>
@@ -194,12 +213,12 @@ const Navbar = () => {
                       : 'nav-link'
                   }`
                 }
-                onClick={handleNavItemClick}
+                onClick={() => handleAuthenticatedNavigation('/employer/dashboard')}
               >
                 Employer
               </NavLink>
             </li>
-            {(isAuthenticated && user?.userType === 'employer') || !isAuthenticated ? (
+            {isAuthenticated() && (
               <li>
                 {/* TODO: Show logged in if user is logged in */}
                 <IconButton aria-label="cart" onClick={handleCartClick} className='w-5 h-5 lg:w-10 lg:h-10'>
@@ -208,9 +227,7 @@ const Navbar = () => {
                   </StyledBadge>
                 </IconButton>
               </li>
-            ) :
-              null
-            }
+            )}
             <Button variant='black' className='mt-5 md:mt-0' label='Get Started' onClick={handleGetStartedClick} />
             <Dialog fullScreen={fullScreen} aria-labelledby="responsive-dialog-title" open={openModal} onClose={handleCloseModal}>
               <DialogTitle id="responsive-dialog-title">

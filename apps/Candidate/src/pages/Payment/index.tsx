@@ -8,6 +8,10 @@ import { Button, Table } from '@video-cv/ui-components';
 import { PaymentModal } from './modals';
 import CreateVideoConfirmationModal from '../VideoManagement/modals/CreateVideoConfirmationModal';
 import { useNavigate } from 'react-router-dom';
+import { getData } from './../../../../../libs/utils/apis/apiMethods';
+import CONFIG from './../../../../../libs/utils/helpers/config';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import { toast } from 'react-toastify';
 
 type ReportTableColumns = {
   id: number;
@@ -114,12 +118,35 @@ const Payment = () => {
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
-  useEffect(() => {
-    const uploadModalParam = queryParams.get('uploadModal');
-    if (uploadModalParam === 'true') {
-      openSetModalFn('uploadModal');
+  const checkPaymentStatus = async () => {
+    try {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}`);
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log(data);
+      
+      if (data) {
+        openSetModalFn('confirmationModal');
+      } else {
+        toast.info('You have an existing payment for video upload that you have not yet completed.');
+      }
+    } 
+    catch (error) {
+      console.error('Error checking payment status:', error);
+      toast.warning('There was an error checking your payment status. Please try again later.');
     }
-  }, [queryParams]);
+  };
+
+  // useEffect(() => {
+  //   const uploadModalParam = queryParams.get('uploadModal');
+  //   if (uploadModalParam === 'true') {
+  //     openSetModalFn('uploadModal');
+  //   }
+  // }, [queryParams]);
 
   const navigate = useNavigate(); // Initialize useNavigate
 
@@ -169,7 +196,8 @@ const Payment = () => {
         <Button
           variant='custom'
           label="Pay for video"
-          onClick={() => openSetModalFn('confirmationModal')}
+          onClick={checkPaymentStatus}
+          // onClick={() => openSetModalFn('confirmationModal')}
         />
       </div>
       {/* Create Payment */}

@@ -395,7 +395,7 @@ const VideoUpload: React.FC = () => {
         action: 'upload',
       };
 
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`);
+      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, apiData);
 
       if (response.isSuccess) {
         toast.success('Video uploaded successfully');
