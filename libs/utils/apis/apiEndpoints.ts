@@ -8,4 +8,7 @@ export enum apiEndpoints {
     // video upload flow
     VIDEO_STATUS = '/api/v1/payment/check/upload-request',
     VIDEO_UPLOAD = '/api/v1/video/upload-edit',
+
+    // payment flow
+    PAYMENT = '/api/v1/payment',
 }
