@@ -19,7 +19,7 @@ interface CloudinaryUploadOptions {
 }
 
 const cloudName = 'dht1fkhxb';
-const   uploadPreset = 'ml_default';
+const uploadPreset = 'ml_default';
 
 const index = async ({
   file,

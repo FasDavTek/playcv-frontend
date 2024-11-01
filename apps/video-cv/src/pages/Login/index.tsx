@@ -1,31 +1,113 @@
 import React from 'react';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Button, Input } from '@video-cv/ui-components';
 import { Images } from '@video-cv/assets';
-import { useAuth } from '../../context/AuthProvider';
 import { Stack } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { useForm } from 'react-hook-form';
+import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import CONFIG from './../../../../../libs/utils/helpers/config';
+import { toast } from 'react-toastify';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+import { decodeJWT } from './../../../../../libs/utils/helpers/decoder';
+
+const ErrorMessages: any = {
+  required: (field: any) => `${field} is required`,
+};
+
+const schema = z.object({
+  email: z.string({
+    required_error: ErrorMessages.required('Email'),
+  })
+  .min(1, "Email is required")
+  .email("Invalid email format"),
+
+  password: z.string({
+    required_error: ErrorMessages.required('Password'),
+  })
+  .min(8, "Password must be at least 8 characters long")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+  .regex(/[0-9]/, "Password must contain at least one number")
+  .regex(/[\W_]/, "Password must contain at least one special character"),
+});
+
+type FormData = z.infer<typeof schema>;
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { handleLogin } = useAuth();
-
   const [loading, setLoading] = React.useState(false);
+  const { register, handleSubmit, watch, control, reset, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}/${userId}`);
+      if (response.isSuccess) {
+        localStorage.setItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA, JSON.stringify(response.data));
+        console.log("User profile fetched successfully");
+      } else {
+        console.error("Failed to fetch user profile");
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
+
+  const onSubmit = async (data: FormData) => {
     setLoading(true);
-    handleLogin();
-    setTimeout(() => {
+    const { email, password } = data;
+    const reqBody = {
+      email, password,
+    }
+    try {
+      const res = await postData(
+        `${CONFIG.BASE_URL}${apiEndpoints.AUTH_LOGIN}`,
+        reqBody
+      );
+
+      console.log(res)
+
+      if (res.isSuccess) {
+        toast.success(res.message);
+      }
+      if (!res.isSuccess) {
+        localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "false");
+        toast.error(res.message);
+      }
+
+      if (res.isSuccess) {
+        const token = res.jwtToken;
+        const decoded = decodeJWT(token);
+        localStorage.setItem(
+          LOCAL_STORAGE_KEYS.USER,
+          JSON.stringify({ ...res, ...decoded })
+        );
+        localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
+        localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, decoded.UserId);
+        localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, res.jwtToken);
+
+        await fetchUserProfile(decoded.UserId);
+        reset();
+
+        const from = location.state?.from;
+        navigate(from, { replace: true });
+      }      
+    }
+    catch (err) {
+      console.error(err);
+      toast.error("An error occurred during login");
+    } finally {
       setLoading(false);
-      // navigate(location.state?.from || '/');
-      navigate(-1);
-      return;
-    }, 1500);
+    }
   };
 
   const handleBackClick = () => {
@@ -46,7 +128,7 @@ const Login = () => {
       ></div>
       <div className="border flex-1">
         <ChevronLeftIcon className="cursor-pointer text-base ml-2 top-2 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
-        <form onSubmit={handleSubmit} className="w-[90%] md:w-7/12 mx-auto mt-14">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-[90%] md:w-7/12 mx-auto mt-14">
           <h5 className="font-bold text-3xl">Login</h5>
           <p className="">Enter your login details to Sign in</p>
           <div className="flex flex-col gap-5 my-5 mt-10">
@@ -62,11 +144,11 @@ const Login = () => {
             <hr className="flex-1" />
           </div>
           <div className="flex flex-col gap-6">
-            <Input label="Email" placeholder="user@email.com" />
-            <Input label="Password" placeholder="user@email.com" />
+            <Input type='email' {...register('email')} error={errors.email} label="Email" placeholder="user@email.com" />
+            <Input type='password' {...register('password')} error={errors.password} label="Password" placeholder="user@email.com" />
           </div>
 
-          <Button type='submit' variant='black' {...{ loading }} className="w-full my-10" label="Login" />
+          <Button type='submit' variant='black' disabled={loading} className="w-full my-10" label={loading ? "Submitting..." : "Login"} />
           <Stack mt={1} gap={1}>
             <p className="text-center md:text-left">Don't have an account? Choose your path to get started: </p>
             <Stack direction={{ xs: 'column', md: 'row' }} mt={1} gap={3} >

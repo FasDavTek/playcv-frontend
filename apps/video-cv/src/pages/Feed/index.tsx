@@ -30,7 +30,7 @@ const Feed = () => {
           <Box flex={2} width={['100%', '70%']}>
             <Typography variant="h3" className="font-bold text-lg md:text-[42px] leading-[60px] md:leading-[72px] text-[#2c3e50]" fontSize={{ xs: '32px', md: '42px' }} sx={{ marginBottom: '1.25rem' }}>
               ACCELERATE YOUR CAREER!
-              <Typography variant='h3' className="font-bold text-base md:text-[38px] leading-[60px] md:leading-[72px] text-[#2c3e50]" fontSize={{ xs: '28px', md: '38px' }}>SHOWCASE YOUR SKILLS & QUALITIES!</Typography>
+              <span className="font-normal text-base md:text-[40px] leading-[60px] md:leading-[72px] text-[#2c3e50]"> SHOWCASE YOUR SKILLS & QUALITIES!</span>
             </Typography>
             <Typography variant="body1" className="text-[#34495e]" sx={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>
               Discover the best job listings for young graduates tailored to your aspirations.

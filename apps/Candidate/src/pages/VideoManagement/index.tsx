@@ -8,6 +8,10 @@ import { VideoLinks } from '@video-cv/constants';
 import { VideoCard, Videos } from '../../components';
 import { CreateVideoConfirmationModal, UploadVideoModal } from './modals';
 import { routes } from '../../routes/routes';
+import { getData } from './../../../../../libs/utils/apis/apiMethods';
+import CONFIG from './../../../../../libs/utils/helpers/config';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import { toast } from 'react-toastify';
 
 export type ModalTypes = null | 'confirmationModal' | 'uploadModal';
 
@@ -24,11 +28,34 @@ const Dashboard = () => {
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
-  useEffect(() => {
-    const uploadModalParam = queryParams.get('uploadModal');
-    if (uploadModalParam === 'true') {
-      openSetModalFn('uploadModal');
+  const checkPaymentStatus = async () => {
+    try {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECK_PENDING}`);
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log(data);
+      
+      if (data) {
+        openSetModalFn('confirmationModal');
+      } else {
+        toast.info('You have an existing payment for video upload that you have not yet completed.');
+      }
+    } 
+    catch (error) {
+      console.error('Error checking payment status:', error);
+      toast.warning('There was an error checking your payment status. Please try again later.');
     }
+  };
+
+  useEffect(() => {
+    // const uploadModalParam = queryParams.get('uploadModal');
+    // if (uploadModalParam === 'true') {
+    //   openSetModalFn('uploadModal');
+    // }
 
     // const fetchedVideos: any = [];
     // setVideos(fetchedVideos);
@@ -48,7 +75,8 @@ const Dashboard = () => {
           <Button
             variant='custom'
             label="Upload your Video"
-            onClick={() => openSetModalFn('confirmationModal')}
+            onClick={checkPaymentStatus}
+            // onClick={() => openSetModalFn('confirmationModal')}
           />
         </div>
         {/* VIDEO CARDS SECTION */}
@@ -67,9 +95,6 @@ const Dashboard = () => {
         <CreateVideoConfirmationModal onClose={closeModal} />
       </Modal>
       {/* TODO: Add tags field and video upload field */}
-      <Modal open={openModal === 'uploadModal'} onClose={closeModal}>
-        <UploadVideoModal onClose={closeModal} />
-      </Modal>
     </section>
   );
 };

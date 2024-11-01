@@ -106,11 +106,11 @@ const Navbar = () => {
         </Link>
         {/* <SearchBar /> */}
         <div className="menu-icon" onClick={handleShowNavbar}>
-          {showNavbar ? <MenuOpenIcon sx={{ width: '1.75rem', height: '1.75rem' }} className='w-12 h-12 z-50' /> : <MenuIcon sx={{ width: '1.75rem', height: '1.75rem' }} className='w-12 h-12 z-50' />}
+          {showNavbar ? <MenuOpenIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 z-50' /> : <MenuIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 z-50' />}
         </div>
         <div className={`nav-elements ${showNavbar && 'active'} justify-start px-3`}>
-          <div className="mt-4 flex lg:hidden" onClick={handleShowNavbar}>
-            {showNavbar && <MenuOpenIcon sx={{ width: '1.75rem', height: '1.75rem' }} className='w-12 h-12 z-50 ml-auto sm:mr-0 md:mr-3' />}
+          <div className="mt-4 flex xl:hidden" onClick={handleShowNavbar}>
+            {showNavbar && <MenuOpenIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 lg:w-24 lg:h-24 z-50 ml-auto sm:mr-0 md:mr-3 lg:mr-4' />}
           </div>
           <ul>
             <li>
@@ -213,7 +213,9 @@ const Navbar = () => {
             }
             <Button variant='black' className='mt-5 md:mt-0' label='Get Started' onClick={handleGetStartedClick} />
             <Dialog fullScreen={fullScreen} aria-labelledby="responsive-dialog-title" open={openModal} onClose={handleCloseModal}>
-              <DialogTitle id="responsive-dialog-title">Get Started</DialogTitle>
+              <DialogTitle id="responsive-dialog-title">
+                <strong className=' text-neutral-200'>Get Started</strong>
+              </DialogTitle>
               <IconButton
                 aria-label="close"
                 onClick={handleCloseModal}
@@ -227,17 +229,12 @@ const Navbar = () => {
                 <CloseIcon />
               </IconButton>
               <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '.95rem' }}>
-                <DialogContentText display='flex' flexDirection='column' gap='.8rem'>
-                  <p>
-                    Welcome to VideoCV! Choose your path to join our community and unlock your potential.
-                  </p>
-                  <p>
-                    <strong>For Professionals:</strong> Create a compelling video resume and showcase your skills to top employers.
-                  </p>
-                  <p>
-                    <strong>For Employers:</strong> Discover talented professionals and streamline your hiring process with our innovative platform.
-                  </p>
-                </DialogContentText>
+              <DialogContentText display='flex' flexDirection='column' gap='.8rem'>
+                Welcome to VideoCV! Choose your path to join our community and unlock your potential.
+                <strong>For Professionals:</strong> Create a compelling video resume and showcase your skills to top employers.
+                <br />
+                <strong>For Employers:</strong> Discover talented professionals and streamline your hiring process with our innovative platform.
+              </DialogContentText>
                 <Stack mx='auto' direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                   <Button variant="black" className='text-sm' label='Sign up as Professional' onClick={() => navigate('/auth/professional-signup')} >
                   </Button>
