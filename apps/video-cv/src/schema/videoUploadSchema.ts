@@ -28,7 +28,7 @@ export const videoUploadSchema = z.object({
   media: z.union([
     z.instanceof(File).refine(
       (file) => file instanceof File,
-      'Input not instance of file'
+      'Please add a video file'
     ).refine(
       (file) =>{ return !file || file.size <= MAX_FILE_SIZE; },
       `Max video file size is ${MAX_FILE_SIZE}MB.`
@@ -38,7 +38,7 @@ export const videoUploadSchema = z.object({
     ),
     z.array(z.instanceof(File)).refine(
       (files) => files.every((file) => file instanceof File),
-      'Input not instance of file'
+      'Please add a video file'
     ),
     z.string().url("Invalid URL for media")
   ]).refine((value) => value !== undefined && value !== null, {
