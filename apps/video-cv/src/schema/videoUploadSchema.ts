@@ -25,6 +25,9 @@ export const videoUploadSchema = z.object({
   price: z.number({
     required_error: ErrorMessages.required('Video Price'),
   }).optional(),
+  paymentReference: z.string({
+    required_error: ErrorMessages.required('Payment Reference'),
+  }).optional(),
   media: z.union([
     z.instanceof(File).refine(
       (file) => file instanceof File,
