@@ -1,9 +1,12 @@
-import { Stack } from '@mui/material';
+import { CircularProgress, Stack } from '@mui/material';
 import { Button, Table, TextArea } from '@video-cv/ui-components'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
+import CONFIG from './../../../../../libs/utils/helpers/config';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 
 interface Uploader {
   id: number;
@@ -11,76 +14,105 @@ interface Uploader {
   email: string;
 }
 interface Video {
-  id: number;
-  videoTitle: string;
-  uploaderName: string;
-  // uploader: Uploader;
-  uploadDate: string;
-  videoStatus: string;
+  id: string;
+  title: string;
+  status: string;
+  startDate: Date;
+  endDate: Date;
+  uploadDate: Date
+  authorName: string;
+  search: string;
+  category: string;
+  userType: string;
+  userId: string;
   action: string;
 }
 
-const mockData: Video[] = [
-  {
-    id: 1,
-    videoTitle: 'Introduction to React',
-    uploaderName: 'Alice Johnson',
-    uploadDate: '2024-07-01',
-    videoStatus: 'Pending',
-    action: 'Approve/Reject',
-  },
-  {
-    id: 2,
-    videoTitle: 'Advanced TypeScript',
-    uploaderName: 'Bob Smith',
-    uploadDate: '2024-07-05',
-    videoStatus: 'Approved',
-    action: 'View',
-  },
-  {
-    id: 3,
-    videoTitle: 'Building REST APIs with Node.js',
-    uploaderName: 'Charlie Brown',
-    uploadDate: '2024-07-10',
-    videoStatus: 'Rejected',
-    action: 'View/Edit',
-  },
-  {
-    id: 4,
-    videoTitle: 'Mastering CSS Grid',
-    uploaderName: 'Diana Prince',
-    uploadDate: '2024-07-15',
-    videoStatus: 'Pending',
-    action: 'Approve/Reject',
-  },
-  {
-    id: 5,
-    videoTitle: 'Introduction to GraphQL',
-    uploaderName: 'Edward Nigma',
-    uploadDate: '2024-07-20',
-    videoStatus: 'Approved',
-    action: 'View',
-  },
-];
+// const mockData: Video[] = [
+//   {
+//     id: 1,
+//     title: 'Introduction to React',
+//     authorName: 'Alice Johnson',
+//     startDate: '2024-07-01',
+//     status: 'Pending',
+//     action: 'Approve/Reject',
+//   },
+//   {
+//     id: 2,
+//     title: 'Advanced TypeScript',
+//     authorName: 'Bob Smith',
+//     startDate: '2024-07-05',
+//     status: 'Approved',
+//     action: 'View',
+//   },
+//   {
+//     id: 3,
+//     title: 'Building REST APIs with Node.js',
+//     authorName: 'Charlie Brown',
+//     startDate: '2024-07-10',
+//     status: 'Rejected',
+//     action: 'View/Edit',
+//   },
+//   {
+//     id: 4,
+//     title: 'Mastering CSS Grid',
+//     authorName: 'Diana Prince',
+//     startDate: '2024-07-15',
+//     status: 'Pending',
+//     action: 'Approve/Reject',
+//   },
+//   {
+//     id: 5,
+//     title: 'Introduction to GraphQL',
+//     authorName: 'Edward Nigma',
+//     startDate: '2024-07-20',
+//     status: 'Approved',
+//     action: 'View',
+//   },
+// ];
 
 const index = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState('');
-  const [selectedVideoId, setSelectedVideoId] = useState<number | null>(null);
+  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [lastFetchTime, setLastFetchTime] = useState(Date.now());
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch('/api/videos');
-      const data = await response.json();
+  const fetchVideos = async () => {
+    try {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=10`)
+      if (!resp.ok) {
+        throw new Error("Failed to fetch videos");
+      }
+
+      const data = await resp.json();
       setVideos(data);
-    };
-  
-    fetchData();
-  }, []);
+      setLoading(false);
+
+      const currentTime = Date.now();
+      const newVideos = data.filter((video: Video) => new Date(video.uploadDate).getTime() > lastFetchTime);
+      if (newVideos.length > 0) {
+        toast.info(`${newVideos.length} new video(s) uploaded`);
+      }
+      setLastFetchTime(currentTime);
+    }
+    catch (err) {
+      console.error('Error fetching videos:', err)
+      setLoading(false)
+      toast.error('Failed to fetch videos')
+    }
+  }
+
+  useEffect(() => {
+    fetchVideos()
+    // Set up interval to fetch videos every 5 minutes
+    const interval = setInterval(fetchVideos, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   // const { fetchVideos, approveVideo, rejectVideo } = useAdminApi();
 
@@ -102,127 +134,121 @@ const index = () => {
   //   setVideos(prevVideos => prevVideos.map(video => video.id === videoId ? { ...video, status: 'rejected', rejectionReason: reason } : video));
   // };
 
-  useEffect(() => {
-    setVideos(mockData);
-  }, []);
+  const handleView = async (videoId: string) => {
+    try {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${videoId}`);
+      if (!response.ok) {
+        throw new Error('Error fetching video details');
+      }
 
-  useEffect(() => {
-  }, [videos]);
-
-
-
-  useEffect(() => {
-    // Simulate receiving a new video notification
-    const newVideo = {
-      id: 6,
-      videoTitle: 'New Video Title',
-      uploaderName: 'New Uploader',
-      uploadDate: '2024-07-30',
-      videoStatus: 'Pending',
-      action: 'Approve/Reject',
-    };
-    toast.info(`New video uploaded: ${newVideo.videoTitle} by ${newVideo.uploaderName}`);
-    setVideos(prevVideos => [...prevVideos, newVideo]);
-  }, []);
-
-  const handleView = (videoId: number) => {
-    navigate(`/admin/video-management/:${videoId}`);
+      const videoDetails = await response.json();
+      navigate(`/admin/video-management/:${videoId}`, {
+        state: { videoDetails },
+      });
+    }
+    catch (err) {
+      console.error('Error fetching video details:', err)
+      toast.error('Failed to fetch video details')
+    }
   };
 
-  const notifyCandidate = async (videoId: number, videoTitle: string, status: string, /* uploaderId: any, */ reason?: string) => {
+  const handleVideoAction = async (videoId: string, action: string, reason?: string) => {
+    try {
+      const apiData = {
+        videoId,
+        action,
+        reason,
+      };
+
+      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_VIDEO}`, apiData)
+      if (!response.ok) {
+        throw new Error(`Failed to ${action} video`)
+      }
+
+      await fetchVideos();
+      toast.success(`Video ${action === 'a' ? 'approved' : 'rejected'} successfully`)
+    } 
+    catch (err) {
+      console.error(`Error ${action === 'a' ? 'approving' : 'rejecting'} video:`, err)
+      toast.error(`Failed to ${action === 'a' ? 'approve' : 'reject'} video`)
+    }
+  }
+
+  const handleApprove = (videoId: string) => handleVideoAction(videoId, 'a')
+  const handleReject = (videoId: string, reason: string) => handleVideoAction(videoId, 'd', reason)
+
+  const notifyCandidate = async (videoId: string, title: string, status: string, /* uploaderId: any, */ reason?: string) => {
     // Simulate an API call
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(`Notification sent to candidate: ${videoId} is ${status}`);
-        toast.info(`Notification sent to candidate: ${videoTitle} is ${status}`);
+        toast.info(`Notification sent to candidate: ${title} is ${status}`);
       }, 1000);
     });
   };
 
 
 
-  const handleApprove = async (videoId: number, videoTitle: string, status: 'approved', /* uploaderId: any */ ) => {
-    console.log(`Approving video: ${videoId}`);
-    setVideos(prevVideos => 
-      prevVideos.map(video => 
-        video.id === videoId ? { ...video, videoStatus: 'Approved' } : video
-      )
-    );
-    toast.success(`Video "${videoTitle}" has been approved.`);
-    const notification = await notifyCandidate(videoId, videoTitle, status, /* uploaderId */);
-    console.log(notification);
-  };
-
-
-
-  const handleReject = async (videoId: number, videoTitle: string, status: 'rejected', reason: string,  /* uploaderId: any */) => {
-    console.log(`Rejecting video: ${videoId}`);
-    setVideos(prevVideos => 
-      prevVideos.map(video => 
-        video.id === videoId ? { ...video, videoStatus: 'Rejected' } : video
-      )
-    );
-    toast.error(`Video "${videoTitle}" has been rejected.`);
-    const notification = await notifyCandidate(videoId, videoTitle, status, reason, /* uploaderId */ );
-    console.log(notification);
-  };
-
-
-
-  const handleOpenRejectDialog = (videoId: number, videoTitle: string) => {
+  const handleOpenRejectDialog = (videoId: string, title: string) => {
     setSelectedVideoId(videoId);
-    setSelectedVideoTitle(videoTitle);
+    setSelectedVideoTitle(title);
     setOpen(true);
   };
   
   const handleClose = () => {
+    setReason('');
     setOpen(false);
   };
   
   const handleConfirmReject = () => {
     if (selectedVideoId !== null) {
-      handleReject(selectedVideoId, selectedVideoTitle, 'rejected', /*  uploaderId, */ reason);
+      handleReject(selectedVideoId, reason);
     }
-    setReason('');
-    setOpen(false);
+    handleClose();
   };
 
 
 
   const columns = [
-    { header: 'Video Name', accessorKey: 'videoTitle', cell: (info: any) => info.getValue() },
-    { header: 'Uploader', accessorKey: 'uploaderName', cell: (info: any) => info.getValue() },
-    { header: 'Upload Date', accessorKey: 'uploadDate', cell: (info: any) => info.getValue() },
-    { header: 'Status', accessorKey: 'videoStatus', cell: (info: any) => info.getValue() },
-    { header: 'View Video', accessorKey: 'viewVideo', cell: ({ row }: any) => (
+    { header: 'Video Name', accessorKey: 'title', },
+    { header: 'Uploader', accessorKey: 'authorName', },
+    { header: 'Upload Date', accessorKey: 'startDate', },
+    { header: 'Status', accessorKey: 'status', },
+    { header: 'View Video', accessorKey: 'viewVideo', cell: ({ row }: { row: { original: Video } }) => (
         <Button variant='custom' label='View' onClick={() => handleView(row.original.id)}></Button>
     ) },
-    { header: 'Actions', accessorKey: 'actions', cell: ({ row }: any) => (
+    { header: 'Actions', accessorKey: 'actions', cell: ({ row }: { row: { original: Video } }) => (
       <Stack direction='row' spacing={2}>
-        <Button variant='success' label='Approve' type='submit' className='text-white' onClick={() => handleApprove(row.original.id, row.original.videoTitle, row.original.status /*, row.original.uploaderId */ )} ></Button>
-        <Button variant='red' label='Reject' type='submit' onClick={() => handleOpenRejectDialog(row.original.id, row.original.videoTitle)} ></Button>
+        <Button variant='success' label='Approve' type='submit' className='text-white' onClick={() => handleApprove(row.original.id)} disabled={row.original.status !== 'Pending'}></Button>
+        <Button variant='red' label='Reject' type='submit' onClick={() => handleOpenRejectDialog(row.original.id, row.original.title)} disabled={row.original.status !== 'Pending'}></Button>
       </Stack>
     ) },
   ];
   
   return (
     <div className='p-4 mb-8'>
-        {videos.length > 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <CircularProgress className="w-8 h-8 animate-spin" />
+        </div>
+      ) : (
+        videos.length > 0 ? (
           <Table loading={false} columns={columns} data={videos} />
         ) : (
-          <p>No data available</p>
-        )}
+          <p>No videos available</p>
+        )
+      )}
 
-        <Dialog open={open} onClose={handleClose} aria-labelledby="dialog-title" aria-describedby="dialog-description" PaperProps={{ sx: { padding: 3, borderRadius: 2, boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)', width: { xs: '90%', sm: '500px' }, maxWidth: '750px' }, }} BackdropProps={{ sx: { backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.2)', }, }} >
-          <DialogTitle>Rejection Reason</DialogTitle>
-          <DialogContent>
-            <TextArea label="" rows={5} value={reason} onChange={(e) => setReason(e.target.value)}/>
-          </DialogContent>
-          <DialogActions>
-            <Button variant='red' label='Cancel' type='reset' onClick={handleClose}></Button>
-            <Button variant='black' label='Submit' type='submit' onClick={handleConfirmReject}></Button>
-          </DialogActions>
-        </Dialog>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="dialog-title" aria-describedby="dialog-description" PaperProps={{ sx: { padding: 3, borderRadius: 2, boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)', width: { xs: '90%', sm: '500px' }, maxWidth: '750px' }, }} BackdropProps={{ sx: { backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.2)', }, }} >
+        <DialogTitle>Rejection Reason</DialogTitle>
+        <DialogContent>
+          <TextArea label="" rows={5} value={reason} onChange={(e) => setReason(e.target.value)}/>
+        </DialogContent>
+        <DialogActions>
+          <Button variant='red' label='Cancel' type='reset' onClick={handleClose}></Button>
+          <Button variant='black' label='Submit' type='submit' onClick={handleConfirmReject}></Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

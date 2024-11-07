@@ -27,26 +27,27 @@ type Video = {
   category: string;
   userType: string;
   userId: string;
+  rejectionReason?: string
 }
 
 const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const queryParams = new URLSearchParams(location.search);
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [approvedVideos, setApprovedVideos] = useState<Video[]>([]);
   const [pendingVideos, setPendingVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastFetchTime, setLastFetchTime] = useState(Date.now());
 
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
   const checkPaymentStatus = async () => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}`);
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=10`);
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -78,19 +79,33 @@ const Dashboard = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_VIDEO_LIST}`);
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_VIDEO_LIST}?Page=1&Limit=10`);
 
       if (!resp.ok) {
         throw new Error('Failed to fetch videos');
       }
       const data = await resp.json();
+      const currentTime = Date.now();
       console.log(data);
       setVideos(data.videos);
 
+      const newVideos = data.videos.filter((video: Video) => new Date(video.startDate).getTime() > lastFetchTime);
       const approved = data.videos.filter((video: Video) => video.status === 'approved');
       const pending = data.videos.filter((video: Video) => ['pending', 'rejected'].includes(video.status));
+      setVideos(data.videos);
       setApprovedVideos(approved);
       setPendingVideos(pending);
+
+      newVideos.forEach((video: Video) => {
+        if (video.status === 'approved') {
+          toast.success(`Your video "${video.title}" has been approved!`)
+        } 
+        else if (video.status === 'rejected') {
+          toast.error(`Your video "${video.title}" has been rejected. Reason: ${video.rejectionReason}`)
+        }
+      })
+
+      setLastFetchTime(currentTime)
     }
     catch (err) {
       console.error('Error fetching videos: ', err);
@@ -104,6 +119,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchVideos()
+    const interval = setInterval(fetchVideos, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, [])
 
 
