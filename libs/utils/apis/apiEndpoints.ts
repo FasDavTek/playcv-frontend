@@ -15,4 +15,8 @@ export enum apiEndpoints {
 
     // payment flow
     PAYMENT = '/api/v1/payment',
+
+    // admin
+    MANAGE_VIDEO = '/api/v1/admin/video/manage',
+    MANAGE_ADS = '/api/v1/admin/ad/manage',
 }

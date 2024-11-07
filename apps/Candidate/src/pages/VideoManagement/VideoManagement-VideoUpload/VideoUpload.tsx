@@ -75,7 +75,7 @@ const VideoUpload: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_CATEGORY}`)
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_CATEGORY}?Page=1&Limit=10`)
         if (response.isSuccess) {
           setCategories(response.data)
         } else {

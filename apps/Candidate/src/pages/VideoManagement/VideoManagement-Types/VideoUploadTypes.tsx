@@ -51,7 +51,7 @@ const VideoUploadTypes: React.FC = () => {
   useEffect(() => {
     const fetchUploadTypes = async () => {
       try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD_TYPE}`)
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD_TYPE}?Page=1&Limit=10`)
         if (!response.ok) {
           throw new Error('Failed to fetch upload types')
         }

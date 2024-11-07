@@ -50,7 +50,7 @@ const Login = () => {
 
   const fetchUserProfile = async (userId: string) => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}/${userId}`);
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}/${userId}?Page=1&Limit=10`);
       if (response.isSuccess) {
         localStorage.setItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA, JSON.stringify(response.data));
         console.log("User profile fetched successfully");
