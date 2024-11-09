@@ -25,6 +25,12 @@ interface Video {
   category: string;
   userType: string;
   userId: string;
+  email: string;
+  courseOfStudy: string;
+  gender: string;
+  phone: string;
+  stateOfOrigin: string;
+  grade: string;
   action: string;
 }
 
@@ -212,6 +218,11 @@ const index = () => {
   const columns = [
     { header: 'Video Name', accessorKey: 'title', },
     { header: 'Uploader', accessorKey: 'authorName', },
+    { header: 'Email', accessorKey: 'email', },
+    { header: 'Course of Study', accessorKey: 'courseOfStudy', },
+    { header: 'Grade', accessorKey: 'grade', },
+    { header: 'Gender', accessorKey: 'gender', },
+    { header: 'Phone', accessorKey: 'phone', },
     { header: 'Upload Date', accessorKey: 'startDate', },
     { header: 'Status', accessorKey: 'status', },
     { header: 'View Video', accessorKey: 'viewVideo', cell: ({ row }: { row: { original: Video } }) => (
@@ -246,7 +257,7 @@ const index = () => {
         </DialogContent>
         <DialogActions>
           <Button variant='red' label='Cancel' type='reset' onClick={handleClose}></Button>
-          <Button variant='black' label='Submit' type='submit' onClick={handleConfirmReject}></Button>
+          <Button variant='black' label='Confirm Rejection' type='submit' onClick={handleConfirmReject}></Button>
         </DialogActions>
       </Dialog>
     </div>

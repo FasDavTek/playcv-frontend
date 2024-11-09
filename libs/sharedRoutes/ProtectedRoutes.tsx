@@ -24,6 +24,8 @@ const EmployerSignup = lazy(() => import('../../apps/Employer/src/pages/Signup')
 const Dashboard = lazy(() => import('../../apps/Employer/src/pages/Dashboard'));
 const Profile = lazy(() => import('../../apps/Employer/src/pages/Profile'));
 const Advertisement = lazy(() => import('../../apps/Employer/src/pages/Advertisement'));
+const EmployerCreateAdsTypes = lazy(() => import("../../apps/Employer/src/pages/Advertisement/AdsManagement-Types/CreateAdsTypes"));
+const EmployerCreateAdsConfirmation = lazy(() => import("../../apps/Employer/src/pages/Advertisement/AdsManagement-Confirmation/CreateAdsConfirmation"));
 const CreateAdverts = lazy(() => import('../../apps/Employer/src/pages/Advertisement/CreateAdverts/CreateAds'));
 const ManageAdvertisement = lazy(() => import('../../apps/Employer/src/pages/Advertisement/manage'));
 const VideoManagement = lazy(() => import('../../apps/Employer/src/pages/VideoManagement'));
@@ -38,6 +40,8 @@ const ViewProfessionalUser = lazy(() => import('../../apps/Admin/src/pages/UserM
 const ViewEmployerUser = lazy(() => import('../../apps/Admin/src/pages/UserManagement/Employer/userDetails'));
 const ContentManagement = lazy(() => import('../../apps/Admin/src/pages/ContentManagement'));
 const AdvertisementManagement = lazy(() => import('../../apps/Admin/src/pages/AdvertisementManagement'));
+const AdminCreateAdsTypes = lazy(() => import("../../apps/Admin/src/pages/AdvertisementManagement/AdsManagement-Types/CreateAdsTypes"));
+const AdminCreateAdsConfirmation = lazy(() => import("../../apps/Admin/src/pages/AdvertisementManagement/AdsManagement-Confirmation/CreateAdsConfirmation"));
 const CreateAdvertisement = lazy(() => import('../../apps/Admin/src/pages/AdvertisementManagement/CreateAdverts/CreateAdvert'));
 const ViewAdvertisement = lazy(() => import('../../apps/Admin/src/pages/AdvertisementManagement/ManageAds/ViewAds'));
 const OrderManagement = lazy(() => import('../../apps/Admin/src/pages/OrderManagement'));
@@ -205,6 +209,14 @@ const router = createBrowserRouter([
                 element: <AdvertisementManagement />,
             },
             {
+                path: ROUTES.ADMIN_CREATE_ADVERTISEMENT_TYPES,
+                element: <AdminCreateAdsTypes />,
+            },
+            {
+                path: ROUTES.ADMIN_CREATE_ADVERTISEMENT_CONFIRMATION,
+                element: <AdminCreateAdsConfirmation />,
+            },
+            {
                 path: ROUTES.ADMIN_ADVERTISEMENT_CREATE,
                 element: <CreateAdvertisement />,
             },
@@ -253,6 +265,14 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.EMPLOYER_ADVERTISEMENT,
                 element: <Advertisement />,
+            },
+            {
+                path: ROUTES.EMPLOYER_CREATE_ADVERTISEMENT_TYPES,
+                element: <EmployerCreateAdsTypes />,
+            },
+            {
+                path: ROUTES.EMPLOYER_CREATE_ADVERTISEMENT_CONFIRMATION,
+                element: <EmployerCreateAdsConfirmation />,
             },
             {
                 path: ROUTES.EMPLOYER_ADVERTISEMENT_CREATE,

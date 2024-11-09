@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -6,152 +6,211 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useNavigate } from 'react-router-dom';
+import { Button, Table, } from '@video-cv/ui-components';
+import { getData } from './../../../../../libs/utils/apis/apiMethods';
+import CONFIG from './../../../../../libs/utils/helpers/config';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import { toast } from 'react-toastify';
+import { CircularProgress } from '@mui/material';
 
-import {
-  Input,
-  DatePicker,
-  Select,
-  TextArea,
-  Button,
-  Table,
-} from '@video-cv/ui-components';
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-interface IVideoManagementTable {
-  fullname: string;
+interface Video {
+  id: string;
+  title: string;
+  status: string;
+  startDate: Date;
+  endDate: Date;
+  uploadDate: Date
+  authorName: string;
+  search: string;
+  category: string;
+  userType: string;
+  userId: string;
   email: string;
   courseOfStudy: string;
   gender: string;
   phone: string;
   stateOfOrigin: string;
   grade: string;
-  action: 'action';
+  action: string;
 }
 
-const data = [
-  {
-    id: '1',
-    fullname: 'John Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'Mathematics',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-  {
-    id: '2',
-    fullname: 'John Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'Zoology',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-  {
-    id: '3',
-    fullname: 'Johnson Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'Plant Biology',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-  {
-    id: '4',
-    fullname: 'John Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'Mechanical Engineering',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-  {
-    id: '5',
-    fullname: 'John Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'Mathematics',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-  {
-    id: '6',
-    fullname: 'John Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'Mathematics',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-  {
-    id: '7',
-    fullname: 'John Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'Mathematics',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-  {
-    id: '8',
-    fullname: 'John Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'Physics',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-  {
-    id: '9',
-    fullname: 'John Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'English',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-  {
-    id: '10',
-    fullname: 'John Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'Geology',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-  {
-    id: '11',
-    fullname: 'John Smith',
-    email: 'john.smith@example.com',
-    courseOfStudy: 'Civil Engineering',
-    gender: 'Male',
-    phone: '1234567890',
-    stateOfOrigin: 'California',
-    grade: '1st class',
-  },
-];
+// const data = [
+//   {
+//     id: '1',
+//     authorName: 'John Smith',
+//     email: 'john.smith@example.com',
+//     courseOfStudy: 'Mathematics',
+//     gender: 'Male',
+//     phone: '1234567890',
+//     stateOfOrigin: 'California',
+//     grade: '1st class',
+//   },
+//   {
+//     id: '2',
+//     authorName: 'John Smith',
+//     email: 'john.smith@example.com',
+//     courseOfStudy: 'Zoology',
+//     gender: 'Male',
+//     phone: '1234567890',
+//     stateOfOrigin: 'California',
+//     grade: '1st class',
+//   },
+//   {
+//     id: '3',
+//     authorName: 'Johnson Smith',
+//     email: 'john.smith@example.com',
+//     courseOfStudy: 'Plant Biology',
+//     gender: 'Male',
+//     phone: '1234567890',
+//     stateOfOrigin: 'California',
+//     grade: '1st class',
+//   },
+//   {
+//     id: '4',
+//     authorName: 'John Smith',
+//     email: 'john.smith@example.com',
+//     courseOfStudy: 'Mechanical Engineering',
+//     gender: 'Male',
+//     phone: '1234567890',
+//     stateOfOrigin: 'California',
+//     grade: '1st class',
+//   },
+//   {
+//     id: '5',
+//     authorName: 'John Smith',
+//     email: 'john.smith@example.com',
+//     courseOfStudy: 'Mathematics',
+//     gender: 'Male',
+//     phone: '1234567890',
+//     stateOfOrigin: 'California',
+//     grade: '1st class',
+//   },
+//   {
+//     id: '6',
+//     authorName: 'John Smith',
+//     email: 'john.smith@example.com',
+//     courseOfStudy: 'Mathematics',
+//     gender: 'Male',
+//     phone: '1234567890',
+//     stateOfOrigin: 'California',
+//     grade: '1st class',
+//   },
+//   {
+//     id: '7',
+//     authorName: 'John Smith',
+//     email: 'john.smith@example.com',
+//     courseOfStudy: 'Mathematics',
+//     gender: 'Male',
+//     phone: '1234567890',
+//     stateOfOrigin: 'California',
+//     grade: '1st class',
+//   },
+//   {
+//     id: '8',
+//     authorName: 'John Smith',
+//     email: 'john.smith@example.com',
+//     courseOfStudy: 'Physics',
+//     gender: 'Male',
+//     phone: '1234567890',
+//     stateOfOrigin: 'California',
+//     grade: '1st class',
+//   },
+//   {
+//     id: '9',
+//     authorName: 'John Smith',
+//     email: 'john.smith@example.com',
+//     courseOfStudy: 'English',
+//     gender: 'Male',
+//     phone: '1234567890',
+//     stateOfOrigin: 'California',
+//     grade: '1st class',
+//   },
+//   {
+//     id: '10',
+//     authorName: 'John Smith',
+//     email: 'john.smith@example.com',
+//     courseOfStudy: 'Geology',
+//     gender: 'Male',
+//     phone: '1234567890',
+//     stateOfOrigin: 'California',
+//     grade: '1st class',
+//   },
+//   {
+//     id: '11',
+//     authorName: 'John Smith',
+//     email: 'john.smith@example.com',
+//     courseOfStudy: 'Civil Engineering',
+//     gender: 'Male',
+//     phone: '1234567890',
+//     stateOfOrigin: 'California',
+//     grade: '1st class',
+//   },
+// ];
 
-const columnHelper = createColumnHelper<IVideoManagementTable>();
+const columnHelper = createColumnHelper<Video>();
 
 const VideoManagement = () => {
   const [value, setValue] = React.useState(0);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [open, setOpen] = useState(false);
+  const [reason, setReason] = useState('');
+  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [lastFetchTime, setLastFetchTime] = useState(Date.now());
 
   const navigate = useNavigate();
+
+  const fetchVideos = async () => {
+    try {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.EMPLOYER_AUTH_VIDEO_LIST}?Page=1&Limit=10`)
+      if (!resp.ok) {
+        throw new Error("Failed to fetch videos");
+      }
+
+      const data = await resp.json();
+      setVideos(data);
+      setLoading(false);
+
+      const currentTime = Date.now();
+      const newVideos = data.filter((video: Video) => new Date(video.uploadDate).getTime() > lastFetchTime);
+      if (newVideos.length > 0) {
+        toast.info(`${newVideos.length} new video(s) uploaded`);
+      }
+      setLastFetchTime(currentTime);
+    }
+    catch (err) {
+      console.error('Error fetching videos:', err)
+      setLoading(false)
+      toast.error('Failed to fetch videos')
+    }
+  }
+
+  useEffect(() => {
+    fetchVideos()
+    // Set up interval to fetch videos every 5 minutes
+    const interval = setInterval(fetchVideos, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, []);
+
+
+  const handleView = async (videoId: string) => {
+    try {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${videoId}`);
+      if (!response.ok) {
+        throw new Error('Error fetching video details');
+      }
+
+      const videoDetails = await response.json();
+      navigate(`/employer/video-management/:${videoId}`, {
+        state: { videoDetails },
+      });
+    }
+    catch (err) {
+      console.error('Error fetching video details:', err)
+      toast.error('Failed to fetch video details')
+    }
+  };
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -161,79 +220,63 @@ const VideoManagement = () => {
     e.preventDefault();
   };
 
-  const handleView = (videoId: number) => {
-    navigate(`/employer/video-management/:${videoId}`);
-  };
-
   const columns = [
-    columnHelper.accessor('fullname', {
+    columnHelper.accessor('title', {
+      header: 'Video Name',
+    }),
+    columnHelper.accessor('authorName', {
       header: 'Full Name',
-      cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('email', {
       header: 'Email',
-      cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('courseOfStudy', {
       header: 'Course of Study',
-      cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('grade', {
       header: 'Grade',
-      cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('gender', {
       header: 'Gender',
-      cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('phone', {
       header: 'Phone',
-      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('status', {
+      header: 'Status',
+    }),
+    columnHelper.accessor('status', {
+      header: 'Status',
     }),
     columnHelper.accessor('action', {
-      cell: ({ row }: any) => {
-        return <Button variant='custom' onClick={() => handleView(row.original.id)} label="View Profile" />;
+      cell: ({ row }: { row: { original: Video } }) => {
+        return <Button variant='custom' onClick={() => handleView(row.original.id)} label="View CV" />;
       },
       header: 'Action',
     }),
   ];
 
-  function CustomTabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
-      </div>
-    );
-  }
-
-  function a11yProps(index: number) {
-    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-    };
-  }
   return (
     <section className="ce-px ce-py">
         {/* Table comes here */}
         {/* filter logic comes here */}
-        <Table
-          loading={false}
-          data={data}
-          columns={columns}
-          tableHeading="All Video CV"
-        />
+        {loading ? (
+          <div className="flex items-center justify-center min-h-screen">
+            <CircularProgress className="w-8 h-8 animate-spin" />
+          </div>
+        ) : (
+          videos.length > 0 ? (
+            <Table
+              loading={false}
+              data={videos}
+              columns={columns}
+              tableHeading="All Video CV"
+            />
+          ) : (
+            <p>No videos available</p>
+          )
+        )}
+        
     </section>
   );
 };

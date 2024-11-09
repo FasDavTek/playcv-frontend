@@ -1,4 +1,4 @@
-import { Icons } from '@video-cv/assets';
+import { Icons } from './../../libs/assets';
 import { ROUTES } from '../ui-components/shared/routes';
 
 const CandidateRoutes = [
