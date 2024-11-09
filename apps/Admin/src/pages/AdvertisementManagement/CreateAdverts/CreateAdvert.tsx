@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useForm, Controller, FieldError } from 'react-hook-form';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
@@ -13,6 +13,9 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { toast } from 'react-toastify';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
+import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
+import CONFIG from './../../../../../../libs/utils/helpers/config';
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -32,25 +35,13 @@ const s3Client = new S3Client({
 //   videoTranscript: string;
 // }
 
-const options = [
-  { value: 'video', label: 'Video', price: '$200' },
-  { value: 'image', label: 'Image', price: '$200' },
-];
-
-type faqType = z.infer<typeof advertSchema>;
+type AdFormData = z.infer<typeof advertSchema>;
 
 const CreateAdvertModal = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadUrls, setUploadUrls] = useState<string[]>([]);
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    control,
-    formState: { errors },
-  } = useForm<faqType>({
+  const [adTypes, setAdTypes] = useState<{ value: string; label: string }[]>([]);
+  const { register, handleSubmit, watch, setValue, reset, control, formState: { errors },} = useForm<AdFormData>({
     resolver: zodResolver(advertSchema),
   });
   console.log('errors', errors);
@@ -58,6 +49,25 @@ const CreateAdvertModal = () => {
   const adType = watch('adType');
 
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+    const fetchAdTypes = async () => {
+      try {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
+        if (!response.ok) throw new Error('Failed to fetch ad types')
+        const data: string[] = await response.json()
+        setAdTypes(data.map(type => ({ value: type as 'video' | 'image', label: type })))
+      } 
+      catch (err) {
+        console.error('Error fetching ad types:', err)
+        toast.error('Failed to load ad types')
+      }
+    }
+
+    fetchAdTypes();
+}, []);
+
 
   const handleFileUpload = async (file: File) => {
     if (!file) throw new Error('File is not defined.');
@@ -83,11 +93,12 @@ const CreateAdvertModal = () => {
     }
   };
 
-  const onSubmit = async (data: faqType) => {
+  const onSubmit = async (data: AdFormData) => {
     try {
-      toast.info('Uploading files...');
-      const files = data.files;
       setIsUploading(true);
+      toast.info('Uploading files...');
+
+      const files = data.files;
       const uploadedUrls: string[] = [];
 
       if (Array.isArray(files)) {
@@ -95,22 +106,36 @@ const CreateAdvertModal = () => {
           const uploadedUrl = await handleFileUpload(file);
           uploadedUrls.push(uploadedUrl);
         }
-      } else {
+      } else if (files) {
         const uploadedUrl = await handleFileUpload(files);
         uploadedUrls.push(uploadedUrl);
       }
 
-      setUploadUrls(uploadedUrls);
       toast.success('Files uploaded successfully!');
-      console.log('Uploaded URLs:', uploadedUrls);
-      // Optionally, you can reset the form or navigate to another page
-      reset();
 
-      navigate('/admin/advertisement-management');
-    } catch (err) {
-      toast.error('Error during file upload!');
-      console.error('Error during file upload:', err);
-    } finally {
+      const adData = {
+        ...data,
+        media: uploadedUrls.map(url => ({
+          type: data.adType,
+          url: url
+        })),
+      };
+
+      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData);
+
+      if (response.status === 200) {
+        toast.success('Advertisement created successfully!');
+        reset();
+        navigate('/admin/advertisement-management');
+      } else {
+        throw new Error('Failed to create advertisement');
+      }
+    } 
+    catch (err) {
+      toast.error('Error creating advertisement!');
+      console.error('Error creating advertisement:', err);
+    } 
+    finally {
       setIsUploading(false);
     }
   };
@@ -133,7 +158,7 @@ const CreateAdvertModal = () => {
           <Input label="Ad Redirect Url" {...register('adUrl', { required: true })} error={errors.adUrl} />
           <Select
             label="Advert Type"
-            options={options}
+            options={adTypes}
             value={watch('adType')}
             onChange={(value: string) => {
               if (value === "video" || value === "image") {

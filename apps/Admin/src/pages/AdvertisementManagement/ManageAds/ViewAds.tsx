@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { CircularProgress, Grid, Typography } from '@mui/material';
 import { formatDate } from '@video-cv/utils';
@@ -10,92 +10,152 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useController, useForm } from 'react-hook-form';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { advertSchema } from './../../../../../video-cv/src/schema/formValidations/Advert.schema';
 import { toast } from 'react-toastify';
+import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
+import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
+import CONFIG from './../../../../../../libs/utils/helpers/config';
 
-type AdDetails = {
-    id: string;
-    adName: string;
-    description: string;
-    adType: string;
-    adUrl: string;
-    startDate: string;
-    endDate: string;
+
+const s3Client = new S3Client({
+    region: 'auto',
+    endpoint: `https://${import.meta.env.VITE_CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId: import.meta.env.VITE_CLOUDFLARE_R2_ACCESS_KEY,
+      secretAccessKey: import.meta.env.VITE_CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+    },
+});
+
+type AdFormData = z.infer<typeof advertSchema>;
+
+interface AdDetails extends Omit<AdFormData, 'files'> {
+    id: string
     media: { type: 'image' | 'video'; url: string }[];
-};
-
-
-type State = {
-    adDetails: AdDetails | null;
-    loading: boolean;
-    isEditing: boolean;
-    error: string | null;
-    isUploading: boolean;
-    uploadUrls: string[];
-    newMedia: { type: 'image' | 'video'; url: string }[];
-};
-
-
-type FileUploadProps = {
-    setFile?: (files: File[] | File | null) => void;
-    // other props
-};
-
-type faqType = z.infer<typeof advertSchema>;
-
-const options = [
-    { value: 'video', label: 'Video' },
-    { value: 'image', label: 'Image' },
-];
+    status: 'pending' | 'approved' | 'rejected';
+}
 
 const ViewAds = () => {
     const { id } = useParams<{ id: string }>();
     const location = useLocation();
     const navigate = useNavigate();
-    const [state, setState] = useState<State>({
-        adDetails: location.state?.ad || {
-            id: '',
-            adName: '',
-            description: '',
-            adType: '',
-            adUrl: '',
-            startDate: '',
-            endDate: '',
-            media: []
-          },
-        loading: true,
-        isEditing: false,
-        error: null,
-        isUploading: false,
-        uploadUrls: [],
-        newMedia: [],
-    });
-    const {
-        register,
-        handleSubmit,
-        watch,
-        setValue,
-        control,
-        formState: { errors },
-    } = useForm<faqType>({
+    const [adDetails, setAdDetails] = useState<AdDetails | null>(null)
+    const [adTypes, setAdTypes] = useState<{ value: 'video' | 'image'; label: string }[]>([])
+    const [isEditing, setIsEditing] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+    const [newMedia, setNewMedia] = useState<File[]>([])
+    const { register, handleSubmit, reset, watch, setValue, control, formState: { errors }, } = useForm<AdFormData>({
         resolver: zodResolver(advertSchema),
     });
-    console.log('errors', errors);
+
+
+    const handleFileUpload = useCallback(async (file: File) => {
+        if (!file) throw new Error('File is not defined.')
+        
+        try {
+            const fileName = `${Date.now()}-${file.name}`
+            const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET
+
+            if (!bucketName) {
+            throw new Error('Bucket name is not defined in environment variables.')
+            }
+
+            const command = new PutObjectCommand({
+            Bucket: bucketName,
+            Key: fileName,
+            Body: file,
+            ContentType: file.type,
+            })
+
+            await s3Client.send(command)
+
+            const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`
+            toast.success('Upload successful')
+            console.log('Upload successful:', uploadedUrl)
+            return uploadedUrl
+        } catch (err) {
+            toast.error(`Upload Failed: ${err}`)
+            console.error('Upload failed:', err)
+            throw err
+        }
+    }, []);
+
 
     useEffect(() => {
-        if (state.adDetails) {
-            setState(prev => ({ ...prev, loading: false }));
-            // Set the initial values of the fields
-            setValue('adName', state.adDetails.adName);
-            setValue('adDescription', state.adDetails.description);
-            setValue('adUrl', state.adDetails.adUrl);
-            setValue('startDate', state.adDetails.startDate);
-            setValue('endDate', state.adDetails.endDate);
-            setValue('adType', state.adDetails.adType && state.adDetails.adType.toLowerCase() === 'image' ? 'image' : 'video');
+        const fetchAdDetails = async () => {
+          try {
+            if (!id) throw new Error('Ad ID is not defined')
+            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${id}`)
+            if (!response.ok) throw new Error('Failed to fetch ad details')
+            const data: AdDetails = await response.json()
+            setAdDetails(data)
+            reset(data);
+          } 
+          catch (err) {
+            console.error('Error fetching ad details:', err)
+            setError('Failed to load ad details')
+            toast.error('Failed to load ad details')
+          }
         }
-    }, [state.adDetails, setValue, id]);
+    
+        const fetchAdTypes = async () => {
+          try {
+            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
+            if (!response.ok) throw new Error('Failed to fetch ad types')
+            const data: string[] = await response.json()
+            setAdTypes(data.map(type => ({ value: type as 'video' | 'image', label: type })))
+          } 
+          catch (err) {
+            console.error('Error fetching ad types:', err)
+            toast.error('Failed to load ad types')
+          }
+        }
+    
+        Promise.all([fetchAdDetails(), fetchAdTypes()]).finally(() => setIsLoading(false))
+    }, [id, reset]);
 
-    if (state.loading) {
+
+    const onSubmit = async (data: AdFormData) => {
+        try {
+            if (!adDetails || !id) throw new Error('Ad details are not available')
+
+            let updatedMedia: { type: 'image' | 'video'; url: string }[] = [...adDetails.media]
+    
+          if (newMedia.length > 0) {
+              const uploadPromises = newMedia.map(async (file) => {
+                const uploadedUrl = await handleFileUpload(file)
+                return { type: file.type.startsWith('image/') ? 'image' : 'video' as const, url: uploadedUrl }
+            })
+    
+            const uploadedMedia = await Promise.all(uploadPromises)
+            updatedMedia = [...updatedMedia, ...uploadedMedia] as { type: 'image' | 'video'; url: string }[]
+          }
+    
+          const updatedData: AdDetails = {
+            ...data,
+            id,
+            media: updatedMedia,
+            status: adDetails.status,
+          }
+    
+          const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData)
+          if (!response.ok) throw new Error('Failed to update ad')
+          
+          toast.success('Ad updated successfully')
+          setIsEditing(false)
+          setAdDetails(updatedData)
+          reset(updatedData)
+          setNewMedia([])
+        } catch (err) {
+          console.error('Error updating ad:', err)
+          toast.error('Failed to update ad')
+        }
+    }
+
+
+
+    if (isLoading) {
         return (
           <div className="flex justify-center items-center h-screen">
             <CircularProgress />
@@ -103,96 +163,16 @@ const ViewAds = () => {
         );
     }
 
-    if (!state.adDetails) {
-    return <p className="text-center text-red-500">Ad not found</p>;
-    }
+    if (error || !adDetails) {
+        return (
+          <div className="items-center justify-center min-h-screen">
+            <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/advertisement-management')} />
+            <p className="text-lg font-semibold text-red-500">{error || 'Ad not found'}</p>
+          </div>
+        )
+    };
 
-    if (state.error) return <Typography color="error">{state.error}</Typography>;
-
-    // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    //     if (e.target.name) {
-    //       setState((prev) => ({
-    //         ...prev,
-    //         adDetails: {
-    //           ...prev.adDetails,
-    //           [e.target.name]: e.target.value
-    //         } as AdDetails
-    //       }));
-    //     }
-    // };
-      
-    // const handleSwitchChange = (value: string) => {
-    //     setState((prev) => ({
-    //         ...prev,
-    //         adDetails: {
-    //         ...prev.adDetails,
-    //         adType: value === 'video' ? 'Video' : 'Image'
-    //         }
-    //     }));
-    // };
-
-    // const handleSaveChanges = () => {
-    //     if (editedAdDetails) {
-    //         setAdDetails({
-    //             ...editedAdDetails,
-    //             media: [...(adDetails?.media || []), ...newMedia]
-    //         });
-    //         setIsEditing(false);
-    //         // Here you would normally send the updated details to the server
-    //     }
-    // };
-
-    // const handleAddFile = (files: File[] | File | null) => {
-    //     if (files) {
-    //         const newFiles = Array.isArray(files) ? files : [files];
-    //         const mappedFiles = newFiles.map((file) => ({
-    //           type: file.type.startsWith('image/') ? 'image' : 'video',
-    //           url: URL.createObjectURL(file),
-    //         })) as { type: 'image' | 'video'; url: string }[];
-    //         setState(prev => ({ ...prev, newMedia: mappedFiles }));
-    //     }
-    // };
-
-
-    const handleFileUpload = async (data: faqType) => {
-        try {
-            toast.info('Uploading files...');
-            setState(prev => ({ ...prev, isUploading: true }));
-            
-            if (data.files) {
-              const newFiles = Array.isArray(data.files) ? data.files : [data.files];
-              const uploadedUrls = await Promise.all(
-                newFiles.map(async (file) => {
-                  const resourceType = file.type.startsWith('image') ? 'image' : 'video';
-                  const url = await VideoUploadWidget({ 
-                    file,
-                    resourceType,
-                    context: {
-                      adName: state.adDetails?.adName,
-                      advertType: state.adDetails?.adType,
-                      adRedirectURL: state.adDetails?.adUrl,
-                      startDate: state.adDetails?.startDate,
-                      endDate: state.adDetails?.endDate,
-                      description: state.adDetails?.description,
-                    },
-                  });
-                  return url;
-                })
-              );
-              setState(prev => ({
-                ...prev,
-                uploadUrls: [...prev.uploadUrls, ...uploadedUrls],
-                isUploading: false,
-                isEditing: false,
-              }));
-              toast.success('Files uploaded successfully!');
-            }
-          } catch (err) {
-            setState(prev => ({ ...prev, isUploading: false }));
-            toast.error(`Error: ${err}`);
-            console.log('Error during file upload:', err);
-          }
-    }
+    const isAdStarted = adDetails.status === 'approved' && new Date(adDetails.startDate) <= new Date();
 
   return (
     <div className="p-6 bg-gray-50 mb-8">
@@ -200,11 +180,11 @@ const ViewAds = () => {
       
       <div className="bg-white p-10 shadow-md rounded-2xl transform transition-all duration-300">
         <div className="flex justify-end items-center mb-4">
-            <Button variant={state.isEditing? 'red' : 'success'} label={state.isEditing ? 'Cancel' : 'Edit Advert'} onClick={() => setState(prev => ({ ...prev, isEditing: !prev.isEditing }))} />
+            <Button variant={isEditing? 'red' : 'success'} label={isEditing ? 'Cancel' : 'Edit Advert'} onClick={() => setIsEditing(isEditing)} />
         </div>
         
-        {state.isEditing ? (
-            <form onSubmit={handleSubmit(handleFileUpload)}>
+        {isEditing ? (
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <Controller
                     name='adName'
                     control={control}
@@ -247,7 +227,8 @@ const ViewAds = () => {
                                 label="Start Date"
                                 className='mb-10'
                                 value={dayjs(value)}
-                                onChange={(value) => onChange(value)}
+                                onChange={(value) => onChange(value?.toDate())}
+                                disabled={isAdStarted}
                             />
                         )}
                     />
@@ -260,7 +241,8 @@ const ViewAds = () => {
                                 label="End Date"
                                 className='mb-10'
                                 value={dayjs(value)}
-                                onChange={(value) => onChange(value)}
+                                onChange={(value) => onChange(value?.toDate())}
+                                disabled={isAdStarted}
                             />
                         )}
                     />
@@ -271,7 +253,7 @@ const ViewAds = () => {
                     render={({ field: { onChange, value } }) => (
                         <Select
                             label="Advert Type"
-                            options={options}
+                            options={adTypes}
                             value={value}
                             onChange={(value) => onChange(value)}
                         />
@@ -286,7 +268,11 @@ const ViewAds = () => {
                             containerClass="mt-3"
                             uploadLabel="Drag and Drop or Browse"
                             uploadRestrictionText="Accepted formats: images, videos (max size: 8MB)"
-                            setFile={(files) => onChange(files)}
+                            setFile={(files) => {
+                                const fileArray = Array.isArray(files) ? files : files ? [files] : [];
+                                setNewMedia(fileArray);
+                                onChange(fileArray);
+                            }}
                         />
                     )}
                 />
@@ -301,28 +287,31 @@ const ViewAds = () => {
             </form>
             ) : (
                 <>
-                    <h1 className="text-3xl font-semibold text-gray-700 mb-4">{state.adDetails.adName}</h1>
+                    <h1 className="text-3xl font-semibold text-gray-700 mb-4">{adDetails.adName}</h1>
                     <div className="mb-3">
-                        <span className="font-semibold text-gray-800">Description:</span> <span className="text-gray-600 text-lg leading-relaxed">{state.adDetails.description}</span>
+                        <span className="font-semibold text-gray-800">Description:</span> <span className="text-gray-600 text-lg leading-relaxed">{adDetails.adDescription}</span>
                     </div>
                     <div className="mb-3">
-                        <span className="font-semibold text-gray-800">Ad Type:</span> <span className="text-gray-600">{state.adDetails.adType}</span>
+                        <span className="font-semibold text-gray-800">Ad Type:</span> <span className="text-gray-600">{adDetails.adType}</span>
                     </div>
                     <div className="mb-3">
                         <span className="font-semibold text-gray-800">Redirect URL:</span>
-                        <a href={state.adDetails.adUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 ml-2 underline transition duration-200 hover:text-blue-800">
-                            {state.adDetails.adUrl}
+                        <a href={adDetails.adUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 ml-2 underline transition duration-200 hover:text-blue-800">
+                            {adDetails.adUrl}
                         </a>
                     </div>
                     <div className="mb-3">
-                        <span className="font-semibold text-gray-800">Start Date:</span> <span className="text-gray-600">{formatDate(state.adDetails.startDate)}</span>
+                        <span className="font-semibold text-gray-800">Start Date:</span> <span className="text-gray-600">{formatDate(adDetails.startDate)}</span>
                     </div>
                     <div className="mb-3">
-                        <span className="font-semibold text-gray-800">End Date:</span> <span className="text-gray-600">{formatDate(state.adDetails.endDate)}</span>
+                        <span className="font-semibold text-gray-800">End Date:</span> <span className="text-gray-600">{formatDate(adDetails.endDate)}</span>
                     </div>
                     <h2 className="text-xl font-semibold mt-10 mb-6 text-gray-800">Media</h2>
                     <Grid container spacing={4}>
-                        {[...(state.adDetails.media ? state.adDetails.media : []), ...state.newMedia].map((item, index) => (
+                        {[...(adDetails.media ? adDetails.media : []), ...newMedia.map(file => ({
+                            type: file.type.startsWith('image/') ? 'image' as const : 'video' as const,
+                            url: URL.createObjectURL(file)
+                        }))].map((item, index) => (
                             <Grid item xs={12} md={6} key={index}>
                                 {item.type === 'image' ? (
                                     <img

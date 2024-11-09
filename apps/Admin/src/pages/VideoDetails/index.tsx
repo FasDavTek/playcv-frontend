@@ -74,11 +74,11 @@ const VideoDetails = () => {
 
   if (error || !videoDetails) {
     return (
-      <Box className="flex flex-col items-center justify-center min-h-screen">
+      <Box className="items-center justify-center min-h-screen">
+        <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-0 p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
         <Typography variant="h6" color="error" gutterBottom>
           {error || 'Video not found'}
         </Typography>
-        <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-0 p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
       </Box>
     )
   }
