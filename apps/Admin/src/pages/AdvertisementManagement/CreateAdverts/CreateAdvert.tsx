@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 import { useForm, Controller, FieldError } from 'react-hook-form';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
@@ -9,7 +9,7 @@ import { Button, Input, TextArea, FileUpload, DatePicker, Select, VideoUploadWid
 
 import { advertSchema } from './../../../../../video-cv/src/schema/formValidations/Advert.schema';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { toast } from 'react-toastify';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
@@ -37,18 +37,64 @@ const s3Client = new S3Client({
 
 type AdFormData = z.infer<typeof advertSchema>;
 
+interface CheckoutDetails {
+  adType: 'video' | 'image';
+  price: number;
+  paymentReference: string;
+  adDetails: {
+    id: string;
+    title: string;
+    description: string;
+  }[];
+}
+
 const CreateAdvertModal = () => {
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadUrls, setUploadUrls] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [adTypes, setAdTypes] = useState<{ value: string; label: string }[]>([]);
+  const [checkoutDetails, setCheckoutDetails] = useState<CheckoutDetails | null>(null);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
   const { register, handleSubmit, watch, setValue, reset, control, formState: { errors },} = useForm<AdFormData>({
     resolver: zodResolver(advertSchema),
   });
-  console.log('errors', errors);
 
-  const adType = watch('adType');
-
+  const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCheckoutDetails = async () => {
+      const state = location.state as { checkoutId: string } | undefined;
+      if (!state || !state.checkoutId) {
+        toast.error('Invalid upload data. Redirecting....');
+        navigate('/admin/advertisement-management');
+        return;
+      }
+
+      try {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${state.checkoutId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch checkout details');
+        }
+        const data: CheckoutDetails = await response.json();
+        setCheckoutDetails(data);
+        
+        if (data.adDetails && data.adDetails.length > 0) {
+          const ad = data.adDetails[0];
+          setValue('adName', ad.title);
+          setValue('adDescription', ad.description);
+        }
+        
+        setValue('adType', data.adType);
+      } catch (error) {
+        console.error('Error fetching checkout details:', error);
+        toast.error('Failed to load ad details. Please try again.');
+        navigate('/admin/advertisement-management');
+      }
+    };
+
+    fetchCheckoutDetails();
+  }, [location.state, navigate, setValue]);
+
 
 
   useEffect(() => {
@@ -63,82 +109,209 @@ const CreateAdvertModal = () => {
         console.error('Error fetching ad types:', err)
         toast.error('Failed to load ad types')
       }
+      finally {
+        setIsLoading(false);
+      }
     }
 
     fetchAdTypes();
 }, []);
 
 
-  const handleFileUpload = async (file: File) => {
-    if (!file) throw new Error('File is not defined.');
 
-    try {
-      const fileName = `${Date.now()}-${file.name}`;
-      const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET;
+const handleFileUpload = useCallback(async (file: File) => {
+  if (!file) throw new Error('File is not defined.');
 
-      const command = new PutObjectCommand({
-        Bucket: bucketName,
-        Key: fileName,
-        Body: file,
-        ContentType: file.type,
-      });
+  try {
+    const fileName = `${Date.now()}-${file.name}`;
+    const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET;
 
-      await s3Client.send(command);
-      const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`;
-      return uploadedUrl;
-    } catch (err) {
-      toast.error(`Upload Failed: ${err}`);
-      console.error('Upload failed:', err);
-      throw err;
+    const command = new PutObjectCommand({
+      Bucket: bucketName,
+      Key: fileName,
+      Body: file,
+      ContentType: file.type,
+    });
+
+    await s3Client.send(command);
+    const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`;
+    return uploadedUrl;
+  } catch (err) {
+    toast.error(`Upload Failed: ${err}`);
+    console.error('Upload failed:', err);
+    throw err;
+  }
+}, []);
+
+
+
+const generateThumbnail = async (file: File) => {
+  return new Promise<string>((resolve, reject) => {
+    if (file.type.startsWith('video/')) {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => {
+        video.currentTime = 1; // Capture frame at 1 second
+      };
+      video.onseeked = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d')?.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const thumbnailFile = new File([blob], 'thumbnail.jpg', { type: 'image/jpeg' });
+            handleFileUpload(thumbnailFile)
+              .then(resolve)
+              .catch(reject);
+          } else {
+            reject(new Error('Failed to create thumbnail blob'));
+          }
+        }, 'image/jpeg');
+      };
+      video.onerror = () => reject(new Error('Error generating video thumbnail'));
+      video.src = URL.createObjectURL(file);
+    } else if (file.type.startsWith('image/')) {
+      resolve(URL.createObjectURL(file));
+    } else {
+      reject(new Error('Unsupported file type'));
     }
-  };
+  });
+};
 
-  const onSubmit = async (data: AdFormData) => {
-    try {
-      setIsUploading(true);
-      toast.info('Uploading files...');
 
-      const files = data.files;
-      const uploadedUrls: string[] = [];
 
+const handleFileChange = async (files: File | File[]) => {
+  const fileArray = Array.isArray(files) ? files : [files];
+  if (fileArray.length > 0) {
+    setValue('files', fileArray as [File, ...File[]]);
+    generateThumbnail(fileArray[0])
+      .then(thumbnailUrl => setThumbnail(thumbnailUrl))
+      .catch(error => {
+        console.error('Error generating thumbnail:', error);
+        toast.error('Failed to generate thumbnail');
+      });
+  }
+};
+
+
+
+const onSubmit = async (data: AdFormData) => {
+  if (!checkoutDetails) {
+    toast.error('Missing ad information. Please try again.');
+    navigate('/admin/advertisement-management');
+    return;
+  }
+
+  try {
+    setIsUploading(true);
+    toast.info('Uploading files...');
+
+    const files = data.files;
+    let mediaUrl = '';
+    let thumbnailUrl = thumbnail;
+
+    const uploadedUrls: string[] = [];
+    const thumbnails: string[] = [];
+
+    if (data.files && data.files.length > 0) {
       if (Array.isArray(files)) {
         for (const file of files) {
           const uploadedUrl = await handleFileUpload(file);
           uploadedUrls.push(uploadedUrl);
+
+          if (file.type.startsWith('video/')) {
+            const thumbnailUrl = await generateThumbnail(file);
+            thumbnails.push(thumbnailUrl);
+          } 
+          else if (file.type.startsWith('image/')) {
+            thumbnails.push(uploadedUrl); // Use the image itself as thumbnail
+          }
         }
       } else if (files) {
         const uploadedUrl = await handleFileUpload(files);
         uploadedUrls.push(uploadedUrl);
+
+        if (files.type.startsWith('video/')) {
+          const thumbnailUrl = await generateThumbnail(files);
+          thumbnails.push(thumbnailUrl);
+        } 
+        else if (files.type.startsWith('image/')) {
+          thumbnails.push(uploadedUrl); // Use the image itself as thumbnail
+        }
       }
 
-      toast.success('Files uploaded successfully!');
+      thumbnailUrl = thumbnails.length > 0 ? thumbnails[0] : null;
+      mediaUrl = uploadedUrls[0];
+    }
 
-      const adData = {
-        ...data,
-        media: uploadedUrls.map(url => ({
-          type: data.adType,
-          url: url
-        })),
+    toast.success('Files uploaded successfully!');
+
+    const adData = {
+      ...data,
+      // adName: data.adName,
+      // adType: data.adType,
+      // adDescription: data.adDescription,
+      // adUrl: data.adUrl,
+      // startDate: data.startDate,
+      // endDate: data.endDate,
+      media: uploadedUrls.map((url: any, index: any) => ({
+        type: data.adType,
+        url: url,
+        thumbnail: thumbnails[index] || null
+      })),
+      thumbnail: thumbnailUrl,
+      paymentReference: checkoutDetails.paymentReference,
+    };
+
+    const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData);
+
+    if (response.ok) {
+      const responseData = await response.json();
+      
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        throw new Error('User ID not found');
+      }
+
+      const paymentConfirmationData = {
+        adType: checkoutDetails.adType,
+        adPrice: checkoutDetails.price,
+        paymentReference: checkoutDetails.paymentReference,
+        userId,
+        isUploaded: true,
       };
 
-      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData);
+      const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData);
 
-      if (response.status === 200) {
-        toast.success('Advertisement created successfully!');
+      if (paymentResponse.ok) {
+        toast.success('Ad uploaded and payment confirmed successfully');
         reset();
         navigate('/admin/advertisement-management');
       } else {
         throw new Error('Failed to create advertisement');
       }
-    } 
-    catch (err) {
-      toast.error('Error creating advertisement!');
-      console.error('Error creating advertisement:', err);
-    } 
-    finally {
-      setIsUploading(false);
     }
-  };
+    else {
+      throw new Error('Failed to upload ad');
+    }
+  } 
+  catch (err) {
+    toast.error('Error creating advertisement!');
+    console.error('Error creating advertisement:', err);
+  } 
+  finally {
+    setIsUploading(false);
+  }
+};
+
+
+
+if (isLoading) {
+  return <div>Loading...</div>;
+}
+
+
 
   return (
     <div className='p-10 overflow-hidden bg-white'>
@@ -177,15 +350,7 @@ const CreateAdvertModal = () => {
               containerClass=""
               uploadLabel="Drag and Drop or Browse"
               {...register('files', { required: true })}
-              setFile={(files: File | File[] | null) => {
-                if (files) {
-                  if (Array.isArray(files)) {
-                    setValue('files', [files[0], ...files.slice(1)]);
-                  } else {
-                    setValue('files', [files]);
-                  }
-                }
-              }}
+              setFile={handleFileChange}
             />
           </div>
 

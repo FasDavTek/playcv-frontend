@@ -49,7 +49,7 @@ const OrderManagementById = lazy(() => import('../../apps/Admin/src/pages/OrderM
 const Management = lazy(() => import('../../apps/Admin/src/pages/VideoManagement'));
 const ManagementById = lazy(() => import('../../apps/Admin/src/pages/VideoDetails'));
 const PriceManagement = lazy(() => import('../../apps/Admin/src/pages/PriceManagement'));
-const JobManagement = lazy(() => import('../../apps/Admin/src/pages/JobManagement'));
+const JobManagement = lazy(() => import('../../apps/Admin/src/pages/JobManagement/index'));
 const AddNewJob = lazy(() => import('../../apps/Admin/src/pages/JobManagement/Vacancy/Vacancies'));
 const ManageJob = lazy(() => import('../../apps/Admin/src/pages/JobManagement/ManageVacancy/ManageJob'));
 

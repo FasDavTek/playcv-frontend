@@ -56,15 +56,13 @@ const Dashboard = () => {
       const data = await response.json();
       console.log(data);
       
-      if (data) {
+      if (!data || !data.checkoutId) {
         openSetModalFn('confirmationModal');
       } else {
         toast.info('You have an existing payment for video upload that you have not yet completed.');
         navigate(`/candidate/video-management/upload`, { 
           state: { 
-            videoType: data.uploadType, 
-            price: data.price ,
-            paymentReference: data.paymentReference
+            checkoutId: data.checkoutId,
           } 
         });
       }

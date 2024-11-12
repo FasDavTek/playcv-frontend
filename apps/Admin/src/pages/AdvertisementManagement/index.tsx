@@ -99,15 +99,13 @@ const Payment = () => {
       const data = await response.json();
       console.log(data);
       
-      if (data) {
+      if (!data || !data.checkoutId) {
         openSetModalFn('confirmationModal');
       } else {
         toast.info('You have an existing payment for video upload that you have not yet completed.');
         navigate(`/candidate/video-management/upload`, { 
           state: { 
-            adType: data.adType, 
-            price: data.price ,
-            paymentReference: data.paymentReference
+            checkoutId: data.checkoutId,
           } 
         });
       }
@@ -117,6 +115,8 @@ const Payment = () => {
       toast.warning('There was an error checking your payment status. Please try again later.');
     }
   };
+
+
 
   const fetchAds = async () => {
     try {
@@ -231,10 +231,6 @@ const Payment = () => {
       toast.error('Failed to update ad status')
     }
   };
-
-
-
-
 
 
 
