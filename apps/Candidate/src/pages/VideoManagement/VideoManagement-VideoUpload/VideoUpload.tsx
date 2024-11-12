@@ -28,38 +28,66 @@ interface Category {
   name: string
 }
 
-interface LocationState {
+interface CheckoutDetails {
   videoType: string;
   price: number;
   paymentReference: string;
+  videos: {
+    id: string;
+    title: string;
+    description: string;
+  }[];
 }
 
 const VideoUpload: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true)
   const [categories, setCategories] = useState<Category[]>([]);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
   const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(videoUploadSchema),
   });
   const location = useLocation();
   const navigate = useNavigate();
-  const [state, setState] = useState<LocationState | null>(null);
+  const [checkoutDetails, setCheckoutDetails] = useState<CheckoutDetails | null>(null);
 
 
   useEffect(() => {
-    if (location.state) {
-      const { videoType, price, paymentReference } = location.state as LocationState;
-      if (videoType && price && paymentReference) {
-        setState({ videoType, price, paymentReference });
-      } else {
+    const fetchCheckoutDetails = async () => {
+      const state = location.state as { checkoutId: string } | undefined;
+      if (!state || !state.checkoutId) {
         toast.error('Invalid upload data. Redirecting....');
         navigate('/candidate/video-management');
+        return;
       }
-    } else {
-      toast.error('Error occured. Redirecting....');
-      navigate('/candidate/video-management');
-    }
-  }, [location.state, navigate]);
+
+      try {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${state.checkoutId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch checkout details');
+        }
+        const data: CheckoutDetails = await response.json();
+        setCheckoutDetails(data);
+        
+        if (data.videos && data.videos.length > 0) {
+          const video = data.videos[0];
+          setValue('name', video.title);
+          setValue('description', video.description);
+        }
+        
+        setValue('videoType', data.videoType);
+        setValue('price', data.price);
+        setValue('paymentReference', data.paymentReference);
+      } catch (error) {
+        console.error('Error fetching checkout details:', error);
+        toast.error('Failed to load video details. Please try again.');
+        navigate('/candidate/video-management');
+      }
+    };
+
+    fetchCheckoutDetails();
+  }, [location.state, navigate, setValue]);
+
 
   const options = [
     { value: 'education', label: 'Education' },
@@ -91,6 +119,7 @@ const VideoUpload: React.FC = () => {
     }
     fetchCategories();
   }, []);
+
 
   const handleFileUpload = useCallback(async (file: File) => {
     if (!file) throw new Error('File is not defined.');
@@ -124,8 +153,57 @@ const VideoUpload: React.FC = () => {
   }, []);
 
 
+  const generateThumbnail = async (file: File) => {
+    return new Promise<string>((resolve, reject) => {
+      if (file.type.startsWith('video/')) {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        video.onloadedmetadata = () => {
+          video.currentTime = 1;
+        };
+        video.onseeked = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          canvas.getContext('2d')?.drawImage(video, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const thumbnailFile = new File([blob], 'thumbnail.jpg', { type: 'image/jpeg' });
+              handleFileUpload(thumbnailFile)
+                .then(resolve)
+                .catch(reject);
+            } else {
+              reject(new Error('Failed to create thumbnail blob'));
+            }
+          }, 'image/jpeg');
+        };
+        video.onerror = () => reject(new Error('Error generating video thumbnail'));
+        video.src = URL.createObjectURL(file);
+      } else {
+        reject(new Error('Unsupported file type for thumbnail generation'));
+      }
+    });
+  };
+
+
+  const handleFileChange = async (files: File | File[] | null) => {
+    if (files) {
+      const file = Array.isArray(files) ? files[0] : files;
+      setValue('media', file);
+      try {
+        const thumbnailUrl = await generateThumbnail(file);
+        setThumbnail(thumbnailUrl);
+      } catch (error) {
+        console.error('Error generating thumbnail:', error);
+        toast.error('Failed to generate thumbnail');
+      }
+    }
+  };
+
+
+
   const onSubmitHandler = async (data: FormData) => {
-    if (!state) {
+    if (!checkoutDetails) {
       toast.error('Missing video information. Please try again.');
       navigate('/candidate/video-management');
       return;
@@ -135,9 +213,9 @@ const VideoUpload: React.FC = () => {
       toast.info('Uploading files...');
       setIsUploading(true);
 
+      let uploadedUrl = '';
       if (data.media instanceof File) {
-        const uploadedUrl = await handleFileUpload(data.media);
-        data.media = uploadedUrl;
+        uploadedUrl = await handleFileUpload(data.media);
       }
 
       const apiData = {
@@ -160,9 +238,9 @@ const VideoUpload: React.FC = () => {
         }
 
         const paymentConfirmationData = {
-          videoType: state.videoType,
-          videoPrice: state.price,
-          paymentReference: state.paymentReference,
+          videoType: checkoutDetails.videoType,
+          videoPrice: checkoutDetails.price,
+          paymentReference: checkoutDetails.paymentReference,
           userId,
           isUploaded: true, // This indicates that the video has been uploaded
         };
@@ -180,10 +258,12 @@ const VideoUpload: React.FC = () => {
       } else {
         throw new Error(uploadResponse.message || 'Failed to upload video');
       }
-    } catch (err) {
+    } 
+    catch (err) {
       toast.error(`Error during submission: ${err}`);
       console.error('Error during submission:', err);
-    } finally {
+    } 
+    finally {
       setIsUploading(false);
     }
   };
@@ -198,7 +278,7 @@ const VideoUpload: React.FC = () => {
           />
           <Input
             label="Video Type"
-            value={`${state?.videoType} video upload`}
+            value={`${checkoutDetails?.videoType} video upload`}
             {...register('videoType')}
             disabled
           />
@@ -236,15 +316,7 @@ const VideoUpload: React.FC = () => {
               containerClass=""
               uploadLabel="Drag and Drop or Browse"
               {...register('media')}
-              setFile={(files: File | File[] | null) => {
-                if (files) {
-                  if (Array.isArray(files)) {
-                    setValue('media', files[0]);
-                  } else {
-                    setValue('media', files);
-                  }
-                }
-              }}
+              setFile={handleFileChange}
             />
             {errors.media && <p className="text-red-500">{errors.media.message}</p>}
           </div>

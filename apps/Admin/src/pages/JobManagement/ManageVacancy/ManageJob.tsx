@@ -3,6 +3,9 @@ import { TextField, Box, Typography, CircularProgress, FormControl, InputLabel, 
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Select, Button } from '@video-cv/ui-components';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
+import CONFIG from './../../../../../../libs/utils/helpers/config';
+import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 
 
 interface Job {
@@ -20,53 +23,40 @@ interface Job {
     jobUrl: string;
 }
 
-const statusOptions = [
-    { value: 'Active', label: 'Active' },
-    { value: 'Expired', label: 'Expired' },
-    { value: 'Pending', label: 'Pending' },
-    { value: 'Rejected', label: 'Rejected' },
-];
-
 const ManageJob: React.FC  = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams<{ id: string }>();
 
   const [job, setJob] = useState<Job | undefined>(location.state?.job);
-
-  const [status, setStatus] = useState<'Active' | 'Expired' | 'Pending' | 'Rejected'>('Active');
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState<string | null>(null);
-  
 
   useEffect(() => {
-    if (!job) {
-      // Optionally handle fetching job if not provided via state
-      setError('No job data provided');
-    } else {
-      setLoading(false);
-      setJob(location.state?.job);
-      setStatus(job.status);
-    }
-  }, [job]);
+    const fetchJobDetails = async () => {
+      if (!job && id) {
+        try {
+          const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${id}`);
+          if (!response.ok) {
+            throw new Error('Unable to fetch job details');
+          }
+          const data = await response.json();
+          setJob(data);
+        } 
+        catch (err) {
+          console.error('Error fetching job details:', err);
+          setError('Error fetching job details');
+        } 
+        finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
 
-  const handleStatusChange = (value: string) => {
-    setStatus(value as 'Active' | 'Expired' | 'Pending' | 'Rejected');
-  };
-
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      // Simulate saving job data
-      console.log('Job data saved:', { ...job, status });
-      navigate('/admin/job-management', { state: { updatedJob: { ...job, status } }, });
-    } catch (err) {
-      setError('Failed to update job details');
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchJobDetails();
+  }, [job, id]);
 
   if (loading) return <CircularProgress />;
 
@@ -125,28 +115,10 @@ const ManageJob: React.FC  = () => {
               <span className="font-semibold text-gray-800">Application link: </span> 
               <a href={job.jobUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline transition duration-200 hover:text-blue-800">Job URL</a>
           </div>
-
-          <FormControl size='medium' margin="normal" variant="outlined">
-              <Select
-                  value={status}
-                  onChange={handleStatusChange}
-                  options={statusOptions}
-                  label="Status"
-                  // className=" bg-white border-gray-300 rounded-md w-56"
-              >
-                  {/* {statusOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                  </MenuItem>
-                  ))} */}
-              </Select>
-          </FormControl>
-
-          <Box mt={4} display="flex" justifyContent="flex-end">
-        <Button variant="success" color="primary" label={loading ? <CircularProgress size={24} color="inherit" /> : 'Save'} onClick={handleSave}>
-          Save
-        </Button>
-      </Box>
+          <div className="mb-3 flex flex-col">
+            <span className="font-semibold text-gray-800">Status: </span> 
+            <span className="text-gray-600">{job.status}</span>
+          </div>
         </div>
       </div>
     </div>

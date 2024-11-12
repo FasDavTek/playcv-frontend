@@ -95,15 +95,13 @@ const Advertisement = () => {
       const data = await response.json();
       console.log(data);
       
-      if (data) {
+      if (!data || !data.checkoutId) {
         openSetModalFn('confirmationModal');
       } else {
-        toast.info('You have an existing payment for ad creation that you have not yet completed.');
+        toast.info('You have an existing payment for video upload that you have not yet completed.');
         navigate(`/employer/advertisement/upload`, { 
           state: { 
-            adType: data.adType, 
-            price: data.price ,
-            paymentReference: data.paymentReference
+            checkoutId: data.checkoutId,
           } 
         });
       }
@@ -114,6 +112,8 @@ const Advertisement = () => {
     }
   };
 
+
+  
   const fetchAds = async () => {
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?Page=1&Limit=10`)
@@ -183,7 +183,6 @@ const Advertisement = () => {
       toast.error('Failed to update ad status')
     }
   };
-
 
 
 

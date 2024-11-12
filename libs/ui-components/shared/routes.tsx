@@ -35,7 +35,7 @@ export const ROUTES = {
     ADMIN_ORDER_MANAGEMENT_BY_ID: "order-management/:id",
     ADMIN_JOB_MANAGEMENT: "job-management",
     ADMIN_ADD_JOB: "job-management/vacancy",
-    ADMIN_MANAGE_JOB_STATUS: "job-management/manage/:id",
+    ADMIN_MANAGE_JOB_STATUS: "job-management/view/:id",
     ADMIN_GUIDELINE: "video-guideline",
     CANDIDATE: "/candidate",
     CANDIDATE_DASHBOARD: "dashboard",
