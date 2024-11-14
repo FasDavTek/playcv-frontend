@@ -3,149 +3,91 @@ import { useForm, Controller } from 'react-hook-form';
 import { Button, Input, RichTextEditor, Select, TextArea, } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
 import ReactQuill from 'react-quill';
+import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
+import CONFIG from './../../../../../../libs/utils/helpers/config';
+import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 
-interface IForm {
+interface PriceItem {
     // itemName?: string;
-    amount?: number;
+    id?: string;
+    price?: string;
     description?: string;
     type?: any;
+    status?: string;
 }
+
+const statusOptions = [
+    { value: 'Active', label: 'Active' },
+    { value: 'Expired', label: 'Expired' },
+    { value: 'Pending', label: 'Pending' },
+    { value: 'Rejected', label: 'Rejected' },
+];
 
 interface PriceProps {
     open: boolean;
     onClose: () => void;
-    onSubmit?: (data: IForm) => void;
-    currentTab: 'videoUploadPrices' | 'adsPrices' | 'buyVideoPrices';
+    currentTab: 'videoUploadTypes' | 'adsTypes' | 'buyVideoTypes';
     modalType: 'add' | 'edit';
-    item?: Partial<IForm> | null;
+    item?: Partial<PriceItem> | null;
 }
 
-const Price = ({ open, onClose, onSubmit = () => {}, modalType, item =                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               null, currentTab, }: PriceProps) => {
-    const { register, control, watch, handleSubmit, setValue } = useForm<IForm>(
-        {
-            defaultValues: {
-                // itemName: item?.itemName ?? '',
-                amount: item?.amount ?? 0,
-                description: item?.description ?? '',
-                type: item?.type ?? ''
-            }
+const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, currentTab, }) => {
+    const { register, control, watch, handleSubmit, setValue, formState: { errors } } = useForm<PriceItem>({
+        defaultValues: {
+            // itemName: item?.itemName ?? '',
+            id: item?.id ?? undefined,
+            price: item?.price ?? '',
+            description: item?.description ?? '',
+            type: item?.type ?? '',
+            status: item?.status ?? '',
         }
-    );
-
-    const [isSaving, setIsSaving] = useState(false);
-    const [localModalType, setLocalModalType] = useState(modalType);
-
-    useEffect(() => {
-        setLocalModalType(modalType);
-        console.log(localModalType)
-    }, [modalType]);
-
-    // const [amount, setAmount] = useState<number | undefined>(item?.amount || 0);
-    // const [type, setType] = useState<string>(item?.type || '');
-    // const [pinnedVideoPrice, setPinnedVideoPrice] = useState<number | undefined>();
-    // const [regularVideoPrice, setRegularVideoPrice] = useState<number | undefined>();
-    // const [videoAdsPrice, setVideoAdsPrice] = useState<number | undefined>();
-    // const [imageAdsPrice, setImageAdsPrice] = useState<number | undefined>();
-    // const [buyVideoPrice, setBuyVideoPrice] = useState<number | undefined>();
-
-    const currentType = watch('type');
+    });
 
     useEffect(() => {
         if (item) {
-            // setValue('itemName', item.itemName ?? '');
-            setValue('amount', item?.amount ?? 0);
-            setValue('description', item.description ?? '');
-            setValue('type', item.type ?? '');
-            // setAmount(item.amount);
-            // setType(item.type);
+          Object.entries(item).forEach(([key, value]) => {
+            setValue(key as keyof PriceItem, value)
+          })
         }
-    }, [item, setValue, /* setAmount, setType */ ]);
-    
+    }, [item, setValue]);
+
     if (!open) return null;
 
-
-    const formatCurrency = (value: number): string => {
-        return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(value);
-    };
-
-
-    // const handleSave = () => {
-    //     if (pinnedVideoPrice !== undefined) {
-    //         const formattedPinnedPrice = formatCurrency(pinnedVideoPrice);
-    //         localStorage.setItem('pinnedVideoPrice', formattedPinnedPrice);
-    //     }
-    
-    //     if (regularVideoPrice !== undefined) {
-    //         const formattedRegularPrice = formatCurrency(regularVideoPrice);
-    //         localStorage.setItem('regularVideoPrice', formattedRegularPrice);
-    //     }
-    
-    //     if (videoAdsPrice !== undefined) {
-    //         const formattedAdsPrice = formatCurrency(videoAdsPrice);
-    //         localStorage.setItem('adsPrice', formattedAdsPrice);
-    //     }
-    
-    //     if (imageAdsPrice !== undefined) {
-    //       const formattedAdsPrice = formatCurrency(imageAdsPrice);
-    //       localStorage.setItem('adsPrice', formattedAdsPrice);
-    //   }
-    
-    //     if (buyVideoPrice !== undefined) {
-    //         const formattedBuyPrice = formatCurrency(buyVideoPrice);
-    //         localStorage.setItem('buyVideoPrice', formattedBuyPrice);
-    //     }
-    
-    //     console.log({
-    //         pinnedVideoPrice: formatCurrency(pinnedVideoPrice || 0),
-    //         regularVideoPrice: formatCurrency(regularVideoPrice || 0),
-    //         videoAdsPrice: formatCurrency(videoAdsPrice || 0),
-    //         imageAdsPrice: formatCurrency(imageAdsPrice || 0),
-    //         buyVideoPrice: formatCurrency(buyVideoPrice || 0),
-    //     });
-    
-    //     toast.success('Prices saved successfully!');
-    
-    //     setPinnedVideoPrice(0);
-    //     setRegularVideoPrice(0);
-    //     setVideoAdsPrice(0);
-    //     setImageAdsPrice(0);
-    //     setBuyVideoPrice(0);
-    //     onClose();
-    // };
-
-    const handleSave = handleSubmit((data: IForm) => {
-        setIsSaving(true);
-        Promise.resolve()
-        .then(() => {
-        console.log('Form data:', data);
-        console.log({
-            // itemName: data.itemName,
-            amount: formatCurrency(data.amount || 0),
-            type: data.type,
-            description: data.description,
-        });
-        toast.success('Prices saved successfully!');
-        onSubmit(data);
-        })
-        .finally(() => setIsSaving(false));
-    });
-
-    // const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const value = parseFloat(e.target.value);
-    //     setAmount(isNaN(value) ? 0 : value);
-    // };
+    const currentType = watch('type');
 
     const tabOptions = {
-        videoUploadPrices: [{ label: 'Pinned Video', value: 'pinned' }, { label: 'Regular Video', value: 'regular' }],
-        adsPrices: [{ label: 'Video Ads', value: 'videoAds' }, { label: 'Image Ads', value: 'imageAds' }],
-        buyVideoPrices: [{ label: 'Pinned Video', value: 'pinned' }, { label: 'Regular Video', value: 'regular' }]
+        videoUploadTypes: [{ label: 'Pinned Video', value: 'pinned' }, { label: 'Regular Video', value: 'regular' }],
+        adsTypes: [{ label: 'Video Ads', value: 'videoAds' }, { label: 'Image Ads', value: 'imageAds' }],
+        buyVideoTypes: [{ label: 'Pinned Video', value: 'pinned' }, { label: 'Regular Video', value: 'regular' }]
     };
 
     const options = tabOptions[currentTab];
+
+
+
+    const onSubmit = async (data: PriceItem) => {
+        try {
+          const endpoint = currentTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE
+          const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, data)
+          if (response.ok) {
+            toast.success(`${modalType === 'add' ? 'Added' : 'Updated'} successfully`)
+            onClose()
+          } else {
+            throw new Error('Failed to save')
+          }
+        } catch (error) {
+          console.error('Error saving:', error)
+          toast.error('Failed to save. Please try again.')
+        }
+    }
+
+
     
   return (
-    <form onSubmit={handleSave} className="bg-white p-10 lg:p-14 centered-modal rounded-lg">
-        <h3 className="text-center font-bold text-xl">{localModalType === 'edit' ? 'Edit Price' : 'Add Price'}</h3>
+    <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-10 lg:p-14 centered-modal rounded-lg">
+        <h3 className="text-center font-bold text-xl">
+            {modalType === 'edit' ? `Edit ${currentTab === 'videoUploadTypes' ? 'Video Upload' : 'Ad'} Type` : `Add ${currentTab === 'videoUploadTypes' ? 'Video Upload' : 'Ad'} Type`}
+        </h3>
         <div className="my-5 flex flex-col gap-5">
             {/* <Controller
                 name="itemName"
@@ -167,14 +109,14 @@ const Price = ({ open, onClose, onSubmit = () => {}, modalType, item =          
                 render={({ field: { onChange, value } }) => (
                     modalType === 'add' ? (
                         <Input
-                            label={`${currentTab === 'videoUploadPrices' ? 'Video Upload' : currentTab === 'adsPrices' ? 'Ad' : 'Buy Video'} Type`}
+                            label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Type`}
                             value={value}
                             onChange={onChange}
                             placeholder="Enter type"
                         />
                     ) : (
                         <Select
-                            label={`${currentTab === 'videoUploadPrices' ? 'Video Upload' : currentTab === 'adsPrices' ? 'Ad' : 'Buy Video'} Type`}
+                            label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Type`}
                             options={options}
                             value={value || ''}
                             onChange={(newValue: string) => onChange(newValue)}
@@ -183,20 +125,49 @@ const Price = ({ open, onClose, onSubmit = () => {}, modalType, item =          
                 )}
             />
             <Controller
-                name="amount"
+                name="price"
                 control={control}
                 rules={{ required: 'Amount is required' }}
                 render={({ field }) => (
                     <Input
-                    label={`${currentType || 'Price'} Price`}
-                        value={field.value}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        label={`${currentTab} Price`}
+                        value={field.value === '' ? '' : field.value}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            field.onChange(value === '' ? '' : parseFloat(value));
+                        }}
                         type="number"
-                        placeholder="Enter price amount"
+                        placeholder={`Enter ${currentTab} price`}
                     />
                 )}
             />
-            <label>{`${currentTab === 'videoUploadPrices' ? 'Video Upload' : currentTab === 'adsPrices' ? 'Ad' : 'Buy Video'} Description`}</label>
+            {modalType === "edit" && (
+                <Controller
+                    name="status"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                        <Select
+                            label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Status`}
+                            options={statusOptions}
+                            value={value || ''}
+                            onChange={(newValue: string) => onChange(newValue)}
+                        />
+                    )}
+                />
+            )}
+            <Controller
+                    name="status"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                        <Select
+                            label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Status`}
+                            options={statusOptions}
+                            value={value || ''}
+                            onChange={(newValue: string) => onChange(newValue)}
+                        />
+                    )}
+                />
+            <label>{`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Description`}</label>
             <Controller
                 name="description"
                 control={control}
@@ -210,13 +181,10 @@ const Price = ({ open, onClose, onSubmit = () => {}, modalType, item =          
                 )}
             />
             <Button
-                onClick={() => {}}
                 type="submit"
                 variant='black'
                 className="w-full"
-                label={localModalType === 'edit' ? 'Edit Price' : 'Add Price'}
-                disabled={isSaving}
-                loading={isSaving}
+                label={modalType === 'edit' ? 'Update' : 'Add'}
             />
         </div>
     </form>
