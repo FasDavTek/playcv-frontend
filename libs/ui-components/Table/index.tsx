@@ -133,10 +133,10 @@ const Table: React.FC<any> = <T extends object>({
         </table>
       )}
       <div className='sticky left-0 right-0 mt-2 flex justify-end gap-2 px-4'>
-        <Button variant='custom' icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+        <Button variant={currentPage === 1 ? 'custom' : 'black'} icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
           Previous
         </Button>
-        <Button variant='custom' icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
+        <Button variant={currentPage === totalPages ? 'custom' : 'black'} icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
           Next
         </Button>
       </div>

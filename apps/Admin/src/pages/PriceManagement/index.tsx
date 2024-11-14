@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Tab, Tabs, Typography, Box, TextField, Stack, Modal } from '@mui/material';
 import { Button, Input, Table } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
@@ -6,304 +6,178 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 import { createColumnHelper } from '@tanstack/react-table';
+import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
+import CONFIG from './../../../../../libs/utils/helpers/config';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import Price from './modal/Price';
+import VideoUploadTypes from './../../../../Candidate/src/pages/VideoManagement/VideoManagement-Types/VideoUploadTypes';
 
-type VideoUpload = {
-  id: number;
-  amount: number;
+type PriceItem = {
+  id: string;
+  price: string;
   type: string;
+  status: string;
+  [key: string]: any;
 }
 
-type Ads = {
-  id: number;
-  amount: number;
-  type: string;
-}
+// type Ads = {
+//   id: number;
+//   amount: number;
+//   type: string;
+// }
 
-type BuyVideo = {
-  id: number;
-  amount: number;
-  type: string;
-}
+// type BuyVideo = {
+//   id: number;
+//   amount: number;
+//   type: string;
+// }
 
-interface PriceFieldsProps {
-  label: string;
-  value: number | undefined;
-  onChange: (value: number) => void;
-}
+// interface PriceFieldsProps {
+//   label: string;
+//   value: number | undefined;
+//   onChange: (value: number) => void;
+// }
 
-const videoUploadColumnHelper = createColumnHelper<VideoUpload>();
-const adsColumnHelper = createColumnHelper<Ads>();
-const buyVideoColumnHelper = createColumnHelper<BuyVideo>();
+const columnHelper = createColumnHelper<PriceItem>();
+// const adsColumnHelper = createColumnHelper<Ads>();
+// const buyVideoColumnHelper = createColumnHelper<BuyVideo>();
 
-const PriceFields: React.FC<PriceFieldsProps> = ({ label, value, onChange }) => {
-  return (
-    <Input
-    //   fullWidth
-      label={label}
-      type="number"
-      value={value}
-      onChange={(e) => onChange(parseFloat(e.target.value))}
-      placeholder='0'
-      startAdornment={
-        <Typography variant="h6">₦</Typography>
-      } 
-    />
-  );
-};
+// const PriceFields: React.FC<PriceFieldsProps> = ({ label, value, onChange }) => {
+//   return (
+//     <Input
+//     //   fullWidth
+//       label={label}
+//       type="number"
+//       value={value}
+//       onChange={(e) => onChange(parseFloat(e.target.value))}
+//       placeholder='0'
+//       startAdornment={
+//         <Typography variant="h6">₦</Typography>
+//       } 
+//     />
+//   );
+// };
 
 const index = () => {
   const [openModal, setOpenModal] = useState<'add' | 'edit' | null>(null);
-  const [activeTab, setActiveTab] = useState<'videoUploadPrices' | 'adsPrices' | 'buyVideoPrices'>('videoUploadPrices');
-  const [selectedItem, setSelectedItem] = useState<VideoUpload | Ads | BuyVideo | null>(null);
+  const [activeTab, setActiveTab] = useState<'videoUploadTypes' | 'adsTypes' | 'buyVideoTypes'>('videoUploadTypes');
+  const [priceItems, setPriceItems] = useState<PriceItem[]>([]);
+  const [selectedItem, setSelectedItem] = useState<PriceItem | null>(null)
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    fetchPriceItems()
+  }, [activeTab]);
 
-  const handleTabChange = (tab: 'videoUploadPrices' | 'adsPrices' | 'buyVideoPrices') => {
-    setActiveTab(tab);
+  const fetchPriceItems = async () => {
+    setLoading(false);
+    try {
+      const endpoint = activeTab === 'videoUploadTypes' ? apiEndpoints.VIDEO_UPLOAD_TYPE : apiEndpoints.ADS_TYPE;
+      const resp = await getData(`${CONFIG.BASE_URL}${endpoint}`);
+      if (resp.ok) {
+        const data = await resp.json();
+        setPriceItems(data);
+      }
+      else {
+        throw new Error(`Unable to fetch ${activeTab}`)
+      }
+    }
+    catch (err) {
+      console.error(`Error fetching ${activeTab}:`, err)
+      toast.error(`Failed to load ${activeTab}`)
+    }
+    finally {
+      setLoading(false);
+    }
   };
 
-  const VideoUploadData = [
-    { id: 1, type: 'Pinned Video', amount: 1000 },
-    { id: 2, type: 'Regular Video', amount: 500 },
-  ];
 
-  const AdsData = [
-    { id: 1, type: 'Video Ads', amount: 2000 },
-    { id: 2, type: 'Image Ads', amount: 1500 },
-  ];
+  const handleStatusToggle = async (id: string, currentStatus: string) => {
+    try {
+      const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+      const endpoint = activeTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE;
+      const resp = await postData(`${CONFIG.BASE_URL}${endpoint}`, {
+        id,
+        status: newStatus,
+      });
+      if (resp.ok) {
+        setPriceItems(priceItems.map(item =>
+          item.id === id ? { ...item, status: newStatus } : item
+        ))
+        toast.success(`${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} ${newStatus.toLowerCase()} successfully`)
+      }
+      else {
+        throw new Error(`Failed to update ${activeTab === 'videoUploadTypes' ? 'video type' : 'ad type'} status`)
+      }
+    }
+    catch (err) {
+      console.error(`Error updating ${activeTab} status:`, err)
+      toast.error(`Failed to update ${activeTab} status`)
+    }
+  }
 
-  const BuyVideoData = [
-    { id: 1, type: 'Pinned Video', amount: 3000 },
-    { id: 2, type: 'Regular Video', amount: 2500 },
-  ];
-
-  // Manage data state
-  const [videoUploads, setVideoUploads] = useState<VideoUpload[]>(VideoUploadData);
-  const [ads, setAds] = useState<Ads[]>(AdsData);
-  const [buyVideos, setBuyVideos] = useState<BuyVideo[]>(BuyVideoData);
+  const columns = [
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('price', {
+      header: 'Price',
+      cell: (info) => `$${info.getValue()}`,
+    }),
+    columnHelper.accessor('status', {
+      header: 'Status',
+      cell: (info) => (
+        <span className={`px-2 py-1.5 text-center items-center rounded-full ${
+          info.getValue() === 'Active' ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
+        }`}>
+          {info.getValue()}
+        </span>
+      ),
+    }),
+    columnHelper.display({
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <div className="flex gap-2">
+          <Button 
+            variant='neutral' 
+            label="Edit" 
+            onClick={() => {
+              setSelectedItem(row.original)
+              navigate(`/admin/price-management/edit/${activeTab}/${row.original.id}`)
+            }}
+          />
+          <Button 
+            variant={row.original.status === 'Active' ? 'red' : 'success'} 
+            label={row.original.status === 'Active' ? 'Deactivate' : 'Activate'}
+            onClick={() => handleStatusToggle(row.original.id, row.original.status)}
+          />
+        </div>
+      ),
+    }),
+  ]
 
   const closeModal = () => setOpenModal(null);
 
-  const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(value);
-  };
 
-  const videoUploadColumns = [
-    videoUploadColumnHelper.accessor('amount', {
-      header: 'Amount',
-      cell: (info) => formatCurrency(info.getValue()),
-    }),
-    videoUploadColumnHelper.accessor('type', {
-      header: 'Type',
-      cell: (info) => info.getValue(),
-    }),
-    // videoUploadColumnHelper.accessor('role', {
-    //   header: 'Role',
-    //   cell: (info) => info.getValue(),
-    // }),
-    // videoUploadColumnHelper.accessor('status', {
-    //   header: 'Status',
-    //   cell: (info) => (
-    //     <span
-    //       className={`px-2 py-1.5 text-center items-center rounded-full ${
-    //         info.getValue() === 'Active' ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
-    //       }`}
-    //     >
-    //       {info.getValue()}
-    //     </span>
-    //   ),
-    // }),
-    videoUploadColumnHelper.display({
-      id: 'action',
-      header: 'Action',
-      cell: ({ row: { original } }) => {
-        const handleEdit = (item: VideoUpload | Ads | BuyVideo) => {
-          setOpenModal('edit');
-          setSelectedItem(item);
-        };
-
-        const handleEditClick = () => handleEdit(original);
-
-        // const handleStatusToggle = () => {
-        //   const newStatus = original.status === 'Active' ? 'Suspended' : 'Active';
-        //   setSubAdmins((prevData) =>
-        //     prevData.map((user) =>
-        //       user.id === original.id ? { ...user, status: newStatus } : user
-        //     )
-        //   );
-        // };
-
-        return (
-          <div className="flex gap-2">
-            <Button variant="custom" label="Edit" onClick={handleEditClick} />
-            {/* {original.status === 'Active' ? (
-              <Button variant="red" label="Suspend" onClick={handleStatusToggle} />
-            ) : (
-              <Button variant="success" label="Activate" onClick={handleStatusToggle} />
-            )} */}
-          </div>
-        );
-      },
-    }),
-  ];
-  
-  // Define columns for Professionals
-  const AdsColumns = [
-    adsColumnHelper.accessor('amount', {
-      header: 'Amount',
-      cell: (info) => formatCurrency(info.getValue()),
-    }),
-    adsColumnHelper.accessor('type', {
-      header: 'Tyoe',
-      cell: (info) => info.getValue(),
-    }),
-    // adsColumnHelper.accessor('phoneNumber', {
-    //   header: 'Phone Number',
-    //   cell: (info) => info.getValue(),
-    // }),
-    // AdsColumnHelper.accessor('status', {
-    //   header: 'Status',
-    //   cell: (info) => (
-    //     <span
-    //       className={`px-2 py-1.5 text-center items-center rounded-full ${
-    //         info.getValue() === 'Active' ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
-    //       }`}
-    //     >
-    //       {info.getValue()}
-    //     </span>
-    //   ),
-    // }),
-    adsColumnHelper.display({
-      id: 'action',
-      header: 'Action',
-      cell: ({ row: { original } }) => {
-        const handleEdit = (item: VideoUpload | Ads | BuyVideo) => {
-          setOpenModal('edit');
-          setSelectedItem(item);
-        };
-
-        const handleEditClick = () => handleEdit(original);
-
-        // const handleStatusToggle = () => {
-        //   const newStatus = original.status === 'Active' ? 'Suspended' : 'Active';
-        //   setSubAdmins((prevData) =>
-        //     prevData.map((user) =>
-        //       user.id === original.id ? { ...user, status: newStatus } : user
-        //     )
-        //   );
-        // };
-
-        return (
-          <div className="flex gap-2">
-            <Button variant="custom" label="Edit" onClick={handleEditClick} />
-            {/* {original.status === 'Active' ? (
-              <Button variant="red" label="Suspend" onClick={handleStatusToggle} />
-            ) : (
-              <Button variant="success" label="Activate" onClick={handleStatusToggle} />
-            )} */}
-          </div>
-        );
-      },
-    }),
-  ];
-  
-  // Define columns for Employers
-  const buyVideoColumns = [
-    buyVideoColumnHelper.accessor('amount', {
-      header: 'Amount',
-      cell: (info) => formatCurrency(info.getValue()),
-    }),
-    buyVideoColumnHelper.accessor('type', {
-      header: 'Type',
-      cell: (info) => info.getValue(),
-    }),
-    // buyVideoColumnHelper.accessor('phoneNumber', {
-    //   header: 'Phone Number',
-    //   cell: (info) => info.getValue(),
-    // }),
-    // buyVideoColumnHelper.accessor('status', {
-    //   header: 'Status',
-    //   cell: (info) => (
-    //     <span
-    //       className={`px-2 py-1.5 text-center items-center rounded-full ${
-    //         info.getValue() === 'Active' ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
-    //       }`}
-    //     >
-    //       {info.getValue()}
-    //     </span>
-    //   ),
-    // }),
-    buyVideoColumnHelper.display({
-      id: 'action',
-      header: 'Action',
-      cell: ({ row: { original } }) => {
-        const handleEdit = (item: VideoUpload | Ads | BuyVideo) => {
-          setOpenModal('edit');
-          setSelectedItem(item);
-        };
-
-        const handleEditClick = () => handleEdit(original);
-
-        // const handleStatusToggle = () => {
-        //   const newStatus = original.status === 'Active' ? 'Suspended' : 'Active';
-        //   setSubAdmins((prevData) =>
-        //     prevData.map((user) =>
-        //       user.id === original.id ? { ...user, status: newStatus } : user
-        //     )
-        //   );
-        // };
-
-        return (
-          <div className="flex gap-2">
-            <Button variant="custom" label="Edit" onClick={handleEditClick} />
-            {/* {original.status === 'Active' ? (
-              <Button variant="red" label="Suspend" onClick={handleStatusToggle} />
-            ) : (
-              <Button variant="success" label="Activate" onClick={handleStatusToggle} />
-            )} */}
-          </div>
-        );
-      },
-    }),
-  ];
-
-  let currentData;
-  let currentColumns;
-  if (activeTab === 'videoUploadPrices') {
-    currentData = videoUploads;
-    currentColumns = videoUploadColumns;
-  } else if (activeTab === 'adsPrices') {
-    currentData = ads;
-    currentColumns = AdsColumns;
-  } else {
-    currentData = buyVideos;
-    currentColumns = buyVideoColumns;
-  }
 
   return (
     <Container>
       <Box sx={{ my: 4 }}>
         <Box className='bg-neutral-100 items-center rounded-lg'>
           <div className="flex p-1">
-            <button
-              className={`py-2 px-4 text-sm font-medium ${activeTab === 'videoUploadPrices' ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}
-              onClick={() => setActiveTab('videoUploadPrices')}
-            >
-              Video Upload Prices
-            </button>
-            <button
-              className={`py-2 px-4 text-sm font-medium ${activeTab === 'adsPrices' ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}
-              onClick={() => setActiveTab('adsPrices')}
-            >
-              Ads Prices
-            </button>
-            <button
-              className={`py-2 px-4 text-sm font-medium ${activeTab === 'buyVideoPrices' ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}
-              onClick={() => setActiveTab('buyVideoPrices')}
-            >
-              Buy Video Prices
-            </button>
+            {['videoUploadTypes', 'adsTypes', 'buyVideoTypes'].map((tab) => (
+              <button
+                key={tab}
+                className={`py-2 px-4 text-sm font-medium ${activeTab === tab ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}
+                onClick={() => setActiveTab(tab as typeof activeTab)}
+              >
+                {`Add ${tab === 'videoUploadTypes' ? 'Video Type' : tab === 'adsTypes' ? 'Ad Type' : 'Buy Video Type'}`}
+              </button>
+            ))}
           </div>
         </Box>
 
@@ -314,8 +188,8 @@ const index = () => {
 
           <Table
             loading={false}
-            data={currentData}
-            columns={currentColumns}
+            data={priceItems}
+            columns={columns}
             tableHeading={`All ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
           />
         </div>
