@@ -34,7 +34,7 @@ export enum apiEndpoints {
     // create ads flow
     ADD_ADS = '/api/v1/ads/create-edit',
     ALL_ADS = '/api/v1/ads/fetch/all',
-    ALL_AUTH_ADS = '/api/v1/ads//auth/fetch/all',
+    ALL_AUTH_ADS = '/api/v1/ads/auth/fetch/all',
     ADS_TYPE = '/api/v1/ads/types/get',
     ADS_BY_ID = '/api/v1/ads/get/:{adId}',
     ADS_STATUS = '/api/v1/ads/check/ad-request',
@@ -42,11 +42,11 @@ export enum apiEndpoints {
     // vacancy flow
     OPEN_VACANCY = '/api/v1/vacancy/create-edit',
     VACANCY_LIST = '/api/v1/vacancy/fetch/all',
-    VACANCY_BY_ID = '/api/v1/vacancy/get/{vacancyId}',
+    VACANCY_BY_ID = '/api/v1/vacancy/get/{vacancyEmail}',
 
     // misc
     COUNTRIES = '/api/v1/helper/location/countries/get',
     STATE = '/api/v1/helper/location/states/get',
     FAQ = '/api/v1/helper/get/faq',
-    SPECIALIZATION = '/api/v1/helper/get/specialization',
+    GET_MISC = '/api/v1/helper/get',
 }

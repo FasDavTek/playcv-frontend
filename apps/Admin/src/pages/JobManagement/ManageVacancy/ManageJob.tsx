@@ -6,6 +6,19 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import dayjs from 'dayjs';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+
+const s3Client = new S3Client({
+  region: 'auto',
+  endpoint: `https://${import.meta.env.VITE_CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: import.meta.env.VITE_CLOUDFLARE_R2_ACCESS_KEY,
+    secretAccessKey: import.meta.env.VITE_CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+  },
+})
 
 
 interface Job {
@@ -13,6 +26,7 @@ interface Job {
     title: string;
     startDate: string;
     location: string;
+    locationId: number;
     employerName: string;
     companyImage: string;
     jobDetails: string;
@@ -20,43 +34,53 @@ interface Job {
     keyResponsibilities: string;
     companyEmail: string;
     status: 'Active' | 'Expired' | 'Pending' | 'Rejected';
+    statusId: number;
     jobUrl: string;
+    coverURL: string;
+    action: string;
 }
 
 const ManageJob: React.FC  = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams<{ id: string }>();
+  const { vacancyId } = useParams<{ vacancyId: any }>();
 
   const [job, setJob] = useState<Job | undefined>(location.state?.job);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const { register, handleSubmit, watch, control, setValue, reset } = useForm<Job>();
 
   useEffect(() => {
-    const fetchJobDetails = async () => {
-      if (!job && id) {
-        try {
-          const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${id}`);
-          if (!response.ok) {
-            throw new Error('Unable to fetch job details');
-          }
-          const data = await response.json();
-          setJob(data);
-        } 
-        catch (err) {
-          console.error('Error fetching job details:', err);
-          setError('Error fetching job details');
-        } 
-        finally {
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
-      }
-    };
+    if (vacancyId) {
+      fetchJobDetails(vacancyId)
+    } else if (location.state?.job) {
+      reset(location.state.job)
+    }
+  }, [vacancyId, location.state, reset]);
 
-    fetchJobDetails();
-  }, [job, id]);
+  const fetchJobDetails = async (vacancyId: any) => {
+    setLoading(true);
+    try {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
+      if (!response.ok) {
+        const jobData = await response.json()
+        reset(jobData)
+      }
+      else {
+        throw new Error('Unable to fetch job details');
+      }
+    } 
+    catch (err) {
+      console.error('Error fetching job details:', err);
+      setError('Error fetching job details');
+    } 
+    finally {
+      setLoading(false);
+    }
+  };
+
 
   if (loading) return <CircularProgress />;
 

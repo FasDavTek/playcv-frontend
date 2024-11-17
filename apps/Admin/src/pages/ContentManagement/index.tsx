@@ -5,6 +5,34 @@ import { Button, Table } from '@video-cv/ui-components';
 import { CategoryModal } from './modals';
 // import { ContentModal } from './modals';
 
+type Content = {
+  id: string;
+  name: string;
+  action: string;
+  [key: string]: any;
+}
+
+type faq = Content & {
+  question: string;
+  answer: string;
+  isActive: boolean;
+}
+
+type country = Content & {
+  countryId: number;
+  countryName: string;
+  shortName: string;
+  dateCreated: Date;
+  dateUpdated: Date;
+}
+
+type state = Content & {
+  countryId: number;
+  shortName: string;
+  dateCreated: Date;
+  dateUpdated: Date;
+}
+
 type ContentColumns = {
   id: number;
   name: string;

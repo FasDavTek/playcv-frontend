@@ -27,8 +27,6 @@ type Vacancy = {
 
 
 const columnHelper = createColumnHelper<Vacancy>();
-
-// const generateSampleVacancies = (type: 'active' | 'pending') => {
 //   const formatDate = (dateStr: string) => {
 //     const date = new Date(dateStr);
 //     return date.toLocaleDateString('en-GB', {
@@ -167,11 +165,35 @@ const JobManagement = () => {
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
   const navigate = useNavigate();
 
-
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(20);
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [datePosted, setDatePosted] = useState('')
+  const [jobTitle, setJobTitle] = useState('')
+  const [specialization, setSpecialization] = useState('')
+  const [status, setStatus] = useState('')
+  const [download, setDownload] = useState(false)
+  const [search, setSearch] = useState('')
+  const [location, setLocation] = useState('')
 
   const fetchJobs = async () => {
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=10`);
+      const queryParams = new URLSearchParams({
+        Page: page.toString(),
+        Limit: limit.toString(),
+        Start_Date: startDate,
+        End_Date: endDate,
+        DatePosted: datePosted,
+        JobTitle: jobTitle,
+        Specialization: specialization,
+        Status: status,
+        Download: download.toString(),
+        search: search,
+        Location: location
+      })
+
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?${queryParams}`);
       if (!resp.ok) {
         throw new Error("Failed to fetch jobs");
       }
@@ -201,19 +223,19 @@ const JobManagement = () => {
     fetchJobs();
     const interval = setInterval(fetchJobs, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [page, limit, startDate, endDate, datePosted, jobTitle, specialization, status, download, search, location]);
 
 
 
-  const handleView = async (jobId: string) => {
+  const handleView = async (vacancyId: string) => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${jobId}`);
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
       if (!response.ok) {
         throw new Error('Error fetching job details');
       }
 
       const jobDetails = await response.json();
-      navigate(`/admin/job-management/view/:${jobId}`, {
+      navigate(`/admin/job-management/view/:${vacancyId}`, {
         state: { jobDetails },
       })
     }
@@ -224,9 +246,9 @@ const JobManagement = () => {
   };
 
 
-  const handleEdit = async (jobId: string) => {
+  const handleEdit = async (vacancyId: string) => {
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${jobId}`);
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
       if (!resp.ok) {
         throw new Error('Error fetching job details');
       }

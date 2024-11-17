@@ -3,13 +3,14 @@ import { CloudUpload as CloudUploadIcon, UploadFile } from '@mui/icons-material'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Input, TextArea, FileUpload, Select } from '@video-cv/ui-components';
+import { Button, Input, TextArea, FileUpload, Select, DatePicker } from '@video-cv/ui-components';
 import { getData, postData } from '../../../../../../libs/utils/apis/apiMethods';
 import CONFIG from '../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from '../../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import { Container, Grid } from '@mui/material';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import dayjs from 'dayjs';
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -21,23 +22,42 @@ const s3Client = new S3Client({
 })
 
 interface IForm {
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  userTypeId: number;
   name: string;
   email: string;
   role?: string;
   phoneNumber: string;
   address: string;
   profilePicture: File | null;
+  isBusinessUser: boolean;
+  isProfessional: boolean;
+  businessId: number;
+  coverURL: string;
+  startDate: string;
+  endDate: string;
   institution?: string;
   dateOfBirth?: string;
   gender?: string;
   cvUrl?: string;
-  companyUrl?: string;
+  redirectUrl?: string;
   businessAddress?: string;
   contactPersonName?: string;
   contactPersonPosition?: string;
   contactPersonPhoneNumber?: string;
   socialMediaLink?: string;
   industry?: string;
+  isDeleted: boolean;
+  isActive: boolean;
+  emailConfirmed: boolean;
+  phoneNumberConfirmed: boolean;
+  isAdmin: boolean;
+  isBlackListed: boolean;
+  userId: string;
+  statusId: number;
+  status: string;
 }
 
 const roleOptions = [
@@ -76,7 +96,7 @@ const CreateEditUSer: React.FC = () => {
         });
       } 
       else {
-        throw new Error('Failed to fetch user details');
+        throw new Error('Unable to fetch user details');
       }
     } 
     catch (error) {
@@ -116,17 +136,26 @@ const CreateEditUSer: React.FC = () => {
   const onSubmit = async (data: IForm) => {
     setLoading(true);
     try {
-      const endpoint = userType === 'subAdmins' ? apiEndpoints.CREATE_SUB_ADMIN : apiEndpoints.MANAGE_PROF_EMP_USER;
+      // const endpoint = userType === 'subAdmins' ? apiEndpoints.CREATE_SUB_ADMIN : apiEndpoints.MANAGE_PROF_EMP_USER;
 
-      let imageUrl = data.profilePicture ? await handleImageUpload(data.profilePicture) : undefined
+      // let imageUrl = data.profilePicture ? await handleImageUpload(data.profilePicture) : undefined
+
+      const imageUrl = data.coverURL ? await handleImageUpload(new File([data.coverURL], 'profile.jpg')) : undefined;
       
       const userData = {
         ...data,
-        userImage: imageUrl,
+        coverURL: imageUrl || data.coverURL,
+        action: 'edit',
+        isProfessional: userType === 'professionals',
+        isBusinessUser: userType === 'employers',
+        isAdmin: userType === 'subAdmins',
         userEmail: email,
+        emailConfirmed: data.emailConfirmed,
+        phoneNumberConfirmed: data.phoneNumberConfirmed,
+        isBlackListed: data.isBlackListed,
       }
 
-      const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, userData);
+      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_PROF_EMP_USER}`, userData);
       if (response.ok) {
         toast.success(`User updated successfully`);
         navigate('/admin/user-management');
@@ -149,8 +178,16 @@ const CreateEditUSer: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-6">
             <Input
-              label="Name"
-              {...register('name', { required: 'Name is required' })}
+              label="First Name"
+              {...register('firstName', { required: 'First Name is required' })}
+            />
+            <Input
+              label="Middle Name"
+              {...register('middleName', { required: 'Middle Name is required' })}
+            />
+            <Input
+              label="Last Name"
+              {...register('lastName', { required: 'Last Name is required' })}
             />
             <Input
               label="Email"
@@ -167,7 +204,7 @@ const CreateEditUSer: React.FC = () => {
               {...register('address')}
             />
             <Controller
-              name="profilePicture"
+              name="coverURL"
               control={control}
               render={({ field }) => (
                 <FileUpload
@@ -179,6 +216,30 @@ const CreateEditUSer: React.FC = () => {
                         field.onChange(file);
                     }
                 }}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="startDate"
+              render={({ field }) => (
+                <DatePicker
+                  {...field}
+                  label="Start year"
+                  value={field.value ? dayjs(field.value) : null}
+                  onChange={(date) => {field.onChange(date);}}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="endDate"
+              render={({ field }) => (
+                <DatePicker
+                  {...field}
+                  label="End year"
+                  value={field.value ? dayjs(field.value) : null}
+                  onChange={(date) => {field.onChange(date);}}
                 />
               )}
             />
@@ -199,6 +260,11 @@ const CreateEditUSer: React.FC = () => {
             )}
             {userType === 'professionals' && (
               <>
+                <Input
+                  label="Redirect URL"
+                  type="url"
+                  {...register('redirectUrl', { required: 'RedirectUrl is required' })}
+                />
                 <Input
                   label="Institution"
                   {...register('institution')}
@@ -223,8 +289,9 @@ const CreateEditUSer: React.FC = () => {
             {userType === 'employers' && (
               <>
                 <Input
-                  label="Company URL"
-                  {...register('companyUrl')}
+                  label="Redirect URL"
+                  type="url"
+                  {...register('redirectUrl', { required: 'RedirectUrl is required' })}
                 />
                 <TextArea
                   label="Business Address"
@@ -252,6 +319,21 @@ const CreateEditUSer: React.FC = () => {
                 />
               </>
             )}
+            <Controller
+              name='status'
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  label="Class of Degree"
+                  value={watch('status')}
+                  options={[
+                    { value: '1', label: 'Active' },
+                    { value: '0', label: 'Inactive' },
+                  ]}
+                  onChange={(value) => onChange('status', value)}
+                />
+              )}
+            />
             <Grid item xs={12}>
               <Button
                 type="submit"

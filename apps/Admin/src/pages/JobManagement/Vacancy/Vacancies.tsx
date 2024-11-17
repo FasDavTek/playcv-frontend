@@ -7,13 +7,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input, Button, RichTextEditor, FileUpload, SelectChip } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 import { Controller, useForm } from 'react-hook-form';
+import { useAllMisc } from '../../../../../../libs/hooks/useAllMisc'
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -65,15 +66,23 @@ type VacancyFormData = z.infer<typeof vacancySchema>;
 
 
 const Vacancies = () => {
+  const { vacancyId } = useParams<{ vacancyId: any }>();
   const [companyImageFile, setCompanyImageFile] = useState<File | null>(null);
-  const [specialisations, setSpecialisations] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [action, setAction] = useState<'create' | 'edit'>('create');
 
   const navigate = useNavigate();
   const location = useLocation();
   const job = location.state?.job;
 
-  const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm<VacancyFormData>({
+  const { specialisations, isLoading: isLoadingSpecialisations, error: specialisationsError } = useAllMisc({
+    resource: 'specialization',
+    page: 1,
+    limit: 100,
+  });
+
+  const { register, handleSubmit, control, setValue, reset, watch, formState: { errors } } = useForm<VacancyFormData>({
     resolver: zodResolver(vacancySchema),
     defaultValues: {
       status: 'Pending',
@@ -81,30 +90,39 @@ const Vacancies = () => {
     },
   });
 
+
+  useEffect(() => {
+    if (vacancyId) {
+      fetchJobDetails(vacancyId)
+    } else if (location.state?.job) {
+      reset(location.state.job)
+    }
+  }, [vacancyId, location.state, reset]);
+
+  const fetchJobDetails = async (vacancyId: any) => {
+    setIsLoading(true);
+    try {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
+      if (!response.ok) {
+        const jobData = await response.json()
+        reset(jobData)
+        setAction('edit')
+      }
+      else {
+        throw new Error('Unable to fetch job details');
+      }
+    } 
+    catch (err) {
+      console.error('Error fetching job details:', err);
+      setError('Error fetching job details');
+    } 
+    finally {
+      setIsLoading(false);
+    }
+  };
+
   
   useEffect(() => {
-    const fetchSpecialisations = async () => {
-      try {
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.SPECIALIZATION}`);
-        if (resp.oka) {
-          const data = await resp.json();
-          setSpecialisations(data);
-        }
-        else {
-          throw new Error('Unable to fetch specialisations');
-        }
-      }
-      catch (err) {
-        console.error('Error fetching specialisations:', err);
-        toast.error('Failed to load specialisations');
-      }
-      finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchSpecialisations();
-
     if (job) {
       Object.entries(job).forEach(([key, value]) => {
         if (key in vacancySchema.shape) {
@@ -186,16 +204,17 @@ const Vacancies = () => {
       const jobData = {
         ...data,
         companyImage: companyImageUrl,
+        action: action,
       };
 
       const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.OPEN_VACANCY}`, jobData);
 
       if (resp.ok) {
-        toast.success(job ? 'Job updated successfully' : 'Job posted successfully!');
+        toast.success(action === 'edit' ? 'Job updated successfully' : 'Job posted successfully!');
         navigate('/admin/job-management');
       }
       else {
-        throw new Error(job ? 'Unable to update job' : 'Unable to post job');
+        throw new Error(action === 'edit' ? 'Unable to update job' : 'Unable to post job');
       }
     } catch (error) {
       toast.error(job ? 'Error updating job' : 'Error posting job');
@@ -275,7 +294,7 @@ const Vacancies = () => {
                   <RichTextEditor value={watch('qualifications')} onChange={(value) => setValue('qualifications', value)} placeholder={'Enter qualifications'} />
                 </Grid>
                 <Grid item xs={12}>
-                  <SelectChip label='Specialisation' id='specialization-select' options={specialisations} value={watch('specialisations')} onChange={(value) => setValue('specialisations', value)} />
+                  <SelectChip label='Specialisation' id='specialization-select' options={specialisations.map(spec => spec.name)} value={watch('specialisations')} onChange={(value) => setValue('specialisations', value)} />
                 </Grid>
                 <Grid item xs={12}>
                   <Input
@@ -292,7 +311,7 @@ const Vacancies = () => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <Button type='submit' variant="black" label={job? 'Update' : 'Submit'} color="primary" disabled={isLoading}></Button>
+                  <Button type='submit' variant="black" label={action === 'edit' ? 'Update' : 'Submit'} color="primary" disabled={isLoading}></Button>
                 </Grid>
             </Grid>
           </form>

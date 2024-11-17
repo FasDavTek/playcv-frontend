@@ -23,16 +23,20 @@ const s3Client = new S3Client({
 });
 
 interface IForm {
-    name: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
     email: string;
     role?: string;
     phoneNumber: string;
     address: string;
+    password: string;
     profilePicture?: any;
     institution?: string;
     dateOfBirth?: string;
     gender?: string;
     cvUrl?: string;
+    redirectUrl?: string;
     companyUrl?: string;
     businessAddress?: string;
     contactPersonName?: string;
@@ -40,7 +44,21 @@ interface IForm {
     contactPersonPhoneNumber?: string;
     socialMediaLink?: string;
     industry?: string;
+    userTypeId: number;
+    isBusinessUser: boolean;
+    isProfessional: boolean;
+    businessName: string;
+    isTracked: boolean;
+    businessId: number;
+    coverURL: string;
+    status: string;
 };
+
+const userTypeOptions = [
+    { value: 1, label: 'Sub Admin' },
+    { value: 2, label: 'Employer' },
+    { value: 3, label: 'Professional' },
+];
 
 const roleOptions = [
     { value: 'admin', label: 'Admin' },
@@ -61,7 +79,15 @@ const CreateUser = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { register, handleSubmit, control, setValue, reset, watch } = useForm<IForm>();
+    const { register, handleSubmit, control, setValue, reset, watch } = useForm<IForm>({
+        defaultValues: {
+            isBusinessUser: userType === 'employers',
+            isProfessional: userType === 'professionals',
+            userTypeId: userType === 'subAdmins' ? 1 : userType === 'employers' ? 2 : 3,
+        },
+    });
+
+    console.log(userType);
 
     const handleImageUpload = async (file: File | null) => {
         if (!file) throw new Error('File is not defined.');
@@ -93,7 +119,7 @@ const CreateUser = () => {
         try {
             const userTypeId = userType === 'subAdmins' ? 1 : userType === 'professional' ? 3 : 2;
             
-            let ImageUrl = data.profilePicture;
+            let ImageUrl = data.coverURL ? await handleImageUpload(new File([data.coverURL], 'profile.jpg')) : undefined;;
 
             if (ImageFile) {
                 ImageUrl = await handleImageUpload(ImageFile);
@@ -101,7 +127,11 @@ const CreateUser = () => {
 
             const userData = {
                 ...data,
-                userImage: ImageUrl,
+                coverURL: ImageUrl || data.coverURL,
+                action: 'create',
+                isProfessional: userType === 'professionals',
+                isBusinessUser: userType === 'employers',
+                isAdmin: userType === 'subAdmins',
                 userTypeId,
             }
 
@@ -131,8 +161,20 @@ const CreateUser = () => {
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <Input
-                            label="Name"
-                            {...register('name', { required: 'Name is required' })}
+                            label="First Name"
+                            {...register('firstName', { required: 'First Name is required' })}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Input
+                            label="Middle Name"
+                            {...register('middleName', { required: 'Middle Name is required' })}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Input
+                            label="Last Name"
+                            {...register('lastName', { required: 'Last Name is required' })}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -149,8 +191,14 @@ const CreateUser = () => {
                         />
                     </Grid>
                     <Grid item xs={12}>
+                        <Input
+                            label="Address"
+                            {...register('address')}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
                         <Controller
-                            name="profilePicture"
+                            name="coverURL"
                             control={control}
                             render={({ field }) => (
                                 <FileUpload
@@ -178,6 +226,13 @@ const CreateUser = () => {
                     )}
                     {userType === 'professionals' && (
                         <>
+                            <Grid item xs={12}>
+                                <Input
+                                    label="Redirect URL"
+                                    type="url"
+                                    {...register('redirectUrl', { required: 'RedirectUrl is required' })}
+                                />
+                            </Grid>
                             <Grid item xs={12}>
                                 <Input
                                     label="Institution"
@@ -209,6 +264,13 @@ const CreateUser = () => {
                     )}
                     {userType === 'employers' && (
                         <>
+                            <Grid item xs={12}>
+                                <Input
+                                    label="Redirect URL"
+                                    type="url"
+                                    {...register('redirectUrl', { required: 'RedirectUrl is required' })}
+                                />
+                            </Grid>
                             <Grid item xs={12}>
                                 <Input
                                     label="Company URL"
@@ -249,6 +311,23 @@ const CreateUser = () => {
                                 <Input
                                     label="Industry"
                                     {...register('industry')}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Controller
+                                    name='status'
+                                    control={control}
+                                    render={({ field: { onChange, value } }) => (
+                                        <Select
+                                        label="Class of Degree"
+                                        value={watch('status')}
+                                        options={[
+                                            { value: '1', label: 'Active' },
+                                            { value: '0', label: 'Inactive' },
+                                        ]}
+                                        onChange={(value) => onChange('status', value)}
+                                        />
+                                    )}
                                 />
                             </Grid>
                         </>
