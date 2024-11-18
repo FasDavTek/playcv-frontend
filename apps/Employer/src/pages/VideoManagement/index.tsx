@@ -152,8 +152,7 @@ const columnHelper = createColumnHelper<Video>();
 const VideoManagement = () => {
   const [value, setValue] = React.useState(0);
   const [videos, setVideos] = useState<Video[]>([]);
-  const [open, setOpen] = useState(false);
-  const [reason, setReason] = useState('');
+  const [viewedVideos, setViewedVideos] = useState<Video[]>([]);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
   const [loading, setLoading] = useState(true);
@@ -202,6 +201,13 @@ const VideoManagement = () => {
       }
 
       const videoDetails = await response.json();
+
+      setViewedVideos(prevVideos => {
+        const newVideos = [videoDetails, ...prevVideos];
+        // Keep only the last 10 viewed videos
+        return newVideos.slice(0, 10);
+      });
+
       navigate(`/employer/video-management/:${videoId}`, {
         state: { videoDetails },
       });
@@ -257,8 +263,23 @@ const VideoManagement = () => {
   ];
 
   return (
-    <section className="">
+    <div className="min-h-screen px-3 md:px-10 py-10">
         {/* Table comes here */}
+        <div>
+          <Typography variant="caption" className="my-4">
+            Recently Viewed Videos
+          </Typography>
+          {viewedVideos.length > 0 ? (
+            <Table
+              loading={false}
+              data={viewedVideos}
+              columns={columns}
+              tableHeading="Recently Viewed Videos"
+            />
+          ) : (
+            <p>No viewed videos yet</p>
+          )}
+        </div>
         {/* filter logic comes here */}
         {/* {loading ? (
           <div className="flex items-center justify-center min-h-screen">
@@ -279,7 +300,7 @@ const VideoManagement = () => {
           tableHeading="All Video CV"
         />
         
-    </section>
+    </div>
   );
 };
 
