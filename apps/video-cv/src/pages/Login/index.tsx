@@ -15,6 +15,7 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { toast } from 'react-toastify';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 import { decodeJWT } from './../../../../../libs/utils/helpers/decoder';
+import { useAuth } from './../../../../../libs/context/AuthContext'
 
 const ErrorMessages: any = {
   required: (field: any) => `${field} is required`,
@@ -30,7 +31,7 @@ const schema = z.object({
   password: z.string({
     required_error: ErrorMessages.required('Password'),
   })
-  .min(8, "Password must be at least 8 characters long")
+  .min(6, "Password must be at least 6 characters long")
   .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
   .regex(/[a-z]/, "Password must contain at least one lowercase letter")
   .regex(/[0-9]/, "Password must contain at least one number")
@@ -39,16 +40,23 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+interface UserProfile {
+  // id: string;
+  name: string;
+  // email: string;
+}
+
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setAuthState } = useAuth();
 
   const [loading, setLoading] = React.useState(false);
   const { register, handleSubmit, watch, control, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
-  const fetchUserProfile = async (userId: string) => {
+  const fetchUserProfile = async (userId: string): Promise<UserProfile | undefined | null | void> => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}/${userId}?Page=1&Limit=10`);
       if (response.isSuccess) {
@@ -74,17 +82,8 @@ const Login = () => {
         reqBody
       );
 
-      console.log(res)
-
       if (res.isSuccess) {
         toast.success(res.message);
-      }
-      if (!res.isSuccess) {
-        localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "false");
-        toast.error(res.message);
-      }
-
-      if (res.isSuccess) {
         const token = res.jwtToken;
         const decoded = decodeJWT(token);
         localStorage.setItem(
@@ -95,17 +94,36 @@ const Login = () => {
         localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, decoded.UserId);
         localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, res.jwtToken);
 
-        await fetchUserProfile(decoded.UserId);
+        const userProfile = await fetchUserProfile(decoded.UserId);
+
+        if (userProfile) {
+          // Update the global auth state
+          setAuthState({
+            isAuthenticated: true,
+            user: {
+              id: decoded.UserId,
+              email: email,
+              name: userProfile.name || 'User', // Adjust based on your user profile structure
+              // Add other relevant user fields
+            }
+          });
+        }
+
         reset();
 
-        const from = location.state?.from;
+        const from = location.state?.from || '/';
         navigate(from, { replace: true });
-      }      
+      }
+      else {
+        localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "false");
+        toast.error(res.message);
+      }   
     }
     catch (err) {
       console.error(err);
       toast.error("An error occurred during login");
-    } finally {
+    } 
+    finally {
       setLoading(false);
     }
   };

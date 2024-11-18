@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useCart } from '../../context/CartProvider';
 import { Box, Checkbox, Paper, Stack, styled, Typography } from '@mui/material';
 import { Button } from '@video-cv/ui-components';
 import { Icons } from '@video-cv/assets';
 import { usePaystack } from '@video-cv/payment';
-import { useAuth } from '../../context/AuthProvider';
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
+import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
+import CONFIG from './../../../../../libs/utils/helpers/config';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import { toast } from 'react-toastify';
+import { useAuth } from './../../../../../libs/context/AuthContext'
 
 const Cart = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { cartState, dispatch } = useCart();
-  const isAuthenticated = useAuth();
+  const { authState } = useAuth();
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [triggerPayment, setTriggerPayment] = useState<boolean>(false);
 
@@ -21,7 +26,8 @@ const Cart = () => {
     totalAmount,
     () => {
       console.log('onSuccess callback');
-      navigate('/employer/video-management');
+      const from = location.state?.from || '/';
+      navigate(from, { replace: true });
     },
     () => {
       console.log('onFailure callback');
@@ -55,20 +61,31 @@ const Cart = () => {
 
   // console.log('isAuth', isAuthenticated);
   const handleCheckout = () => {
-    // if not signed in, navigate to sign in, append ?next to sign in
-    // if signed in, trigger paystack modal
-    // TODO: Do sign in logic
+    if (!authState.isAuthenticated) {
+      const from = location.state?.from || '/';
+      navigate(from, { replace: true });
+      return;
+    }
+
+    if (selectedItems.length === 0) {
+      toast.info('Please select items to purchase');
+    }
+
+    const paymentConfig = {
+      email: authState.user?.email || '',
+      amount: totalAmount * 100, // Paystack expects amount in kobo
+      metadata: {
+        custom_fields: [
+          {
+            display_name: "User ID",
+            variable_name: "user_id",
+            value: authState.user?.id || ''
+          }
+        ]
+      }
+    };
+    
     payButtonFn();
-    // if (isAuthenticated?.authState?.isAuthenticated) {
-    //   if (isAuthenticated.authState.userType === 'employer') {
-    //     payButtonFn();
-    //   } else if (isAuthenticated.authState.userType === 'job-seeker') {
-    //     // Handle job-seeker specific logic, for example:
-    //     navigate('/auth/login');
-    //   }
-    // } else {
-    //   navigate('/auth/login');
-    // }
   };
 
   useEffect(() => {
