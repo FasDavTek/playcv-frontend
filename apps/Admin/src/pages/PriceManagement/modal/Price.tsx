@@ -1,20 +1,53 @@
 import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form';
-import { Button, Input, RichTextEditor, Select, TextArea, } from '@video-cv/ui-components';
+import { Button, FileUpload, Input, RichTextEditor, Select, TextArea, } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
 import ReactQuill from 'react-quill';
 import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
+import { UploadFile } from '@mui/icons-material';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
-interface PriceItem {
-    // itemName?: string;
+const s3Client = new S3Client({
+    region: 'auto',
+    endpoint: `https://${import.meta.env.VITE_CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId: import.meta.env.VITE_CLOUDFLARE_R2_ACCESS_KEY,
+      secretAccessKey: import.meta.env.VITE_CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+    },
+});
+
+interface AdTypeItem {
     id?: string;
-    price?: string;
-    description?: string;
-    type?: any;
+    typeName: string;
+    typeDescription: string;
+    thumbnailUrl?: string;
+    dateCreated?: string;
+    dateUpdated?: string;
+    createdBy?: string;
     status?: string;
-}
+    action: 'create' | 'edit';
+  }
+  
+  interface VideoUploadTypeItem {
+    typeId?: string;
+    name: string;
+    shortName: string;
+    description: string;
+    thumbnailUrl?: string;
+    uploadPrice: number;
+    transactionFee: number;
+    buyPrice: number;
+    dateCreated?: string;
+    dateUpdated?: string;
+    createdBy?: string;
+    active: boolean;
+    status?: string;
+    action: 'create' | 'edit';
+  }
+
+  type PriceItem = AdTypeItem | VideoUploadTypeItem;
 
 const statusOptions = [
     { value: 'Active', label: 'Active' },
@@ -29,31 +62,40 @@ interface PriceProps {
     currentTab: 'videoUploadTypes' | 'adsTypes' | 'buyVideoTypes';
     modalType: 'add' | 'edit';
     item?: Partial<PriceItem> | null;
+    currentUser: string;
 }
 
-const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, currentTab, }) => {
+const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, currentTab, currentUser, }) => {
+    const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+    const [action, setAction] = useState<'create' | 'edit'>('create');
+
     const { register, control, watch, handleSubmit, setValue, formState: { errors } } = useForm<PriceItem>({
         defaultValues: {
             // itemName: item?.itemName ?? '',
-            id: item?.id ?? undefined,
-            price: item?.price ?? '',
-            description: item?.description ?? '',
-            type: item?.type ?? '',
-            status: item?.status ?? '',
+            action: modalType === 'add' ? "create" : "edit",
+            status: 'Active',
         }
     });
 
     useEffect(() => {
         if (item) {
           Object.entries(item).forEach(([key, value]) => {
-            setValue(key as keyof PriceItem, value)
-          })
+            if (value !== undefined) {
+              if (typeof value === 'string') {
+                setValue(key as keyof PriceItem, value);
+              } else if (typeof value === 'number') {
+                setValue(key as keyof VideoUploadTypeItem, value);
+              } else if (typeof value === 'boolean') {
+                setValue('active' as keyof VideoUploadTypeItem, value);
+              }
+            }
+          });
         }
-    }, [item, setValue]);
+      }, [item, setValue]);
 
     if (!open) return null;
 
-    const currentType = watch('type');
+    // const currentType = watch('type');
 
     const tabOptions = {
         videoUploadTypes: [{ label: 'Pinned Video', value: 'pinned' }, { label: 'Regular Video', value: 'regular' }],
@@ -63,12 +105,52 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
 
     const options = tabOptions[currentTab];
 
-
+    const handleImageUpload = async (file: File) => {
+        if (!file) throw new Error('File is not defined.');
+    
+        try {
+          const fileName = `${Date.now()}-${file.name}`;
+          const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET;
+    
+          const command = new PutObjectCommand({
+            Bucket: bucketName,
+            Key: fileName,
+            Body: file,
+            ContentType: file.type,
+          });
+    
+          await s3Client.send(command);
+          const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`;
+          return uploadedUrl;
+        } 
+        catch (err) {
+          toast.error(`Image upload failed: ${err}`);
+          console.error('Upload failed:', err);
+          throw err;
+        }
+    };
 
     const onSubmit = async (data: PriceItem) => {
         try {
+
+            let thumbnailUrl = data.thumbnailUrl;
+            if (thumbnailFile) {
+                thumbnailUrl = await handleImageUpload(thumbnailFile);
+            }
+
+            const now = new Date().toISOString();
+
+            const priceData = {
+                ...data,
+                thumbnailUrl: thumbnailUrl,
+                action: modalType === 'add' ? 'create' : 'edit',
+                dateCreated: modalType === 'add' ? now : data.dateCreated,
+                dateUpdated: modalType === 'edit' ? now : undefined,
+                createdBy: modalType === 'add' ? currentUser : data.createdBy,
+                active: data.status === 'Active',
+            }
           const endpoint = currentTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE
-          const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, data)
+          const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, priceData)
           if (response.ok) {
             toast.success(`${modalType === 'add' ? 'Added' : 'Updated'} successfully`)
             onClose()
@@ -103,44 +185,61 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
                 )}
             /> */}
             <Controller
-                name="type"
+                name={currentTab === 'videoUploadTypes' ? 'name' : 'typeName' }
                 control={control}
-                rules={{ required: 'Type is required' }}
-                render={({ field: { onChange, value } }) => (
-                    modalType === 'add' ? (
-                        <Input
-                            label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Type`}
-                            value={value}
-                            onChange={onChange}
-                            placeholder="Enter type"
-                        />
-                    ) : (
-                        <Select
-                            label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Type`}
-                            options={options}
-                            value={value || ''}
-                            onChange={(newValue: string) => onChange(newValue)}
-                        />
-                    )
-                )}
-            />
-            <Controller
-                name="price"
-                control={control}
-                rules={{ required: 'Amount is required' }}
+                rules={{ required: 'Type (name) is required' }}
                 render={({ field }) => (
                     <Input
-                        label={`${currentTab} Price`}
-                        value={field.value === '' ? '' : field.value}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            field.onChange(value === '' ? '' : parseFloat(value));
-                        }}
-                        type="number"
-                        placeholder={`Enter ${currentTab} price`}
+                        label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : 'Ad'} Type`}
+                        {...register(`${currentTab === 'videoUploadTypes' ? 'name' : 'typeName'}`)}
+                        placeholder="Enter type name"
                     />
                 )}
             />
+            {currentTab === 'videoUploadTypes' && (
+                <Controller
+                    name='shortName'
+                    control={control}
+                    rules={{ required: 'Short name is required' }}
+                    render={({ field }) => (
+                        <Input
+                            label='Short Name'
+                            {...register('shortName')}
+                            placeholder="Enter short name"
+                        />
+                    )}
+                />
+            )}
+            {currentTab === 'videoUploadTypes' && (
+                <Controller
+                    name="uploadPrice"
+                    control={control}
+                    rules={{ required: 'Amount is required' }}
+                    render={({ field }) => (
+                        <Input
+                            label={`Video Upload Price`}
+                            {...register('uploadPrice')}
+                            type="number"
+                            placeholder={`Enter video upload price`}
+                        />
+                    )}
+                />
+            )}
+            {currentTab === 'videoUploadTypes' && (
+                <Controller
+                    name="buyPrice"
+                    control={control}
+                    rules={{ required: 'Amount is required' }}
+                    render={({ field }) => (
+                        <Input
+                            label={`Buy Video Price`}
+                            {...register('buyPrice')}
+                            type="number"
+                            placeholder={`Enter buy price`}
+                        />
+                    )}
+                />
+            )}
             {modalType === "edit" && (
                 <Controller
                     name="status"
@@ -156,29 +255,43 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
                 />
             )}
             <Controller
-                    name="status"
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                        <Select
-                            label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Status`}
-                            options={statusOptions}
-                            value={value || ''}
-                            onChange={(newValue: string) => onChange(newValue)}
-                        />
-                    )}
-                />
-            <label>{`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Description`}</label>
+                name="status"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                    <Select
+                        label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Status`}
+                        options={statusOptions}
+                        value={value || ''}
+                        onChange={(newValue: string) => onChange(newValue)}
+                    />
+                )}
+            />
+            <label>{currentTab === 'videoUploadTypes' ? 'Video Upload Description' : 'Ad Description'}</label>
             <Controller
-                name="description"
+                name={currentTab === 'videoUploadTypes' ? 'description' : 'typeDescription'}
                 control={control}
                 rules={{ required: true }}
                 render={({ field }) => (
                     <RichTextEditor
                         value={field.value || ''}
                         onChange={field.onChange}
-                        placeholder={`Enter description for ${currentType}`}
+                        placeholder={`Enter description for ${currentTab === 'videoUploadTypes' ? 'Video Upload Type' : 'Ad Type'}`}
                     />
                 )}
+            />
+            <FileUpload
+                uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
+                containerClass=""
+                uploadLabel="Drag and Drop or Browse"
+                setFile={(files: File | File[] | null) => {
+                if (files) {
+                    if (Array.isArray(files)) {
+                    handleImageUpload(files[0]);
+                    } else {
+                    handleImageUpload(files);
+                    }
+                }
+                }}
             />
             <Button
                 type="submit"

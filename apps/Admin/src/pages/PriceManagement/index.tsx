@@ -11,6 +11,7 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import Price from './modal/Price';
 import VideoUploadTypes from './../../../../Candidate/src/pages/VideoManagement/VideoManagement-Types/VideoUploadTypes';
+import { useCurrentUser } from './../../../../../libs/hooks/useCurrentUser';
 
 type PriceItem = {
   id: string;
@@ -66,6 +67,7 @@ const index = () => {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
+  const { currentUser, loading: userLoading, error: userError } = useCurrentUser();
   
   useEffect(() => {
     fetchPriceItems()
@@ -175,7 +177,7 @@ const index = () => {
                 className={`py-2 px-4 text-sm font-medium ${activeTab === tab ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}
                 onClick={() => setActiveTab(tab as typeof activeTab)}
               >
-                {`Add ${tab === 'videoUploadTypes' ? 'Video Type' : tab === 'adsTypes' ? 'Ad Type' : 'Buy Video Type'}`}
+                {`${tab === 'videoUploadTypes' ? 'Video Upload Type' : tab === 'adsTypes' ? 'Ad Type' : 'Buy Video Type'}`}
               </button>
             ))}
           </div>
@@ -183,7 +185,9 @@ const index = () => {
 
         <div className="mt-4">
           <div className="flex justify-end items-center mb-4">
-            <Button label="Add Price" variant="black" onClick={() => setOpenModal('add')} />
+            {(activeTab === 'videoUploadTypes' || activeTab === 'adsTypes') && (
+              <Button label="Add Price" variant="black" onClick={() => setOpenModal('add')} />
+            )}
           </div>
 
           <Table
@@ -196,7 +200,9 @@ const index = () => {
 
         <Modal open={openModal === 'add' || openModal === 'edit'} onClose={closeModal} sx={{ maxWidth: 'lg' }}>
           <>
-            <Price onClose={closeModal} currentTab={activeTab} item={selectedItem} open={true} modalType={openModal === 'add' ? 'add' : 'edit'} />
+            {currentUser && (
+              <Price onClose={closeModal} currentTab={activeTab} item={selectedItem} open={true} modalType={openModal === 'add' ? 'add' : 'edit'} currentUser={currentUser.name} />
+            )}
           </>
         </Modal>
       </Box>

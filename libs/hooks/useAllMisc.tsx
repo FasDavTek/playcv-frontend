@@ -59,19 +59,19 @@ interface MiscQueryParams {
     resource: string;
 }
 
-interface Specialisation {
+interface MiscItem {
     id: string;
     name: string;
 }
 
 interface UseAllMiscResult {
-    specialisations: Specialisation[];
+    data: MiscItem[];
     isLoading: boolean;
     error: Error | null;
 }
 
 export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
-    const [specialisations, setSpecialisations] = useState<Specialisation[]>([]);
+    const [data, setData] = useState<MiscItem[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
 
@@ -87,8 +87,15 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
                 });
 
                 const url = `${CONFIG.BASE_URL}${apiEndpoints.GET_MISC}?${queryParams.toString()}`;
-                const result = await getData(url);
-                setSpecialisations(result.data || []);
+                const response = await getData(url);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+
+                const result = await response.json();
+
+                setData(result.data || []);
             } catch (err) {
                 setError(err instanceof Error ? err : new Error('An error occurred while fetching data'));
             } finally {
@@ -99,5 +106,5 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
         fetchData();
     }, [params.page, params.limit, params.download, params.resource]);
 
-    return { specialisations, isLoading, error };
+    return { data, isLoading, error };
 };
