@@ -238,17 +238,19 @@ const index = () => {
   
   return (
     <div className='p-4 mb-8'>
-      {loading ? (
+      {/* {loading ? (
         <div className="flex items-center justify-center min-h-screen">
           <CircularProgress className="w-8 h-8 animate-spin" />
         </div>
       ) : (
         videos.length > 0 ? (
-          <Table loading={false} columns={columns} data={videos} />
+          
         ) : (
           <p>No videos available</p>
         )
-      )}
+      )} */}
+
+      <Table loading={false} columns={columns} data={videos} />
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="dialog-title" aria-describedby="dialog-description" PaperProps={{ sx: { padding: 3, borderRadius: 2, boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)', width: { xs: '90%', sm: '500px' }, maxWidth: '750px' }, }} BackdropProps={{ sx: { backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.2)', }, }} >
         <DialogTitle>Rejection Reason</DialogTitle>
