@@ -48,5 +48,5 @@ export enum apiEndpoints {
     COUNTRIES = '/api/v1/helper/location/countries/get',
     STATE = '/api/v1/helper/location/states/get',
     FAQ = '/api/v1/helper/get/faq',
-    GET_MISC = '/api/v1/helper/get',
+    GET_MISC = '/api/v1/helper/resource/get',
 }

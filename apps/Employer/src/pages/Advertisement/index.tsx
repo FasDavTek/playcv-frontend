@@ -157,7 +157,7 @@ const Advertisement = () => {
       }
 
       const adDetails = await response.json();
-      navigate(`/admin/advertisement-management/:${adId}`, {
+      navigate(`/employer/advertisement/view/:${adId}`, {
         state: { adDetails },
       });
     }
@@ -252,17 +252,19 @@ const Advertisement = () => {
       </div>
 
 
-      {loading ? (
+      {/* {loading ? (
         <div className="flex items-center justify-center min-h-screen">
           <CircularProgress className="w-8 h-8 animate-spin" />
         </div>
       ) : (
           ads.length > 0 ? (
-            <Table loading={false} data={ads} columns={columns} tableHeading="All Ads" />
+            
           ) : (
             <p>No ads available</p>
           )
-      )}
+      )} */}
+
+      <Table loading={false} data={ads} columns={columns} tableHeading="All Ads" />
 
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
         <CreateAdsConfirmModal onClose={closeModal} />

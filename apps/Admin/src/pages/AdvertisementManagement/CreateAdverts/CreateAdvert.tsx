@@ -45,6 +45,7 @@ interface CheckoutDetails {
     id: string;
     title: string;
     description: string;
+    action: string;
   }[];
 }
 
@@ -56,6 +57,10 @@ const CreateAdvertModal = () => {
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const { register, handleSubmit, watch, setValue, reset, control, formState: { errors },} = useForm<AdFormData>({
     resolver: zodResolver(advertSchema),
+    defaultValues: {
+      action: 'create',
+      userId: localStorage.getItem('userId') || '',
+    }
   });
 
   const location = useLocation();
@@ -260,7 +265,7 @@ const onSubmit = async (data: AdFormData) => {
         url: url,
         thumbnail: thumbnails[index] || null
       })),
-      thumbnail: thumbnailUrl,
+      coverURL: thumbnailUrl,
       paymentReference: checkoutDetails.paymentReference,
     };
 
@@ -280,6 +285,7 @@ const onSubmit = async (data: AdFormData) => {
         paymentReference: checkoutDetails.paymentReference,
         userId,
         isUploaded: true,
+        responseData,
       };
 
       const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData);

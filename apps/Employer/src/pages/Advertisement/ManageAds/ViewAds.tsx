@@ -122,7 +122,11 @@ const ViewAds = () => {
               if (!response.ok) throw new Error('Failed to fetch ad details')
               const data: AdDetails = await response.json()
               setAdDetails(data)
-              reset(data);
+              reset({
+                ...data,
+                action: 'edit',
+                adId: data.adId,
+              });
             } 
             catch (err) {
               console.error('Error fetching ad details:', err)

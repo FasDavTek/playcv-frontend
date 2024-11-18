@@ -27,135 +27,6 @@ type Vacancy = {
 
 
 const columnHelper = createColumnHelper<Vacancy>();
-//   const formatDate = (dateStr: string) => {
-//     const date = new Date(dateStr);
-//     return date.toLocaleDateString('en-GB', {
-//       day: '2-digit',
-//       month: 'short', // You can use 'long' for full month names
-//       year: 'numeric',
-//     });
-//   };
-
-//   if (type === 'active') {
-//     return [
-//       {
-//         id: 1,
-//         title: 'Software Engineer',
-//         startDate: formatDate('2024-09-01'),
-//         location: 'San Francisco, CA',
-//         employerName: 'TechCorp Inc.',
-//         companyImage: '/images/techcorp.png',
-//         jobDetails: 'Developing and maintaining software applications.',
-//         qualifications: 'BSc in Computer Science or related field.',
-//         keyResponsibilities: 'Writing clean, scalable code.',
-//         companyEmail: 'hr@techcorp.com',
-//         status: 'Active',
-//         jobUrl: 'https://techcorp.com/jobs/123',
-//       },
-//       {
-//         id: 2,
-//         title: 'Product Manager',
-//         startDate: formatDate('2024-08-15'),
-//         location: 'New York, NY',
-//         employerName: 'BizSolutions',
-//         companyImage: '/images/bizsolutions.png',
-//         jobDetails: 'Overseeing product development and strategy.',
-//         qualifications: 'MBA or equivalent experience.',
-//         keyResponsibilities: 'Defining product vision and strategy.',
-//         companyEmail: 'contact@bizsolutions.com',
-//         status: 'Expired',
-//         jobUrl: 'https://bizsolutions.com/jobs/456',
-//       },
-//       {
-//         id: 3,
-//         title: 'Data Analyst',
-//         startDate: formatDate('2024-08-05'),
-//         location: 'Austin, TX',
-//         employerName: 'DataCorp',
-//         companyImage: '/images/datacorp.png',
-//         jobDetails: 'Analyzing and interpreting complex data.',
-//         qualifications: 'Experience with SQL and Python.',
-//         keyResponsibilities: 'Generating actionable insights from data.',
-//         companyEmail: 'jobs@datacorp.com',
-//         status: 'Active',
-//         jobUrl: 'https://datacorp.com/jobs/789',
-//       },
-//       {
-//         id: 4,
-//         title: 'HR Specialist',
-//         startDate: formatDate('2024-07-30'),
-//         location: 'Seattle, WA',
-//         employerName: 'HRTech',
-//         companyImage: '/images/hrtech.png',
-//         jobDetails: 'Managing recruitment and employee relations.',
-//         qualifications: 'Experience in HR management.',
-//         keyResponsibilities: 'Developing HR policies and procedures.',
-//         companyEmail: 'hr@hrtech.com',
-//         status: 'Expired',
-//         jobUrl: 'https://hrtech.com/jobs/1011',
-//       },
-//     ];
-//   } else {
-//     return [
-//       {
-//         id: 5,
-//         title: 'Graphic Designer',
-//         startDate: formatDate('2024-07-20'),
-//         location: 'Los Angeles, CA',
-//         employerName: 'CreativeWorks',
-//         companyImage: '/images/creativeworks.png',
-//         jobDetails: 'Designing creative assets for marketing campaigns.',
-//         qualifications: 'Proficiency in Adobe Creative Suite.',
-//         keyResponsibilities: 'Creating visual content for digital platforms.',
-//         companyEmail: 'design@creativeworks.com',
-//         status: 'Pending',
-//         jobUrl: 'https://creativeworks.com/jobs/789',
-//       },
-//       {
-//         id: 6,
-//         title: 'Marketing Specialist',
-//         startDate: formatDate('2024-06-10'),
-//         location: 'Chicago, IL',
-//         employerName: 'MarketLeads',
-//         companyImage: '/images/marketleads.png',
-//         jobDetails: 'Executing marketing strategies and campaigns.',
-//         qualifications: 'Experience in digital marketing.',
-//         keyResponsibilities: 'Developing marketing materials.',
-//         companyEmail: 'marketing@marketleads.com',
-//         status: 'Rejected',
-//         jobUrl: 'https://marketleads.com/jobs/1011',
-//       },
-//       {
-//         id: 7,
-//         title: 'Sales Manager',
-//         startDate: formatDate('2024-05-15'),
-//         location: 'Miami, FL',
-//         employerName: 'SalesCorp',
-//         companyImage: '/images/salescorp.png',
-//         jobDetails: 'Managing the sales team and driving revenue.',
-//         qualifications: 'Experience in sales management.',
-//         keyResponsibilities: 'Achieving sales targets.',
-//         companyEmail: 'sales@salescorp.com',
-//         status: 'Pending',
-//         jobUrl: 'https://salescorp.com/jobs/1213',
-//       },
-//       {
-//         id: 8,
-//         title: 'Operations Manager',
-//         startDate: formatDate('2024-04-25'),
-//         location: 'Dallas, TX',
-//         employerName: 'OpsGlobal',
-//         companyImage: '/images/opsglobal.png',
-//         jobDetails: 'Overseeing daily operations and logistics.',
-//         qualifications: 'Experience in operations management.',
-//         keyResponsibilities: 'Streamlining operational processes.',
-//         companyEmail: 'ops@opsglobal.com',
-//         status: 'Rejected',
-//         jobUrl: 'https://opsglobal.com/jobs/1415',
-//       },
-//     ];
-//   }
-// };
 
 const JobManagement = () => {
   const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active');
@@ -165,35 +36,11 @@ const JobManagement = () => {
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
   const navigate = useNavigate();
 
-  const [page, setPage] = useState(1)
-  const [limit, setLimit] = useState(20);
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
-  const [datePosted, setDatePosted] = useState('')
-  const [jobTitle, setJobTitle] = useState('')
-  const [specialization, setSpecialization] = useState('')
-  const [status, setStatus] = useState('')
-  const [download, setDownload] = useState(false)
-  const [search, setSearch] = useState('')
-  const [location, setLocation] = useState('')
+
 
   const fetchJobs = async () => {
     try {
-      const queryParams = new URLSearchParams({
-        Page: page.toString(),
-        Limit: limit.toString(),
-        Start_Date: startDate,
-        End_Date: endDate,
-        DatePosted: datePosted,
-        JobTitle: jobTitle,
-        Specialization: specialization,
-        Status: status,
-        Download: download.toString(),
-        search: search,
-        Location: location
-      })
-
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?${queryParams}`);
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=15`);
       if (!resp.ok) {
         throw new Error("Failed to fetch jobs");
       }
@@ -223,7 +70,7 @@ const JobManagement = () => {
     fetchJobs();
     const interval = setInterval(fetchJobs, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [page, limit, startDate, endDate, datePosted, jobTitle, specialization, status, download, search, location]);
+  }, []);
 
 
 

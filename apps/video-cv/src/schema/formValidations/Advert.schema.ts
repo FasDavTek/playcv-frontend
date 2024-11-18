@@ -12,6 +12,10 @@ const isDayjs = (value: any): value is dayjs.Dayjs => {
 };
 
 export const advertSchema = z.object({
+  action: z.string(),
+  adId: z.number().optional(),
+  statusId: z.number(),
+  userId: z.string(),
   adName: z.string({required_error: ErrorMessages.required('Ad Name'),}).min(1, "Ad Name is required"),
   adDescription: z.string({required_error: ErrorMessages.required('Ad Description'),}).min(1, "Ad Description is required"),
   adUrl: z.string({required_error: ErrorMessages.required('Ad Url'),}).url("Must be a valid URL"),

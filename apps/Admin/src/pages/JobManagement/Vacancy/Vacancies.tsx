@@ -5,7 +5,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import styles
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Input, Button, RichTextEditor, FileUpload, SelectChip } from '@video-cv/ui-components';
+import { Input, Button, RichTextEditor, FileUpload, SelectChip, Select } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -51,14 +51,15 @@ const vacancySchema = z.object({
   title: z.string().min(1, "Job title is required"),
   companyImage: z.string().optional(),
   companyThumbnail: z.string().optional(),
-  employerName: z.string().min(1, "Company name is required"),
-  location: z.string().min(1, "Location is required"),
+  companyName: z.string().min(1, "Company name is required"),
+  countryId: z.string().min(1, "Country is required"),
+  stateId: z.string().min(1, "State is required"),
   jobDetails: z.string().min(1, "Job details are required"),
   qualifications: z.string().min(1, "Qualifications are required"),
   keyResponsibilities: z.string().min(1, "Key responsibilities are required"),
   companyEmail: z.string().email("Invalid email address"),
-  jobUrl: z.string().url("Invalid URL"),
-  specialisations: z.array(z.string()).min(1, "At least one specialisation is required"),
+  linkToApply: z.string().url("Invalid URL"),
+  specialisations: z.array(z.string().min(1, "At least one specialisation is required")),
   status: z.enum(['Active', 'Expired', 'Pending', 'Rejected']),
 });
 
@@ -70,16 +71,32 @@ const Vacancies = () => {
   const [companyImageFile, setCompanyImageFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCountryId, setSelectedCountryId] = useState<string>('');
   const [action, setAction] = useState<'create' | 'edit'>('create');
 
   const navigate = useNavigate();
   const location = useLocation();
   const job = location.state?.job;
 
-  const { specialisations, isLoading: isLoadingSpecialisations, error: specialisationsError } = useAllMisc({
+  const { data: specialisations, isLoading: isLoadingSpecialisations, error: specialisationsError } = useAllMisc({
     resource: 'specialization',
     page: 1,
     limit: 100,
+    download: false,
+  });
+
+  const { data: countries, isLoading: isLoadingCountries, error: countriesError } = useAllMisc({
+    resource: 'country',
+    page: 1,
+    limit: 190,
+    download: false,
+  });
+
+  const { data: states, isLoading: isLoadingStates, error: statesError } = useAllMisc({
+    resource: 'state',
+    page: 1,
+    limit: 100,
+    download: false,
   });
 
   const { register, handleSubmit, control, setValue, reset, watch, formState: { errors } } = useForm<VacancyFormData>({
@@ -122,48 +139,48 @@ const Vacancies = () => {
   };
 
   
-  useEffect(() => {
-    if (job) {
-      Object.entries(job).forEach(([key, value]) => {
-        if (key in vacancySchema.shape) {
-          const fieldKey = key as keyof VacancyFormData;
+  // useEffect(() => {
+  //   if (job) {
+  //     Object.entries(job).forEach(([key, value]) => {
+  //       if (key in vacancySchema.shape) {
+  //         const fieldKey = key as keyof VacancyFormData;
           
-          switch (fieldKey) {
-            case 'specialisations':
-              if (Array.isArray(value)) {
-                setValue(fieldKey, value);
-              }
-              break;
-            case 'status':
-              if (typeof value === 'string') {
-                const statusValue = value as VacancyFormData['status'];
-                if (['Active', 'Expired', 'Pending', 'Rejected'].includes(statusValue)) {
-                  setValue(fieldKey, statusValue);
-                }
-              }
-              break;
-            case 'id':
-            case 'title':
-            case 'companyImage':
-            case 'companyThumbnail':
-            case 'employerName':
-            case 'location':
-            case 'jobDetails':
-            case 'qualifications':
-            case 'keyResponsibilities':
-            case 'companyEmail':
-            case 'jobUrl':
-              if (typeof value === 'string') {
-                setValue(fieldKey, value);
-              }
-              break;
-            default:
-              console.warn(`Unexpected field: ${key}`);
-          }
-        }
-      });
-    }
-  }, [job, setValue]);
+  //         switch (fieldKey) {
+  //           case 'specialisations':
+  //             if (Array.isArray(value)) {
+  //               setValue(fieldKey, value);
+  //             }
+  //             break;
+  //           case 'status':
+  //             if (typeof value === 'string') {
+  //               const statusValue = value as VacancyFormData['status'];
+  //               if (['Active', 'Expired', 'Pending', 'Rejected'].includes(statusValue)) {---
+  //                 setValue(fieldKey, statusValue);
+  //               }
+  //             }
+  //             break;
+  //           case 'id':
+  //           case 'title':
+  //           case 'companyImage':
+  //           case 'companyThumbnail':
+  //           case 'companyName':
+  //           case 'location':
+  //           case 'jobDetails':
+  //           case 'qualifications':
+  //           case 'keyResponsibilities':
+  //           case 'companyEmail':
+  //           case 'linkToApply':
+  //             if (typeof value === 'string') {
+  //               setValue(fieldKey, value);
+  //             }
+  //             break;
+  //           default:
+  //             console.warn(`Unexpected field: ${key}`);
+  //         }
+  //       }
+  //     });
+  //   }
+  // }, [job, setValue]);
 
 
   const handleImageUpload = async (file: File) => {
@@ -203,7 +220,7 @@ const Vacancies = () => {
 
       const jobData = {
         ...data,
-        companyImage: companyImageUrl,
+        companyLogoUrl: companyImageUrl,
         action: action,
       };
 
@@ -268,18 +285,45 @@ const Vacancies = () => {
                   )}
                 </Grid>
                 <Grid item xs={12}>
-                <Input
-                    className='rounded-xl'
-                    label="Company Name"
-                    {...register('employerName')}
-                />
+                  <Input
+                      className='rounded-xl'
+                      label="Company Name"
+                      {...register('companyName')}
+                  />
                 </Grid>
                 <Grid item xs={12}>
-                <Input
-                    className='rounded-xl'
-                    label="Company Location"
-                    {...register('location')}
-                />
+                  <Controller
+                    name='countryId'
+                    control={control}
+                    render={({ field }) => (
+                      <Select 
+                        label='Country' 
+                        value={watch('countryId')} 
+                        options={countries.map(country => ({ value: country.id, label: country.name }))}
+                        onChange={(value) => {
+                          field.onChange(value);
+                          setSelectedCountryId(value);
+                          setValue('countryId', '');
+                        }}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Controller
+                    name='stateId'
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <Select 
+                        label='State' 
+                        value={watch('stateId')} 
+                        options={states.map(state => ({ value: state.id, label: state.name }))}
+                        onChange={(value) => {
+                          onChange('stateId', value);
+                        }}
+                      />
+                    )}
+                  />
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="subtitle2">Job Details</Typography>
@@ -293,8 +337,14 @@ const Vacancies = () => {
                   <Typography variant="subtitle2">Qualifications</Typography>
                   <RichTextEditor value={watch('qualifications')} onChange={(value) => setValue('qualifications', value)} placeholder={'Enter qualifications'} />
                 </Grid>
+                
                 <Grid item xs={12}>
-                  <SelectChip label='Specialisation' id='specialization-select' options={specialisations.map(spec => spec.name)} value={watch('specialisations')} onChange={(value) => setValue('specialisations', value)} />
+                  <SelectChip 
+                    label='Specialisation'
+                    id='specialization-select'
+                    options={specialisations.map(spec => spec.name )}
+                    value={watch('specialisations')}
+                    onChange={(value) => setValue('specialisations', value)} />
                 </Grid>
                 <Grid item xs={12}>
                   <Input
@@ -307,7 +357,7 @@ const Vacancies = () => {
                   <Input
                       className='rounded-xl'
                       label="Link to Apply"
-                      {...register('jobUrl')}
+                      {...register('linkToApply')}
                   />
                 </Grid>
                 <Grid item xs={12}>
