@@ -45,8 +45,16 @@ export enum apiEndpoints {
     VACANCY_BY_ID = '/api/v1/vacancy/get/{vacancyEmail}',
 
     // misc
-    COUNTRIES = '/api/v1/helper/location/countries/get',
-    STATE = '/api/v1/helper/location/states/get',
-    FAQ = '/api/v1/helper/get/faq',
+    COUNTRIES = '/api/v1/helper/location/countries/create-edit',
+    GET_COUNTRIES = '/api/v1/helper/location/countries/get',
+    STATE = '/api/v1/helper/location/state/create-edit',
+    GET_STATE = '/api/v1/helper/location/states/get',
+    FAQ = '/api/v1/helper/faq/create-edit',
     GET_MISC = '/api/v1/helper/resource/get',
+    COURSE = '/api/v1/helper/course/create-edit',
+    INDUSTRY = '/api/v1/helper/industry/create-edit',
+    DEGREE = '/api/v1/helper/degree-class/create-edit',
+    QHALIFICATION = '/api/v1/helper/qualification/create-edit',
+    TESTIMONIAL = '/api/v1/helper/site-testimonial/create-edit',
+    CV_GUIDELINE = '/api/v1/helper/cv-guideline/create-edit',
 }

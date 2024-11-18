@@ -257,25 +257,27 @@ const VideoManagement = () => {
   ];
 
   return (
-    <section className="ce-px ce-py">
+    <section className="">
         {/* Table comes here */}
         {/* filter logic comes here */}
-        {loading ? (
+        {/* {loading ? (
           <div className="flex items-center justify-center min-h-screen">
             <CircularProgress className="w-8 h-8 animate-spin" />
           </div>
         ) : (
           videos.length > 0 ? (
-            <Table
-              loading={false}
-              data={videos}
-              columns={columns}
-              tableHeading="All Video CV"
-            />
+            
           ) : (
             <p>No videos available</p>
           )
-        )}
+        )} */}
+
+        <Table
+          loading={false}
+          data={videos}
+          columns={columns}
+          tableHeading="All Video CV"
+        />
         
     </section>
   );

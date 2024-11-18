@@ -6,13 +6,13 @@
 @tailwind utilities;
 
 .centered-modal {
-  @apply fixed top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[100%] md:max-w-[450px] overflow-scroll h-full;
+  @apply fixed top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[100%] md:max-w-[450px] overflow-scroll h-auto;
 }
 .centered-modal-md {
-  @apply absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[90%] md:max-w-[30%] overflow-scroll h-full;
+  @apply absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[90%] md:max-w-[30%] overflow-scroll h-auto;
 }
 .centered-modal-large {
-  @apply absolute top-[80%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[90%] md:max-w-[75%] rounded-[20px] overflow-scroll h-full block;
+  @apply absolute top-[80%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[90%] md:max-w-[75%] rounded-[20px] overflow-scroll h-auto block;
 }
 
 .right-modal {
