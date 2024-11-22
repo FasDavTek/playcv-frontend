@@ -2,6 +2,10 @@
   command = "yarn build-landing && yarn build-employer && yarn build-candidate && yarn build-admin"
   publish = "dist/apps/video-cv"
 
+[build.environment]
+  SECRETS_SCAN_OMIT_PATHS = "dist/apps/*/assets/config-*.ts"
+  SECRETS_SCAN_OMIT_KEYS = "VITE_*"
+
 [[redirects]]
   from = "/employer/*"
   to = "/employer/index.html"
