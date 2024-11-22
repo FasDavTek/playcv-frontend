@@ -33,6 +33,7 @@ interface VideoProps {
   };
 }
 
+
 const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
   const { videoUrl, uploaderName, views, role, description, id, imageSrc, price, pinned, link = '/video/cV2gBU6hKfY' /*   link = `/video/${id}` */ } = video;
   const { cartState, dispatch } = useCart();

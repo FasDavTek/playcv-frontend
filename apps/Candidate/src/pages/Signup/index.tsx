@@ -82,6 +82,7 @@ const index = () => {
                 lastName: data.surname,
                 phoneNumber: data.phoneNumber,
                 businessName: data.businessName,
+                password: data.password,
             }
           
             const combinedData = {
