@@ -6,7 +6,7 @@ import { videoCVs } from '../utils/videoCVs'
 import { ChannelCard, Loader, VideoCard } from '.';
 import { Button } from '@video-cv/ui-components';
 import { Link } from 'react-router-dom';
-import { getData, postData } from './../../../../libs/utils/apis/apiMethods';
+import { getData } from './../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../libs/utils/helpers/config';
 

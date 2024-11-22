@@ -8,14 +8,32 @@ import { EffectCreative, Autoplay } from 'swiper/modules';
 import { Images } from '@video-cv/assets';
 import { Button, Input, Radio, Select } from '@video-cv/ui-components';
 import { VideoCard, Videos } from '../../components';
-import { videoCVs } from '../../utils/videoCVs';
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useNavigate } from 'react-router-dom';
+import { getData } from './../../../../../libs/utils/apis/apiMethods';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import CONFIG from './../../../../../libs/utils/helpers/config';
+
+interface Video {
+    id: string;
+    uploaderName: string;
+    role: string;
+    videoUrl: string;
+    uploadDate: string;
+    views: number;
+    isActive: boolean;
+    imageSrc?: string;
+    price: number;
+    description: string;
+    pinned?: boolean;
+}
 
 const heroImages = [Images.HeroImage6, Images.HeroImage7, Images.HeroImage8, Images.HeroImage9, Images.HeroImage9];
 
 const index = () => {
+    const [videos, setVideos] = useState<Video[]>([]);
+    const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -24,6 +42,25 @@ const index = () => {
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [isFilterApplied, setIsFilterApplied] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchVideos = async () => {
+          try {
+            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=100`);
+            if (response.isSuccess) {
+              setVideos(response.data);
+            } else {
+              console.error('Failed to fetch videos:', response.message);
+            }
+          } catch (error) {
+            console.error('Error fetching videos:', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchVideos();
+    }, []);
 
     useEffect(() => {
         const handleResize = () => {
@@ -48,7 +85,7 @@ const index = () => {
     }, []);
 
     const filterVideoCVs = () => {
-        return videoCVs.filter((video) => {
+        return videos.filter((video) => {
             const matchesText = video.role.toLowerCase().includes(searchText.toLowerCase());
             // const matchesCategory = setSelectedCategories.length === 0 || selectedCategories.includes(video.category);
             // return matchesText && matchesCategory;

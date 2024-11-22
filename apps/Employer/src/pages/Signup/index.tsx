@@ -41,7 +41,7 @@ type FormData = z.infer<typeof schema>;
 
 const Index = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       isTracked: true,
@@ -62,7 +62,7 @@ const Index = () => {
     return Math.floor(100000 + Math.random() * 900000);
   };
 
-  const onSubmit = async (data: FormData) => {
+  const submitForm = async (data: FormData) => {
     if (!termsAccepted) {
       toast.info("Please accept the Terms of Service to proceed.");
       return;
@@ -135,7 +135,11 @@ const Index = () => {
         <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
         <h2 className='font-semibold text-center md:text-left text-xl md:text-lg mb-1'>Create Business</h2>
         <p className='text-lg mb-7 text-center md:text-left text-neutral-300'>Create Your Business Profile</p>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={(e) => { 
+          e.preventDefault();
+          const data = getValues();
+          submitForm(data);
+        }}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Input type='text' label="First Name" placeholder="First Name" error={errors.firstName} {...register('firstName')} />
             <Input type='text' label="Middle Name" placeholder="Middle Name" error={errors.middleName} {...register('middleName')} />

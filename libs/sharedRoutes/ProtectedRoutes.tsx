@@ -337,5 +337,5 @@ const router = createBrowserRouter([
 ]);
 
 export default function ProtectedRoutes(): React.ReactElement {
-    return <RouterProvider router={router} />;
+    return <RouterProvider router={router} future={{ v7_startTransition: true }} />;
   }
