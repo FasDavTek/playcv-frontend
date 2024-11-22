@@ -208,11 +208,15 @@ const Payment = () => {
         tableHeading="All Payments"
       />
       <Modal open={openModal === 'paymentModal'} onClose={closeModal}>
-        <PaymentModal onClose={closeModal} />
+        <>
+          <PaymentModal onClose={closeModal} />
+        </>
       </Modal>
 
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
-        <CreateVideoConfirmationModal onClose={closeModal}/>
+        <>
+          <CreateVideoConfirmationModal onClose={closeModal}/>
+        </>
       </Modal>
     </div>
   );

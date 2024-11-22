@@ -9,7 +9,11 @@ import { toast } from 'react-toastify';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { postData } from './../../../../../libs/utils/apis/apiMethods';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import CONFIG from './../../../../../libs/utils/helpers/config';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+import { decodeJWT } from './../../../../../libs/utils/helpers/decoder';
 
 const schema = z.object({
     firstName: z.string().min(1, "First name is required"),
@@ -25,6 +29,9 @@ const schema = z.object({
       .regex(/[0-9]/, "Password must contain at least one number")
       .regex(/[\W_]/, "Password must contain at least one special character"),
     confirmPassword: z.string(),
+    isTracked: z.boolean(),
+    isBusinessUser: z.boolean(),
+    isProfessional: z.boolean(),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
@@ -36,6 +43,11 @@ const index = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(schema),
+        defaultValues: {
+            isTracked: true,
+            isBusinessUser: false,
+            isProfessional: true,
+        },
     });
 
     const [termsAccepted, setTermsAccepted] = useState(false);
@@ -54,8 +66,33 @@ const index = () => {
         setLoading(true);
 
         try {
-            localStorage.setItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA, JSON.stringify(data));
-            navigate('/candidate/profile');
+            const defaultValues = {
+                isTracked: true,
+                isBusinessUser: false,
+                isProfessional: true,
+            };
+          
+            const combinedData = {
+                ...data,
+                ...defaultValues,
+            };
+
+            const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_REGISTER}`, combinedData);
+
+            if (resp.isSuccess) {
+                toast.success(resp.message);
+                const token = resp.jtwToken;
+                const decoded = decodeJWT(token);
+                localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...resp, ...decoded, ...defaultValues }));
+                localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
+                localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, decoded.UserId);
+                localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, resp.jwtToken);
+                localStorage.setItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA, JSON.stringify(data));
+                navigate('/candidate/profile');
+            }
+            else {
+                toast.error(resp.message);
+            }
         } 
         catch (err) {
             console.error(err);
@@ -104,7 +141,7 @@ const index = () => {
                         </label>
                     </div>
                     <div className="flex justify-start gap-5 mt-5">
-                        <Button type='submit' variant="black" label={loading ? "Proceeding..." : "Proceed"} className='w-[60%]' disabled={loading} />
+                        <Button type='submit' variant="black" label={loading ? "Signing up..." : "Sign up"} className='w-[60%]' disabled={loading} />
                     </div>
                 </form>
                 <p className='text-lg mt-5 text-center text-neutral-300'>Already have an account? <span onClick={handleSignIn} className='text-blue-400 font-medium hover:underline cursor-pointer'>SignIn</span></p>

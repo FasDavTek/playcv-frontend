@@ -109,13 +109,13 @@ const Profile = () => {
     resolver: zodResolver(schema),
     defaultValues: {
       isTracked: true,
-      isBusinessUser: true,
-      isProfessional: false,
+      isBusinessUser: false,
+      isProfessional: true,
       nyscStartYear: new Date(),
       nyscEndYear: new Date(),
     },
   });
-  const [isSignup, setIsSignup] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   
@@ -123,7 +123,6 @@ const Profile = () => {
     const loadData = async () => {
       const signupData = localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
       if (signupData) {
-        setIsSignup(true);
         const parsedData = JSON.parse(signupData);
         Object.entries(parsedData).forEach(([key, value]) => {
           setValue(key as keyof FormData, value as string);
@@ -154,8 +153,8 @@ const Profile = () => {
     try {
       const defaultValues = {
         isTracked: true,
-        isBusinessUser: true,
-        isProfessional: false,
+        isBusinessUser: false,
+        isProfessional: true,
       };
   
       const combinedData = {
@@ -163,8 +162,7 @@ const Profile = () => {
         ...defaultValues,
       };
 
-      const endpoint = isSignup ? apiEndpoints.AUTH_REGISTER : apiEndpoints.PROFILE;
-      const res = await postData(`${CONFIG.BASE_URL}${endpoint}`, combinedData);
+      const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, combinedData);
 
       if (res.isSuccess) {
         toast.success(res.message);
@@ -175,16 +173,14 @@ const Profile = () => {
         localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, decoded.UserId);
         localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, res.jwtToken);
 
-        if (isSignup) {
-          localStorage.removeItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
-          navigate('/');
-        }
+        localStorage.removeItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
+        navigate('/');
       } else {
         toast.error(res.message);
       }
     } catch (err) {
       console.error(err);
-      toast.error(isSignup ? "An error occurred during signup" : "An error occurred while updating profile");
+      toast.error("An error occurred while updating profile");
     } finally {
       setLoading(false);
       setEditField(null);
@@ -461,7 +457,7 @@ const Profile = () => {
               )}
             </div>
             <div className="flex justify-end gap-5 mt-5">
-              <Button type='submit' variant='black' label={loading ? "Submitting..." : (isSignup ? "Complete Signup" : "Update Profile and Continue")} disabled={loading} />
+              <Button type='submit' variant='black' label={loading ? "Submitting..." : "Update Profile and Continue"} disabled={loading} />
             </div>
           </CustomTabPanel>
           <CustomTabPanel value={values} index={1}>

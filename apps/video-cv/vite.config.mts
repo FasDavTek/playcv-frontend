@@ -1,7 +1,9 @@
-/// <reference types='vitest' />
-import { defineConfig } from 'vite';
+/// <reference types='vitest/config' />
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import path from 'path';
+
 
 export default defineConfig({
   root: __dirname,
@@ -10,6 +12,15 @@ export default defineConfig({
   server: {
     port: 4200,
     host: 'localhost',
+
+    fs: {
+      allow: [
+        // Allow serving files from project root and up to two levels up
+        path.resolve(__dirname),
+        path.resolve(__dirname, '..'),
+        path.resolve(__dirname, '../..'),
+      ],
+    },
   },
 
   preview: {
@@ -44,6 +55,13 @@ export default defineConfig({
     coverage: {
       reportsDirectory: '../../coverage/apps/video-cv',
       provider: 'v8',
+    },
+  },
+
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@libs': path.resolve(__dirname, '../../libs'),
     },
   },
 });
