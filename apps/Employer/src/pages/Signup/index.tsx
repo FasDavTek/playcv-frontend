@@ -29,6 +29,7 @@ const schema = z.object({
   confirmPassword: z.string(),
   isTracked: z.boolean(),
   userTypeId: z.number(),
+  businessId: z.number(),
   isBusinessUser: z.boolean(),
   isProfessional: z.boolean(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -57,6 +58,10 @@ const Index = () => {
     setTermsAccepted(e.target.checked);
   };
 
+  const generateBusinessId = (): number => {
+    return Math.floor(100000 + Math.random() * 900000);
+  };
+
   const onSubmit = async (data: FormData) => {
     if (!termsAccepted) {
       toast.info("Please accept the Terms of Service to proceed.");
@@ -79,6 +84,7 @@ const Index = () => {
         phoneNumber: data.phoneNumber,
         businessName: data.businessName,
         password: data.password,
+        businessId: generateBusinessId(),
       }
 
       
