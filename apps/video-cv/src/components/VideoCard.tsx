@@ -16,26 +16,27 @@ import { Button } from '@video-cv/ui-components';
 import { useCart } from '../context/CartProvider';
 import { useAuth } from '../context/AuthProvider';
 
-interface VideoProps {
-  video: {
-    id: string;
-    uploaderName: string;
-    role: string;
-    videoUrl: string;
-    uploadDate: string;
-    views: number;
-    isActive: boolean;
-    imageSrc?: string;
-    price: number;
-    link?: string;
-    description: string;
-    pinned?: boolean;
-  };
+interface Video {
+  id: string;
+  uploaderName: string;
+  role: string;
+  videoUrl: string;
+  uploadDate: string;
+  views: number;
+  isActive: boolean;
+  imageSrc?: string;
+  price: number;
+  description: string;
+  pinned?: boolean;
+}
+
+interface VideoCardProps {
+  video: Video;
 }
 
 
-const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
-  const { videoUrl, uploaderName, views, role, description, id, imageSrc, price, pinned, link = '/video/cV2gBU6hKfY' /*   link = `/video/${id}` */ } = video;
+const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
+  const { id, uploaderName, role, views, imageSrc, price, pinned } = video;
   const { cartState, dispatch } = useCart();
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -97,15 +98,16 @@ const VideoCard: React.FC<VideoProps> = ({ video }: any) => {
       }}
       elevation={4}
     >
-      <Link to={link} style={{ textDecoration: 'none' }} >
+      <Link to={`/video/${id}`} style={{ textDecoration: 'none' }} >
         <CardMedia
           ref={ref}
           component='img'
           image={inView ? imageSrc || demoThumbnailUrl : demoThumbnailUrl}
           title={role}
           onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = demoThumbnailUrl;
+            const target = e.target as HTMLImageElement;
+            target.onerror = null;
+            target.src = demoThumbnailUrl;
           }}
           sx={{ width: { xs: '100%', sm: '358px' }, height: 180 }}
         />
