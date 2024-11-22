@@ -1,4 +1,3 @@
-// import { useAppState } from "../contexts/app/AppProvider";
 import ProtectedRoutes from '../../../../libs/sharedRoutes/ProtectedRoutes';
 import AuthRoutes from './AuthRoutes';
 import { useAuth } from '../context/AuthProvider';

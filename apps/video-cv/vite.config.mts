@@ -64,4 +64,12 @@ export default defineConfig({
       '@libs': path.resolve(__dirname, '../../libs'),
     },
   },
+
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler' // or "modern"
+      }
+    }
+  },
 });
