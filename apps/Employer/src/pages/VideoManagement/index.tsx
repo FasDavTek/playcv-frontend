@@ -266,19 +266,21 @@ const VideoManagement = () => {
     <div className="min-h-screen px-3 md:px-10 py-10">
         {/* Table comes here */}
         <div>
-          <Typography variant="caption" className="my-4">
+          <Typography variant="subtitle2" className="my-4">
             Recently Viewed Videos
           </Typography>
-          {viewedVideos.length > 0 ? (
+          {/* {viewedVideos.length > 0 ? (
+            
+          ) : (
+            <p>No viewed videos yet</p>
+          )} */}
+
             <Table
               loading={false}
               data={viewedVideos}
               columns={columns}
               tableHeading="Recently Viewed Videos"
             />
-          ) : (
-            <p>No viewed videos yet</p>
-          )}
         </div>
         {/* filter logic comes here */}
         {/* {loading ? (

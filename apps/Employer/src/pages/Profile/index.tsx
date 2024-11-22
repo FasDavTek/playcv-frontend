@@ -62,11 +62,11 @@ const Profile = () => {
     resolver: zodResolver(schema),
     defaultValues: {
       isTracked: true,
-      isBusinessUser: false,
-      isProfessional: true,
+      isBusinessUser: true,
+      isProfessional: false,
     },
   });
-  const [isSignup, setIsSignup] = useState(false);
+  
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(true);
@@ -75,7 +75,6 @@ const Profile = () => {
     const loadData = async () => {
       const signupData = localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
       if (signupData) {
-        setIsSignup(true);
         const parsedData = JSON.parse(signupData);
         Object.entries(parsedData).forEach(([key, value]) => {
           setValue(key as keyof FormData, value as string);
@@ -105,8 +104,8 @@ const Profile = () => {
     try {
       const defaultValues = {
         isTracked: true,
-        isBusinessUser: false,
-        isProfessional: true,
+        isBusinessUser: true,
+        isProfessional: false,
       };
   
       const combinedData = {
@@ -114,8 +113,8 @@ const Profile = () => {
         ...defaultValues,
       };
 
-      const endpoint = isSignup ? apiEndpoints.AUTH_REGISTER : apiEndpoints.PROFILE;
-      const res = await postData(`${CONFIG.BASE_URL}${endpoint}`, combinedData);
+      // const endpoint = isSignup ? apiEndpoints.AUTH_REGISTER : apiEndpoints.PROFILE;
+      const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, combinedData);
 
       if (res.isSuccess) {
         toast.success(res.message);
@@ -126,16 +125,16 @@ const Profile = () => {
         localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, decoded.UserId);
         localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, res.jwtToken);
 
-        if (isSignup) {
+        // if (isSignup) {
           localStorage.removeItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
           navigate('/');
-        }
+        // }
       } else {
         toast.error(res.message);
       }
     } catch (err) {
       console.error(err);
-      toast.error(isSignup ? "An error occurred during signup" : "An error occurred while updating profile");
+      toast.error("An error occurred while updating profile");
     } finally {
       setLoading(false);
       setEditField(null);
@@ -422,12 +421,12 @@ const Profile = () => {
             )}
           </div>
 
-          <Button type='submit' variant="black" disabled={loading} label={loading ? "Submitting..." : (isSignup ? "Complete Signup" : "Update Profile")} className='mt-5' />
+          <Button type='submit' variant="black" disabled={loading} label={loading ? "Submitting..." : "Update Profile"} className='mt-5' />
         </form>
       </Box>
       <Snackbar open={state.open} autoHideDuration={6000} onClose={() => setState({ ...state, open: false })} anchorOrigin={{ vertical: state.vertical, horizontal: state.horizontal }} action={<IconButton color='info' onClick={handleSnackbarClick}><InfoIcon /></IconButton>} message="Click the icon for more details">
         <Alert onClick={handleSnackbarClick} variant='filled' severity="info" sx={{ width: '100%', cursor: 'pointer' }}>
-          {isSignup ? "Please complete your profile to finish the signup process." : "Click on each field to edit your profile information."}
+          {"Click on each field to edit your profile information."}
         </Alert>
       </Snackbar>
 
