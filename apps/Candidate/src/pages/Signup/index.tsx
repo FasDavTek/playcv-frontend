@@ -30,6 +30,7 @@ const schema = z.object({
       .regex(/[\W_]/, "Password must contain at least one special character"),
     confirmPassword: z.string(),
     isTracked: z.boolean(),
+    userTypeId: z.number(),
     isBusinessUser: z.boolean(),
     isProfessional: z.boolean(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -45,6 +46,7 @@ const index = () => {
         resolver: zodResolver(schema),
         defaultValues: {
             isTracked: true,
+            userTypeId: 3,
             isBusinessUser: false,
             isProfessional: true,
         },
@@ -68,12 +70,22 @@ const index = () => {
         try {
             const defaultValues = {
                 isTracked: true,
+                userTypeId: 3,
                 isBusinessUser: false,
                 isProfessional: true,
             };
+
+            const payloadData = {
+                email: data.email,
+                firstName: data.firstName,
+                middleName: data.middleName,
+                lastName: data.surname,
+                phoneNumber: data.phoneNumber,
+                businessName: data.businessName,
+            }
           
             const combinedData = {
-                ...data,
+                ...payloadData,
                 ...defaultValues,
             };
 
