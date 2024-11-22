@@ -6,10 +6,8 @@ const encryptKey = import.meta.env.VITE_ENCRYPT_KEY;
 const enquiry = import.meta.env.VITE_ENQUIRY_KEY;
 const paystackey = import.meta.env.VITE_PAYSTACK_API_KEY;
 
-const isDevelopment = import.meta.env.DEV;
-
 const CONFIG = {
-  BASE_URL: isDevelopment ? 'http://localhost:4100/api' : baseUrl,
+  BASE_URL: baseUrl,
   PUBLIC_KEY: publicKey,
   SECRET_KEY: secretKey,
   FLUT_URL: flutUrl,
