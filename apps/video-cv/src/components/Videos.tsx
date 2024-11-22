@@ -6,9 +6,28 @@ import { videoCVs } from '../utils/videoCVs'
 import { ChannelCard, Loader, VideoCard } from '.';
 import { Button } from '@video-cv/ui-components';
 import { Link } from 'react-router-dom';
+import { getData, postData } from './../../../../libs/utils/apis/apiMethods';
+import { apiEndpoints } from './../../../../libs/utils/apis/apiEndpoints';
+import CONFIG from './../../../../libs/utils/helpers/config';
+
+interface Video {
+  id: string;
+  uploaderName: string;
+  role: string;
+  videoUrl: string;
+  uploadDate: string;
+  views: number;
+  isActive: boolean;
+  imageSrc?: string;
+  price: number;
+  description: string;
+  pinned?: boolean;
+}
 
 // TODO: Rename component
-const Videos = ({ videos }: any) => {
+const Videos = () => {
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [videosPerPage, setVideosPerPage] = useState(0);
   const [columns, setColumns] = useState(1);
@@ -23,6 +42,25 @@ const Videos = ({ videos }: any) => {
   };
 
   useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=100`);
+        if (response.isSuccess) {
+          setVideos(response.data);
+        } else {
+          console.error('Failed to fetch videos:', response.message);
+        }
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
+  useEffect(() => {
     const handleResize = () => {
       const cols = calculateColumns();
       setColumns(cols);
@@ -35,7 +73,8 @@ const Videos = ({ videos }: any) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
-  if (!videoCVs?.length) return <Loader />;
+  if (loading) return <Loader />;
+  if (!videos.length) return <p>No videos available</p>;
 
   const totalPages = Math.ceil(videos.length / videosPerPage);
 
@@ -56,7 +95,7 @@ const Videos = ({ videos }: any) => {
           {/* {videoCVs.map((item: any, idx: number) => (
             <Box key={idx}>{item.url && <VideoCard video={item} />}</Box>
           ))} */}
-          {currentVideos.map((video: any) => (
+          {currentVideos.map((video: Video) => (
             // <Link key={video.id} to={`/video/${video.id}`} state={video}>
               <Box key={video.id}>
                 <VideoCard video={video} />
