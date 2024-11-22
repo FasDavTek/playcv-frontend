@@ -85,7 +85,7 @@ const Feed = () => {
             LATEST VIDEOS
           </Typography>
 
-          <Videos videos={videoCVs.slice(0, 20)} />
+          <Videos />
         </Box>
 
           {/* LAtest jobs section */}
@@ -111,7 +111,7 @@ const Feed = () => {
             VIDEOS
           </Typography>
 
-          <Videos videos={videoCVs.slice(10, 30)} />
+          <Videos />
         </Box>
 
         <Box className="mt-20">
@@ -125,7 +125,7 @@ const Feed = () => {
             EXPERIENCED PROFESSIONAL
           </Typography>
 
-          <Videos videos={videoCVs.slice(10, 30)} />
+          <Videos />
         </Box>
 
       </Box>
