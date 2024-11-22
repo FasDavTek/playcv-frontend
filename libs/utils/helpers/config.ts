@@ -9,7 +9,7 @@ const paystackey = import.meta.env.VITE_PAYSTACK_API_KEY;
 const isDevelopment = import.meta.env.DEV;
 
 const CONFIG = {
-  BASE_URL: isDevelopment ? baseUrl : baseUrl,
+  BASE_URL: isDevelopment ? 'http://localhost:4100/api' : baseUrl,
   PUBLIC_KEY: publicKey,
   SECRET_KEY: secretKey,
   FLUT_URL: flutUrl,
