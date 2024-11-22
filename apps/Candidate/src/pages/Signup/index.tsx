@@ -17,13 +17,13 @@ import { decodeJWT } from './../../../../../libs/utils/helpers/decoder';
 
 const schema = z.object({
     firstName: z.string().min(1, "First name is required"),
-    middleName: z.string().optional(),
+    middleName: z.string().min(1, "Middle name is required"),
     surname: z.string().min(1, "Surname is required"),
-    businessName: z.string().optional(),
-    phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
+    businessName: z.string().min(1, "Business name is required"),
+    phoneNumber: z.string().min(10, "Phone number must be at least 11 digits"),
     email: z.string().email("Invalid email format"),
     password: z.string()
-      .min(8, "Password must be at least 8 characters long")
+      .min(8, "Password must be at least 6 characters long")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
       .regex(/[0-9]/, "Password must contain at least one number")
@@ -65,6 +65,8 @@ const index = () => {
     };
 
     const onSubmit = async (data: FormData) => {
+        console.log(CONFIG.BASE_URL);
+
         if (!termsAccepted) {
             toast.info("Please accept the Terms of Service to proceed.");
             return;
@@ -97,6 +99,7 @@ const index = () => {
             };
 
             const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_REGISTER}`, combinedData);
+            console.log(CONFIG.BASE_URL);
 
             if (resp.isSuccess) {
                 toast.success(resp.message);
