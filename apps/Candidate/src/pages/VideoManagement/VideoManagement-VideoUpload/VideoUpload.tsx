@@ -69,7 +69,7 @@ const VideoUpload: React.FC = () => {
 
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${paymentId}`);
-        if (!response.Success) {
+        if (!response.isSuccess) {
           throw new Error('Failed to fetch checkout details');
         }
         const data: CheckoutDetails = await response.json();
@@ -110,7 +110,7 @@ const VideoUpload: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_CATEGORY}?Page=1&Limit=10`)
-        if (response.Success) {
+        if (response.isSuccess) {
           setCategories(response.data)
         } else {
           throw new Error(response.message || 'Failed to fetch categories')
@@ -237,7 +237,7 @@ const VideoUpload: React.FC = () => {
 
       const uploadResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, apiData);
       
-      if (uploadResponse.Success) {
+      if (uploadResponse.isSuccess) {
         toast.success('Video uploaded and payment confirmed successfully');
         reset();
         navigate('/candidate/video-management');

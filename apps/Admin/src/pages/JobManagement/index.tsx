@@ -41,7 +41,7 @@ const JobManagement = () => {
   const fetchJobs = async () => {
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=15`);
-      if (!resp.Success) {
+      if (!resp.isSuccess) {
         throw new Error("Failed to fetch jobs");
       }
 
@@ -77,7 +77,7 @@ const JobManagement = () => {
   const handleView = async (vacancyId: string) => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
-      if (!response.Success) {
+      if (!response.isSuccess) {
         throw new Error('Error fetching job details');
       }
 
@@ -96,7 +96,7 @@ const JobManagement = () => {
   const handleEdit = async (vacancyId: string) => {
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
-      if (!resp.Success) {
+      if (!resp.isSuccess) {
         throw new Error('Error fetching job details');
       }
 

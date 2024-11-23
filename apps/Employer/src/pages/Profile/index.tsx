@@ -116,7 +116,7 @@ const Profile = () => {
       // const endpoint = isSignup ? apiEndpoints.AUTH_REGISTER : apiEndpoints.PROFILE;
       const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, combinedData);
 
-      if (res.Success) {
+      if (res.isSuccess) {
         toast.success(res.message);
         const token = res.jwtToken;
         const decoded = decodeJWT(token);
@@ -539,7 +539,7 @@ export default Profile;
     //   const endpoint = isSignup ? apiEndpoints.AUTH_REGISTER : apiEndpoints.PROFILE;
     //   const res = await postData(`${CONFIG.BASE_URL}${endpoint}`, data);
 
-    //   if (res.Success) {
+    //   if (res.isSuccess) {
     //     toast.success(res.message);
     //     const token = res.jwtToken;
     //     const decoded = decodeJWT(token);

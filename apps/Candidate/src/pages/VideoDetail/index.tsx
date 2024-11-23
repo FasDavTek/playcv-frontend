@@ -51,7 +51,7 @@ const VideoDetail = () => {
       setError(null)
       try {
         const response = await fetch(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}${videoId}`)
-        if (!response.Success) {
+        if (!response.isSuccess) {
           throw new Error('Failed to fetch video details')
         }
         const data = await response.json()

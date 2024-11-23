@@ -91,7 +91,7 @@ const index = () => {
   const fetchVideos = async () => {
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=10`)
-      if (!resp.Success) {
+      if (!resp.isSuccess) {
         throw new Error("Failed to fetch videos");
       }
 
@@ -143,7 +143,7 @@ const index = () => {
   const handleView = async (videoId: string) => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${videoId}`);
-      if (!response.Success) {
+      if (!response.isSuccess) {
         throw new Error('Error fetching video details');
       }
 
@@ -167,7 +167,7 @@ const index = () => {
       };
 
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_VIDEO}`, apiData)
-      if (!response.Success) {
+      if (!response.isSuccess) {
         throw new Error(`Failed to ${action} video`)
       }
 

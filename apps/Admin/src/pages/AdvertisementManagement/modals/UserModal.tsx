@@ -68,7 +68,7 @@ const CreateAdvertModal = () => {
           <Select
             label="Advert Type"
             options={options}
-            value={watch('adType')}
+            value={watch('adType') || ''}
             onChange={(value: string) => {
               if (value === "video" || value === "image") {
                 setValue('adType', value);

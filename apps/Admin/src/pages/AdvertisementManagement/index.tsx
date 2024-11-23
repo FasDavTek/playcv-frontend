@@ -5,7 +5,6 @@ import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, In
 
 import { formatDate } from '@video-cv/utils';
 import { Button, Table, TextArea } from '@video-cv/ui-components';
-import { UserModal } from './modals';
 import { useNavigate } from 'react-router-dom';
 import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
@@ -53,7 +52,7 @@ const Payment = () => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Page=1&Limit=10`);
 
-      if (!response.Success) {
+      if (!response.isSuccess) {
         throw new Error('Network response was not ok');
       }
 
@@ -82,7 +81,7 @@ const Payment = () => {
   const fetchAds = async () => {
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_ADS}?Page=1&Limit=10`)
-      if (!resp.Success) {
+      if (!resp.isSuccess) {
         throw new Error("Failed to fetch ads");
       }
 
@@ -119,7 +118,7 @@ const Payment = () => {
   const handleView = async (adId: string) => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${adId}`);
-      if (!response.Success) {
+      if (!response.isSuccess) {
         throw new Error('Error fetching ad details');
       }
 
@@ -143,7 +142,7 @@ const Payment = () => {
       }
 
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_ADS}`, apiData)
-      if (!response.Success) {
+      if (!response.isSuccess) {
         throw new Error(`Failed to ${action === 'a' ? 'activate' : 'suspend'} ad`)
       }
 
