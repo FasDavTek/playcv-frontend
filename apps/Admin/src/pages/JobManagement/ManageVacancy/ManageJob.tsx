@@ -64,7 +64,7 @@ const ManageJob: React.FC  = () => {
     setLoading(true);
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
-      if (!response.isSuccess) {
+      if (!response.ok) {
         const jobData = await response.json()
         reset(jobData)
       }

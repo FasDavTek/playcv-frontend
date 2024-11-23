@@ -41,7 +41,7 @@ const Orders = () => {
     const fetchPayments = async () => {
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.FETCH_ALL_PAYMENTS}`);
-        if (response.isSuccess) {
+        if (response.ok) {
           const data = await response.json();
           setPayments(data);
         } else {

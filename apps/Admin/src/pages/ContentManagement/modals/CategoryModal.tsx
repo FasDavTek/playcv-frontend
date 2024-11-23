@@ -80,7 +80,7 @@ const CategoryModal = ({
         action: action === 'add' ? 'create' : 'edit',
       }
       const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, contentData);
-      if (response.isSuccess) {
+      if (response.ok) {
         toast.success(`${action === 'add' ? 'Created' : 'Updated'} successfully`);
         onClose();
       } else {

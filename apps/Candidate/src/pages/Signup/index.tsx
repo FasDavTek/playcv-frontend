@@ -96,7 +96,7 @@ const index = () => {
 
             const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_REGISTER}`, combinedData);
 
-            if (resp.isSuccess) {
+            if (resp.ok) {
                 toast.success(resp.message);
                 const token = resp.jtwToken;
                 const decoded = decodeJWT(token);
