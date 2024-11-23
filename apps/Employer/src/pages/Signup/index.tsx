@@ -29,7 +29,6 @@ const schema = z.object({
   confirmPassword: z.string(),
   isTracked: z.boolean(),
   userTypeId: z.number(),
-  businessId: z.number(),
   isBusinessUser: z.boolean(),
   isProfessional: z.boolean(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -84,7 +83,6 @@ const Index = () => {
         phoneNumber: data.phoneNumber,
         businessName: data.businessName,
         password: data.password,
-        businessId: generateBusinessId(),
       }
 
       
@@ -111,9 +109,8 @@ const Index = () => {
         toast.error(resp.message);
       }
     } 
-    catch (err) {
-      console.error(err);
-      toast.error("An error occurred during signup");
+    catch (err: any) {
+      toast.error(err.message);
     } 
     finally {
       setLoading(false);
