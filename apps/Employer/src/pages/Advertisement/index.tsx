@@ -88,7 +88,7 @@ const Advertisement = () => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Page=1&Limit=10`);
 
-      if (!response.Success) {
+      if (!response.isSuccess) {
         throw new Error('Network response was not ok');
       }
 
@@ -117,7 +117,7 @@ const Advertisement = () => {
   const fetchAds = async () => {
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?Page=1&Limit=10`)
-      if (!resp.Success) {
+      if (!resp.isSuccess) {
         throw new Error("Failed to fetch ads");
       }
 
@@ -152,7 +152,7 @@ const Advertisement = () => {
   const handleView = async (adId: string) => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${adId}`);
-      if (!response.Success) {
+      if (!response.isSuccess) {
         throw new Error('Error fetching ad details');
       }
 

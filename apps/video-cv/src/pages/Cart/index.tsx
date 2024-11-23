@@ -29,7 +29,7 @@ const Cart = () => {
   const onPaymentSuccess = async (response: any) => {
     try {
       toast.info('Processing payment...');
-      await payButtonFn();
+      payButtonFn();
 
       if (!paymentDetails) {
         throw new Error('Payment failed or was cancelled');
@@ -45,9 +45,8 @@ const Cart = () => {
         purchaseDetails: selectedItems.map(itemId => {
           const item = cartState.cart.find(cartItem => cartItem.id === itemId);
           return {
-            videoId: item?.videoId,
-            quantity: paymentDetails?.quantity,
-            amount: paymentDetails?.price
+            videoId: item?.id,
+            amount: paymentDetails?.amount,
           };
         }),
         status: paymentDetails.status,
@@ -61,7 +60,7 @@ const Cart = () => {
       };
 
       const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, PaymentDetailsData);
-      if (resp.Success) {
+      if (resp.isSuccess) {
         console.log('Payment successful');
         // toast.success("Payment details saved successfully");
         // Clear cart or remove purchased items
@@ -89,11 +88,6 @@ const Cart = () => {
     toast.error("Payment failed. Please try again.");
   };
 
-
-
-  const handlePaymentComplete = useCallback((reference: string, paymentDetails: PaymentDetails) => {
-    return { reference, paymentDetails }
-  });
 
 
 
@@ -150,7 +144,7 @@ const Cart = () => {
       }
     };
     
-    payButtonFn(paymentConfig);
+    payButtonFn();
   };
 
   useEffect(() => {

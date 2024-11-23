@@ -21,7 +21,7 @@ type AdDetails = {
     adUrl: string;
     startDate: string;
     endDate: string;
-    media: { type: 'image' | 'video'; url: string }[];
+    media: { type: string; url: string }[];
 };
 
 type State = {
@@ -31,7 +31,7 @@ type State = {
     error: string | null;
     isUploading: boolean;
     uploadUrls: string[];
-    newMedia: { type: 'image' | 'video'; url: string }[];
+    newMedia: { type: string; url: string }[];
 };
 
 type FileUploadProps = {
@@ -257,8 +257,14 @@ const ManageAdvertisement = () => {
                             <Select
                                 label="Advert Type"
                                 options={options}
-                                value={value}
-                                onChange={(value) => onChange(value)}
+                                value={watch('adType') || ''}
+                                onChange={(value: string) => {
+                                    if (value === "video" || value === "image") {
+                                    setValue('adType', value);
+                                    } else {
+                                    console.error(`Invalid ad type: ${value}`);
+                                    }
+                                }}
                             />
                         )}
                     />

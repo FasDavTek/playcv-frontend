@@ -89,7 +89,7 @@ const CreateEditUSer: React.FC = () => {
     setLoading(true);
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USER}/${userEmail}`);
-      if (response.Success) {
+      if (response.isSuccess) {
         const userData = await response.json();
         Object.keys(userData).forEach((key) => {
           setValue(key as keyof IForm, userData[key]);
@@ -156,7 +156,7 @@ const CreateEditUSer: React.FC = () => {
       }
 
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_PROF_EMP_USER}`, userData);
-      if (response.Success) {
+      if (response.isSuccess) {
         toast.success(`User updated successfully`);
         navigate('/admin/user-management');
       } 

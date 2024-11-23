@@ -92,7 +92,7 @@ const ViewAds = () => {
           try {
             if (!id) throw new Error('Ad ID is not defined')
             const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${id}`)
-            if (!response.Success) throw new Error('Failed to fetch ad details')
+            if (!response.isSuccess) throw new Error('Failed to fetch ad details')
             const data: AdDetails = await response.json()
             setAdDetails(data)
             reset({
@@ -111,7 +111,7 @@ const ViewAds = () => {
         const fetchAdTypes = async () => {
           try {
             const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
-            if (!response.Success) throw new Error('Failed to fetch ad types')
+            if (!response.isSuccess) throw new Error('Failed to fetch ad types')
             const data: string[] = await response.json()
             setAdTypes(data.map(type => ({ value: type as string, label: type })))
           } 
@@ -149,7 +149,7 @@ const ViewAds = () => {
           }
     
           const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData)
-          if (!response.Success) throw new Error('Failed to update ad')
+          if (!response.isSuccess) throw new Error('Failed to update ad')
           
           toast.success('Ad updated successfully')
           setIsEditing(false)

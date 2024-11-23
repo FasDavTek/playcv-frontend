@@ -74,7 +74,7 @@ const UserManagement = () => {
     setLoading(true);
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USERS}?respType=${activeTab}`)
-      if (resp.Success) {
+      if (resp.isSuccess) {
         const data = await resp.json();
         setUsers(data);
       }
@@ -99,7 +99,7 @@ const UserManagement = () => {
         userEmail: email,
         status: newStatus
       });
-      if (response.Success) {
+      if (response.isSuccess) {
         setUsers(users.map(user => 
           user.email === email ? { ...user, status: newStatus } : user
         ));

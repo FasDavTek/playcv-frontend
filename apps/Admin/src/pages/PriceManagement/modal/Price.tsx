@@ -151,7 +151,7 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
             }
           const endpoint = currentTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE
           const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, priceData)
-          if (response.Success) {
+          if (response.isSuccess) {
             toast.success(`${modalType === 'add' ? 'Added' : 'Updated'} successfully`)
             onClose()
           } else {
