@@ -20,76 +20,23 @@ const CreateAdsConfirmation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState<LocationState | null>(null);
 
-  useEffect(() => {
-    if (location.state) {
-      const { AdType, price, paymentReference } = location.state as LocationState;
-      if (AdType && price && paymentReference) {
-        setState({ AdType, price, paymentReference });
-      } else {
-        toast.error('Invalid creation data. Redirecting....');
-        navigate('/admin/advertisement-management');
-      }
-    } else {
-      toast.error('Error occured. Redirecting....');
-      navigate('/admin/advertisement-management');
-    }
-  }, [location.state, navigate]);
+  const { uploadRequestId, adTypeId, adTypeName, price, paymentReference, paymentDetails } = location.state || {};
 
   const handleCreateNow = () => {
-    if (state) {
-      navigate('/admin/advertisement-management/upload', {
-        state: {
-          AdType: state.AdType,
-          videoPrice: state.price,
-          paymentReference: state.paymentReference
-        }
-      });
-    } else {
-      toast.error('Missing Ad information. Please try again.');
-      navigate('/admin/advertisement-management');
-    }
+    navigate('/admin/advertisement-management/upload', {
+      state: {
+        uploadRequestId,
+        adTypeId,
+        adTypeName,
+        price,
+        paymentReference,
+        paymentDetails
+      }
+    });
   };
 
-  const handleCreateLater = async () => {
-    if (!state) {
-      toast.error('Missing Ad information. Please try again.');
-      navigate('/admin/advertisement-management');
-      return;
-    }
-
-    setIsLoading(true)
-    try {
-      const userId = localStorage.getItem('userId')
-
-      if (!userId) {
-        throw new Error('User ID not found')
-      }
-
-      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, {
-        AdType: state.AdType,
-        AdPrice: state.price,
-        paymentReference: state.paymentReference,
-        userId
-      });
-      // const userId = 'user-id';
-      // const AdId = 'Ad-id';
-
-      // await axios.post('/api/Ad-drafts', { userId, AdId });
-
-      if (response.status === 200) {
-        toast.success('Your payment has been saved. You can create your Ad later.')
-        navigate('/admin/advertisement-management');
-      } else {
-        throw new Error('Failed to save payment information')
-      }
-    } 
-    catch (error) {
-      console.error('Failed to create Ad draft:', error);
-      toast.error('Failed to save payment information. Please try again.');
-    }
-    finally {
-      setIsLoading(false);
-    }
+  const handleCreateLater = () => {
+    navigate('/admin/advertisement-management');
   };
 
   return (
@@ -98,7 +45,7 @@ const CreateAdsConfirmation = () => {
       <p>Your payment was successful. What would you like to do next?</p>
       <p className='text-red-500 my-4'><span className='font-semibold'>NOTE: </span>By uploading your AdCV on this platfom, you have read the AdCV guideline thoroughly and you agree to this platform's Terms and Conditions</p>
       <Stack direction='row' gap={4}>
-      <Button variant='custom' label={isLoading ? 'Saving...' : 'Upload Later'} onClick={handleCreateLater} disabled={isLoading} />
+        <Button variant='custom' label={isLoading ? 'Saving...' : 'Upload Later'} onClick={handleCreateLater} disabled={isLoading} />
         <Button variant='black' label="Upload Now" onClick={handleCreateNow} />
       </Stack>
       

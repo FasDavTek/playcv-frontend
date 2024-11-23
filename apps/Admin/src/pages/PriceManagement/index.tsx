@@ -78,7 +78,7 @@ const index = () => {
     try {
       const endpoint = activeTab === 'videoUploadTypes' ? apiEndpoints.VIDEO_UPLOAD_TYPE : apiEndpoints.ADS_TYPE;
       const resp = await getData(`${CONFIG.BASE_URL}${endpoint}`);
-      if (resp.ok) {
+      if (resp.Success) {
         const data = await resp.json();
         setPriceItems(data);
       }
@@ -104,7 +104,7 @@ const index = () => {
         id,
         status: newStatus,
       });
-      if (resp.ok) {
+      if (resp.Success) {
         setPriceItems(priceItems.map(item =>
           item.id === id ? { ...item, status: newStatus } : item
         ))

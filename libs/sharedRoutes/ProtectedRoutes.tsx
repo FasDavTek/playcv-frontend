@@ -7,6 +7,7 @@ import AppLayout from '../../apps/video-cv/src/layouts/AppLayout';
 import AuthLayout from '../../apps/video-cv/src/layouts/AuthLayout';
 import ErrorBoundary from '../../apps/video-cv/src/routes/ErrorBoundary';
 import { Layout } from '../ui-components';
+import { AuthProvider, useAuth } from '../context/AuthContext';
 // import { routes } from "../constants";
 
 const Home = lazy(() => import('../../apps/video-cv/src/pages/Home'));
@@ -337,5 +338,9 @@ const router = createBrowserRouter([
 ]);
 
 export default function ProtectedRoutes(): React.ReactElement {
-    return <RouterProvider router={router} future={{ v7_startTransition: true }} />;
+    return (
+        <AuthProvider>
+            <RouterProvider router={router} future={{ v7_startTransition: true }} />
+        </AuthProvider>
+    );
   }

@@ -59,7 +59,7 @@ const Login = () => {
   const fetchUserProfile = async (userId: string): Promise<UserProfile | undefined | null | void> => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}/${userId}?Page=1&Limit=10`);
-      if (response.isSuccess) {
+      if (response.Success) {
         localStorage.setItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA, JSON.stringify(response.data));
         console.log("User profile fetched successfully");
       } else {
@@ -82,7 +82,7 @@ const Login = () => {
         reqBody
       );
 
-      if (res.isSuccess) {
+      if (res.Success) {
         toast.success(res.message);
         const token = res.jwtToken;
         const decoded = decodeJWT(token);

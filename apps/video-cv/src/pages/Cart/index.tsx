@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -19,24 +19,89 @@ const Cart = () => {
   const location = useLocation();
   const { cartState, dispatch } = useCart();
   const { authState } = useAuth();
-  const [totalAmount, setTotalAmount] = useState<number>(0);
+  const [price, setPrice] = useState<number>(0);
   const [triggerPayment, setTriggerPayment] = useState<boolean>(false);
-
-  const { payButtonFn } = usePaystack(
-    totalAmount,
-    () => {
-      console.log('onSuccess callback');
-      const from = location.state?.from || '/';
-      navigate(from, { replace: true });
-    },
-    () => {
-      console.log('onFailure callback');
-    }
-  );
-
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
+
+
+  const onPaymentSuccess = async (response: any) => {
+    try {
+      toast.info('Processing payment...');
+      await payButtonFn();
+
+      if (!paymentDetails) {
+        throw new Error('Payment failed or was cancelled');
+      }
+      
+      const PaymentDetailsData = {
+        buyerId: authState.user?.id,
+        currency: paymentDetails.currency,
+        total: paymentDetails.amount,
+        countryCode: 'NG',
+        datetime: paymentDetails.paidAt || new Date().toISOString(),
+        reference_Id: paymentDetails.reference,
+        purchaseDetails: selectedItems.map(itemId => {
+          const item = cartState.cart.find(cartItem => cartItem.id === itemId);
+          return {
+            videoId: item?.videoId,
+            quantity: paymentDetails?.quantity,
+            amount: paymentDetails?.price
+          };
+        }),
+        status: paymentDetails.status,
+        cardType: paymentDetails.cardType || "Unknown",
+        cardDetails: `${paymentDetails.cardBrand || "Unknown"} ${paymentDetails.cardType || ""}`,
+        last_Four: paymentDetails.last4 || "Unknown",
+        paymentType: "purchase",
+        userIdentifier: authState.user?.email,
+        transactionFee: paymentDetails.fees || 0,
+        chargedTaxAmount: 0,
+      };
+
+      const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, PaymentDetailsData);
+      if (resp.Success) {
+        console.log('Payment successful');
+        // toast.success("Payment details saved successfully");
+        // Clear cart or remove purchased items
+        selectedItems.forEach(id => dispatch({ type: 'REMOVE_FROM_CART', payload: { id } }));
+        setSelectedItems([]);
+        setSelectAll(false);
+      }
+      else {
+        toast.error("Unable to save payment details");
+      }
+    }
+    catch (err) {
+      // console.error("Error saving payment details:", error);
+      toast.error("An error occurred while saving payment details");
+    }
+
+    const from = location.state?.from || '/';
+    navigate(from, { replace: true });
+  };
+
+
+
+  const onPaymentFailure = () => {
+    console.log('Payment failed');
+    toast.error("Payment failed. Please try again.");
+  };
+
+
+
+  const handlePaymentComplete = useCallback((reference: string, paymentDetails: PaymentDetails) => {
+    return { reference, paymentDetails }
+  });
+
+
+
+  const { payButtonFn, paymentDetails, isProcessing } = usePaystack(
+    price,
+    onPaymentSuccess,
+    onPaymentFailure
+  );
 
   useEffect(() => {
     if (selectAll) {
@@ -51,7 +116,7 @@ const Cart = () => {
     const newTotalPrice = cartState.cart
       .filter(item => selectedItems.includes(item.id))
       .reduce((acc, item) => acc + item.price, 0);
-    setTotalAmount(newTotalPrice);
+    setPrice(newTotalPrice);
   }, [selectedItems, cartState.cart]);
 
 
@@ -62,8 +127,8 @@ const Cart = () => {
   // console.log('isAuth', isAuthenticated);
   const handleCheckout = () => {
     if (!authState.isAuthenticated) {
-      const from = location.state?.from || '/';
-      navigate(from, { replace: true });
+      toast.info("Please log in to proceed with checkout");
+      navigate('/auth/login', { state: { from: location.pathname } });
       return;
     }
 
@@ -73,7 +138,7 @@ const Cart = () => {
 
     const paymentConfig = {
       email: authState.user?.email || '',
-      amount: totalAmount * 100, // Paystack expects amount in kobo
+      amount: price * 100, // Paystack expects amount in kobo
       metadata: {
         custom_fields: [
           {
@@ -85,7 +150,7 @@ const Cart = () => {
       }
     };
     
-    payButtonFn();
+    payButtonFn(paymentConfig);
   };
 
   useEffect(() => {
@@ -93,7 +158,7 @@ const Cart = () => {
       payButtonFn();
       setTriggerPayment(false);
     }
-  }, [totalAmount, triggerPayment, payButtonFn]);
+  }, [price, triggerPayment, payButtonFn]);
 
   const ClampedText = styled(Typography)({
     display: '-webkit-box',
@@ -191,7 +256,7 @@ const Cart = () => {
             <div className="flex justify-between px-1 py-0.5">
               <p className="px-1 py-0.5">Subtotal</p>
               <p className="">
-                ₦{totalAmount}
+                ₦{price}
               </p>
             </div>
             <div className="px-1 py-0.5">
@@ -215,7 +280,7 @@ const Cart = () => {
           <div className="flex justify-between px-1 py-0.5">
             <p className="px-1 py-0.5">Subtotal</p>
             <p className="">
-              ₦{totalAmount}
+              ₦{price}
             </p>
           </div>
           <div className="px-1 py-0.5">

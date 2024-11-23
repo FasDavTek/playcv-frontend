@@ -53,7 +53,7 @@ const AdUploadTypes: React.FC = () => {
     const fetchUploadTypes = async () => {
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD_TYPE}?Page=1&Limit=10`)
-        if (!response.ok) {
+        if (!response.Success) {
           throw new Error('Failed to fetch upload types')
         }
         const data: AdType[] = await response.json()

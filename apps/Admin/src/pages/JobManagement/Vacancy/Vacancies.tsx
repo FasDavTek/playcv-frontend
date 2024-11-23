@@ -120,7 +120,7 @@ const Vacancies = () => {
     setIsLoading(true);
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
-      if (!response.ok) {
+      if (!response.Success) {
         const jobData = await response.json()
         reset(jobData)
         setAction('edit')
@@ -226,7 +226,7 @@ const Vacancies = () => {
 
       const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.OPEN_VACANCY}`, jobData);
 
-      if (resp.ok) {
+      if (resp.Success) {
         toast.success(action === 'edit' ? 'Job updated successfully' : 'Job posted successfully!');
         navigate('/admin/job-management');
       }

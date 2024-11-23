@@ -29,9 +29,14 @@ const s3Client = new S3Client({
 
 type AdFormData = z.infer<typeof advertSchema>;
 
+interface AdType {
+    value: string
+    label: string
+  }
+
 interface AdDetails extends Omit<AdFormData, 'files'> {
     id: string
-    media: { type: 'image' | 'video'; url: string }[];
+    media: { type: string; url: string }[];
     status: 'pending' | 'approved' | 'rejected';
 }
 
@@ -40,7 +45,7 @@ const ViewAds = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [adDetails, setAdDetails] = useState<AdDetails | null>(null)
-    const [adTypes, setAdTypes] = useState<{ value: 'video' | 'image'; label: string }[]>([])
+    const [adTypes, setAdTypes] = useState<AdType[]>([])
     const [isEditing, setIsEditing] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -87,7 +92,7 @@ const ViewAds = () => {
           try {
             if (!id) throw new Error('Ad ID is not defined')
             const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${id}`)
-            if (!response.ok) throw new Error('Failed to fetch ad details')
+            if (!response.Success) throw new Error('Failed to fetch ad details')
             const data: AdDetails = await response.json()
             setAdDetails(data)
             reset({
@@ -106,9 +111,9 @@ const ViewAds = () => {
         const fetchAdTypes = async () => {
           try {
             const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
-            if (!response.ok) throw new Error('Failed to fetch ad types')
+            if (!response.Success) throw new Error('Failed to fetch ad types')
             const data: string[] = await response.json()
-            setAdTypes(data.map(type => ({ value: type as 'video' | 'image', label: type })))
+            setAdTypes(data.map(type => ({ value: type as string, label: type })))
           } 
           catch (err) {
             console.error('Error fetching ad types:', err)
@@ -124,7 +129,7 @@ const ViewAds = () => {
         try {
             if (!adDetails || !id) throw new Error('Ad details are not available')
 
-            let updatedMedia: { type: 'image' | 'video'; url: string }[] = [...adDetails.media]
+            let updatedMedia: { type: string; url: string }[] = [...adDetails.media]
     
           if (newMedia.length > 0) {
               const uploadPromises = newMedia.map(async (file) => {
@@ -133,7 +138,7 @@ const ViewAds = () => {
             })
     
             const uploadedMedia = await Promise.all(uploadPromises)
-            updatedMedia = [...updatedMedia, ...uploadedMedia] as { type: 'image' | 'video'; url: string }[]
+            updatedMedia = [...updatedMedia, ...uploadedMedia] as { type: string; url: string }[]
           }
     
           const updatedData: AdDetails = {
@@ -144,7 +149,7 @@ const ViewAds = () => {
           }
     
           const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData)
-          if (!response.ok) throw new Error('Failed to update ad')
+          if (!response.Success) throw new Error('Failed to update ad')
           
           toast.success('Ad updated successfully')
           setIsEditing(false)
@@ -257,9 +262,15 @@ const ViewAds = () => {
                     render={({ field: { onChange, value } }) => (
                         <Select
                             label="Advert Type"
-                            options={adTypes}
-                            value={value}
-                            onChange={(value) => onChange(value)}
+                            options={adTypes.map((type) => ({ value: type.value, label: type.label }))}
+                            value={watch('adType') || ''}
+                            onChange={(value: string) => {
+                                if (value === "video" || value === "image") {
+                                  setValue('adType', value);
+                                } else {
+                                  console.error(`Invalid ad type: ${value}`);
+                                }
+                              }}
                         />
                     )}
                 />
