@@ -163,7 +163,7 @@ const VideoManagement = () => {
   const fetchVideos = async () => {
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.EMPLOYER_AUTH_VIDEO_LIST}?Page=1&Limit=10`)
-      if (!resp.isSuccess) {
+      if (!resp.ok) {
         throw new Error("Failed to fetch videos");
       }
 
@@ -196,7 +196,7 @@ const VideoManagement = () => {
   const handleView = async (videoId: string) => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${videoId}`);
-      if (!response.isSuccess) {
+      if (!response.ok) {
         throw new Error('Error fetching video details');
       }
 

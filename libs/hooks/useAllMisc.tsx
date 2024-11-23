@@ -89,7 +89,7 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
                 const url = `${CONFIG.BASE_URL}${apiEndpoints.GET_MISC}?${queryParams.toString()}`;
                 const response = await getData(url);
                 
-                if (!response.isSuccess) {
+                if (!response.ok) {
                     throw new Error('Failed to fetch data');
                 }
 

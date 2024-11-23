@@ -60,7 +60,7 @@ const Cart = () => {
       };
 
       const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, PaymentDetailsData);
-      if (resp.isSuccess) {
+      if (resp.ok) {
         console.log('Payment successful');
         // toast.success("Payment details saved successfully");
         // Clear cart or remove purchased items

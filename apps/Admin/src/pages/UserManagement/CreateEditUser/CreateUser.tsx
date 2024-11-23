@@ -138,7 +138,7 @@ const CreateUser = () => {
             const endpoint = userType === 'subAdmins' ? apiEndpoints.CREATE_SUB_ADMIN : apiEndpoints.CREATE_PROF_EMP_USER;
             const resp = await postData(`${CONFIG.BASE_URL}${endpoint}`, userData);
 
-            if (resp.isSuccess) {
+            if (resp.ok) {
                 toast.success('User created successfully');
                 reset();
                 navigate('/admin/user-management');
