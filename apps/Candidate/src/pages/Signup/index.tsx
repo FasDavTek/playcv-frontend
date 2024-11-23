@@ -31,7 +31,6 @@ const schema = z.object({
     confirmPassword: z.string().optional(),
     isTracked: z.boolean(),
     userTypeId: z.number(),
-    businessId: z.number(),
     isBusinessUser: z.boolean(),
     isProfessional: z.boolean(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -88,7 +87,6 @@ const index = () => {
                 phoneNumber: data.phoneNumber,
                 businessName: data.businessName,
                 password: data.password,
-                businessId: generateBusinessId(),
             }
           
             const combinedData = {
@@ -97,7 +95,6 @@ const index = () => {
             };
 
             const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_REGISTER}`, combinedData);
-            console.log(CONFIG.BASE_URL);
 
             if (resp.Success) {
                 toast.success(resp.message);
@@ -114,9 +111,9 @@ const index = () => {
                 toast.error(resp.message);
             }
         } 
-        catch (err) {
+        catch (err: any) {
             console.error(err);
-            toast.error("An error occurred during signup");
+            toast.error(err.message);
         } 
         finally {
             setLoading(false);
