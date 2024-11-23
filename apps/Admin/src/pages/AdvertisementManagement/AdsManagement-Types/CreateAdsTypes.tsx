@@ -7,14 +7,31 @@ import { Card, CardContent, CardHeader, CircularProgress, Typography } from '@mu
 import { getData, postData } from '../../../../../../libs/utils/apis/apiMethods';
 import CONFIG from '../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from '../../../../../../libs/utils/apis/apiEndpoints';
+import { useAuth } from './../../../../../../libs/context/AuthContext';
 
 interface AdType {
   id: string
   name: string
   description: string
   price: number
-  imageUrl?: string;
-  videoUrl? : string;
+  coverUrl?: string;
+  redirectUrl? : string;
+}
+
+interface PaymentDetails {
+  reference: string;
+  status: string;
+  transaction: string;
+  amount: number;
+  currency: string;
+  cardType?: string;
+  cardBrand?: string;
+  last4?: string;
+  bank?: string;
+  channelType?: string;
+  paidAt?: string;
+  createdAt?: string;
+  fees?: number;
 }
 
 const AdUploadTypes: React.FC = () => {
@@ -23,6 +40,7 @@ const AdUploadTypes: React.FC = () => {
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get('type');
   const [price, setPrice] = useState<number>(0);
+  const { authState } = useAuth();
   const [selectedType, setSelectedType] = useState<AdType | null>(null);
   const [adTypes, setAdTypes] = useState<AdType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,8 +70,8 @@ const AdUploadTypes: React.FC = () => {
   useEffect(() => {
     const fetchUploadTypes = async () => {
       try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD_TYPE}?Page=1&Limit=10`)
-        if (!response.ok) {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}?Page=1&Limit=10`)
+        if (!response.Success) {
           throw new Error('Failed to fetch upload types')
         }
         const data: AdType[] = await response.json()
@@ -77,21 +95,82 @@ const AdUploadTypes: React.FC = () => {
 
 
 
-  const onPaymentSuccess = async (reference: string) => {
-    // console.log('Payment successful:', reference);
-    // console.log('Amount paid:', price);
+  const onPaymentSuccess = async (reference: string, paymentDetails: PaymentDetails) => {
     if (selectedType) {
-          navigate(`/admin/advertisement-management/confirmation`, { 
-            state: {
-              adTypeId: selectedType.id,
-              adTypeName: selectedType?.name.charAt(0).toUpperCase(), 
-              price: price,
-              paymentReference: reference,
-            }
+      try {
+        const paymentConfirmationData = {
+          userId: authState.user?.id,
+          currency: paymentDetails.currency,
+          total: paymentDetails.amount,
+          countryCode: "NG",
+          datetime: paymentDetails.paidAt || new Date().toISOString(),
+          reference_Id: paymentDetails.reference,
+          // purchaseDetails: [{
+          //   videoId: uploadResponse.data.videoId,
+          //   quantity: 1,
+          //   amount: paymentDetails.amount
+          // }],
+          status: paymentDetails.status,
+          cardType: paymentDetails.cardType || "Unknown",
+          cardDetails: `${paymentDetails.cardBrand || "Unknown"} ${paymentDetails.cardType || ""}`,
+          last_Four: paymentDetails.last4 || "Unknown",
+          paymentType: "upload",
+          uploadType: selectedType.name,
+          uploadTypeId: selectedType.id,
+          userIdentifier: authState.user?.email,
+          adTypeId: selectedType.id,
+          transactionFee: paymentDetails.fees || 0,
+          chargedTaxAmount: 0,
+          isUploaded: false, // This indicates that the video has been uploaded
+        };
+
+
+        const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData);
+
+
+        if (!paymentResponse.Success) {
+          toast.error('Unable to save payment details');
+          throw new Error('Unable to save payment details');
+        }
+
+
+        // Create an upload request
+        const uploadRequestPayload = {
+          userId: authState.user?.id,
+          adId: null, // This will be filled later when the video is uploaded
+          name: selectedType?.name.charAt(0).toUpperCase(),
+          adTypeId: selectedType.id,
+          description: "",
+          coverUrl: "",
+          redirectUrl: "",
+          action: "create",
+          statusId: null,
+          startDate: null,
+          endDate: null,
+          paymentId: paymentResponse.data.id
+        };
+
+        const uploadRequestResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, uploadRequestPayload);
+
+        if (!uploadRequestResponse.Success) {
+          throw new Error('Failed to create upload request');
+        }
+
+        // Navigate to the confirmation page
+        navigate(`/admin/advertisement-management/confirmation`, { 
+          state: {
+            uploadRequestId: uploadRequestResponse.data.id,
+            adTypeId: selectedType.id,
+            adTypeName: selectedType.name,
+            price: price,
+            paymentReference: reference,
+            paymentId: paymentResponse.data.id
+          }
         });
-      // localStorage.setItem('videoType', selectedType.name);
-      // localStorage.setItem('videoPrice', price.toString());
-      
+      } catch (error) {
+        console.error('Error creating upload request:', error);
+        toast.error('Failed to process your request. Please try again.');
+      }
     }
   };
 
@@ -183,14 +262,15 @@ const AdUploadTypes: React.FC = () => {
                 <strong>Price:</strong> {adType.price.toFixed(2)} NGN
               </p>
               <img
-                src={adType.imageUrl}
+                src={adType.coverUrl}
                 alt={`${adType.name} Example`}
                 className="w-full h-auto mb-4 rounded-lg"
               />
               <Button 
                 variant="black" 
                 onClick={() => handlePayment(adType)}
-                label={`Choose ${adType.name}`}
+                label={isProcessing ? 'Processing...' : `Choose ${adType.name}`}
+                disabled={isProcessing}
               >
               </Button>
             </CardContent>

@@ -38,7 +38,7 @@ const Id: React.FC = () => {
 
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT_DETAILS}/${id}`);
-        if (response.ok) {
+        if (response.Success) {
           const data = await response.json();
           setPaymentDetails(data);
         } else {

@@ -20,7 +20,7 @@ export const useCurrentUser = () => {
       try {
         setLoading(true);
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`);
-        if (!response.ok) {
+        if (!response.Success) {
           throw new Error('Failed to fetch user profile');
         }
         const userData = await response.json();

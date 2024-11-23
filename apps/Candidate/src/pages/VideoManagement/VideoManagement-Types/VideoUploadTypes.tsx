@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CircularProgress, Typography } from '@mu
 import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
+import { useAuth } from './../../../../../../libs/context/AuthContext';
 
 interface UploadType {
   id: string
@@ -16,27 +17,34 @@ interface UploadType {
   imageUrl: string
 }
 
+interface PaymentDetails {
+  reference: string;
+  status: string;
+  transaction: string;
+  amount: number;
+  currency: string;
+  cardType?: string;
+  cardBrand?: string;
+  last4?: string;
+  bank?: string;
+  channelType?: string;
+  paidAt?: string;
+  createdAt?: string;
+  fees?: number;
+}
+
 const VideoUploadTypes: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get('type');
   const [price, setPrice] = useState<number>(0);
+  const { authState } = useAuth();
   const [selectedType, setSelectedType] = useState<UploadType | null>(null);
   const [uploadTypes, setUploadTypes] = useState<UploadType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const storedPinnedPrice = parseFloat(localStorage.getItem('pinnedVideoPrice') || '5000');
-  const storedRegularPrice = parseFloat(localStorage.getItem('regularVideoPrice') || '2000');
-
-  // const calculatePrice = useCallback(() => {
-  //   if (type === 'pinned') {
-  //     setPrice(storedPinnedPrice);
-  //   } else {
-  //     setPrice(storedRegularPrice);
-  //   }
-  // }, [type, storedPinnedPrice, storedRegularPrice]);
 
   const calculatePrice = useCallback((selectedType: UploadType | undefined) => {
     if (selectedType) {
@@ -44,15 +52,12 @@ const VideoUploadTypes: React.FC = () => {
     }
   }, [])
 
-  // useEffect(() => {
-  //   calculatePrice();
-  // }, [calculatePrice]);
 
   useEffect(() => {
     const fetchUploadTypes = async () => {
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD_TYPE}?Page=1&Limit=10`)
-        if (!response.ok) {
+        if (!response.Success) {
           throw new Error('Failed to fetch upload types')
         }
         const data: UploadType[] = await response.json()
@@ -76,21 +81,79 @@ const VideoUploadTypes: React.FC = () => {
 
 
 
-  const onPaymentSuccess = async (reference: string) => {
-    // console.log('Payment successful:', reference);
-    // console.log('Amount paid:', price);
+  const onPaymentSuccess = async (reference: string, paymentDetails: PaymentDetails) => {
     if (selectedType) {
-          navigate(`/candidate/video-management/confirmation`, { 
-            state: {
-              uploadTypeId: selectedType.id,
-              uplloadTypeName: selectedType?.name.charAt(0).toUpperCase(), 
-              price: price,
-              paymentReference: reference,
-            }
+      try {
+        const paymentConfirmationData = {
+          userId: authState.user?.id,
+          currency: paymentDetails.currency,
+          total: paymentDetails.amount,
+          countryCode: "NG",
+          datetime: paymentDetails.paidAt || new Date().toISOString(),
+          reference_Id: paymentDetails.reference,
+          // purchaseDetails: [{
+          //   videoId: uploadResponse.data.videoId,
+          //   quantity: 1,
+          //   amount: paymentDetails.amount
+          // }],
+          status: paymentDetails.status,
+          cardType: paymentDetails.cardType || "Unknown",
+          cardDetails: `${paymentDetails.cardBrand || "Unknown"} ${paymentDetails.cardType || ""}`,
+          last_Four: paymentDetails.last4 || "Unknown",
+          paymentType: "upload",
+          uploadType: selectedType.name,
+          uploadTypeId: selectedType.id,
+          userIdentifier: authState.user?.email,
+          // adTypeId: selectedType.adTypeId,
+          transactionFee: paymentDetails.fees || 0,
+          chargedTaxAmount: 0,
+          isUploaded: false, // This indicates that the video has been uploaded
+        };
+
+
+        const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData);
+
+
+        if (!paymentResponse.Success) {
+          toast.error('Unable to save payment details');
+          throw new Error('Unable to save payment details');
+        }
+
+
+        // Create an upload request
+        const uploadRequestPayload = {
+          videoId: null, // This will be filled later when the video is uploaded
+          title: "",
+          typeId: selectedType.id,
+          description: "",
+          transcript: "",
+          categoryId: null,
+          videoUrl: "",
+          action: "create",
+          paymentId: paymentResponse.data.id
+        };
+
+        const uploadRequestResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, uploadRequestPayload);
+
+        if (!uploadRequestResponse.Success) {
+          throw new Error('Failed to create upload request');
+        }
+
+        // Navigate to the confirmation page
+        navigate(`/candidate/video-management/confirmation`, { 
+          state: {
+            uploadRequestId: uploadRequestResponse.data.id,
+            uploadTypeId: selectedType.id,
+            uploadTypeName: selectedType.name,
+            price: price,
+            paymentReference: reference,
+            paymentId: paymentResponse.data.id
+          }
         });
-      // localStorage.setItem('videoType', selectedType.name);
-      // localStorage.setItem('videoPrice', price.toString());
-      
+      } catch (error) {
+        console.error('Error creating upload request:', error);
+        toast.error('Failed to process your request. Please try again.');
+      }
     }
   };
 
@@ -100,6 +163,7 @@ const VideoUploadTypes: React.FC = () => {
     toast.error('Payment failed');
     setSelectedType(null);
   };
+
 
   const { payButtonFn, isProcessing } = usePaystack(
     price,
@@ -189,7 +253,8 @@ const VideoUploadTypes: React.FC = () => {
               <Button 
                 variant="black" 
                 onClick={() => handlePayment(uploadType)}
-                label={`Choose ${uploadType.name}`}
+                label={isProcessing ? 'Processing...' : `Choose ${uploadType.name}`}
+                disabled={isProcessing}
               >
               </Button>
             </CardContent>

@@ -8,12 +8,29 @@ import { LOCAL_STORAGE_KEYS } from '../utils/localStorage';
 import { postData } from '../utils/apis/apiMethods';
 import { apiEndpoints } from '../utils/apis/apiEndpoints';
 
+interface PaymentDetails {
+  reference: string;
+  status: string;
+  transaction: string;
+  amount: number;
+  currency: string;
+  cardType?: string;
+  cardBrand?: string;
+  last4?: string;
+  bank?: string;
+  channelType?: string;
+  paidAt?: string;
+  createdAt?: string;
+  fees?: number;
+}
+
 const usePaystack = (
   amount: number,
-  onCompleteCB?: (reference: string) => void,
+  onCompleteCB?: (reference: string, paymentDetails: PaymentDetails) => void,
   onCloseCB?: () => void,
   options: Partial<HookConfig> = {}
 ) => {
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
   const [paymentReference, setPaymentReference] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -37,7 +54,7 @@ const usePaystack = (
   //   setIsProcessing(true);
   //   try {
   //     const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentDetails);
-  //     if (response.isSuccess) {
+  //     if (response.Success) {
   //       toast.success('Payment processed successfully');
   //       return true;
   //     } else {
@@ -56,14 +73,31 @@ const usePaystack = (
   // };
   
   const payButtonFn = useCallback(() => {
+    setIsProcessing(true);
     initializePayment({
       ...config,
-      onSuccess: async (reference: string) => {
-        setPaymentReference(reference);
-          toast.success('Payment Successful');
-          if (onCompleteCB) {
-            onCompleteCB(reference);
-          }
+      onSuccess: async (response: any) => {
+        setIsProcessing(false);
+        const details: PaymentDetails = {
+          reference: response.reference,
+          status: response.status,
+          transaction: response.transaction,
+          amount: response.amount / 100,
+          currency: response.currency,
+          cardType: response.authorization?.card_type,
+          cardBrand: response.authorization?.brand,
+          last4: response.authorization?.last4,
+          bank: response.authorization?.bank,
+          channelType: response.channel,
+          paidAt: response.paid_at,
+          createdAt: response.created_at,
+          fees: response.fees / 100,
+        };
+        setPaymentDetails(details);
+        toast.success('Payment Successful');
+        if (onCompleteCB) {
+          onCompleteCB(response.reference, details);
+        }
       },
       onClose: () => {
         setIsProcessing(false);
@@ -75,9 +109,9 @@ const usePaystack = (
       },
     })
    
-  }, [amount, onCompleteCB, onCloseCB, options, config]);
+  }, [amount, onCompleteCB, onCloseCB, options, config, initializePayment]);
 
-  return { payButtonFn, paymentReference, isProcessing };
+  return { payButtonFn, paymentDetails, isProcessing };
 };
 
 export default usePaystack;

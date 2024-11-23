@@ -7,10 +7,12 @@ import { toast } from 'react-toastify';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
 import { Button, Input, FileUpload, Select, RichTextEditor } from '@video-cv/ui-components';
+import { usePaystack } from '@video-cv/payment';
 import { videoUploadSchema } from './../../../../../video-cv/src/schema/videoUploadSchema';
 import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
+import { useAuth } from './../../../../../../libs/context/AuthContext';
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -30,6 +32,7 @@ interface Category {
 
 interface CheckoutDetails {
   videoType: string;
+  uploadTypeId: string;
   price: number;
   paymentReference: string;
   videos: {
@@ -37,6 +40,8 @@ interface CheckoutDetails {
     title: string;
     description: string;
   }[];
+  adTypeId?: string;
+  duration?: string;
 }
 
 const VideoUpload: React.FC = () => {
@@ -49,21 +54,22 @@ const VideoUpload: React.FC = () => {
   });
   const location = useLocation();
   const navigate = useNavigate();
+  const { authState } = useAuth();
   const [checkoutDetails, setCheckoutDetails] = useState<CheckoutDetails | null>(null);
+  const { uploadRequestId, uploadTypeId, uploadTypeName, price, paymentReference, paymentId } = location.state || {};
 
 
   useEffect(() => {
     const fetchCheckoutDetails = async () => {
-      const state = location.state as { checkoutId: string } | undefined;
-      if (!state || !state.checkoutId) {
+      if (paymentId) {
         toast.error('Invalid upload data. Redirecting....');
-        navigate('/candidate/video-management');
+        // navigate('/candidate/video-management');
         return;
       }
 
       try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${state.checkoutId}`);
-        if (!response.ok) {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${paymentId}`);
+        if (!response.Success) {
           throw new Error('Failed to fetch checkout details');
         }
         const data: CheckoutDetails = await response.json();
@@ -81,12 +87,12 @@ const VideoUpload: React.FC = () => {
       } catch (error) {
         console.error('Error fetching checkout details:', error);
         toast.error('Failed to load video details. Please try again.');
-        navigate('/candidate/video-management');
+        // navigate('/candidate/video-management');
       }
     };
 
     fetchCheckoutDetails();
-  }, [location.state, navigate, setValue]);
+  }, [paymentId, navigate, setValue]);
 
 
   const options = [
@@ -104,7 +110,7 @@ const VideoUpload: React.FC = () => {
     const fetchCategories = async () => {
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_CATEGORY}?Page=1&Limit=10`)
-        if (response.isSuccess) {
+        if (response.Success) {
           setCategories(response.data)
         } else {
           throw new Error(response.message || 'Failed to fetch categories')
@@ -205,7 +211,6 @@ const VideoUpload: React.FC = () => {
   const onSubmitHandler = async (data: FormData) => {
     if (!checkoutDetails) {
       toast.error('Missing video information. Please try again.');
-      navigate('/candidate/video-management');
       return;
     }
 
@@ -219,44 +224,25 @@ const VideoUpload: React.FC = () => {
       }
 
       const apiData = {
+        videoId: uploadRequestId,
         title: data.name,
-        uploadTypeId: data.videoType,
+        typeId: uploadTypeId,
         description: data.description,
         transcript: data.videoTranscript,
         categoryId: data.Category,
         videoUrl: data.media,
-        action: 'upload',
-        paymentReference: data.paymentReference,
+        action: 'edit',
+        paymentReference: checkoutDetails.paymentReference,
       };
 
       const uploadResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, apiData);
-
-      if (uploadResponse.isSuccess) {
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
-          throw new Error('User ID not found');
-        }
-
-        const paymentConfirmationData = {
-          videoType: checkoutDetails.videoType,
-          videoPrice: checkoutDetails.price,
-          paymentReference: checkoutDetails.paymentReference,
-          userId,
-          isUploaded: true, // This indicates that the video has been uploaded
-        };
-
-        const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData);
-
-        if (paymentResponse.isSuccess) {
-          toast.success('Video uploaded and payment confirmed successfully');
-          reset();
-          navigate('/candidate/video-management');
-        } 
-        else {
-          throw new Error(paymentResponse.message || 'Failed to confirm payment');
-        }
+      
+      if (uploadResponse.Success) {
+        toast.success('Video uploaded and payment confirmed successfully');
+        reset();
+        navigate('/candidate/video-management');
       } else {
-        throw new Error(uploadResponse.message || 'Failed to upload video');
+        throw new Error(uploadResponse.message || 'Unable to upload video');
       }
     } 
     catch (err) {

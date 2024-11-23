@@ -37,7 +37,7 @@ const s3Client = new S3Client({
 type AdFormData = z.infer<typeof advertSchema>;
 
 interface CheckoutDetails {
-  adType: 'video' | 'image';
+  adType: string;
   price: number;
   paymentReference: string;
   adDetails: {
@@ -46,6 +46,8 @@ interface CheckoutDetails {
     description: string;
   }[];
   action: string;
+  adTypeId?: string;
+  duration?: string;
 }
 
 const CreateAds = () => {
@@ -57,7 +59,7 @@ const CreateAds = () => {
   const { register, handleSubmit, watch, setValue, reset, control, formState: { errors },} = useForm<AdFormData>({
     resolver: zodResolver(advertSchema),
     defaultValues: {
-      action: 'create',
+      action: 'edit',
       userId: localStorage.getItem('userId') || '',
     }
   });
@@ -65,20 +67,20 @@ const CreateAds = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const { uploadRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
 
 
   useEffect(() => {
     const fetchCheckoutDetails = async () => {
-      const state = location.state as { checkoutId: string } | undefined;
-      if (!state || !state.checkoutId) {
+      if (paymentId) {
         toast.error('Invalid upload data. Redirecting....');
-        navigate('/admin/advertisement-management');
+        // navigate('/admin/advertisement-management');
         return;
       }
 
       try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${state.checkoutId}`);
-        if (!response.ok) {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${paymentId}`);
+        if (!response.Success) {
           throw new Error('Failed to fetch checkout details');
         }
         const data: CheckoutDetails = await response.json();
@@ -94,12 +96,12 @@ const CreateAds = () => {
       } catch (error) {
         console.error('Error fetching checkout details:', error);
         toast.error('Failed to load ad details. Please try again.');
-        navigate('/admin/advertisement-management');
+        // navigate('/admin/advertisement-management');
       }
     };
 
     fetchCheckoutDetails();
-  }, [location.state, navigate, setValue]);
+  }, [paymentId, navigate, setValue]);
 
 
 
@@ -107,7 +109,7 @@ const CreateAds = () => {
     const fetchAdTypes = async () => {
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
-        if (!response.ok) throw new Error('Failed to fetch ad types')
+        if (!response.Success) throw new Error('Failed to fetch ad types')
         const data: string[] = await response.json()
         setAdTypes(data.map(type => ({ value: type as 'video' | 'image', label: type })))
       } 
@@ -204,13 +206,12 @@ const CreateAds = () => {
   const onSubmit = async (data: AdFormData) => {
     if (!checkoutDetails) {
       toast.error('Missing ad information. Please try again.');
-      navigate('/admin/advertisement-management');
       return;
     }
 
     try {
-      setIsUploading(true);
       toast.info('Uploading files...');
+      setIsUploading(true);
 
       const files = data.files;
       let mediaUrl = '';
@@ -253,50 +254,30 @@ const CreateAds = () => {
       toast.success('Files uploaded successfully!');
 
       const adData = {
-        ...data,
-        // adName: data.adName,
-        // adType: data.adType,
-        // adDescription: data.adDescription,
-        // adUrl: data.adUrl,
-        // startDate: data.startDate,
-        // endDate: data.endDate,
+        // ...data,
+        name: data.adName,
+        adType: adTypeName,
+        adTypeId: adTypeId,
+        description: data.adDescription,
+        redirectUrl: data.adUrl,
+        startDate: data.startDate,
+        endDate: data.endDate,
         media: uploadedUrls.map((url: any, index: any) => ({
           type: data.adType,
           url: url,
           thumbnail: thumbnails[index] || null
         })),
+        action: 'edit',
         coverURL: thumbnailUrl,
         paymentReference: checkoutDetails.paymentReference,
       };
 
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData);
 
-      if (response.ok) {
-        const responseData = await response.json();
-        
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
-          throw new Error('User ID not found');
-        }
-
-        const paymentConfirmationData = {
-          adType: checkoutDetails.adType,
-          adPrice: checkoutDetails.price,
-          paymentReference: checkoutDetails.paymentReference,
-          userId,
-          isUploaded: true,
-          responseData,
-        };
-
-        const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData);
-
-        if (paymentResponse.ok) {
+      if (response.Success) {
           toast.success('Ad uploaded and payment confirmed successfully');
           reset();
           navigate('/admin/advertisement-management');
-        } else {
-          throw new Error('Failed to create advertisement');
-        }
       }
       else {
         throw new Error('Failed to upload ad');
@@ -320,7 +301,7 @@ const CreateAds = () => {
   return (
     <div className='p-10 overflow-hidden bg-white'>
       <ChevronLeftIcon className="cursor-pointer text-base mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/employer/advertisement')} />
-      <form onSubmit={handleSubmit(onSubmit, (err) => console.log('err', err))} className="bg-white px-10">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white px-10">
         <div className="my-5 flex flex-col gap-5">
           <Input label="Ad Title" {...register('adName', { required: true })} error={errors.adName} />
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
@@ -332,7 +313,7 @@ const CreateAds = () => {
             placeholder='Add description for your advert'
           />
           <Input label="Ad Redirect Url" {...register('adUrl', { required: true })} error={errors.adUrl} />
-          <Select
+          {/* <Select
             label="Advert Type"
             options={adTypes}
             value={watch('adType')}
@@ -343,7 +324,7 @@ const CreateAds = () => {
                 console.error(`Invalid ad type: ${value}`);
               }
             }}
-          />
+          /> */}
           <div className="">
             <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
               Media Upload (Multiple Files)

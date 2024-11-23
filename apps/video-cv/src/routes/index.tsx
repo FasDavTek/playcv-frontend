@@ -4,8 +4,8 @@ import { useAuth } from '../context/AuthProvider';
 import { Navigate } from 'react-router-dom';
 
 const PrivateRoutes = () => {
-  const isAuthenticated = useAuth();
-  // if (!isAuthenticated.authState) window.location.href = '/auth/login';
+  const { authState } = useAuth();
+  // if (!authState.isAuthenticated) window.location.href = '/auth/login';
   return <ProtectedRoutes />;
 };
 
@@ -17,7 +17,7 @@ const NonPrivateRoutes = () => {
 };
 
 export default function Routes(): React.ReactElement {
-  const isAuthenticated = useAuth();
+  const { authState } = useAuth();
 
   return (
     <>

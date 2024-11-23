@@ -29,45 +29,6 @@ type ads = {
   action: string;
 };
 
-// const initialData = [
-//   {
-//     id: '1',
-//     title: 'Summer Sale',
-//     adUrl: 'https://example.com/summer-sale.png',
-//     createdAt: '2024-06-01T10:00:00Z',
-//     authorName: 'John Doe',
-//     status: 'active',
-//     description: 'This is a summer sale ad',
-//     startDate: '2024-06-01T10:00:00Z',
-//     endDate: '2024-06-30T10:00:00Z',
-//     adType: 'image',
-//   },
-//   {
-//     id: '2',
-//     title: 'Winter Collection',
-//     adUrl: 'https://example.com/winter-collection.png',
-//     createdAt: '2024-11-15T12:00:00Z',
-//     authorName: 'Jane Smith',
-//     status: 'suspended',
-//     description: 'This is a winter collection ad',
-//     startDate: '2024-11-15T12:00:00Z',
-//     endDate: '2024-12-31T12:00:00Z',
-//     adType: 'image',
-//   },
-//   {
-//     id: '3',
-//     title: 'Spring Promo',
-//     adUrl: 'https://example.com/spring-promo.png',
-//     createdAt: '2024-03-21T09:30:00Z',
-//     authorName: 'Alice Johnson',
-//     status: 'active',
-//     description: 'This is a spring promo ad',
-//     startDate: '2024-03-21T09:30:00Z',
-//     endDate: '2024-04-30T09:30:00Z',
-//     adType: 'video',
-//   },
-// ];
-
 type ModalTypes = null | 'confirmationModal' | 'createAds';
 
 const columnHelper = createColumnHelper<ads>();
@@ -92,7 +53,7 @@ const Payment = () => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Page=1&Limit=10`);
 
-      if (!response.ok) {
+      if (!response.Success) {
         throw new Error('Network response was not ok');
       }
 
@@ -121,7 +82,7 @@ const Payment = () => {
   const fetchAds = async () => {
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_ADS}?Page=1&Limit=10`)
-      if (!resp.ok) {
+      if (!resp.Success) {
         throw new Error("Failed to fetch ads");
       }
 
@@ -158,7 +119,7 @@ const Payment = () => {
   const handleView = async (adId: string) => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${adId}`);
-      if (!response.ok) {
+      if (!response.Success) {
         throw new Error('Error fetching ad details');
       }
 
@@ -182,7 +143,7 @@ const Payment = () => {
       }
 
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_ADS}`, apiData)
-      if (!response.ok) {
+      if (!response.Success) {
         throw new Error(`Failed to ${action === 'a' ? 'activate' : 'suspend'} ad`)
       }
 
@@ -341,7 +302,9 @@ const Payment = () => {
       </Dialog>
 
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
-        <CreateAdsModal onClose={closeModal} />
+        <>
+          <CreateAdsModal onClose={closeModal} />
+        </>
       </Modal>
     </div>
   );
