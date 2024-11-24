@@ -91,7 +91,7 @@ const index = () => {
   const fetchVideos = async () => {
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=10`)
-      if (!resp.code === "201") {
+      if (!resp.ok) {
         throw new Error("Failed to fetch videos");
       }
 
