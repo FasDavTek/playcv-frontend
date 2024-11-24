@@ -114,7 +114,7 @@ const VideoUploadTypes: React.FC = () => {
         const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData);
 
 
-        if (!paymentResponse.code === "201") {
+        if (!paymentResponse.ok) {
           toast.error('Unable to save payment details');
           throw new Error('Unable to save payment details');
         }
