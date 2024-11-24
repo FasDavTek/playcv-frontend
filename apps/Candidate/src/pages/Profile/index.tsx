@@ -164,7 +164,7 @@ const Profile = () => {
 
       const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, combinedData);
 
-      if (res.ok) {
+      if (res.code === "201") {
         toast.success(res.message);
         const token = res.jwtToken;
         const decoded = decodeJWT(token);

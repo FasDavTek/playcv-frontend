@@ -49,7 +49,7 @@ const Dashboard = () => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=10`);
 
-      if (!response.ok) {
+      if (!response.code === "201") {
         throw new Error('Network response was not ok');
       }
 
@@ -79,7 +79,7 @@ const Dashboard = () => {
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_VIDEO_LIST}?Page=1&Limit=10`);
 
-      if (!resp.ok) {
+      if (!resp.code === "201") {
         throw new Error('Failed to fetch videos');
       }
       const data = await resp.json();

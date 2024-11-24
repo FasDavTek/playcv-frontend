@@ -11,7 +11,6 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 import { useForm } from 'react-hook-form';
-import { decodeJWT } from './../../../../../libs/utils/helpers/decoder';
 
 const schema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -40,7 +39,7 @@ type FormData = z.infer<typeof schema>;
 
 const Index = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>({
+  const { register, handleSubmit, reset, formState: { errors }, getValues } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       isTracked: true,
@@ -50,15 +49,11 @@ const Index = () => {
     },
   });
 
-  const [termsAccepted, setTermsAccepted] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTermsAccepted(e.target.checked);
-  };
-
-  const generateBusinessId = (): number => {
-    return Math.floor(100000 + Math.random() * 900000);
   };
 
   const submitForm = async (data: FormData) => {
@@ -96,14 +91,16 @@ const Index = () => {
 
       if (resp.code === "201") {
         toast.success(`You're in! Your account has been successfully created.`);
-        toast.info(`Make the most of our platform by setting up your complete profile.`);
-        const token = resp.jtwToken;
-        const decoded = decodeJWT(token);
-        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...resp, ...decoded, ...defaultValues }));
+        toast.info(`Let's get to know you better. Complete your profile for a tailored experience.`);
+
+        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...resp.user, ...defaultValues }));
         localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
-        localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, decoded.UserId);
-        localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, resp.jwtToken);
+        localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, resp.user.id);
         localStorage.setItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA, JSON.stringify(data));
+
+        reset();
+        setTermsAccepted(false);
+
         navigate('/employer/profile');
       }
       else {

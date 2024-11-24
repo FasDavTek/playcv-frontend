@@ -71,7 +71,7 @@ const AdUploadTypes: React.FC = () => {
     const fetchUploadTypes = async () => {
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}?Page=1&Limit=10`)
-        if (!response.ok) {
+        if (!response.code === "201") {
           throw new Error('Failed to fetch upload types')
         }
         const data: AdType[] = await response.json()
@@ -128,7 +128,7 @@ const AdUploadTypes: React.FC = () => {
         const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData);
 
 
-        if (!paymentResponse.ok) {
+        if (!paymentResponse.code === "201") {
           toast.error('Unable to save payment details');
           throw new Error('Unable to save payment details');
         }
@@ -152,7 +152,7 @@ const AdUploadTypes: React.FC = () => {
 
         const uploadRequestResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, uploadRequestPayload);
 
-        if (!uploadRequestResponse.ok) {
+        if (!uploadRequestResponse.code === "201") {
           throw new Error('Failed to create upload request');
         }
 

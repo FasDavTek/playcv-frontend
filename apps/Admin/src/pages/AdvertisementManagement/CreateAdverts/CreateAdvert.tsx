@@ -79,7 +79,7 @@ const CreateAdvertModal = () => {
 
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${paymentId}`);
-        if (!response.ok) {
+        if (!response.code === "201") {
           throw new Error('Failed to fetch checkout details');
         }
         const data: CheckoutDetails = await response.json();
@@ -108,7 +108,7 @@ const CreateAdvertModal = () => {
     const fetchAdTypes = async () => {
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
-        if (!response.ok) throw new Error('Failed to fetch ad types')
+        if (!response.code === "201") throw new Error('Failed to fetch ad types')
         const data: string[] = await response.json()
         setAdTypes(data.map(type => ({ value: type as 'video' | 'image', label: type })))
       } 
@@ -274,7 +274,7 @@ const onSubmitHandler = async (data: AdFormData) => {
 
     const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData);
 
-    if (response.ok) {
+    if (response.code === "201") {
       toast.success('Ad uploaded and payment confirmed successfully');
       reset();
       navigate('/admin/advertisement-management');
