@@ -196,7 +196,7 @@ const VideoManagement = () => {
   const handleView = async (videoId: string) => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${videoId}`);
-      if (!response.code === "201") {
+      if (!response.ok) {
         throw new Error('Error fetching video details');
       }
 

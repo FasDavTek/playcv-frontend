@@ -52,7 +52,7 @@ const Payment = () => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Page=1&Limit=10`);
 
-      if (!response.code === "201") {
+      if (!response.ok) {
         throw new Error('Network response was not ok');
       }
 
@@ -118,7 +118,7 @@ const Payment = () => {
   const handleView = async (adId: string) => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${adId}`);
-      if (!response.code === "201") {
+      if (!response.ok) {
         throw new Error('Error fetching ad details');
       }
 
@@ -142,7 +142,7 @@ const Payment = () => {
       }
 
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_ADS}`, apiData)
-      if (!response.code === "201") {
+      if (!response.ok) {
         throw new Error(`Failed to ${action === 'a' ? 'activate' : 'suspend'} ad`)
       }
 

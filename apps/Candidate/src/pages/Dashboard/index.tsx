@@ -32,7 +32,7 @@ const Dashboard = () => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=10`);
 
-      if (!response.code === "201") {
+      if (!response.ok) {
         throw new Error('Network response was not ok');
       }
 

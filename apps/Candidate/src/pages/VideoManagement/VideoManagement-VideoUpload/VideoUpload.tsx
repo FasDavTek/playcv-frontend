@@ -69,7 +69,7 @@ const VideoUpload: React.FC = () => {
 
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${paymentId}`);
-        if (!response.code === "201") {
+        if (!response.ok) {
           throw new Error('Failed to fetch checkout details');
         }
         const data: CheckoutDetails = await response.json();

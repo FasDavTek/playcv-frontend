@@ -80,7 +80,7 @@ const CreateAds = () => {
 
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${paymentId}`);
-        if (!response.code === "201") {
+        if (!response.ok) {
           throw new Error('Failed to fetch checkout details');
         }
         const data: CheckoutDetails = await response.json();
@@ -109,7 +109,7 @@ const CreateAds = () => {
     const fetchAdTypes = async () => {
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
-        if (!response.code === "201") throw new Error('Failed to fetch ad types')
+        if (!response.ok) throw new Error('Failed to fetch ad types')
         const data: string[] = await response.json()
         setAdTypes(data.map(type => ({ value: type as 'video' | 'image', label: type })))
       } 
