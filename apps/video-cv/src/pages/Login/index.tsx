@@ -68,11 +68,14 @@ const Login = () => {
       );
 
       if (res.code === "200") {
-        toast.success(res.message);
+
+        toast.success(`Welcome aboard once again! Let's continue where we left off.`);
+        
         localStorage.setItem(
           LOCAL_STORAGE_KEYS.USER,
           JSON.stringify({ ...res })
         );
+
         localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
         localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, res.user.id);
 
@@ -94,12 +97,11 @@ const Login = () => {
       }
       else {
         localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "false");
-        toast.error(res.message);
+        toast.error(`We couldn't verify your identity. Please try again or use the 'Forgot Password' option if needed.`);
       }   
     }
-    catch (err) {
-      console.error(err);
-      toast.error("An error occurred during login");
+    catch (err: any) {
+      toast.error(err.message);
     } 
     finally {
       setLoading(false);
