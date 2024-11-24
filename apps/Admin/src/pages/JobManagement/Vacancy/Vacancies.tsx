@@ -120,7 +120,7 @@ const Vacancies = () => {
     setIsLoading(true);
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
-      if (!response.code === "201") {
+      if (!response.ok) {
         const jobData = await response.json()
         reset(jobData)
         setAction('edit')

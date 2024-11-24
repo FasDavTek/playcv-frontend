@@ -88,7 +88,7 @@ const Advertisement = () => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Page=1&Limit=10`);
 
-      if (!response.code === "201") {
+      if (!response.ok) {
         throw new Error('Network response was not ok');
       }
 
@@ -152,7 +152,7 @@ const Advertisement = () => {
   const handleView = async (adId: string) => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${adId}`);
-      if (!response.code === "201") {
+      if (!response.ok) {
         throw new Error('Error fetching ad details');
       }
 

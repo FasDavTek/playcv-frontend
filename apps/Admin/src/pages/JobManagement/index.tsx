@@ -77,7 +77,7 @@ const JobManagement = () => {
   const handleView = async (vacancyId: string) => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
-      if (!response.code === "201") {
+      if (!response.ok) {
         throw new Error('Error fetching job details');
       }
 

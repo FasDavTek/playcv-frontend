@@ -92,7 +92,7 @@ const VideoDetails = () => {
       setError(null)
       try {
         const response = await fetch(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}${videoId}`)
-        if (!response.code === "201") {
+        if (!response.ok) {
           throw new Error('Failed to fetch video details')
         }
         const data = await response.json()
@@ -145,7 +145,7 @@ const VideoDetails = () => {
   const getVideoDetails = async (id: any) => {
     // Replace with actual API call or data fetching logic
     const response = await fetch(`/api/videos/${id}`);
-    if (!response.code === "201") throw new Error('Failed to fetch video details');
+    if (!response.ok) throw new Error('Failed to fetch video details');
     return response.json();
   };
 
@@ -154,7 +154,7 @@ const VideoDetails = () => {
     // Replace with actual API call or data fetching logic
     const query = new URLSearchParams(searchParams).toString();
     const response = await fetch(`/api/videos/related?${query}`);
-    if (!response.code === "201") throw new Error('Failed to fetch related videos');
+    if (!response.ok) throw new Error('Failed to fetch related videos');
     return response.json();
   };
 

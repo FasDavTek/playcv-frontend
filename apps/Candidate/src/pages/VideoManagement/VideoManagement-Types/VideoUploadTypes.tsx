@@ -57,7 +57,7 @@ const VideoUploadTypes: React.FC = () => {
     const fetchUploadTypes = async () => {
       try {
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD_TYPE}?Page=1&Limit=10`)
-        if (!response.code === "201") {
+        if (!response.ok) {
           throw new Error('Failed to fetch upload types')
         }
         const data: UploadType[] = await response.json()
