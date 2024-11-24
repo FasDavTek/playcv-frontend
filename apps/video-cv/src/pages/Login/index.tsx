@@ -14,7 +14,6 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { toast } from 'react-toastify';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
-import { decodeJWT } from './../../../../../libs/utils/helpers/decoder';
 import { useAuth } from './../../../../../libs/context/AuthContext'
 
 const ErrorMessages: any = {
@@ -56,20 +55,6 @@ const Login = () => {
     resolver: zodResolver(schema),
   });
 
-  const fetchUserProfile = async (userId: string): Promise<UserProfile | undefined | null | void> => {
-    try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}/${userId}?Page=1&Limit=10`);
-      if (response.code === "201") {
-        localStorage.setItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA, JSON.stringify(response.data));
-        console.log("User profile fetched successfully");
-      } else {
-        console.error("Failed to fetch user profile");
-      }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-    }
-  };
-
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     const { email, password } = data;
@@ -82,32 +67,25 @@ const Login = () => {
         reqBody
       );
 
-      if (res.code === "201") {
+      if (res.code === "200") {
         toast.success(res.message);
-        const token = res.jwtToken;
-        const decoded = decodeJWT(token);
         localStorage.setItem(
           LOCAL_STORAGE_KEYS.USER,
-          JSON.stringify({ ...res, ...decoded })
+          JSON.stringify({ ...res })
         );
         localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
-        localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, decoded.UserId);
-        localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, res.jwtToken);
+        localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, res.user.id);
 
-        const userProfile = await fetchUserProfile(decoded.UserId);
-
-        if (userProfile) {
           // Update the global auth state
           setAuthState({
             isAuthenticated: true,
             user: {
-              id: decoded.UserId,
+              id: res.user.id,
               email: email,
-              name: userProfile.name || 'User', // Adjust based on your user profile structure
+              name: res.user.name || 'User', // Adjust based on your user profile structure
               // Add other relevant user fields
             }
           });
-        }
 
         reset();
 
