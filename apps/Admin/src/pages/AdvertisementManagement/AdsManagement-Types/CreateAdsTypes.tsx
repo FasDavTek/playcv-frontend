@@ -152,7 +152,7 @@ const AdUploadTypes: React.FC = () => {
 
         const uploadRequestResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, uploadRequestPayload);
 
-        if (!uploadRequestResponse.code === "201") {
+        if (!uploadRequestResponse.ok) {
           throw new Error('Failed to create upload request');
         }
 
