@@ -42,7 +42,7 @@ type FormData = z.infer<typeof schema>;
 
 const index = () => {
     const navigate = useNavigate();
-    const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>({
+    const { register, handleSubmit, reset, formState: { errors }, getValues } = useForm<FormData>({
         resolver: zodResolver(schema),
         defaultValues: {
             isTracked: true,
@@ -57,10 +57,6 @@ const index = () => {
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTermsAccepted(e.target.checked);
-    };
-
-    const generateBusinessId = (): number => {
-        return Math.floor(100000 + Math.random() * 900000);
     };
 
     const submitForm = async (data: FormData) => {
@@ -98,14 +94,16 @@ const index = () => {
 
             if (resp.code === "201") {
                 toast.success(`You're in! Your account has been successfully created.`);
-                toast.info(`Make the most of our platform by setting up your complete profile.`);
-                const token = resp.jtwToken;
-                const decoded = decodeJWT(token);
-                localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...resp, ...decoded, ...defaultValues }));
+                toast.info(`Let's get to know you better. Complete your profile for a tailored experience.`);
+
+                localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...resp, ...defaultValues }));
                 localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
-                localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, decoded.UserId);
-                localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, resp.jwtToken);
+                localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, resp.user.id);
                 localStorage.setItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA, JSON.stringify(data));
+
+                reset();
+                setTermsAccepted(false);
+
                 navigate('/candidate/profile');
             }
             else {

@@ -54,7 +54,7 @@ const usePaystack = (
   //   setIsProcessing(true);
   //   try {
   //     const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentDetails);
-  //     if (response.ok) {
+  //     if (response.code === "201") {
   //       toast.success('Payment processed successfully');
   //       return true;
   //     } else {
