@@ -96,8 +96,9 @@ const index = () => {
 
             const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_REGISTER}`, combinedData);
 
-            if (resp.ok) {
-                toast.success(resp.message);
+            if (resp.code === "201") {
+                toast.success(`You're in! Your account has been successfully created.`);
+                toast.info(`Make the most of our platform by setting up your complete profile.`);
                 const token = resp.jtwToken;
                 const decoded = decodeJWT(token);
                 localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...resp, ...decoded, ...defaultValues }));
@@ -108,12 +109,19 @@ const index = () => {
                 navigate('/candidate/profile');
             }
             else {
-                toast.error(resp.message);
+                toast.error(`We couldn't complete your registration. Please verify your details and give it another go.`);
             }
         } 
         catch (err: any) {
-            console.error(err);
-            toast.error(err.message);
+            if (err.response.data.error.message.includes("User with this email")) {
+                toast.error("This email is already registered. Please use a different email or try logging in.");
+            }
+            else if (err.response.data.error.message.includes("User with phone number")) {
+                toast.error("This phone number is already registered. Please use a different number or try logging in.");
+            }
+            else {
+                toast.error(err.message || "An error occurred during signup. Please try again.");
+            };
         } 
         finally {
             setLoading(false);

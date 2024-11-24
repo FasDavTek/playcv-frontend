@@ -13,6 +13,14 @@ export default defineConfig({
     port: 4200,
     host: 'localhost',
 
+    proxy: {
+      '/api': {
+        target: 'https://api.playcv.ng',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    },
+
     fs: {
       allow: [
         // Allow serving files from project root and up to two levels up
