@@ -329,7 +329,7 @@ const VideoDetails = () => {
         )}
         {/* CART ITEM ENDS */}
         
-        <JobBoard jobs={mockJobs.slice(0, 3)} />
+        <JobBoard />
       </Stack>
 
       <Box className={`flex-col w-[30%] gap-4 lg:flex hidden`}>
