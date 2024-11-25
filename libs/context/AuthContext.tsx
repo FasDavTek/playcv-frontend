@@ -8,6 +8,7 @@ interface AuthState {
     email?: string;
     username?: string;
     name: string;
+    userTypeId?: number;
     // Add other relevant user fields
   } | null;
 }
@@ -32,6 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: user.email,
           username: user.email,
           name: user.name,
+          userTypeId: user.userTypeId,
           // Add other relevant user fields
         }
       };

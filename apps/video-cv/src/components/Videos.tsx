@@ -48,7 +48,7 @@ const Videos = () => {
         if (response.code === "201") {
           setVideos(response.data);
         } else {
-          console.error('Failed to fetch videos:', response.message);
+          console.error('Unable to fetch videos:', response.message);
         }
       } catch (error) {
         console.error('Error fetching videos:', error);

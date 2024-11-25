@@ -19,11 +19,27 @@ import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Controller, FieldError, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
+import { getData } from './../../../../../libs/utils/apis/apiMethods';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import CONFIG from './../../../../../libs/utils/helpers/config';
 
+interface Jobs {
+  id: string;
+  jobTitle: string;
+  datePosted: Date;
+  startDate: Date;
+  endDate: Date;
+  description?: string;
+  companyName?: string;
+  specialization: string;
+  location: string;
+}
 
 const heroImages = [Images.HeroImage10, Images.HeroImage11, Images.HeroImage12, Images.HeroImage13, Images.HeroImage14];
 
 const JobBoard = () => {
+  const [jobs, setJobs] = useState<Jobs[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -37,7 +53,29 @@ const JobBoard = () => {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [isFilterApplied, setIsFilterApplied] = useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`);
+        if (resp.status === 200) {
+          setJobs(resp.data);
+        }
+        else {
+          console.error('Unable to fetch jobs:', resp.message);
+        }
+      }
+      catch (err) {
+        console.error('Error fetching jobs:', err);
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+
+    fetchJobs();
+  }, []);
+
+  useEffect(() => {
         const handleResize = () => {
           const screenWidth = window.innerWidth;
           if (screenWidth >= 768) {
@@ -57,73 +95,77 @@ const JobBoard = () => {
         return () => {
           window.removeEventListener('resize', handleResize);
         };
-    }, []);
+  }, []);
 
-    const filterJobs = () => {
-        return mockJobs.filter((job) => {
-            const matchesText = job.title.toLowerCase().includes(searchText.toLowerCase());
-            // const matchesCategory = setSelectedCategories.length === 0 || selectedCategories.includes(video.category);
-            const matchesLocation = selectedLocations.length === 0 || selectedLocations.includes(job.location);
-            const matchesDate = selectedDates.length === 0 || selectedDates.includes(job.postedTime);
-            // const matchesStatus = selectedStatus === 'all' || job.status === selectedStatus;
-            // return matchesText && matchesCategory;
-            return matchesText && matchesLocation && matchesDate /* && matchesStatus */ ;
-        });
-    };
-    
-    const filteredJobs = filterJobs();
-    const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+  const filterJobs = () => {
+      return jobs.filter((job) => {
+          const matchesText = job.jobTitle.toLowerCase().includes(searchText.toLowerCase());
+          // const matchesCategory = setSelectedCategories.length === 0 || selectedCategories.includes(video.category);
+          const matchesLocation = selectedLocations.length === 0 || selectedLocations.includes(job.location);
 
-    const handlePrevPage = () => {
-        if (currentPage > 0) {
-            setCurrentPage((prevPage) => prevPage - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages - 1) {
-            setCurrentPage((prevPage) => prevPage + 1);
-        }
-    };
-
-    const paginatedJobs = filteredJobs.slice(
-        currentPage * itemsPerPage,
-        (currentPage + 1) * itemsPerPage
-    );
-
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchText(e.target.value);
-        setIsFilterApplied(true);
-    };
-    
-    const handleCategoryChange = (value: string) => {
-        setSelectedCategories([...selectedCategories, value]);
-        setIsFilterApplied(true);
-    };
-
-    const handleLocationChange = (value: string) => {
-      setSelectedLocations([...selectedLocations, value]);
-      setIsFilterApplied(true);
-    };
+          const jobDate = dayjs(job.datePosted).startOf('day');
+          const matchesDate = selectedDates.length === 0 || selectedDates.some(date => 
+            dayjs(date).startOf('day').isSame(jobDate)
+          );
+          // const matchesStatus = selectedStatus === 'all' || job.status === selectedStatus;
+          // return matchesText && matchesCategory;
+          return matchesText && matchesLocation && matchesDate /* && matchesStatus */ ;
+      });
+  };
   
-    const handleDateChange = (e: ChangeEvent<{ value: string[] }>) => {
-      setSelectedDates(e.target.value);
-      setIsFilterApplied(true);
-    };
+  const filteredJobs = filterJobs();
+  const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
 
-    const handleStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setSelectedStatus(e.target.value);
+  const handlePrevPage = () => {
+      if (currentPage > 0) {
+          setCurrentPage((prevPage) => prevPage - 1);
+      }
+  };
+
+  const handleNextPage = () => {
+      if (currentPage < totalPages - 1) {
+          setCurrentPage((prevPage) => prevPage + 1);
+      }
+  };
+
+  const paginatedJobs = filteredJobs.slice(
+      currentPage * itemsPerPage,
+      (currentPage + 1) * itemsPerPage
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchText(e.target.value);
       setIsFilterApplied(true);
-    };
-    
-    const handleClearFilters = () => {
-        setSearchText('');
-        setSelectedCategories([]);
-        setSelectedLocations([]);
-        setSelectedDates([]);
-        setSelectedStatus('all');
-        setIsFilterApplied(false);
-    };
+  };
+  
+  const handleCategoryChange = (value: string) => {
+      setSelectedCategories([...selectedCategories, value]);
+      setIsFilterApplied(true);
+  };
+
+  const handleLocationChange = (value: string) => {
+    setSelectedLocations([...selectedLocations, value]);
+    setIsFilterApplied(true);
+  };
+
+  const handleDateChange = (e: ChangeEvent<{ value: string[] }>) => {
+    setSelectedDates(e.target.value);
+    setIsFilterApplied(true);
+  };
+
+  const handleStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSelectedStatus(e.target.value);
+    setIsFilterApplied(true);
+  };
+  
+  const handleClearFilters = () => {
+      setSearchText('');
+      setSelectedCategories([]);
+      setSelectedLocations([]);
+      setSelectedDates([]);
+      setSelectedStatus('all');
+      setIsFilterApplied(false);
+  };
 
   return (
     <Box>

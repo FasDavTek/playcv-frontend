@@ -5,8 +5,26 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import JobCard from './JobCard';
 import { Button } from '@video-cv/ui-components';
 import { Link } from 'react-router-dom';
+import { Loader } from '.';
+import { getData } from './../../../../libs/utils/apis/apiMethods';
+import { apiEndpoints } from './../../../../libs/utils/apis/apiEndpoints';
+import CONFIG from './../../../../libs/utils/helpers/config';
 
-const fetchJobs: React.FC<{ jobs: any[] }> = ({ jobs }) => {
+interface Jobs {
+  id: string;
+  jobTitle: string;
+  datePosted: Date;
+  startDate: Date;
+  endDate: Date;
+  description?: string;
+  companyName?: string;
+  specialization: string;
+  location: string;
+}
+
+const fetchJobs: React.FC = () => {
+  const [jobs, setJobs] = useState<Jobs[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [jobsPerPage, setJobsPerPage] = useState(0);
   const [columns, setColumns] = useState(1);
@@ -21,6 +39,28 @@ const fetchJobs: React.FC<{ jobs: any[] }> = ({ jobs }) => {
   };
 
   useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`);
+        if (resp.status === 200) {
+          setJobs(resp.data);
+        }
+        else {
+          console.error('Unable to fetch jobs:', resp.message);
+        }
+      }
+      catch (err) {
+        console.error('Error fetching jobs:', err);
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+
+    fetchJobs();
+  }, []);
+
+  useEffect(() => {
     const handleResize = () => {
       const cols = calculateColumns();
       setColumns(cols);
@@ -33,6 +73,7 @@ const fetchJobs: React.FC<{ jobs: any[] }> = ({ jobs }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
+  if (loading) return <Loader />;
   if (!jobs?.length) return <p>No jobs found</p>;
 
   const totalPages = Math.ceil(jobs.length / jobsPerPage);
@@ -51,8 +92,10 @@ const fetchJobs: React.FC<{ jobs: any[] }> = ({ jobs }) => {
   return (
     <div>
       <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-        {currentJobs.map((job) => (
-          <JobCard key={job.id} job={job} />
+        {currentJobs.map((job: Jobs) => (
+          <Box key={job.id}>
+            <JobCard job={job} />
+          </Box>
         ))}
       </div>
 

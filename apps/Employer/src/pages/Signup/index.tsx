@@ -11,6 +11,7 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 import { useForm } from 'react-hook-form';
+import { decodeJWT } from './../../../../../libs/utils/helpers/decoder';
 
 const schema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -93,9 +94,13 @@ const Index = () => {
         toast.success(`You're in! Your account has been successfully created.`);
         toast.info(`Let's get to know you better. Complete your profile for a tailored experience.`);
 
-        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...resp.user, ...defaultValues }));
+        const token = resp.jwtToken;
+        const decoded = decodeJWT(token);
+
+        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...resp, ...decoded, ...defaultValues }));
         localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
         localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, resp.user.id);
+        localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, resp.token);
         localStorage.setItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA, JSON.stringify(data));
 
         reset();
