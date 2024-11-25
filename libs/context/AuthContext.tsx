@@ -5,7 +5,8 @@ interface AuthState {
   isAuthenticated: boolean;
   user: {
     id: string;
-    username: string;
+    email?: string;
+    username?: string;
     name: string;
     // Add other relevant user fields
   } | null;
@@ -28,6 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: true,
         user: {
           id: user.UserId,
+          email: user.email,
           username: user.email,
           name: user.name,
           // Add other relevant user fields
