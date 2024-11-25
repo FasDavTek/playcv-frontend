@@ -13,7 +13,6 @@ import { postData } from './../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
-import { decodeJWT } from './../../../../../libs/utils/helpers/decoder';
 
 const schema = z.object({
     firstName: z.string().min(1, "First name is required"),

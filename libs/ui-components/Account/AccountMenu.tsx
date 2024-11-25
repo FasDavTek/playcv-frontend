@@ -17,6 +17,7 @@ import {
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 interface Account {
   id: string;
@@ -44,7 +45,6 @@ const AccountPreview: React.FC<{ account: Account }> = ({ account }) => (
 );
 
 export const AccountMenu: React.FC<AccountMenuProps> = ({
-  currentAccount,
   accounts,
   onSwitchAccount,
   onSignOut
@@ -54,6 +54,9 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const { authState } = useAuth();
+
+  const currentUser = authState.user;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -71,6 +74,22 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
       navigate(`${baseRoute}/profile`);
     }
   };
+
+  if (!currentUser) {
+    return null;
+  };
+
+
+
+  const currentAccount: Account = {
+    id: currentUser.id,
+    name: currentUser.name,
+    email: currentUser.email || '',
+    avatar: '/path/to/default/avatar.png', // You might want to add an avatar field to your user object
+    userType: currentUser.userTypeId === 1 ? 'Admin' : currentUser.userTypeId === 2 ? 'Employer' : 'Professional'
+  };
+
+
 
   return (
     <>
