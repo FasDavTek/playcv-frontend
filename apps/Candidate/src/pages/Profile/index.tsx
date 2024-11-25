@@ -324,7 +324,7 @@ const Profile = () => {
                   <DatePicker
                     {...field}
                     label="NYSC Service year (start)"
-                    value={field.value ? dayjs(field.value) : null}
+                    value={dayjs(field.value) || ''}
                     onChange={(date) => {field.onChange(date);}}
                   />
                 )}
@@ -346,7 +346,7 @@ const Profile = () => {
                     <DatePicker
                       {...field}
                       label="NYSC Service year (end)"
-                      value={field.value ? dayjs(field.value) : null}
+                      value={dayjs(field.value) || ''}
                       onChange={(date) => {field.onChange(date);}}
                     />
                   )}

@@ -17,7 +17,7 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import { Button } from '@video-cv/ui-components';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import { useAuth } from '../context/AuthProvider';
+import { useAuth } from './../../../../libs/context/AuthContext';
 import { LOCAL_STORAGE_KEYS } from './../../../../libs/utils/localStorage';
 
 const Hamburger = () => (
@@ -44,6 +44,7 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
 const Navbar = () => {
   const { cartState } = useCart();
   const navigate = useNavigate();
+  const { authState, logout } = useAuth();
 
   const navbarRef = useRef<HTMLDivElement | null>(null);
 
@@ -96,13 +97,8 @@ const Navbar = () => {
     return user && token;
   }
 
-  const getUserType = () => {
-    const user = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) || '{}');
-    return user.userType;
-  };
-
   const handleAuthenticatedNavigation = (path: string) => {
-    if (isAuthenticated()) {
+    if (authState.isAuthenticated) {
       navigate(path);
     } else {
       navigate(path.includes('candidate') ? '/auth/professional-signup' : '/auth/employer-signup');
@@ -218,7 +214,7 @@ const Navbar = () => {
                 Employer
               </NavLink>
             </li>
-            {isAuthenticated() && (
+            {authState.isAuthenticated && (
               <li>
                 {/* TODO: Show logged in if user is logged in */}
                 <IconButton aria-label="cart" onClick={handleCartClick} className='w-5 h-5 lg:w-10 lg:h-10'>
@@ -228,7 +224,14 @@ const Navbar = () => {
                 </IconButton>
               </li>
             )}
-            <Button variant='black' className='mt-5 md:mt-0' label='Get Started' onClick={handleGetStartedClick} />
+            {authState.isAuthenticated ? 
+              (
+                <Button variant='black' className='mt-5 md:mt-0' label='Logout' onClick={logout} />
+              ) : 
+              (
+                <Button variant='black' className='mt-5 md:mt-0' label='Get Started' onClick={handleGetStartedClick} />
+              )
+            }
             <Dialog fullScreen={fullScreen} aria-labelledby="responsive-dialog-title" open={openModal} onClose={handleCloseModal}>
               <DialogTitle id="responsive-dialog-title">
                 <strong className=' text-neutral-200'>Get Started</strong>

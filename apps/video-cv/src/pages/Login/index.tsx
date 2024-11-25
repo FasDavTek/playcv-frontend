@@ -21,11 +21,10 @@ const ErrorMessages: any = {
 };
 
 const schema = z.object({
-  email: z.string({
-    required_error: ErrorMessages.required('Email'),
+  username: z.string({
+    required_error: ErrorMessages.required('Username'),
   })
-  .min(1, "Email is required")
-  .email("Invalid email format"),
+  .min(1, "Username is required"),
 
   password: z.string({
     required_error: ErrorMessages.required('Password'),
@@ -57,9 +56,9 @@ const Login = () => {
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
-    const { email, password } = data;
+    const { username, password } = data;
     const reqBody = {
-      email, password,
+      username, password,
     }
     try {
       const res = await postData(
@@ -84,7 +83,7 @@ const Login = () => {
             isAuthenticated: true,
             user: {
               id: res.user.id,
-              email: email,
+              username: username,
               name: res.user.name || 'User', // Adjust based on your user profile structure
               // Add other relevant user fields
             }
@@ -142,8 +141,8 @@ const Login = () => {
             <hr className="flex-1" />
           </div>
           <div className="flex flex-col gap-6">
-            <Input type='email' {...register('email')} error={errors.email} label="Email" placeholder="user@email.com" />
-            <Input type='password' {...register('password')} error={errors.password} label="Password" placeholder="user@email.com" />
+            <Input type='username' {...register('username')} error={errors.username} label="Username" placeholder="user@email.com" />
+            <Input type='password' {...register('password')} error={errors.password} label="Password" placeholder="XubYgsanbE" />
           </div>
 
           <Button type='submit' variant='black' disabled={loading} className="w-full my-10" label={loading ? "Submitting..." : "Login"} />

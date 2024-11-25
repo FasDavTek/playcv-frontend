@@ -6,6 +6,7 @@ const CONFIG = {
   BASE_URL: baseUrl,
   PAYSTACK: paystackey,
   CLOUDFLARE: cloudflarekey,
+  IS_PRODUCTION: import.meta.env.PROD,
 };
 
 export default CONFIG;
