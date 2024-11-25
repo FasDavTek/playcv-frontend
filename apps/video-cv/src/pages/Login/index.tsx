@@ -14,7 +14,8 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { toast } from 'react-toastify';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
-import { useAuth } from './../../../../../libs/context/AuthContext'
+import { useAuth } from './../../../../../libs/context/AuthContext';
+import { decodeJWT } from './../../../../../libs/utils/helpers/decoder';
 
 const ErrorMessages: any = {
   required: (field: any) => `${field} is required`,
@@ -69,13 +70,17 @@ const Login = () => {
       if (res.code === "200") {
 
         toast.success(`Welcome aboard once again! Let's continue where we left off.`);
+
+        const token = res.jwtToken;
+        const decoded = decodeJWT(token);
         
         localStorage.setItem(
           LOCAL_STORAGE_KEYS.USER,
-          JSON.stringify({ ...res })
+          JSON.stringify({ ...res, ...decoded })
         );
 
         localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
+        localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, res.token);
         localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, res.user.id);
 
           // Update the global auth state
@@ -84,7 +89,8 @@ const Login = () => {
             user: {
               id: res.user.id,
               username: username,
-              name: res.user.name || 'User', // Adjust based on your user profile structure
+              name: res.user.fullName || 'User',
+              userTypeId: res.user.userTypeId,
               // Add other relevant user fields
             }
           });

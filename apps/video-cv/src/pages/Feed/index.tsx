@@ -97,7 +97,7 @@ const Feed = () => {
            sx={{ color: 'black' }}
            className="font-bold text-3xl my-5">LATEST JOBS</Typography>
           {/* <JobBoard jobs={jobs}> */}
-          <JobBoard jobs={mockJobs.slice(0, 30)} />
+          <JobBoard />
         </Box>
 
         <Box className="mt-20 ">

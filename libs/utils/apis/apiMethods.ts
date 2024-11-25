@@ -64,7 +64,7 @@ axiosInstance.interceptors.response.use(undefined, async function (error) {
   return Promise.reject(error);
 });
 
-export const getData = async (url: string) => {
+export const getData = async (url: string, p0?: { headers: { Authorization: string; }; }) => {
   const { data } = await axiosInstance({
     method: "get",
     url,

@@ -12,7 +12,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import SaveAsOutlinedIcon from '@mui/icons-material/SaveAsOutlined';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { postData } from './../../../../../libs/utils/apis/apiMethods';
+import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
@@ -72,22 +72,30 @@ const Profile = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(true);
 
   useEffect(() => {
-    const loadData = async () => {
-      const signupData = localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
-      if (signupData) {
-        const parsedData = JSON.parse(signupData);
-        Object.entries(parsedData).forEach(([key, value]) => {
-          setValue(key as keyof FormData, value as string);
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_PROFILE}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-      }
-      else {
-        const userData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) || '{}');
-        Object.entries(userData).forEach(([key, value]) => {
+        if (resp.data) {
+          const parsedData = JSON.parse(resp.data);
+          Object.entries(parsedData).forEach(([key, value]) => {
             setValue(key as keyof FormData, value as string);
-        });
+          });
+        }
+        else {
+          const userData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) || '{}');
+          Object.entries(userData).forEach(([key, value]) => {
+              setValue(key as keyof FormData, value as string);
+          });
+        }
+      }
+      catch (err) {
+        toast.error('Unable to load user profile');
       }
     };
-    loadData();
+    fetchUserData();
   }, [setValue]);
 
   useEffect(() => {
@@ -117,25 +125,19 @@ const Profile = () => {
       const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, combinedData);
 
       if (res.code === "201") {
-        toast.success(res.message);
-        const token = res.jwtToken;
-        const decoded = decodeJWT(token);
-        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...res, ...decoded, ...defaultValues }));
-        localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
-        localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, decoded.UserId);
-        localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, res.jwtToken);
+        toast.success(`Wonderful! Your profile has been successfully modified.`);
+        
+        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...res, ...defaultValues }));
 
-        // if (isSignup) {
-          localStorage.removeItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
-          navigate('/');
-        // }
+        // localStorage.removeItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
       } else {
-        toast.error(res.message);
+        toast.error(`We couldn't complete your profile update. Another attempt might do the trick.`);
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("An error occurred while updating profile");
-    } finally {
+    }
+    catch (err) {
+      toast.error(`We encountered an issue updating your profile. Please try again.`);
+    }
+    finally {
       setLoading(false);
       setEditField(null);
     }
@@ -495,8 +497,8 @@ export default Profile;
 
   
 //   useEffect(() => {
-//     const loadData = () => {
-//       const signupData = localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
+//     const fetchUserData = () => {
+//       const resp.data = localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
 //       const userData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) || '{}');
       
 //       if (signupData) {

@@ -9,7 +9,6 @@ import {
   Input,
   DatePicker,
   Select,
-  TextArea,
   Button,
   RichTextEditor,
 } from '@video-cv/ui-components';
@@ -22,7 +21,7 @@ import 'react-quill/dist/quill.snow.css';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
-import { postData } from './../../../../../libs/utils/apis/apiMethods';
+import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
@@ -120,22 +119,33 @@ const Profile = () => {
   const [open, setOpen] = useState(false);
   
   useEffect(() => {
-    const loadData = async () => {
-      const signupData = localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
-      if (signupData) {
-        const parsedData = JSON.parse(signupData);
-        Object.entries(parsedData).forEach(([key, value]) => {
-          setValue(key as keyof FormData, value as string);
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_PROFILE}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
+        if (resp.data) {
+          Object.entries(resp.data).forEach(([key, value]) => {
+            if (key === 'nyscStartYear' || key === 'nyscEndYear') {
+              setValue(key as keyof FormData, value ? dayjs(value as string).toDate() : undefined);
+            } else {
+              setValue(key as keyof FormData, value as string);
+            }
+          });
+        }
+        else {
+          const userData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) || '{}');
+          Object.entries(userData).forEach(([key, value]) => {
+              setValue(key as keyof FormData, value as string);
+          });
+        }
       }
-      else {
-        const userData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) || '{}');
-        Object.entries(userData).forEach(([key, value]) => {
-            setValue(key as keyof FormData, value as string);
-        });
+      catch (err) {
+        toast.error('Unable to load user profile');
       }
     };
-    loadData();
+    fetchUserData();
   }, [setValue]);
 
   useEffect(() => {
@@ -145,11 +155,7 @@ const Profile = () => {
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
-    // setFormData({
-    //   ...data,
-    //   nyscStartYear: dayjs(data.nyscStartYear),
-    //   nyscEndYear: dayjs(data.nyscEndYear),
-    // });
+    
     try {
       const defaultValues = {
         isTracked: true,
@@ -160,28 +166,26 @@ const Profile = () => {
       const combinedData = {
         ...data,
         ...defaultValues,
+        nyscStartYear: data.nyscStartYear ? dayjs(data.nyscStartYear).format('YYYY-MM-DD') : null,
+        nyscEndYear: data.nyscEndYear ? dayjs(data.nyscEndYear).format('YYYY-MM-DD') : null,
       };
 
       const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, combinedData);
 
       if (res.code === "201") {
-        toast.success(res.message);
-        const token = res.jwtToken;
-        const decoded = decodeJWT(token);
-        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...res, ...decoded, ...defaultValues }));
-        localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
-        localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, decoded.UserId);
-        localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, res.jwtToken);
+        toast.success(`Wonderful! Your profile has been successfully modified.`);
+        
+        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...res, ...defaultValues }));
 
-        localStorage.removeItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
-        navigate('/');
+        // localStorage.removeItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
       } else {
-        toast.error(res.message);
+        toast.error(`We couldn't complete your profile update. Another attempt might do the trick.`);
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("An error occurred while updating profile");
-    } finally {
+    }
+    catch (err) {
+      toast.error(`We encountered an issue updating your profile. Please try again.`);
+    }
+    finally {
       setLoading(false);
       setEditField(null);
     }
@@ -324,8 +328,8 @@ const Profile = () => {
                   <DatePicker
                     {...field}
                     label="NYSC Service year (start)"
-                    value={dayjs(field.value) || ''}
-                    onChange={(date) => {field.onChange(date);}}
+                    value={field.value ? dayjs(field.value) : null}
+                    onChange={(date) => {field.onChange(date ? date.toDate() : null);}}
                   />
                 )}
               />
@@ -346,8 +350,8 @@ const Profile = () => {
                     <DatePicker
                       {...field}
                       label="NYSC Service year (end)"
-                      value={dayjs(field.value) || ''}
-                      onChange={(date) => {field.onChange(date);}}
+                      value={field.value ? dayjs(field.value) : null}
+                      onChange={(date) => {field.onChange(date ? date.toDate() : null);}}
                     />
                   )}
                 />

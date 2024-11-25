@@ -18,7 +18,7 @@ import { Button } from '@video-cv/ui-components';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useAuth } from './../../../../libs/context/AuthContext';
-import { LOCAL_STORAGE_KEYS } from './../../../../libs/utils/localStorage';
+import { toast } from 'react-toastify';
 
 const Hamburger = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 52 24">
@@ -91,17 +91,45 @@ const Navbar = () => {
     };
   }, [showNavbar]);
 
-  const isAuthenticated = () => {
-    const user = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
-    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-    return user && token;
-  }
+  // const isAuthenticated = () => {
+  //   const user = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
+  //   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  //   return user && token;
+  // }
 
   const handleAuthenticatedNavigation = (path: string) => {
-    if (authState.isAuthenticated) {
-      navigate(path);
-    } else {
-      navigate(path.includes('candidate') ? '/auth/professional-signup' : '/auth/employer-signup');
+    if (!authState.isAuthenticated) {
+      toast.warning(`This area is for registered users. Please authenticate to continue.`)
+      navigate('/auth/login')
+      return
+    }
+
+    const userTypeId = authState.user?.userTypeId;
+
+    switch (path) {
+      case '/admin/dashboard':
+        if (userTypeId === 1) {
+          navigate(path)
+        } else {
+          toast.error("Secure area detected. Authentication required to enter.")
+        }
+        break
+      case '/employer/dashboard':
+        if (userTypeId === 2) {
+          navigate(path)
+        } else {
+          toast.error("Authentication required. Let's get you logged in.")
+        }
+        break
+      case '/candidate/dashboard':
+        if (userTypeId === 3) {
+          navigate(path)
+        } else {
+          toast.error("Authentication required. Let's get you logged in.")
+        }
+        break
+      default:
+        navigate(path)
     }
   };
 
@@ -192,7 +220,10 @@ const Navbar = () => {
                       : 'nav-link'
                   }`
                 }
-                onClick={() => handleAuthenticatedNavigation('/candidate/dashboard')}
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleAuthenticatedNavigation('/candidate/dashboard')
+                }}
               >
                 Professional
               </NavLink>
@@ -209,7 +240,10 @@ const Navbar = () => {
                       : 'nav-link'
                   }`
                 }
-                onClick={() => handleAuthenticatedNavigation('/employer/dashboard')}
+                onClick={(e) => {
+                  e.preventDefault()  
+                  handleAuthenticatedNavigation('/employer/dashboard')
+                }}
               >
                 Employer
               </NavLink>
