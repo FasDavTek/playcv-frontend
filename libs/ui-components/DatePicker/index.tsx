@@ -45,7 +45,7 @@ const DatePickerComponent = forwardRef<HTMLInputElement, IDatePickerProps>(({
           className,
           { ' outline-red-500 border border-red-500': !!error }
         )}
-        format="DD/MM/YYYY"
+        format="DD-MM-YYYY"
         maxDate={maxDate}
         value={value !== undefined ? value : null}
         onChange={onChange}

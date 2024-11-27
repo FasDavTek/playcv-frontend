@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, RouterProvider } from 'react-router-dom';
 import { ROUTES } from '../../libs/ui-components/shared/routes';
 
 import AppLayout from '../../apps/video-cv/src/layouts/AppLayout';
@@ -8,6 +8,7 @@ import AuthLayout from '../../apps/video-cv/src/layouts/AuthLayout';
 import ErrorBoundary from '../../apps/video-cv/src/routes/ErrorBoundary';
 import { Layout } from '../ui-components';
 import { AuthProvider, useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 // import { routes } from "../constants";
 
 const Home = lazy(() => import('../../apps/video-cv/src/pages/Home'));
@@ -63,6 +64,7 @@ const CandidateVideoManagement = lazy(() => import('../../apps/Candidate/src/pag
 const CandidateVideoUploadTypes = lazy(() => import('../../apps/Candidate/src/pages/VideoManagement/VideoManagement-Types/VideoUploadTypes'));
 const CandidateVideoUploadDetails = lazy(() => import('../../apps/Candidate/src/pages/VideoManagement/VideoManagement-VideoUpload/VideoUpload'));
 const CandidateVideoUploadConfirmation = lazy(() => import('../../apps/Candidate/src/pages/VideoManagement/VideoManagement-Confirmation/VideoUploadConfirmation'));
+const CandidateVideoGuideline = lazy(() => import('../../apps/Candidate/src/pages/VideoCvGuideline/index'));
 const VideoDetail = lazy(() => import('../../apps/Candidate/src/pages/VideoDetail'));
 const Vacancies = lazy(() => import('../../apps/Candidate/src/pages/Vacancies'));
 const CandidateProfile = lazy(() => import('../../apps/Candidate/src/pages/Profile'));
@@ -70,6 +72,39 @@ const FAQ = lazy(() => import('../../apps/Candidate/src/pages/FAQ'));
 const Payment = lazy(() => import('../../apps/Candidate/src/pages/Payment'));
 const PaymentRecords = lazy(() => import('../../apps/Candidate/src/pages/Payment/PaymentInvoice/InvoiceDetails'));
 const CandidateLogin = lazy(() => import('../../apps/Candidate/src/pages/Login'));
+
+
+
+const ProtectedRoute = ({ allowedUserTypes, children }: any) => {
+    const { authState } = useAuth();
+
+    if (!authState.isAuthenticated) {
+        toast.warning(`This area is for registered users. Please authenticate to continue.`);
+        return <Navigate to="/auth/login" replace />;
+    }
+
+    const userTypeId = authState.user?.userTypeId;
+
+    if (!allowedUserTypes.includes(userTypeId)) {
+        switch (userTypeId) {
+        case 1: // Admin
+            toast.error("Secure area detected. Authentication required to enter.");
+            return <Navigate to="/admin/*" replace />;
+        case 2: // Employer
+            toast.error("Secure area detected. Authentication required to enter.");
+            return <Navigate to="/employer/*" replace />;
+        case 3: // Candidate
+            toast.error("Secure area detected. Authentication required to enter.");
+            return <Navigate to="/candidate/*" replace />;
+        default:
+            toast.error("Authentication required. Let's get you logged in.");
+            return <Navigate to="/auth/login" replace />;
+        }
+    }
+
+    return children ? children : <Outlet />;
+};
+
 
 
 const router = createBrowserRouter([
@@ -109,7 +144,9 @@ const router = createBrowserRouter([
         path: ROUTES.CANDIDATE,
         element: (
             <Suspense fallback={<h1>Loading...</h1>}>
-              {<Layout type="Candidate" />}
+                <ProtectedRoute allowedUserTypes={[3]}>
+                    {<Layout type="Candidate" />}
+                </ProtectedRoute>
             </Suspense>
           ),
           children: [
@@ -159,7 +196,7 @@ const router = createBrowserRouter([
             },
             {
                 path: ROUTES.CANDIDATE_VIDEO_GUIDELINE,
-                element: <div className="h-[500px]">Video CV guideline</div>,
+                element: <CandidateVideoGuideline />,
             },
           ],
     },
@@ -167,7 +204,9 @@ const router = createBrowserRouter([
         path: ROUTES.ADMIN,
         element: (
             <Suspense fallback={<h1>Loading...</h1>}>
-              {<Layout type="Admin" />}
+                <ProtectedRoute allowedUserTypes={[1]}>
+                    {<Layout type="Admin" />}
+                </ProtectedRoute>
             </Suspense>
           ),
           children: [
@@ -263,7 +302,12 @@ const router = createBrowserRouter([
     },
     {
         path: ROUTES.EMPLOYER,
-        element: <Suspense fallback={<h1>Loading...</h1>}>{<Layout type='Employer' />}</Suspense>,
+        element: 
+            <Suspense fallback={<h1>Loading...</h1>}>
+                <ProtectedRoute allowedUserTypes={[2]}>
+                    {<Layout type='Employer' />}
+                </ProtectedRoute>
+            </Suspense>,
         children: [
             {
                 path: ROUTES.EMPLOYER_DASHBOARD,

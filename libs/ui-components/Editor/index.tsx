@@ -36,7 +36,9 @@ const index = ({ value, onChange, placeholder }: RichTextEditorProps) => {
       }
     },
     onUpdate: ({ editor }) => {
-      const htmlContent = editor.getHTML();
+      const htmlContent = editor.getText();
+      // const cleanContent = htmlContent.replace(/^<p>(.*)<\/p>$/, '$1');
+      // onChange(cleanContent);
       onChange(htmlContent);
     },
   });

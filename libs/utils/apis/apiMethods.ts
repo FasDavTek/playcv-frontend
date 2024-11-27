@@ -72,7 +72,7 @@ export const getData = async (url: string, p0?: { headers: { Authorization: stri
   return data;
 };
 
-export const postData = async (url: string, reqBody: {}) => {
+export const postData = async (url: string, reqBody: {}, p0?: { headers: { Authorization: string; }; }) => {
   const { data } = await axiosInstance({
     method: "POST",
     url,
