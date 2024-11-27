@@ -88,7 +88,7 @@ const Vacancies = () => {
   const { data: countries, isLoading: isLoadingCountries, error: countriesError } = useAllMisc({
     resource: 'country',
     page: 1,
-    limit: 190,
+    limit: 100,
     download: false,
   });
 

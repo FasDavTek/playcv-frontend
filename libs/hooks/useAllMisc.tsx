@@ -62,6 +62,8 @@ interface MiscQueryParams {
 interface MiscItem {
     id: string;
     name: string;
+    title?: string;
+    content?: string;
 }
 
 interface UseAllMiscResult {

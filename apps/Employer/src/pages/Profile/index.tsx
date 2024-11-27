@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-import { Input, Select, Button } from '@video-cv/ui-components';
+import { Input, Select, Button, DatePicker } from '@video-cv/ui-components';
+import dayjs from 'dayjs';
 import { Snackbar, Alert, SnackbarOrigin, IconButton } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import SaveAsOutlinedIcon from '@mui/icons-material/SaveAsOutlined';
@@ -16,36 +17,42 @@ import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
-import { decodeJWT } from './../../../../../libs/utils/helpers/decoder';
+import { useAllMisc } from './../../../../../libs/hooks/useAllMisc';
 
 interface State extends SnackbarOrigin {
   open: boolean;
 }
 
 const schema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  middleName: z.string().optional(),
-  surname: z.string().min(1, "Surname is required"),
-  email: z.string().email("Invalid email format"),
-  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
-  businessName: z.string().min(1, "Business name is required"),
-  businessPhoneNumber: z.string().min(10, "Business phone number must be at least 10 digits"),
-  businessSector: z.string().min(1, "Business sector is required"),
-  businessEmail: z.string().email("Invalid email format"),
-  businessWebsite: z.string().url().optional().or(z.literal('')),
-  businessSocialMedia: z.string().optional(),
-  businessAddress: z.string().min(1, "Business address is required"),
-  contactPerson: z.string().min(1, "Contact person name is required"),
-  contactPersonRole: z.string().min(1, "Contact person role is required"),
-  password: z.string().min(8, "Password must be at least 8 characters").optional(),
-  confirmPassword: z.string().optional(),
-  isTracked: z.boolean(),
-  isBusinessUser: z.boolean(),
-  isProfessional: z.boolean(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+  userProfile: z.object({
+    userDetails: z.object({
+      firstName: z.string().min(1, "First name is required"),
+      middleName: z.string().optional(),
+      lastName: z.string().min(1, "Surname is required"),
+      email: z.string().email("Invalid email format"),
+      phoneNo: z.string().min(10, "Phone number must be at least 10 digits").max(11, 'Phone number must not be more than 11 digits'),
+      dateOfBirth: z.date().refine(date => dayjs(date).isValid(), {
+        message: "Invalid Date of birth",
+      }),
+      isBusinessUser: z.boolean(),
+    }),
+    businessDetails: z.object({
+      businessName: z.string().min(1, "Business name is required"),
+      businessPhoneNumber: z.string().min(10, "Business phone number must be at least 10 digits"),
+      industry: z.string().min(1, "Business sector is required"),
+      industryId: z.number().optional(),
+      businessEmail: z.string().email("Invalid email format"),
+      websiteUrl: z.string().url().optional().or(z.literal('')),
+      fbLink: z.string().url().optional().or(z.literal('')),
+      twitter: z.string().url().optional().or(z.literal('')),
+      instagramUrl: z.string().url().optional().or(z.literal('')),
+      address: z.string().min(1, "Business address is required"),
+      contactName: z.string().min(1, "Contact person name is required"),
+      contactPosition: z.string().min(1, "Contact person role is required"),
+      contactPhone: z.string().min(10, "Contact person's phone number must be at least 10 digits"),
+    }),
+  }),
+})
 
 // const schema = baseSchema.refine((data) => data.password === data.confirmPassword, {
 //   message: "Passwords don't match",
@@ -61,9 +68,10 @@ const Profile = () => {
   const { register, control, setValue, watch, handleSubmit, formState: { errors }, getValues } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      isTracked: true,
-      isBusinessUser: true,
-      isProfessional: false,
+      userProfile: {
+        userDetails: {},
+        businessDetails: {},
+      }
     },
   });
   
@@ -75,20 +83,49 @@ const Profile = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        if (!token) {
+          toast.error('Unable to load user profile');
+          return;
+        }
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_PROFILE}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (resp.data) {
-          const parsedData = JSON.parse(resp.data);
-          Object.entries(parsedData).forEach(([key, value]) => {
-            setValue(key as keyof FormData, value as string);
+
+        if (resp.userProfile) {
+          const { userDetails, businessDetails } = resp.userProfile;
+
+          Object.entries(userDetails).forEach(([key, value]) => {
+            if (key in schema.shape.userProfile.shape.userDetails.shape) {
+              const fieldKey = key as keyof FormData['userProfile']['userDetails'];
+              const fieldSchema = schema.shape.userProfile.shape.userDetails.shape[fieldKey];
+              
+              if (fieldSchema instanceof z.ZodString && typeof value === 'string') {
+                setValue(`userProfile.userDetails.${fieldKey}`, value);
+              }
+              else if (fieldSchema instanceof z.ZodDate && value instanceof Date) {
+                setValue(`userProfile.userDetails.${fieldKey}`, value);
+              }
+            }
           });
-        }
-        else {
-          const userData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) || '{}');
-          Object.entries(userData).forEach(([key, value]) => {
-              setValue(key as keyof FormData, value as string);
+          Object.entries(businessDetails).forEach(([key, value]) => {
+            if (key in schema.shape.userProfile.shape.businessDetails.shape) {
+              const fieldKey = key as keyof FormData['userProfile']['businessDetails'];
+              const fieldSchema = schema.shape.userProfile.shape.businessDetails.shape[fieldKey];
+              
+              if (fieldSchema instanceof z.ZodString && typeof value === 'string') {
+                setValue(`userProfile.businessDetails.${fieldKey}`, value);
+              } 
+              else if (fieldSchema instanceof z.ZodNumber && typeof value === 'number') {
+                setValue(`userProfile.businessDetails.${fieldKey}`, value);
+              }
+            }
           });
+
+          setValue('userProfile.userDetails.dateOfBirth', userDetails.dateOfBirth || '')
+          setValue('userProfile.businessDetails.websiteUrl', businessDetails.websiteUrl || '')
+          setValue('userProfile.businessDetails.fbLink', businessDetails.fbLink || '')
+          setValue('userProfile.businessDetails.twitter', businessDetails.twitter || '')
+          setValue('userProfile.businessDetails.instagramUrl', businessDetails.instagramUrl || '')
         }
       }
       catch (err) {
@@ -98,10 +135,40 @@ const Profile = () => {
     fetchUserData();
   }, [setValue]);
 
+
+
+  const { data: industry, isLoading: isLoadingDegreeClasses } = useAllMisc({
+    resource: 'industry',
+    page: 1,
+    limit: 100,
+    download: false,
+  });
+
+
+
+  const createNewEntry = async (resource: string, data: any) => {
+    try {
+      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.INDUSTRY}`, data);
+      if (response.code === "200") {
+        toast.success(`New ${resource} created successfully`);
+        return response.data;
+      } else {
+        toast.error(`Failed to create new ${resource}`);
+        return null;
+      }
+    } catch (error) {
+      console.error(`Error creating new ${resource}:`, error);
+      toast.error(`Error creating new ${resource}`);
+      return null;
+    }
+  };
+
+
   useEffect(() => {
     const subscription = watch((data) => data);
     return () => subscription.unsubscribe();
   }, [watch]);
+
 
 
 
@@ -110,31 +177,61 @@ const Profile = () => {
     setLoading(true);
     
     try {
-      const defaultValues = {
-        isTracked: true,
-        isBusinessUser: true,
-        isProfessional: false,
-      };
-  
+      let industryId = null;
+
+      if (data.userProfile.businessDetails.industry) {
+        const existingIndustry = industry?.find(c => c.name === data.userProfile.businessDetails.industry);
+        if (existingIndustry) {
+          industryId = existingIndustry.id;
+        } else {
+          const newCourse = await createNewEntry('industry', { name: data.userProfile.businessDetails.industry });
+          if (newCourse) {
+            industryId = newCourse.id;
+          }
+        }
+      }
+
       const combinedData = {
         ...data,
-        ...defaultValues,
+        userProfile: {
+          ...data.userProfile,
+          userDetails: {
+            ...data.userProfile.userDetails,
+            isBusinessUser: true,
+          },
+          businessDetails: {
+            ...data.userProfile.businessDetails,
+            industryId: industryId,
+            course: industryId ? null : data.userProfile.businessDetails.industry,
+          }
+        }
       };
 
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      if (!token) {
+        toast.error('You are not authenticated. Please log in again.');
+        return;
+      }
+
       // const endpoint = isSignup ? apiEndpoints.AUTH_REGISTER : apiEndpoints.PROFILE;
-      const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, combinedData);
+      const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, combinedData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       if (res.code === "201") {
         toast.success(`Wonderful! Your profile has been successfully modified.`);
         
-        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...res, ...defaultValues }));
+        const updatedUser = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) || '{}');
+        updatedUser.userProfile = combinedData.userProfile;
+        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ updatedUser }));
 
         // localStorage.removeItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
       } else {
         toast.error(`We couldn't complete your profile update. Another attempt might do the trick.`);
       }
     }
-    catch (err) {
+    catch (err: any) {
+      toast.error(err);
       toast.error(`We encountered an issue updating your profile. Please try again.`);
     }
     finally {
@@ -175,248 +272,311 @@ const Profile = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-8">
             {editField === 'firstName' ? (
                   <Input
-                    {...register('firstName')}
+                    {...register('userProfile.userDetails.firstName')}
                     label="First Name"
                     type='text'
                     placeholder='First Name'
-                    error={errors.firstName}
+                    error={errors.userProfile?.userDetails?.firstName}
                   />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('firstName')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.userDetails.firstName')}>
                 <label>First Name</label>
-                <Typography className="input-like">{watch('firstName')}</Typography>
-                <IconButton onClick={() => handleEditClick('firstName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <Typography className="input-like">{watch('userProfile.userDetails.firstName')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.userDetails.firstName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            {editField === 'middleName' ? (
+            {editField === 'userProfile.userDetails.middleName' ? (
               <Input
-                {...register('middleName')}
+                {...register('userProfile.userDetails.middleName')}
                 label="Middle Name"
                 type='text'
                 placeholder='Middle Name'
-                error={errors.middleName}
+                error={errors.userProfile?.userDetails?.middleName}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('middleName')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.userDetails.middleName')}>
                 <label>Middle Name</label>
-                <Typography className="input-like">{watch('middleName')}</Typography>
-                <IconButton onClick={() => handleEditClick('middleName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <Typography className="input-like">{watch('userProfile.userDetails.middleName')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.userDetails.middleName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            {editField === 'surname' ? (
+            {editField === 'userProfile.userDetails.lastName' ? (
               <Input
-                {...register('surname')}
+                {...register('userProfile.userDetails.lastName')}
                 label="Surname"
                 type='text'
                 placeholder='Surname'
-                error={errors.surname}
+                error={errors.userProfile?.userDetails?.lastName}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('surname')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.userDetails.lastName')}>
                 <label>Surname</label>
-                <Typography className="input-like">{watch('surname')}</Typography>
-                <IconButton onClick={() => handleEditClick('surname')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <Typography className="input-like">{watch('userProfile.userDetails.lastName')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.userDetails.lastName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            {editField === 'email' ? (
+            {editField === 'userProfile.userDetails.email' ? (
               <Input
-                {...register('email')}
+                {...register('userProfile.userDetails.email')}
                 label="Email"
                 type='email'
                 placeholder='Email'
-                error={errors.email}
+                error={errors.userProfile?.userDetails?.email}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('email')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.userDetails.email')}>
                 <label>Email</label>
-                <Typography className="input-like">{watch('email')}</Typography>
-                <IconButton onClick={() => handleEditClick('email')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <Typography className="input-like">{watch('userProfile.userDetails.email')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.userDetails.email')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            {editField === 'phoneNumber' ? (
+            {editField === 'userProfile.userDetails.phoneNo' ? (
               <Input
-                {...register('phoneNumber')}
+                {...register('userProfile.userDetails.phoneNo')}
                 label="Phone Number"
                 type='tel'
                 placeholder='Phone Number'
-                error={errors.phoneNumber}
+                error={errors.userProfile?.userDetails?.phoneNo}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('phoneNumber')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.userDetails.phoneNo')}>
                 <label>Phone Number</label>
-                <Typography className="input-like">{watch('phoneNumber')}</Typography>
-                <IconButton onClick={() => handleEditClick('phoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <Typography className="input-like">{watch('userProfile.userDetails.phoneNo')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.userDetails.phoneNo')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            <Box className="input-box">
-              <label>Business Name</label>
-              <Typography className="input-like">{watch('businessName')}</Typography>
-            </Box>
-            {editField === 'businessPhoneNumber' ? (
+            {editField === 'userProfile.userDetails.dateOfBirth' ? (
+               <Controller
+                control={control}
+                name="userProfile.userDetails.dateOfBirth"
+                render={({ field }) => (
+                  <DatePicker
+                    {...field}
+                    label="Date of birth"
+                    value={field.value ? dayjs(field.value) : null}
+                    onChange={(date) => {field.onChange(date ? date.toDate() : null);}}
+                  />
+                )}
+              />
+            ) : (
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.userDetails.dateOfBirth')}>
+                <label>Date Of Birth</label>
+                <Typography className="input-like">{watch('userProfile.userDetails.dateOfBirth') ? dayjs(watch('userProfile.userDetails.dateOfBirth')).format('MMMM D, YYYY') : null}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.userDetails.dateOfBirth')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                  <SaveAsOutlinedIcon />
+                </IconButton>
+              </Box>
+            )}
+            {editField === 'userProfile.businessDetails.businessName' ? (
               <Input
-                {...register('businessPhoneNumber')}
+                {...register('userProfile.businessDetails.businessName')}
+                label="Business Name"
+                placeholder='Business Name'
+                error={errors.userProfile?.businessDetails?.businessPhoneNumber}
+              />
+            ) : (
+              <Box className="input-box">
+                <label>Business Name</label>
+                <Typography className="input-like">{watch('userProfile.businessDetails.businessName')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.businessName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                    <SaveAsOutlinedIcon />
+                </IconButton>
+              </Box>
+            )}
+            {editField === 'userProfile.businessDetails.businessPhoneNumber' ? (
+              <Input
+                {...register('userProfile.businessDetails.businessPhoneNumber')}
                 label="Business Phone Number"
                 type='tel'
                 placeholder='Business Phone Number'
-                error={errors.businessPhoneNumber}
+                error={errors.userProfile?.businessDetails?.businessPhoneNumber}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('businessPhoneNumber')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.businessPhoneNumber')}>
                 <label>Business Phone Number</label>
-                <Typography className="input-like" >{watch('businessPhoneNumber')}</Typography>
-                <IconButton onClick={() => handleEditClick('businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <Typography className="input-like" >{watch('userProfile.businessDetails.businessPhoneNumber')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.businessPhoneNumber')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            {editField === 'businessSector' ? (
+            {editField === 'userProfile.businessDetails.industry' ? (
               <Controller
-                {...register('businessSector')}
+                {...register('userProfile.businessDetails.industry')}
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <Select
                     label="Industry"
                     value={value}
-                    {...register('businessSector')}
+                    {...register('userProfile.businessDetails.industry')}
                     options={[{ value: 'product', label: 'Product' }]}
-                    onChange={(value) => onChange('classOfDegree', value)}
+                    onChange={(value) => onChange(value)}
                   />
                 )}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('businessSector')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.industry')}>
                 <label>Industry</label>
-                <Typography className="input-like" >{watch('businessSector')}</Typography>
-                <IconButton onClick={() => handleEditClick('businessSector')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <Typography className="input-like" >{watch('userProfile.businessDetails.industry')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.industry')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            {editField === 'businessWebsite' ? (
+            {editField === 'userProfile.businessDetails.websiteUrl' ? (
               <Input
-                {...register("businessWebsite")}
+                {...register("userProfile.businessDetails.websiteUrl")}
                 label="Website Url (Optional)"
                 type='text'
                 placeholder='Website Url'
-                error={errors.businessWebsite}
+                error={errors.userProfile?.businessDetails?.websiteUrl}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('businessWebsite')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.websiteUrl')}>
                 <label>Website URL (Optional)</label>
-                <Typography className="input-like">{watch('businessWebsite')}</Typography>
-                <IconButton onClick={() => handleEditClick('businessWebsite')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <p className="input-like">
+                    <a href={watch('userProfile.businessDetails.websiteUrl')} target="_blank" rel="noopener noreferrer">
+                      {watch('userProfile.businessDetails.websiteUrl')}
+                    </a>
+                </p>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.websiteUrl')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            {editField === 'businessSocialMedia' ? (
+            {editField === 'userProfile.businessDetails.fbLink' ? (
               <Input
-                {...register("businessSocialMedia")}
-                label="Social Media Page Link"
+                {...register("userProfile.businessDetails.fbLink")}
+                label="Facebook Page Link"
                 type='text'
-                placeholder='Social Media Page Link'
-                error={errors.businessSocialMedia}
+                placeholder='Facebook Page Link'
+                error={errors.userProfile?.businessDetails?.fbLink}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('businessSocialMedia')}>
-                <label>Social Media Page Link</label>
-                <Typography className="input-like">{watch('businessSocialMedia')}</Typography>
-                <IconButton onClick={() => handleEditClick('businessSocialMedia')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.fbLink')}>
+                <label>Facebook Page Link</label>
+                <p className="input-like">
+                  <a href={watch('userProfile.businessDetails.fbLink')} target="_blank" rel="noopener noreferrer">
+                      {watch('userProfile.businessDetails.fbLink')}
+                  </a>
+                </p>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.fbLink')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            {editField === 'businessAddress' ? (
+            {editField === 'userProfile.businessDetails.twitter' ? (
               <Input
-                {...register("businessAddress")}
+                {...register("userProfile.businessDetails.twitter")}
+                label="Twitter Page Link"
+                type='text'
+                placeholder='Twitter Page Link'
+                error={errors.userProfile?.businessDetails?.twitter}
+              />
+            ) : (
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.twitter')}>
+                <label>Twitter Page Link</label>
+                <p className="input-like">
+                  <a href={watch('userProfile.businessDetails.twitter')} target="_blank" rel="noopener noreferrer">
+                      {watch('userProfile.businessDetails.twitter')}
+                  </a>
+                </p>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.twitter')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                  <SaveAsOutlinedIcon />
+                </IconButton>
+              </Box>
+            )}
+            {editField === 'userProfile.businessDetails.instagramUrl' ? (
+              <Input
+                {...register("userProfile.businessDetails.instagramUrl")}
+                label="Instagram Page Link"
+                type='text'
+                placeholder='Instagram Page Link'
+                error={errors.userProfile?.businessDetails?.instagramUrl}
+              />
+            ) : (
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.instagramUrl')}>
+                <label>Instagram Page Link</label>
+                <Typography className="input-like">{watch('userProfile.businessDetails.instagramUrl')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.instagramUrl')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                  <SaveAsOutlinedIcon />
+                </IconButton>
+              </Box>
+            )}
+            {editField === 'userProfile.businessDetails.address' ? (
+              <Input
+                {...register("userProfile.businessDetails.address")}
                 label="Office Address"
                 type='text'
                 placeholder='Office Address'
-                error={errors.businessAddress}
+                error={errors.userProfile?.businessDetails?.address}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('businessAddress')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.address')}>
                 <label>Office Address</label>
-                <Typography className="input-like">{watch('businessAddress')}</Typography>
-                <IconButton onClick={() => handleEditClick('businessAddress')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <Typography className="input-like">{watch('userProfile.businessDetails.address')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.address')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            {editField === 'contactPerson' ? (
+            {editField === 'userProfile.businessDetails.contactName' ? (
               <Input
-                {...register("contactPerson")}
+                {...register("userProfile.businessDetails.contactName")}
                 label="Contact Person Name"
                 type='text'
                 placeholder='Contact Person Name'
-                error={errors.contactPerson}
+                error={errors.userProfile?.businessDetails?.contactName}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('contactPerson')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.contactName')}>
                 <label>Contact Person Name</label>
-                <Typography className="input-like">{watch('contactPerson')}</Typography>
-                <IconButton onClick={() => handleEditClick('contactPerson')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <Typography className="input-like">{watch('userProfile.businessDetails.contactName')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.contactName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            {editField === 'contactPersonRole' ? (
+            {editField === 'userProfile.businessDetails.contactPosition' ? (
               <Input
-                {...register("contactPersonRole")}
+                {...register("userProfile.businessDetails.contactPosition")}
                 label="Contact Person Position"
                 type='text'
                 placeholder='Contact Person Position'
-                error={errors.contactPersonRole}
+                error={errors.userProfile?.businessDetails?.contactPosition}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('contactPersonRole')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.contactPosition')}>
                 <label>Contact Person Position</label>
-                <Typography className="input-like">{watch('contactPersonRole')}</Typography>
-                <IconButton onClick={() => handleEditClick('contactPersonRole')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <Typography className="input-like">{watch('userProfile.businessDetails.contactPosition')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.contactPosition')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}
-            {editField === 'password' ? (
+            {editField === 'userProfile.businessDetails.contactPhone' ? (
               <Input
-                {...register('password')}
-                label="Password"
-                type='password'
-                placeholder='Password'
-                error={errors.password}
+                {...register('userProfile.businessDetails.contactPhone')}
+                label="Phone Number"
+                type='tel'
+                placeholder='Phone Number'
+                error={errors.userProfile?.businessDetails?.contactPhone}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('password')}>
-                <label>Password</label>
-                <Typography className="input-like">{watch('password')}</Typography>
-                <IconButton onClick={() => handleEditClick('password')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
-                  <SaveAsOutlinedIcon />
-                </IconButton>
-              </Box>
-            )}
-            {editField === 'confirmPassword' ? (
-              <Input
-                {...register('confirmPassword')}
-                label="Confirm Password"
-                type='password'
-                placeholder='Confirm Password'
-                error={errors.confirmPassword}
-              />
-            ) : (
-              <Box className="input-box" onClick={() => handleEditClick('confirmPassword')}>
-                <label>Confirm Password</label>
-                <Typography className="input-like">{watch('confirmPassword')}</Typography>
-                <IconButton onClick={() => handleEditClick('confirmPassword')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.contactPhone')}>
+                <label>Contact Person Phone Number</label>
+                <Typography className="input-like">{watch('userProfile.businessDetails.contactPhone')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.contactPhone')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
@@ -437,206 +597,3 @@ const Profile = () => {
 };
 
 export default Profile;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useState, useEffect } from 'react';
-// import { useForm } from 'react-hook-form';
-// import { Input } from '@video-cv/ui-components';
-// import { Box, IconButton, Typography, Snackbar, Alert } from '@mui/material';
-// import SaveAsOutlinedIcon from '@mui/icons-material/SaveAsOutlined';
-// import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
-
-// const Profile = () => {
-//   const { register, setValue, watch } = useForm();
-//   const [editField, setEditField] = useState<string | null>(null);
-//   const [snackbarOpen, setSnackbarOpen] = useState(false);
-//   const [snackbarMessage, setSnackbarMessage] = useState('');
-
-  
-//   useEffect(() => {
-//     const fetchUserData = () => {
-//       const resp.data = localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
-//       const userData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) || '{}');
-      
-//       if (signupData) {
-//         const parsedData = JSON.parse(signupData);
-//         Object.entries(parsedData).forEach(([key, value]) => {
-//           setValue(key, value);
-//         });
-//       } else {
-//         Object.entries(userData).forEach(([key, value]) => {
-//           setValue(key, value);
-//         });
-//       }
-//     };
-//     loadData();
-//   }, [setValue]);
-
-  
-//   const submitForm = () => {
-//     const data = {
-//       firstName: watch("firstName"),
-//       middleName: watch("middleName"),
-//       surname: watch("surname"),
-//       email: watch("email"),
-//       phoneNumber: watch("phoneNumber"),
-//       businessName: watch("businessName"),
-//       businessPhoneNumber: watch("businessPhoneNumber"),
-//       businessSector: watch("businessSector"),
-//       businessEmail: watch("businessEmail"),
-//       businessWebsite: watch("businessWebsite"),
-//       businessSocialMedia: watch("businessSocialMedia"),
-//       businessAddress: watch("businessAddress"),
-//       contactPerson: watch("contactPerson"),
-//       contactPersonRole: watch("contactPersonRole"),
-//       password: watch("password"),
-//       confirmPassword: watch("confirmPassword"),
-//     };
-
-//     console.log("Submitting data:", data);
-//     try {
-    //   const endpoint = isSignup ? apiEndpoints.AUTH_REGISTER : apiEndpoints.PROFILE;
-    //   const res = await postData(`${CONFIG.BASE_URL}${endpoint}`, data);
-
-    //   if (res.code === "201") {
-    //     toast.success(res.message);
-    //     const token = res.jwtToken;
-    //     const decoded = decodeJWT(token);
-    //     localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...res, ...decoded }));
-    //     localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
-    //     localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, decoded.UserId);
-    //     localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, res.jwtToken);
-
-    //     if (isSignup) {
-    //       localStorage.removeItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
-    //       navigate('/');
-    //     }
-    //   } else {
-    //     toast.error(res.message);
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    //   toast.error(isSignup ? "An error occurred during signup" : "An error occurred while updating profile");
-    // } finally {
-    //   setLoading(false);
-    //   setEditField(null);
-    // }
-//   };
-
-  
-//   const handleEditClick = (fieldName: string) => {
-//     setEditField(fieldName);
-//   };
-
-  
-//   const renderEditableField = (fieldName: string, label: string, type = 'text') => (
-//     editField === fieldName ? (
-//       <Input
-//         {...register(fieldName)}
-//         label={label}
-//         type={type}
-//         placeholder={label}
-//         onBlur={() => setEditField(null)}
-//       />
-//     ) : (
-//       <Box className="input-box" key={fieldName}>
-//         <label>{label}</label>
-//         <Typography className="input-like" onClick={() => handleEditClick(fieldName)}>
-//           {watch(fieldName) || 'Click to edit'}
-//         </Typography>
-//         <IconButton onClick={() => handleEditClick(fieldName)} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
-//           <SaveAsOutlinedIcon />
-//         </IconButton>
-//       </Box>
-//     )
-//   );
-
-  
-//   const handleCloseSnackbar = (event?: React.SyntheticEvent | Event, reason?: string) => {
-//     if (reason === 'clickaway') {
-//       return;
-//     }
-//     setSnackbarOpen(false);
-//   };
-
-//   return (
-//     <Box sx={{ width: '90%', marginInline: 'auto' }}>
-//       <Box>
-//         <form onSubmit={(e) => {
-//           e.preventDefault();
-//           submitForm();
-//         }}>
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-8">
-//             {renderEditableField("firstName", "First Name")}
-//             {renderEditableField("middleName", "Middle Name")}
-//             {renderEditableField("surname", "Surname")}
-//             {renderEditableField("email", "Email", "email")}
-//             {renderEditableField("phoneNumber", "Phone Number", "tel")}
-//             {renderEditableField("businessName", "Business Name")}
-//             {renderEditableField("businessPhoneNumber", "Business Phone Number", "tel")}
-//             {renderEditableField("businessSector", "Business Sector")}
-//             {renderEditableField("businessWebsite", "Business Website", "url")}
-//             {renderEditableField("businessSocialMedia", "Business Social Media")}
-//             {renderEditableField("businessAddress", "Business Address")}
-//             {renderEditableField("contactPerson", "Contact Person")}
-//             {renderEditableField("contactPersonRole", "Contact Person Role")}
-//             {renderEditableField("password", "Password", "password")}
-//             {renderEditableField("confirmPassword", "Confirm Password", "password")}
-//           </div>
-//           <Button type='submit' variant="black" disabled={loading} label={loading ? "Submitting..." : (isSignup ? "Complete Signup" : "Update Profile")} className='mt-5' />
-//         </form>
-//       </Box>
-      
-//       <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-//         <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-//           {snackbarMessage}
-//         </Alert>
-//       </Snackbar>
-//     </Box>
-//   );
-// };
-
-// export default Profile;

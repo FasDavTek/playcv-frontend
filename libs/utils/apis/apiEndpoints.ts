@@ -54,7 +54,7 @@ export enum apiEndpoints {
     GET_MISC = '/api/v1/helper/resource/get',
     COURSE = '/api/v1/helper/course/create-edit',
     INDUSTRY = '/api/v1/helper/industry/create-edit',
-    DEGREE = '/api/v1/helper/degree-class/create-edit',
+    DEGREE_CLASS = '/api/v1/helper/degree-class/create-edit',
     QHALIFICATION = '/api/v1/helper/qualification/create-edit',
     TESTIMONIAL = '/api/v1/helper/site-testimonial/create-edit',
     CV_GUIDELINE = '/api/v1/helper/cv-guideline/create-edit',
