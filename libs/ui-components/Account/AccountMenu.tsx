@@ -33,6 +33,7 @@ interface AccountMenuProps {
   currentAccount: Account;
   accounts: Account[];
   onSwitchAccount: (account: Account) => void;
+  onSignOut?: () => void;
 }
 
 const AccountPreview: React.FC<{ account: Account }> = ({ account }) => (

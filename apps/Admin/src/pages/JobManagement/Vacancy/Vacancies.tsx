@@ -25,24 +25,9 @@ const s3Client = new S3Client({
   },
 });
 
-// const specialisations = [
-//   'Software Development',
-//   'Data Science',
-//   'UI/UX Design',
-//   'Project Management',
-//   'Digital Marketing',
-//   'Business Analysis',
-//   'DevOps',
-//   'Cybersecurity',
-//   'Artificial Intelligence',
-//   'Cloud Computing',
-// ];
-
 const statusOptions = [
-  { value: 'Active', label: 'Active' },
-  { value: 'Expired', label: 'Expired' },
-  { value: 'Pending', label: 'Pending' },
-  { value: 'Rejected', label: 'Rejected' },
+  { value: 'true', label: 'Activate' },
+  { value: 'false', label: 'Suspend' },
 ];
 
 

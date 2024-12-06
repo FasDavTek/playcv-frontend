@@ -7,6 +7,9 @@ import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+import { useAllCountry } from './../../../../../libs/hooks/useAllCountries';
+import { useAllState } from './../../../../../libs/hooks/useAllState';
 
 type Vacancy = {
   id: number;
@@ -36,16 +39,22 @@ const JobManagement = () => {
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
   const navigate = useNavigate();
 
-
+  const { data: countryData, isLoading: isCountryLoading, error: countryError } = useAllCountry();
+  const { data: stateData, isLoading: isStateLoading, error: stateError } = useAllState();
 
   const fetchJobs = async () => {
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=15`);
-      if (!resp.ok) {
-        throw new Error("Failed to fetch jobs");
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      if (!token) {
+        toast.error('Unable to load user profile');
+        return;
       }
 
-      const data = await resp.json();
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=30`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await resp.data;
       setJobs(data);
       setLoading(false);
 
