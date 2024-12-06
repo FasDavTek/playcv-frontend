@@ -4,7 +4,7 @@ import CONFIG from '../../libs/utils/helpers/config';
 import { apiEndpoints } from '../../libs/utils/apis/apiEndpoints';
 
 export const getAllState = async () => {
-    const data = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_MISC}`);
+    const data = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_STATE}`);
     return data;
 };
 

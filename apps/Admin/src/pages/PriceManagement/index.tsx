@@ -12,52 +12,20 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import Price from './modal/Price';
 import VideoUploadTypes from './../../../../Candidate/src/pages/VideoManagement/VideoManagement-Types/VideoUploadTypes';
 import { useCurrentUser } from './../../../../../libs/hooks/useCurrentUser';
+import { useAuth } from './../../../../../libs/context/AuthContext';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 type PriceItem = {
   id: string;
   price: string;
-  type: string;
+  typeName?: string
+  uploadPrice?: number
+  buyPrice?: number
   status: string;
   [key: string]: any;
 }
 
-// type Ads = {
-//   id: number;
-//   amount: number;
-//   type: string;
-// }
-
-// type BuyVideo = {
-//   id: number;
-//   amount: number;
-//   type: string;
-// }
-
-// interface PriceFieldsProps {
-//   label: string;
-//   value: number | undefined;
-//   onChange: (value: number) => void;
-// }
-
 const columnHelper = createColumnHelper<PriceItem>();
-// const adsColumnHelper = createColumnHelper<Ads>();
-// const buyVideoColumnHelper = createColumnHelper<BuyVideo>();
-
-// const PriceFields: React.FC<PriceFieldsProps> = ({ label, value, onChange }) => {
-//   return (
-//     <Input
-//     //   fullWidth
-//       label={label}
-//       type="number"
-//       value={value}
-//       onChange={(e) => onChange(parseFloat(e.target.value))}
-//       placeholder='0'
-//       startAdornment={
-//         <Typography variant="h6">₦</Typography>
-//       } 
-//     />
-//   );
-// };
 
 const index = () => {
   const [openModal, setOpenModal] = useState<'add' | 'edit' | null>(null);
@@ -67,7 +35,7 @@ const index = () => {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-  const { currentUser, loading: userLoading, error: userError } = useCurrentUser();
+  const { authState } = useAuth();
   
   useEffect(() => {
     fetchPriceItems()
@@ -76,19 +44,40 @@ const index = () => {
   const fetchPriceItems = async () => {
     setLoading(false);
     try {
-      const endpoint = activeTab === 'videoUploadTypes' ? apiEndpoints.VIDEO_UPLOAD_TYPE : apiEndpoints.ADS_TYPE;
-      const resp = await getData(`${CONFIG.BASE_URL}${endpoint}`);
-      if (resp.code === "201") {
-        const data = await resp.json();
-        setPriceItems(data);
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      if (!token) {
+        toast.error('Unable to load user profile');
+        return;
       }
-      else {
-        throw new Error(`Unable to fetch ${activeTab}`)
+
+      const endpoint = activeTab === 'videoUploadTypes' ? apiEndpoints.VIDEO_UPLOAD_TYPE : apiEndpoints.ADS_TYPE;
+      const resp = await getData(`${CONFIG.BASE_URL}${endpoint}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (resp.code === "00") {
+        let data = resp.data
+        console.log(priceItems);
+        setPriceItems(data || []);
+        console.log(priceItems)
+      }
+      else if (activeTab === 'adsTypes') {
+        let data = resp.map((item: any) => ({
+          id: item.typeId.toString(),
+          name: item.typeName,
+          typeDescription: item.typeDescription,
+          dateCreated: item.dateCreated,
+          dateUpdated: item.dateUpdated,
+          createdBy: item.createdBy,
+          active: true
+        }));
+
+        setPriceItems(data);
+        console.log(priceItems);
       }
     }
     catch (err) {
-      console.error(`Error fetching ${activeTab}:`, err)
-      toast.error(`Failed to load ${activeTab}`)
+      console.info(`No ${activeTab} found:`, err)
+      toast.info(activeTab === 'videoUploadTypes' ? `No Video Upload Type found` : activeTab === 'adsTypes' ? `No Ads Type Found` : `No Buy Video Type Found`)
     }
     finally {
       setLoading(false);
@@ -98,17 +87,26 @@ const index = () => {
 
   const handleStatusToggle = async (id: string, currentStatus: string) => {
     try {
-      const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      if (!token) {
+        toast.error('Unable to load user profile');
+        return;
+      }
+      
+      const newStatus = !currentStatus;
       const endpoint = activeTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE;
       const resp = await postData(`${CONFIG.BASE_URL}${endpoint}`, {
         id,
         status: newStatus,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (resp.code === "201") {
+      if (resp.code === "00") {
         setPriceItems(priceItems.map(item =>
-          item.id === id ? { ...item, status: newStatus } : item
+          (item.id === id || item.typeId === id) ? { ...item, active: newStatus } : item
         ))
-        toast.success(`${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} ${newStatus.toLowerCase()} successfully`)
+        toast.success(`${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} ${newStatus ? 'activated' : 'suspended'} successfully`)
       }
       else {
         throw new Error(`Failed to update ${activeTab === 'videoUploadTypes' ? 'video type' : 'ad type'} status`)
@@ -118,49 +116,122 @@ const index = () => {
       console.error(`Error updating ${activeTab} status:`, err)
       toast.error(`Failed to update ${activeTab} status`)
     }
-  }
+  };
 
-  const columns = [
-    columnHelper.accessor('name', {
-      header: 'Name',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('price', {
-      header: 'Price',
-      cell: (info) => `$${info.getValue()}`,
-    }),
-    columnHelper.accessor('status', {
+
+  const handleEdit = (item: PriceItem) => {
+    setSelectedItem(item);
+    setOpenModal('edit');
+  };
+
+
+  const getColumns = () => {
+    const baseColumn = [
+      columnHelper.accessor('name', {
+        header: 'Name',
+        cell: (info) => info.getValue(),
+      }),
+    ]
+
+    const statusColumn = columnHelper.accessor('active', {
       header: 'Status',
-      cell: (info) => (
+      cell: (info: any) => (
         <span className={`px-2 py-1.5 text-center items-center rounded-full ${
-          info.getValue() === 'Active' ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
+          info.getValue() ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
         }`}>
-          {info.getValue()}
+          {info.getValue() ? 'Active' : 'Suspended'}
         </span>
       ),
-    }),
-    columnHelper.display({
+    })
+
+    const actionColumn = columnHelper.display({
       id: 'actions',
       header: 'Actions',
       cell: ({ row }) => (
-        <div className="flex gap-2">
-          <Button 
-            variant='neutral' 
-            label="Edit" 
-            onClick={() => {
-              setSelectedItem(row.original)
-              navigate(`/admin/price-management/edit/${activeTab}/${row.original.id}`)
-            }}
-          />
-          <Button 
-            variant={row.original.status === 'Active' ? 'red' : 'success'} 
-            label={row.original.status === 'Active' ? 'Deactivate' : 'Activate'}
-            onClick={() => handleStatusToggle(row.original.id, row.original.status)}
-          />
+        <div className='flex gap-2'>
+          <Button variant='custom' label='Edit' onClick={() => handleEdit(row.original)} />
+          <Button variant={row.original.active ? 'red' : 'success'} label={row.original.active ? 'Suspend' : 'Activate'} onClick={() => handleStatusToggle(row.original.id || row.original.typeId || '', row.original.active)} />
         </div>
-      ),
-    }),
-  ]
+      )
+    });
+
+    switch (activeTab) {
+      case 'videoUploadTypes':
+        return [
+          ...baseColumn,
+          columnHelper.accessor('uploadPrice', { header: 'Price', }),
+          statusColumn,
+          actionColumn,
+        ]
+
+      case 'adsTypes':
+        return [
+          ...baseColumn,
+          columnHelper.accessor('AdPrice', { header: 'Price', }),
+          columnHelper.accessor('typeDescription', { header: 'Description' }),
+          statusColumn,
+          actionColumn,
+        ]
+
+      case 'buyVideoTypes':
+        return [
+          ...baseColumn,
+          columnHelper.accessor('buyPrice', { header: 'Price', }),
+          statusColumn,
+          actionColumn,
+        ]
+
+      default:
+        return [
+          ...baseColumn,
+          actionColumn,
+        ];
+    }
+  }
+
+  const columns = getColumns();
+
+  // [
+  //   columnHelper.accessor('name', {
+  //     header: 'Name',
+  //     cell: (info) => info.getValue(),
+  //   }),
+  //   columnHelper.accessor('price', {
+  //     header: 'Price',
+  //     cell: (info) => `$${info.getValue()}`,
+  //   }),
+  //   columnHelper.accessor('status', {
+  //     header: 'Status',
+  //     cell: (info) => (
+  //       <span className={`px-2 py-1.5 text-center items-center rounded-full ${
+  //         info.getValue() === 'Active' ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
+  //       }`}>
+  //         {info.getValue()}
+  //       </span>
+  //     ),
+  //   }),
+  //   columnHelper.display({
+  //     id: 'actions',
+  //     header: 'Actions',
+  //     cell: ({ row }) => (
+  //       <div className="flex gap-2">
+  //         <Button 
+  //           variant='neutral' 
+  //           label="Edit" 
+  //           onClick={() => {
+  //             setSelectedItem(row.original)
+  //             navigate(`/admin/price-management/edit/${activeTab}/${row.original.id}`)
+  //           }}
+  //         />
+  //         <Button 
+  //           variant={row.original.status === 'Active' ? 'red' : 'success'} 
+  //           label={row.original.status === 'Active' ? 'Deactivate' : 'Activate'}
+  //           onClick={() => handleStatusToggle(row.original.id, row.original.status)}
+  //         />
+  //       </div>
+  //     ),
+  //   }),
+  // ]
 
   const closeModal = () => setOpenModal(null);
 
@@ -198,10 +269,10 @@ const index = () => {
           />
         </div>
 
-        <Modal open={openModal === 'add' || openModal === 'edit'} onClose={closeModal} sx={{ maxWidth: 'lg' }}>
+        <Modal open={openModal === 'add' || openModal === 'edit'} onClose={closeModal}>
           <>
-            {currentUser && (
-              <Price onClose={closeModal} currentTab={activeTab} item={selectedItem} open={true} modalType={openModal === 'add' ? 'add' : 'edit'} currentUser={currentUser.name} />
+            {authState.isAuthenticated && authState.user?.name && (
+              <Price onClose={closeModal} currentTab={activeTab} item={selectedItem} open={true} modalType={openModal === 'add' ? 'add' : 'edit'} currentUser={authState?.user?.name} />
             )}
           </>
         </Modal>

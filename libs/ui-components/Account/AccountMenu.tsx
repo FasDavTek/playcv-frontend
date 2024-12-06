@@ -8,7 +8,8 @@ import {
   ListItemText, 
   Divider,
   Typography,
-  Box
+  Box,
+  Modal
 } from '@mui/material';
 import { 
   AccountCircle as AccountCircleIcon,
@@ -18,6 +19,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import LogoutModal from '../Layout/LogoutModal';
 
 interface Account {
   id: string;
@@ -31,7 +33,6 @@ interface AccountMenuProps {
   currentAccount: Account;
   accounts: Account[];
   onSwitchAccount: (account: Account) => void;
-  onSignOut: () => void;
 }
 
 const AccountPreview: React.FC<{ account: Account }> = ({ account }) => (
@@ -47,14 +48,14 @@ const AccountPreview: React.FC<{ account: Account }> = ({ account }) => (
 export const AccountMenu: React.FC<AccountMenuProps> = ({
   accounts,
   onSwitchAccount,
-  onSignOut
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const open = Boolean(anchorEl);
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const { authState } = useAuth();
+  const { authState, logout } = useAuth();
 
   const currentUser = authState.user;
 
@@ -75,10 +76,22 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
     }
   };
 
+
+  const handleLogout = () => {
+    setIsLogoutModalOpen(true);
+    handleClose();
+  };
+
+  const confirmLogout = () => {
+    logout();
+    setIsLogoutModalOpen(false);
+    navigate('/auth/login');
+  };
+
+
   if (!currentUser) {
     return null;
   };
-
 
 
   const currentAccount: Account = {
@@ -163,7 +176,7 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
         </MenuItem>
         <Divider />
         <MenuItem 
-            onClick={onSignOut}
+            onClick={handleLogout}
             sx={{
                 '&:hover': {
                   backgroundColor: 'grey',
@@ -181,6 +194,11 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
           <ListItemText className='text-neutral-300'>Sign out</ListItemText>
         </MenuItem>
       </Menu>
+      <Modal open={isLogoutModalOpen} onClose={() => setIsLogoutModalOpen(false)}>
+        <>
+          <LogoutModal onClose={() => setIsLogoutModalOpen(false)} onLogout={confirmLogout} />
+        </>
+      </Modal>
     </>
   );
 };

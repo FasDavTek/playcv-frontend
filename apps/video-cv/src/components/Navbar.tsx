@@ -208,46 +208,72 @@ const Navbar = () => {
                 Job Board
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to="/candidate/dashboard"
-                className={({ isActive, isPending }) =>
-                  `text-black text-lg  ${
-                    isPending
-                      ? 'pending'
-                      : isActive
-                      ? 'active-nav-link'
-                      : 'nav-link'
-                  }`
-                }
-                onClick={(e) => {
-                  e.preventDefault()
-                  handleAuthenticatedNavigation('/candidate/dashboard')
-                }}
-              >
-                Professional
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/employer/dashboard"
-                className={({ isActive, isPending }) =>
-                  `text-black text-lg  ${
-                    isPending
-                      ? 'pending'
-                      : isActive
-                      ? 'active-nav-link'
-                      : 'nav-link'
-                  }`
-                }
-                onClick={(e) => {
-                  e.preventDefault()  
-                  handleAuthenticatedNavigation('/employer/dashboard')
-                }}
-              >
-                Employer
-              </NavLink>
-            </li>
+            {authState.isAuthenticated && authState?.user?.userTypeId === 3 && (
+              <li>
+                <NavLink
+                  to="/candidate/dashboard"
+                  className={({ isActive, isPending }) =>
+                    `text-black text-lg  ${
+                      isPending
+                        ? 'pending'
+                        : isActive
+                        ? 'active-nav-link'
+                        : 'nav-link'
+                    }`
+                  }
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleAuthenticatedNavigation('/candidate/dashboard')
+                  }}
+                >
+                  Professional
+                </NavLink>
+              </li>
+            )}
+            {authState.isAuthenticated && authState?.user?.userTypeId === 2 && (
+              <li>
+                <NavLink
+                  to="/employer/dashboard"
+                  className={({ isActive, isPending }) =>
+                    `text-black text-lg  ${
+                      isPending
+                        ? 'pending'
+                        : isActive
+                        ? 'active-nav-link'
+                        : 'nav-link'
+                    }`
+                  }
+                  onClick={(e) => {
+                    e.preventDefault()  
+                    handleAuthenticatedNavigation('/employer/dashboard')
+                  }}
+                >
+                  Employer
+                </NavLink>
+              </li>
+            )}
+            {authState.isAuthenticated && authState?.user?.userTypeId === 1 && (
+              <li>
+                <NavLink
+                  to='/admin/dashbaord'
+                  className={({ isActive, isPending }) =>
+                    `text-black text-lg  ${
+                      isPending
+                        ? 'pending'
+                        : isActive
+                        ? 'active-nav-link'
+                        : 'nav-link'
+                    }`
+                  }
+                  onClick={(e) => {
+                    e.preventDefault()  
+                    handleAuthenticatedNavigation('/admin/dashboard')
+                  }}
+                >
+                  Admin
+                </NavLink>
+              </li>
+            )}
             {authState.isAuthenticated && (
               <li>
                 {/* TODO: Show logged in if user is logged in */}

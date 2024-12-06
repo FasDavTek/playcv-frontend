@@ -197,12 +197,15 @@ const Profile = () => {
           ...data.userProfile,
           userDetails: {
             ...data.userProfile.userDetails,
+            dateOfBirth: data.userProfile.userDetails.dateOfBirth 
+              ? dayjs(data.userProfile.userDetails.dateOfBirth).format('DD-MM-YYYY')
+              : null,
             isBusinessUser: true,
           },
           businessDetails: {
             ...data.userProfile.businessDetails,
             industryId: industryId,
-            course: industryId ? null : data.userProfile.businessDetails.industry,
+            industry: industryId ? null : data.userProfile.businessDetails.industry,
           }
         }
       };
@@ -218,7 +221,7 @@ const Profile = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (res.code === "201") {
+      if (res.code === "00") {
         toast.success(`Wonderful! Your profile has been successfully modified.`);
         
         const updatedUser = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) || '{}');
@@ -390,6 +393,23 @@ const Profile = () => {
                 <Typography className="input-like">{watch('userProfile.businessDetails.businessName')}</Typography>
                 <IconButton onClick={() => handleEditClick('userProfile.businessDetails.businessName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                     <SaveAsOutlinedIcon />
+                </IconButton>
+              </Box>
+            )}
+            {editField === 'userProfile.businessDetails.businessEmail' ? (
+              <Input
+                {...register('userProfile.businessDetails.businessEmail')}
+                label="Business Email"
+                type='businessEmail'
+                placeholder='Business Email'
+                error={errors.userProfile?.businessDetails?.businessEmail}
+              />
+            ) : (
+              <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.businessEmail')}>
+                <label>Business Email</label>
+                <Typography className="input-like">{watch('userProfile.businessDetails.businessEmail')}</Typography>
+                <IconButton onClick={() => handleEditClick('userProfile.businessDetails.businessEmail')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                  <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
             )}

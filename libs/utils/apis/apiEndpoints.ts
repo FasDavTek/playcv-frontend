@@ -29,7 +29,7 @@ export enum apiEndpoints {
     GET_USER = '/api/v1/admin/get/user/profile/:useremail',
     CREATE_PROF_EMP_USER = '/api/v1/admin/user/create-prof-emp',
     MANAGE_PROF_EMP_USER = '/api/v1/admin/user/manage-prof-emp',
-    CREATE_AD_TYPE = '/api/v1/ads/types/create-edit',
+    CREATE_AD_TYPE = '/api/v1/ads/adtypes/create-edit',
     CREATE_VIDEO_TYPE = '/api/v1/video/uploadtype/create-edit',
 
     // create ads flow
@@ -46,7 +46,7 @@ export enum apiEndpoints {
     VACANCY_BY_ID = '/api/v1/vacancy/get/{vacancyEmail}',
 
     // misc
-    COUNTRIES = '/api/v1/helper/location/countries/create-edit',
+    COUNTRY = '/api/v1/helper/location/countries/create-edit',
     GET_COUNTRIES = '/api/v1/helper/location/countries/get',
     STATE = '/api/v1/helper/location/state/create-edit',
     GET_STATE = '/api/v1/helper/location/states/get',
@@ -54,6 +54,7 @@ export enum apiEndpoints {
     GET_MISC = '/api/v1/helper/resource/get',
     COURSE = '/api/v1/helper/course/create-edit',
     INDUSTRY = '/api/v1/helper/industry/create-edit',
+    INSTITUTION = '/api/v1/helper/institution/create-edit',
     DEGREE_CLASS = '/api/v1/helper/degree-class/create-edit',
     QHALIFICATION = '/api/v1/helper/qualification/create-edit',
     TESTIMONIAL = '/api/v1/helper/site-testimonial/create-edit',

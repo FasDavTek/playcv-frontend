@@ -5,6 +5,16 @@ import { Button, Table } from '@video-cv/ui-components';
 import { CategoryModal } from './modals';
 // import { ContentModal } from './modals';
 import { useAllMisc } from './../../../../../libs/hooks/useAllMisc';
+import { useAllCountry } from './../../../../../libs/hooks/useAllCountries';
+import { useAllState } from './../../../../../libs/hooks/useAllState';
+
+const truncateText = (text: string, wordLimit: number) => {
+  const words = text.split(' ');
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+  return text;
+};
 
 type Content = {
   id: string;
@@ -67,15 +77,37 @@ type guideline = Content & {
 const columnHelper = createColumnHelper<Content>();
 
 const ContentPage = () => {
-  const [activeTab, setActiveTab] = useState<'faq' | 'country' | 'state' | 'institutions' | 'courses' | 'industry/Sector' | 'qualifications' | 'siteTestimonials' | 'degreeClass' | 'cvUploadGuideline'>('faq');
-  const [openModal, setOpenModal] = useState<'add' | 'edit' | 'view' | null>(null);
+  const [activeTab, setActiveTab] = useState<'faq' | 'country' | 'state' | 'institution' | 'course' | 'industry/Sector' | 'qualifications' | 'siteTestimonials' | 'degreeClass' | 'cvUploadGuideline'>('faq');
+  const [openModal, setOpenModal] = useState<'create' | 'edit' | 'view' | null>(null);
   const [selectedItem, setSelectedItem] = useState<Content | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(40);
 
-  const { data, isLoading, error } = useAllMisc({
+  const { data: miscData, isLoading: isMiscLoading, error: miscError } = useAllMisc({
     resource: activeTab,
     page: 1,
-    limit: 20,
+    limit: 40,
   });
+
+  console.log(miscData)
+
+  const { data: countryData, isLoading: isCountryLoading, error: countryError } = useAllCountry();
+  const { data: stateData, isLoading: isStateLoading, error: stateError } = useAllState();
+
+  const getDataForActiveTab = () => {
+    switch (activeTab) {
+      case 'country':
+        return countryData?.data || [];
+      case 'state':
+        return stateData?.data || [];
+      default:
+        return miscData || [];
+    }
+  };
+
+  const isLoading = isMiscLoading || isCountryLoading || isStateLoading;
+  const error = miscError || countryError || stateError;
+
 
   const closeModal = () => {
     setOpenModal(null);
@@ -84,7 +116,7 @@ const ContentPage = () => {
 
   const handleAddNew = () => {
     setSelectedItem(null);
-    setOpenModal('add');
+    setOpenModal('create');
   };
 
   const handleEdit = (item: Content) => {
@@ -97,6 +129,7 @@ const ContentPage = () => {
     setOpenModal('view');
   };
 
+  console.log(selectedItem)
   
   const getColumns = () => {
     const baseColumns = [
@@ -106,7 +139,7 @@ const ContentPage = () => {
       }),
       columnHelper.accessor('description', {
         header: "Description",
-        cell: (info) => info.getValue(),
+        cell: (info) => truncateText(info.getValue() as string, 10),
       }),
     ];
 
@@ -129,7 +162,10 @@ const ContentPage = () => {
       case 'faq':
         return [
           columnHelper.accessor('question', { header: 'Question' }),
-          columnHelper.accessor('answer', { header: 'Answer' }),
+          columnHelper.accessor('answer', { 
+            header: 'Answer',
+            cell: (info) => truncateText(info.getValue() as string, 10),
+          }),
           columnHelper.accessor('isActive', {
             header: 'Status',
             cell: (info) => info.getValue() ? 'Active' : 'Inactive'
@@ -138,7 +174,7 @@ const ContentPage = () => {
         ];
       case 'country':
         return [
-          columnHelper.accessor('countryName', { header: 'Country Name' }),
+          columnHelper.accessor('name', { header: 'Country Name' }),
           columnHelper.accessor('shortName', { header: 'Short Name' }),
           actionColumn,
         ]
@@ -146,19 +182,22 @@ const ContentPage = () => {
         return [
           columnHelper.accessor('name', { header: 'State Name' }),
           columnHelper.accessor('shortName', { header: 'Short Name' }),
-          columnHelper.accessor('countryId', { header: 'Country ID' }),
+          // columnHelper.accessor('countryId', { header: 'Country ID' }),
           actionColumn,
         ]
-      case 'institutions':
+      case 'institution':
         return [
-          ...baseColumns,
+          columnHelper.accessor('name', { header: 'Institution Name' }),
           columnHelper.accessor('location', { header: 'Location' }),
           actionColumn,
         ]
-      case 'courses':
+      case 'course':
         return [
           columnHelper.accessor('courseName', { header: 'Course Name' }),
-          columnHelper.accessor('description', { header: 'Description' }),
+          columnHelper.accessor('description', { 
+            header: 'Description',
+            cell: (info) => truncateText(info.getValue() as string, 10),
+          }),
           actionColumn,
         ]
       case 'industry/Sector':
@@ -170,13 +209,19 @@ const ContentPage = () => {
         return [
           ...baseColumns,
           columnHelper.accessor('shortName', { header: 'Short Name' }),
-          columnHelper.accessor('shortDescription', { header: 'Short Description' }),
+          columnHelper.accessor('shortDescription', { 
+            header: 'Short Description',
+            cell: (info) => truncateText(info.getValue() as string, 10),
+          }),
           actionColumn,
         ]
       case 'siteTestimonials':
         return [
           columnHelper.accessor('name', { header: 'Name' }),
-          columnHelper.accessor('testimonial', { header: 'Testimonial' }),
+          columnHelper.accessor('testimonial', { 
+            header: 'Testimonial',
+            cell: (info) => truncateText(info.getValue() as string, 10),
+          }),
           columnHelper.accessor('profileImage', { 
             header: 'Profile Image',
             cell: (info) => info.getValue() ? 'Uploaded' : 'Not Uploaded'
@@ -192,7 +237,10 @@ const ContentPage = () => {
       case 'cvUploadGuideline':
         return [
           columnHelper.accessor('guideline', { header: 'Guideline' }),
-          columnHelper.accessor('description', { header: 'Description' }),
+          columnHelper.accessor('description', { 
+            header: 'Description',
+            cell: (info) => truncateText(info.getValue() as string, 10),
+          }),
           actionColumn,
         ]
       default:
@@ -201,6 +249,8 @@ const ContentPage = () => {
   }
 
   const columns = getColumns();
+
+  const tableData = getDataForActiveTab();
   
 
   return (
@@ -215,7 +265,7 @@ const ContentPage = () => {
 
       <div className="bg-gray-300 border-b border-gray-200 rounded-lg">
         <div className="flex p-1 overflow-auto gap-3">
-          {['faq', 'country', 'state', 'institutions', 'courses', 'industry/Sector', 'qualifications', 'siteTestimonials', 'degreeClass', 'cvUploadGuideline'].map((tab) => (
+          {['faq', 'country', 'state', 'institution', 'course', 'industry/Sector', 'qualifications', 'siteTestimonials', 'degreeClass', 'cvUploadGuideline'].map((tab) => (
             <button
               key={tab}
               className={`py-2 px-4 text-sm font-medium ${activeTab === tab ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}
@@ -231,14 +281,15 @@ const ContentPage = () => {
 
       <div className="mt-4">
         <Table
-          loading={false}
-          data={data || []}
+          loading={isLoading}
+          data={tableData}
           columns={columns}
+          error={error}
           tableHeading={`All ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
         />
       </div>
       
-      <Modal open={openModal === 'add' || openModal === 'edit' || openModal === 'view'} onClose={closeModal} sx={{ maxWidth: 'lg' }}>
+      <Modal open={openModal === 'create' || openModal === 'edit' || openModal === 'view'} onClose={closeModal} sx={{ maxWidth: 'lg' }}>
         <>
           <CategoryModal open={true} selectedItem={selectedItem} onClose={closeModal} action={openModal} currentTab={activeTab}></CategoryModal>
         </>

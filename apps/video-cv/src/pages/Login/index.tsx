@@ -62,10 +62,14 @@ const Login = () => {
       username, password,
     }
     try {
+      console.log(reqBody);
+
       const res = await postData(
         `${CONFIG.BASE_URL}${apiEndpoints.AUTH_LOGIN}`,
         reqBody
       );
+
+      console.log(res);
 
       if (res.code === "200") {
 
@@ -106,7 +110,7 @@ const Login = () => {
       }   
     }
     catch (err: any) {
-      toast.error(err.message);
+      toast.error(`Oops! Error 404: Correct credentials not found. But don't worry, let's give it another shot!`);
     } 
     finally {
       setLoading(false);

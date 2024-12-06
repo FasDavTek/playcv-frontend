@@ -1,4 +1,6 @@
 import React from 'react';
+import Button from '../Button';
+import { Typography } from '@mui/material';
 
 // import * as Assets from '@video-cv/assets';
 
@@ -10,26 +12,20 @@ const LogoutModal = ({
   onLogout: () => void;
 }) => {
   return (
-    <div className="bg-white p-10 lg:p-14 centered-modal">
-      <div className="flex flex-col items-center space-y-4">
+    <div className="bg-white p-10 lg:p-14 centered-modal-md rounded-lg">
+      <div className="flex flex-col items-center space-y-8 lg:space-y-14">
         {/* <img src={Assets.Icons.LogoutModalIcon} alt="confirm icon" /> */}
 
-        <p className="text-center">Are you sure you want to logout?</p>
+        <Typography variant='h4' className="text-center text-base lg:text-2xl font-semibold" gutterBottom>Confirm Sign Out</Typography>
 
-        <div className="flex items-center space-x-4">
-          <button
-            type="button"
-            className="ce-btn-text"
-            onClick={() => {
-              onClose();
-            }}
-          >
-            Cancel
-          </button>
+        <Typography variant='h6' component='body' className="text-center text-base lg:text-7xl">
+          You are about to sign out of your account. Any unsaved changes may be lost. Are you sure you want to proceed?
+        </Typography>
 
-          <button className="ce-btn !bg-[#D8304A]" onClick={() => onLogout()}>
-            Logout
-          </button>
+        <div className="flex items-center space-x-16 lg:space-x-24">
+          <Button variant='black' label='Cancel' onClick={onClose}></Button>
+
+          <Button variant='red' label='Sign out' onClick={onLogout}></Button>
         </div>
       </div>
     </div>
