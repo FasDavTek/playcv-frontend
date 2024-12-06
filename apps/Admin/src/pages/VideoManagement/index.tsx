@@ -7,6 +7,7 @@ import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material
 import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 interface Uploader {
   id: number;
@@ -34,48 +35,6 @@ interface Video {
   action: string;
 }
 
-// const mockData: Video[] = [
-//   {
-//     id: 1,
-//     title: 'Introduction to React',
-//     authorName: 'Alice Johnson',
-//     startDate: '2024-07-01',
-//     status: 'Pending',
-//     action: 'Approve/Reject',
-//   },
-//   {
-//     id: 2,
-//     title: 'Advanced TypeScript',
-//     authorName: 'Bob Smith',
-//     startDate: '2024-07-05',
-//     status: 'Approved',
-//     action: 'View',
-//   },
-//   {
-//     id: 3,
-//     title: 'Building REST APIs with Node.js',
-//     authorName: 'Charlie Brown',
-//     startDate: '2024-07-10',
-//     status: 'Rejected',
-//     action: 'View/Edit',
-//   },
-//   {
-//     id: 4,
-//     title: 'Mastering CSS Grid',
-//     authorName: 'Diana Prince',
-//     startDate: '2024-07-15',
-//     status: 'Pending',
-//     action: 'Approve/Reject',
-//   },
-//   {
-//     id: 5,
-//     title: 'Introduction to GraphQL',
-//     authorName: 'Edward Nigma',
-//     startDate: '2024-07-20',
-//     status: 'Approved',
-//     action: 'View',
-//   },
-// ];
 
 const index = () => {
   const [videos, setVideos] = useState<Video[]>([]);
@@ -89,15 +48,22 @@ const index = () => {
   const navigate = useNavigate();
 
   const fetchVideos = async () => {
+    setLoading(true);
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=10`)
-      if (!resp.ok) {
-        throw new Error("Failed to fetch videos");
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      if (!token) {
+        toast.error('Unable to load user profile');
+        return;
       }
 
-      const data = await resp.json();
-      setVideos(data);
-      setLoading(false);
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=30`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      let data;
+      if (resp.succeeded === true) {
+        data = await resp.data;
+        setVideos(data || []);
+      }
 
       const currentTime = Date.now();
       const newVideos = data.filter((video: Video) => new Date(video.uploadDate).getTime() > lastFetchTime);
@@ -107,9 +73,11 @@ const index = () => {
       setLastFetchTime(currentTime);
     }
     catch (err) {
-      console.error('Error fetching videos:', err)
       setLoading(false)
-      toast.error('Failed to fetch videos')
+      toast.info('No video found')
+    }
+    finally {
+      setLoading(false);
     }
   }
 
