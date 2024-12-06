@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CloudUpload as CloudUploadIcon, UploadFile } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useForm, Controller } from 'react-hook-form';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button, Input, TextArea, FileUpload, Select, DatePicker } from '@video-cv/ui-components';
 import { getData, postData } from '../../../../../../libs/utils/apis/apiMethods';
 import CONFIG from '../../../../../../libs/utils/helpers/config';
@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { Container, Grid } from '@mui/material';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import dayjs from 'dayjs';
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -26,10 +27,10 @@ interface IForm {
   middleName: string;
   lastName: string;
   userTypeId: number;
-  name: string;
+  name?: string;
   email: string;
   role?: string;
-  phoneNumber: string;
+  phoneNo: string;
   address: string;
   profilePicture: File | null;
   isBusinessUser: boolean;
@@ -52,6 +53,8 @@ interface IForm {
   isDeleted: boolean;
   isActive: boolean;
   emailConfirmed: boolean;
+  businessName?: string;
+  isTracked?: boolean;
   phoneNumberConfirmed: boolean;
   isAdmin: boolean;
   isBlackListed: boolean;
@@ -74,22 +77,36 @@ const genderOptions = [
 const CreateEditUSer: React.FC = () => {
   const { userType, email } = useParams<{ userType: string; email: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const { register, handleSubmit, watch, control, setValue, reset } = useForm<IForm>();
 
   useEffect(() => {
-    if (email) {
+    if (location.state?.user) {
+      const userData = location.state.user.userBioDetails;
+      Object.keys(userData).forEach((key) => {
+        setValue(key as keyof IForm, userData[key]);
+      });
+    } else if (email) {
       fetchUserDetails(email);
     }
-  }, [email]);
+  }, [email, location.state]);
 
   const fetchUserDetails = async (userEmail: string) => {
     setLoading(true);
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USER}/${userEmail}`);
-      if (response.code === "201") {
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      if (!token) {
+        toast.error('Unable to load user profile');
+        return;
+      }
+
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USER}/${userEmail}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.succeeded === true) {
         const userData = await response.json();
         Object.keys(userData).forEach((key) => {
           setValue(key as keyof IForm, userData[key]);
@@ -197,11 +214,15 @@ const CreateEditUSer: React.FC = () => {
             <Input
               label="Phone Number"
               type="tel"
-              {...register('phoneNumber')}
+              {...register('phoneNo')}
             />
             <TextArea
               label="Address"
               {...register('address')}
+            />
+            <Input
+                label="Business Name"
+                {...register('businessName')}
             />
             <Controller
               name="coverURL"
@@ -216,30 +237,6 @@ const CreateEditUSer: React.FC = () => {
                         field.onChange(file);
                     }
                 }}
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="startDate"
-              render={({ field }) => (
-                <DatePicker
-                  {...field}
-                  label="Start year"
-                  value={field.value ? dayjs(field.value) : null}
-                  onChange={(date) => {field.onChange(date);}}
-                />
-              )}
-            />
-            <Controller
-              control={control}
-              name="endDate"
-              render={({ field }) => (
-                <DatePicker
-                  {...field}
-                  label="End year"
-                  value={field.value ? dayjs(field.value) : null}
-                  onChange={(date) => {field.onChange(date);}}
                 />
               )}
             />
@@ -258,82 +255,6 @@ const CreateEditUSer: React.FC = () => {
                 )}
               />
             )}
-            {userType === 'professionals' && (
-              <>
-                <Input
-                  label="Redirect URL"
-                  type="url"
-                  {...register('redirectUrl', { required: 'RedirectUrl is required' })}
-                />
-                <Input
-                  label="Institution"
-                  {...register('institution')}
-                />
-                <Input
-                  label="Date of Birth"
-                  type="date"
-                  {...register('dateOfBirth')}
-                />
-                <Select
-                  label="Gender"
-                  options={genderOptions}
-                  value={watch('gender') || ''}
-                  onChange={(value) => setValue('gender', value)}
-                />
-                <Input
-                  label="CV URL"
-                  {...register('cvUrl')}
-                />
-              </>
-            )}
-            {userType === 'employers' && (
-              <>
-                <Input
-                  label="Redirect URL"
-                  type="url"
-                  {...register('redirectUrl', { required: 'RedirectUrl is required' })}
-                />
-                <TextArea
-                  label="Business Address"
-                  {...register('businessAddress')}
-                />
-                <Input
-                  label="Contact Person Name"
-                  {...register('contactPersonName')}
-                />
-                <Input
-                  label="Contact Person Position"
-                  {...register('contactPersonPosition')}
-                />
-                <Input
-                  label="Contact Person Phone Number"
-                  {...register('contactPersonPhoneNumber')}
-                />
-                <Input
-                  label="Social Media Link"
-                  {...register('socialMediaLink')}
-                />
-                <Input
-                  label="Industry"
-                  {...register('industry')}
-                />
-              </>
-            )}
-            <Controller
-              name='status'
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  label="Class of Degree"
-                  value={watch('status')}
-                  options={[
-                    { value: '1', label: 'Active' },
-                    { value: '0', label: 'Inactive' },
-                  ]}
-                  onChange={(value) => onChange('status', value)}
-                />
-              )}
-            />
             <Grid item xs={12}>
               <Button
                 type="submit"

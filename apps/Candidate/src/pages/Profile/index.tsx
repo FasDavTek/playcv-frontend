@@ -69,7 +69,7 @@ const schema = z.object({
   userProfile: z.object({
     userDetails: z.object({
       firstName: z.string().min(1, "First name is required"),
-      middleName: z.string().optional(),
+      middleName: z.string().min(1, "Middle name is required"),
       lastName: z.string().min(1, "Surname is required"),
       phoneNo: z.string().min(10, "Phone number must be at least 10 digits").max(11, 'Phone number must not be more than 11 digits'),
       email: z.string().email("Invalid email format"),
@@ -87,11 +87,13 @@ const schema = z.object({
       degreeTypeId: z.number().optional(),
       institution: z.string().min(1, "Institution attended is required"),
       classOfDegree: z.string().min(1, "Class of degree is required"),
+      degreeClassId: z.number().optional(),
       coverLetter: z.string().min(1, "Cover letter content is required"),
-      businessName: z.string().optional(),
-      businessProfile: z.string().optional(),
+      businessName: z.string().min(3, "Business Name is required"),
+      businessProfile: z.string().min(10, "Business Profile content is required"),
       businessPhoneNumber: z.string().min(10, "Business phone number must be at least 10 digits"),
       industry: z.string().min(1, "Business sector is required"),
+      industryId: z.number().optional(),
     }),
   }),
 });
@@ -131,34 +133,77 @@ const Profile = () => {
         if (resp.userProfile) {
           const { userDetails, professionalDetails } = resp.userProfile;
           
+          // Object.entries(userDetails).forEach(([key, value]) => {
+          //   if (key in schema.shape.userProfile.shape.userDetails.shape) {
+          //     const fieldKey = key as keyof FormData['userProfile']['userDetails'];
+          //     const fieldSchema = schema.shape.userProfile.shape.userDetails.shape[fieldKey];
+              
+          //     if (fieldSchema instanceof z.ZodString && typeof value === 'string') {
+          //       setValue(`userProfile.userDetails.${fieldKey}`, value);
+          //     }
+          //     else if (fieldSchema instanceof z.ZodDate && value instanceof Date) {
+          //       setValue(`userProfile.userDetails.${fieldKey}`, new Date(value));
+          //     }
+          //   }
+          // });
+
           Object.entries(userDetails).forEach(([key, value]) => {
-            if (key in schema.shape.userProfile.shape.userDetails.shape) {
-              const fieldKey = key as keyof FormData['userProfile']['userDetails'];
-              const fieldSchema = schema.shape.userProfile.shape.userDetails.shape[fieldKey];
-              
-              if (fieldSchema instanceof z.ZodString && typeof value === 'string') {
-                setValue(`userProfile.userDetails.${fieldKey}`, value);
-              } else if (fieldSchema instanceof z.ZodDate && value instanceof Date) {
-                setValue(`userProfile.userDetails.${fieldKey}`, value);
+            if (key === 'dateOfBirth' && value) {
+              if (typeof value === 'string' || typeof value === 'number') {
+                setValue('userProfile.userDetails.dateOfBirth', new Date(value));
               }
-            }
-          });
-          Object.entries(professionalDetails).forEach(([key, value]) => {
-            if (key in schema.shape.userProfile.shape.professionalDetails.shape) {
-              const fieldKey = key as keyof FormData['userProfile']['professionalDetails'];
-              const fieldSchema = schema.shape.userProfile.shape.professionalDetails.shape[fieldKey];
-              
-              if (fieldSchema instanceof z.ZodString && typeof value === 'string') {
-                setValue(`userProfile.professionalDetails.${fieldKey}`, value);
-              } else if (fieldSchema instanceof z.ZodNumber && typeof value === 'number') {
-                setValue(`userProfile.professionalDetails.${fieldKey}`, value);
+            } 
+            else {
+              if (key in schema.shape.userProfile.shape.userDetails.shape) {
+                const fieldKey = key as keyof FormData['userProfile']['userDetails'];
+                const fieldSchema = schema.shape.userProfile.shape.userDetails.shape[fieldKey];
+
+                if (fieldSchema instanceof z.ZodString && typeof value === 'string') {
+                  setValue(`userProfile.userDetails.${fieldKey}`, value);
+                }
+                else if (fieldSchema instanceof z.ZodBoolean && typeof value === 'boolean') {
+                  setValue(`userProfile.userDetails.${fieldKey}`, value);
+                }
               }
             }
           });
 
-          setValue('userProfile.userDetails.dateOfBirth', userDetails.dateOfBirth || '')
-          setValue('userProfile.professionalDetails.nyscStartYear', professionalDetails.nyscStartYear || '')
-          setValue('userProfile.professionalDetails.nyscEndYear', professionalDetails.nyscEndYear || '')
+          // Object.entries(professionalDetails).forEach(([key, value]) => {
+          //   if (key in schema.shape.userProfile.shape.professionalDetails.shape) {
+          //     const fieldKey = key as keyof FormData['userProfile']['professionalDetails'];
+          //     const fieldSchema = schema.shape.userProfile.shape.professionalDetails.shape[fieldKey];
+              
+          //     if (fieldSchema instanceof z.ZodString && typeof value === 'string') {
+          //       setValue(`userProfile.professionalDetails.${fieldKey}`, value);
+          //     } 
+          //     else if (fieldSchema instanceof z.ZodNumber && typeof value === 'number') {
+          //       // setValue('userProfile.professionalDetails.nyscStartYear', professionalDetails.nyscStartYear)
+          //       // setValue('userProfile.professionalDetails.nyscEndYear', professionalDetails.nyscEndYear)
+          //       setValue(`userProfile.professionalDetails.${fieldKey}`, Number(value));
+          //       console.log(value)
+          //     }
+          //   }
+          // });
+
+
+          Object.entries(professionalDetails).forEach(([key, value]) => {
+            if ((key === 'nyscStartYear' || key === 'nyscEndYear') && value) {
+              setValue(`userProfile.professionalDetails.${key}`, Number(value));
+            } else {
+                if (key in schema.shape.userProfile.shape.professionalDetails.shape) {
+                  const fieldKey = key as keyof FormData['userProfile']['professionalDetails'];
+                  const fieldSchema = schema.shape.userProfile.shape.professionalDetails.shape[fieldKey];
+                  
+                  if (fieldSchema instanceof z.ZodString && typeof value === 'string') {
+                    setValue(`userProfile.professionalDetails.${fieldKey}`, value);
+                  }
+                }
+            }
+          });
+
+          console.log('Fetched NYSC Start Year:', professionalDetails.nyscStartYear)
+          console.log('Fetched NYSC End Year:', professionalDetails.nyscEndYear)
+          // setValue('userProfile.userDetails.dateOfBirth', new Date(userDetails.dateOfBirth))
         }
       }
       catch (err) {
@@ -190,10 +235,32 @@ const Profile = () => {
     download: false,
   });
 
+  const { data: institutions, isLoading: isLoadingInstitutions } = useAllMisc({
+    resource: 'institution',
+    page: 1,
+    limit: 100,
+    download: false,
+  });
+
+  const { data: industry, isLoading: isLoadingIndustries } = useAllMisc({
+    resource: 'industry',
+    page: 1,
+    limit: 100,
+    download: false,
+  });
+
   const createNewEntry = async (resource: string, data: any) => {
     try {
-      const endpoint = resource === 'course' ? apiEndpoints.COURSE : apiEndpoints.DEGREE_CLASS;
-      const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, data);
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      if (!token) {
+        toast.error('Unable to load user data');
+        return;
+      }
+      console.log(resource);
+      const endpoint = resource === 'course' ? apiEndpoints.COURSE : resource === 'degree-class' ? apiEndpoints.DEGREE_CLASS : resource === 'industry' ? apiEndpoints.INDUSTRY : apiEndpoints.INSTITUTION;
+      const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, data, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (response.code === "200") {
         toast.success(`New ${resource} created successfully`);
         return response.data;
@@ -225,6 +292,8 @@ const Profile = () => {
       let courseId = null;
       let degreeClassId = null;
       let degreeTypeId = null;
+      let industryId = null;
+      let institutionId = null;
 
       // Handle course
       if (data.userProfile.professionalDetails.course) {
@@ -255,13 +324,26 @@ const Profile = () => {
 
       // Handle degree type
       if (data.userProfile.professionalDetails?.degree) {
-        const existingDegreeType = degreeTypes?.find(dc => dc.name === data.userProfile.professionalDetails.degree);
-        if (existingDegreeType) {
-          degreeTypeId = existingDegreeType.id;
+        const existingInstitution = institutions?.find(dc => dc.name === data.userProfile.professionalDetails.institution);
+        if (existingInstitution) {
+          institutionId = existingInstitution.id;
         } else {
-          const newDegreeType = await createNewEntry('degree', { name: data.userProfile.professionalDetails.degree });
+          const newDegreeType = await createNewEntry('institution', { name: data.userProfile.professionalDetails.institution });
           if (newDegreeType) {
-            degreeTypeId = newDegreeType.id;
+            institutionId = newDegreeType.id;
+          }
+        }
+      }
+
+
+      if (data.userProfile.professionalDetails.industry) {
+        const existingIndustry = industry?.find(c => c.name === data.userProfile.professionalDetails.industry);
+        if (existingIndustry) {
+          industryId = existingIndustry.id;
+        } else {
+          const newInstitution = await createNewEntry('industry', { name: data.userProfile.professionalDetails.industry });
+          if (newInstitution) {
+            industryId = newInstitution.id;
           }
         }
       }
@@ -273,31 +355,25 @@ const Profile = () => {
           ...data.userProfile,
           userDetails: {
             ...data.userProfile.userDetails,
-            // dateOfBirth: data.userProfile.userDetails.dateOfBirth 
-            //   ? dayjs(data.userProfile.userDetails.dateOfBirth).format('DD-MM-YYYY')
-            //   : null,
-              isProfessionalUser: true,
-              degreeTypeId: degreeTypeId,
-              degree: degreeTypeId ? null : data.userProfile.professionalDetails.degree,
-              courseId: courseId,
-              course: courseId ? null : data.userProfile.professionalDetails.course,
-              degreeClassId: degreeClassId,
-              classOfDegree: degreeClassId ? null : data.userProfile.professionalDetails.classOfDegree,
+            dateOfBirth: data.userProfile.userDetails.dateOfBirth || null,
+            isProfessionalUser: true,
           },
           professionalDetails: {
             ...data.userProfile.professionalDetails,
             degreeTypeId: degreeTypeId,
-            degree: degreeTypeId ? null : data.userProfile.professionalDetails.degree,
-            courseId: courseId,
-            course: courseId ? null : data.userProfile.professionalDetails.course,
-            degreeClassId: degreeClassId,
-            classOfDegree: degreeClassId ? null : data.userProfile.professionalDetails.classOfDegree,
-            nyscStartYear: data.userProfile.professionalDetails.nyscStartYear 
-              ? Number(dayjs(data.userProfile.professionalDetails.nyscStartYear).year())
-              : null,
-            nyscEndYear: data.userProfile.professionalDetails.nyscEndYear 
-              ? Number(dayjs(data.userProfile.professionalDetails.nyscEndYear).year())
-              : null,
+            degree: degreeTypeId ? 6 : data.userProfile.professionalDetails.degree,
+            // courseId: courseId,
+            // course: courseId ? null : data.userProfile.professionalDetails.course,
+            // degreeClassId: degreeClassId,
+            // classOfDegree: degreeClassId ? null : data.userProfile.professionalDetails.classOfDegree,
+            // industryId: industryId,
+            // industry: industryId ? null : data.userProfile.professionalDetails.industry,
+            nyscStartYear: data.userProfile.professionalDetails.nyscStartYear,
+            nyscEndYear: data.userProfile.professionalDetails.nyscEndYear,
+            // nyscStartYear: Number(dayjs(data.userProfile.professionalDetails.nyscStartYear).year()),
+            // nyscEndYear: data.userProfile.professionalDetails.nyscEndYear 
+            //   ? Number(dayjs(data.userProfile.professionalDetails.nyscEndYear).year())
+            //   : null,
           }
         }
       };
@@ -502,7 +578,7 @@ const Profile = () => {
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('userProfile.professionalDetails.nyscStartYear')}>
                   <label>NYSC Service Year (Start)</label>
-                  <Typography className="input-like">{watch('userProfile.professionalDetails.nyscStartYear') || 'Pick a date'}</Typography>
+                  <Typography className="input-like">{watch('userProfile.professionalDetails.nyscStartYear')}</Typography>
                   <IconButton onClick={() => handleEditClick('userProfile.professionalDetails.nyscStartYear')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                     <SaveAsOutlinedIcon />
                   </IconButton>
@@ -525,7 +601,7 @@ const Profile = () => {
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('userProfile.professionalDetails.nyscEndYear')}>
                   <label>NYSC Service Year (End)</label>
-                  <Typography className="input-like">{watch('userProfile.professionalDetails.nyscEndYear') || 'Pick a date'}</Typography>
+                  <Typography component='data' className="input-like">{watch('userProfile.professionalDetails.nyscEndYear')}</Typography>
                   <IconButton onClick={() => handleEditClick('userProfile.professionalDetails.nyscEndYear')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                     <SaveAsOutlinedIcon />
                   </IconButton>
@@ -633,10 +709,22 @@ const Profile = () => {
           </CustomTabPanel>
           <CustomTabPanel value={values} index={1}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <Box className="input-box" onClick={() => handleEditClick('userProfile.professionalDetails.businessName')}>
-                <label>Business Name</label>
-                <Typography className="input-like">{watch('userProfile.professionalDetails.businessName')}</Typography>
-              </Box>
+              {editField === 'userProfile.professionalDetails.businessName' ? (
+                <Input
+                  {...register('userProfile.professionalDetails.businessName')}
+                  label="Business Name"
+                  placeholder='Business Name'
+                  error={errors.userProfile?.professionalDetails?.businessPhoneNumber}
+                />
+              ) : (
+                <Box className="input-box">
+                  <label>Business Name</label>
+                  <Typography className="input-like">{watch('userProfile.professionalDetails.businessName')}</Typography>
+                  <IconButton onClick={() => handleEditClick('userProfile.professionalDetails.businessName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                      <SaveAsOutlinedIcon />
+                  </IconButton>
+                </Box>
+              )}
               {editField === 'userProfile.professionalDetails.businessPhoneNumber' ? (
                 <Input
                   {...register('userProfile.professionalDetails.businessPhoneNumber')}
@@ -685,7 +773,7 @@ const Profile = () => {
                   defaultValue={watch('userProfile.professionalDetails.businessProfile')}
                   render={({ field }) => (
                     <RichTextEditor
-                      value={watch('userProfile.professionalDetails.businessProfile') || ''}
+                      value={watch('userProfile.professionalDetails.businessProfile')}
                       onChange={(value) => setValue('userProfile.professionalDetails.businessProfile', value)}
                       placeholder='Business Profile'
                     />

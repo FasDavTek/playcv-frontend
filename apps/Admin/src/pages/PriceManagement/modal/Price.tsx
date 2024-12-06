@@ -50,10 +50,8 @@ interface AdTypeItem {
   type PriceItem = AdTypeItem | VideoUploadTypeItem;
 
 const statusOptions = [
-    { value: 'Active', label: 'Active' },
-    { value: 'Expired', label: 'Expired' },
-    { value: 'Pending', label: 'Pending' },
-    { value: 'Rejected', label: 'Rejected' },
+    { value: 'true', label: 'Activate' },
+    { value: 'false', label: 'Suspend' },
 ];
 
 interface PriceProps {
@@ -67,6 +65,7 @@ interface PriceProps {
 
 const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, currentTab, currentUser, }) => {
     const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+    const [isLoading, setIsLoading] = useState(false)
     const [action, setAction] = useState<'create' | 'edit'>('create');
 
     const { register, control, watch, handleSubmit, setValue, formState: { errors } } = useForm<PriceItem>({
@@ -131,8 +130,8 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
     };
 
     const onSubmit = async (data: PriceItem) => {
+        setIsLoading(true)
         try {
-
             let thumbnailUrl = data.thumbnailUrl;
             if (thumbnailFile) {
                 thumbnailUrl = await handleImageUpload(thumbnailFile);
@@ -151,17 +150,21 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
             }
           const endpoint = currentTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE
           const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, priceData)
-          if (response.code === "201") {
+          if (response.code === "00") {
             toast.success(`${modalType === 'add' ? 'Added' : 'Updated'} successfully`)
             onClose()
           } else {
             throw new Error('Failed to save')
           }
-        } catch (error) {
+        } 
+        catch (error) {
           console.error('Error saving:', error)
           toast.error('Failed to save. Please try again.')
         }
-    }
+        finally {
+          setIsLoading(false)
+        }
+    };
 
 
     
@@ -197,62 +200,59 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
                 )}
             />
             {currentTab === 'videoUploadTypes' && (
-                <Controller
-                    name='shortName'
-                    control={control}
-                    rules={{ required: 'Short name is required' }}
-                    render={({ field }) => (
-                        <Input
-                            label='Short Name'
-                            {...register('shortName')}
-                            placeholder="Enter short name"
-                        />
-                    )}
-                />
-            )}
-            {currentTab === 'videoUploadTypes' && (
-                <Controller
-                    name="uploadPrice"
-                    control={control}
-                    rules={{ required: 'Amount is required' }}
-                    render={({ field }) => (
-                        <Input
-                            label={`Video Upload Price`}
-                            {...register('uploadPrice')}
-                            type="number"
-                            placeholder={`Enter video upload price`}
-                        />
-                    )}
-                />
-            )}
-            {currentTab === 'videoUploadTypes' && (
-                <Controller
-                    name="buyPrice"
-                    control={control}
-                    rules={{ required: 'Amount is required' }}
-                    render={({ field }) => (
-                        <Input
-                            label={`Buy Video Price`}
-                            {...register('buyPrice')}
-                            type="number"
-                            placeholder={`Enter buy price`}
-                        />
-                    )}
-                />
-            )}
-            {modalType === "edit" && (
-                <Controller
-                    name="status"
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                        <Select
-                            label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Status`}
-                            options={statusOptions}
-                            value={value || ''}
-                            onChange={(newValue: string) => onChange(newValue)}
-                        />
-                    )}
-                />
+                <>
+                    <Controller
+                        name='shortName'
+                        control={control}
+                        rules={{ required: 'Short name is required' }}
+                        render={({ field }) => (
+                            <Input
+                                label='Short Name'
+                                {...register('shortName')}
+                                placeholder="Enter short name"
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="uploadPrice"
+                        control={control}
+                        rules={{ required: 'Amount is required' }}
+                        render={({ field }) => (
+                            <Input
+                                label={`Video Upload Price`}
+                                {...register('uploadPrice')}
+                                type="number"
+                                placeholder={`Enter video upload price`}
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="buyPrice"
+                        control={control}
+                        rules={{ required: 'Amount is required' }}
+                        render={({ field }) => (
+                            <Input
+                                label={`Buy Video Price`}
+                                {...register('buyPrice')}
+                                type="number"
+                                placeholder={`Enter buy price`}
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="transactionFee"
+                        control={control}
+                        rules={{ required: 'Amount is required' }}
+                        render={({ field }) => (
+                            <Input
+                                label={`Transaction Fee`}
+                                {...register('transactionFee')}
+                                type="number"
+                                placeholder={`Enter Transaction fee`}
+                            />
+                        )}
+                    />
+                </>
             )}
             <Controller
                 name="status"
@@ -297,7 +297,8 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
                 type="submit"
                 variant='black'
                 className="w-full"
-                label={modalType === 'edit' ? 'Update' : 'Add'}
+                label={isLoading ? 'Processing...' : (modalType === 'edit' ? 'Update' : 'Add')}
+                disabled={isLoading}
             />
         </div>
     </form>

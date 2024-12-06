@@ -9,6 +9,7 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import { CreateAdsConfirmModal } from './modals';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 // Define your ad data type
 type ads = {
@@ -27,42 +28,6 @@ type ads = {
   action: string;
 };
 
-// Mock data
-// const initialData = [
-//   {
-//     id: '1',
-//     adName: 'Summer Sale',
-//     adUrl: 'https://example.com/summer-sale.png',
-//     createdAt: '2024-06-01T10:00:00Z',
-//     status: 'active',
-//     description: 'This is a summer sale ad',
-//     startDate: '2024-06-01T10:00:00Z',
-//     endDate: '2024-06-30T10:00:00Z',
-//     adType: 'image',
-//   },
-//   {
-//     id: '2',
-//     adName: 'Winter Collection',
-//     adUrl: 'https://example.com/winter-collection.png',
-//     createdAt: '2024-11-15T12:00:00Z',
-//     status: 'suspended',
-//     description: 'This is a winter collection ad',
-//     startDate: '2024-11-15T12:00:00Z',
-//     endDate: '2024-12-31T12:00:00Z',
-//     adType: 'image',
-//   },
-//   {
-//     id: '3',
-//     adName: 'Spring Promo',
-//     adUrl: 'https://example.com/spring-promo.png',
-//     createdAt: '2024-03-21T09:30:00Z',
-//     status: 'active',
-//     description: 'This is a spring promo ad',
-//     startDate: '2024-03-21T09:30:00Z',
-//     endDate: '2024-04-30T09:30:00Z',
-//     adType: 'video',
-//   },
-// ];
 
 type ModalTypes = null | 'confirmationModal' | 'createAds';
 
@@ -116,7 +81,11 @@ const Advertisement = () => {
   
   const fetchAds = async () => {
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?Page=1&Limit=10`)
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?Page=1&Limit=10`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       if (!resp.ok) {
         throw new Error("Failed to fetch ads");
       }

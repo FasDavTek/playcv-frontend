@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Button, Input, TextArea, FileUpload, Select, RichTextEditor, } from '@video-cv/ui-components';
-import { Grid, IconButton, Typography } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Button, Input,  FileUpload, Select, RichTextEditor, } from '@video-cv/ui-components';
+import { Grid, Typography } from '@mui/material';
 import { UploadFile } from '@mui/icons-material';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { toast } from 'react-toastify';
 import { useAllMisc } from './../../../../../../libs/hooks/useAllMisc';
-import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
+import { postData } from './../../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
+import { useAllCountry } from './../../../../../../libs/hooks/useAllCountries';
+import { useAllState } from './../../../../../../libs/hooks/useAllState';
+import model from './../../../../../../libs/utils/helpers/model'
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -27,7 +30,7 @@ interface ContentItem {
 
 interface CategoryModalProps {
   open: boolean;
-  action: 'view' | 'add' | 'edit' | null;
+  action: 'view' | 'create' | 'edit' | null;
   onClose: () => void;
   selectedItem?: Partial<ContentItem> | null;
   currentTab: string;
@@ -47,41 +50,80 @@ const CategoryModal = ({
     resource: currentTab,
     page: 1,
     limit: 1,
-    // id: selectedItem?.id,
   });
 
+  const { data: countryData, isLoading: isCountryLoading, error: countryError } = useAllCountry();
+  const { data: stateData, isLoading: isStateLoading, error: stateError } = useAllState();
+
   useEffect(() => {
-    if (selectedItem && itemData && itemData.length > 0) {
-      reset(itemData[0]);
+    if (selectedItem) {
+      reset(selectedItem);
     } else {
       reset({});
     }
-  }, [selectedItem, itemData, reset]);
+  }, [selectedItem, reset]);
 
 
   
   if (!open) return null;
 
-
+  console.log(selectedItem);
 
   const handleFormSubmit = async (data: ContentItem) => {
     if (action === 'view') return;
 
     const endpoint = apiEndpoints[currentTab.toUpperCase() as keyof typeof apiEndpoints];
     try {
-      let profileImageUrl = data.profileImage;
+      const formData = new FormData();
 
-      if (profileImageFile) {
-        profileImageUrl = await handleImageUpload(profileImageFile);
-      }
-      const contentData = {
+      let contentData: any = {
         ...data,
-        profileImage: profileImageUrl,
-        action: action === 'add' ? 'create' : 'edit',
+        action: action === 'create' ? 'create' : 'edit',
       }
-      const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, contentData);
-      if (response.code === "201") {
-        toast.success(`${action === 'add' ? 'Created' : 'Updated'} successfully`);
+
+      if (currentTab === 'siteTestimonials' && profileImageFile) {
+        const profileImageUrl = await handleImageUpload(profileImageFile);
+        contentData.profileImage = profileImageUrl;
+      } else if (profileImageFile && currentTab !== 'country') {
+        const profileImageUrl = await handleImageUpload(profileImageFile);
+        contentData.profileImage = profileImageUrl;
+      } else if (currentTab === 'country') {
+        contentData = {
+          Name: data.name,
+          ShortName: data.shortName,
+          Action: action === 'create' ? 'create' : 'edit'
+        };
+      }
+
+      console.log(currentTab);
+      console.log(action);
+      console.log(formData);
+
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      if (!token) {
+        toast.error('You are not authenticated. Please log in again.');
+        return;
+      }
+
+      
+
+      for (const key in contentData) {
+        console.log(key);
+        console.log(contentData[key]);
+        if (contentData.hasOwnProperty(key)) {
+          formData.append(key, contentData[key]);
+          console.log(formData)
+        }
+      }
+
+      const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, formData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+         },
+      });
+      if (response.statusCode === "200") {
+        toast.success(`${action === 'create' ? 'Created' : 'Updated'} successfully`);
         onClose();
       } else {
         throw new Error('Failed to submit data');
@@ -113,7 +155,7 @@ const CategoryModal = ({
       case 'country':
         return (
           <>
-            <Input label="Country Name" {...register('countryName', { required: true })} disabled={isViewMode} />
+            <Input label="Country Name" {...register('name', { required: true })} disabled={isViewMode} />
             <Input label="Country Code" {...register('shortName', { required: true })} disabled={isViewMode} />
           </>
         );
@@ -122,17 +164,41 @@ const CategoryModal = ({
           <>
             <Input label="State Name" {...register('name', { required: true })} disabled={isViewMode} />
             <Input label="Abbreviation" {...register('shortName', { required: true })} disabled={isViewMode} />
-            <Input label="Country ID" type="number" {...register('countryId', { required: true })} disabled={isViewMode} />
+            {/* <Input label="Country ID" type="number" {...register('countryId', { required: true })} disabled={isViewMode} /> */}
+            <Controller
+              name='countryId'
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  label="Country"
+                  value={watch('countryId', { required: true })}
+                  options={model(countryData, "name", "id")}
+                  onChange={(value) => onChange(value)}
+                />
+              )}
+            />
           </>
         );
-      case 'institutions':
+      case 'institution':
         return (
           <>
             <Input label="Institution Name" {...register('name', { required: true })} disabled={isViewMode} />
-            <Input label="Location" {...register('location', { required: true })} disabled={isViewMode} />
+            <Controller
+              name='countryId'
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  label="Country"
+                  value={watch('countryId', { required: true })}
+                  options={model(countryData, "name", "id")}
+                  onChange={(value) => onChange(value)}
+                />
+              )}
+            />
+            {/* <Input label="Location" {...register('location', { required: true })} disabled={isViewMode} /> */}
           </>
         );
-      case 'courses':
+      case 'course':
         return (
           <>
             <Input label="Course Title" {...register('courseName', { required: true })} disabled={isViewMode} />

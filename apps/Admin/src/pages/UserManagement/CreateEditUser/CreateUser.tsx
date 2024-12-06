@@ -12,6 +12,7 @@ import { getData, postData } from './../../../../../../libs/utils/apis/apiMethod
 import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 import { Controller, useForm } from 'react-hook-form';
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
 
 const s3Client = new S3Client({
     region: 'auto',
@@ -29,8 +30,8 @@ interface IForm {
     email: string;
     role?: string;
     phoneNumber: string;
-    address: string;
-    password: string;
+    address?: string;
+    password?: string;
     profilePicture?: any;
     institution?: string;
     dateOfBirth?: string;
@@ -47,11 +48,11 @@ interface IForm {
     userTypeId: number;
     isBusinessUser: boolean;
     isProfessional: boolean;
-    businessName: string;
-    isTracked: boolean;
-    businessId: number;
-    coverURL: string;
-    status: string;
+    businessName?: string;
+    isTracked?: boolean;
+    businessId?: number;
+    coverURL?: string;
+    status: string | "";
 };
 
 const userTypeOptions = [
@@ -119,7 +120,7 @@ const CreateUser = () => {
         try {
             const userTypeId = userType === 'subAdmins' ? 1 : userType === 'professional' ? 3 : 2;
             
-            let ImageUrl = data.coverURL ? await handleImageUpload(new File([data.coverURL], 'profile.jpg')) : undefined;;
+            let ImageUrl = data.coverURL ? await handleImageUpload(new File([data.coverURL], 'profile.jpg')) : undefined;
 
             if (ImageFile) {
                 ImageUrl = await handleImageUpload(ImageFile);
@@ -127,7 +128,7 @@ const CreateUser = () => {
 
             const userData = {
                 ...data,
-                coverURL: ImageUrl || data.coverURL,
+                // coverURL: ImageUrl || data.coverURL,
                 action: 'create',
                 isProfessional: userType === 'professionals',
                 isBusinessUser: userType === 'employers',
@@ -135,8 +136,18 @@ const CreateUser = () => {
                 userTypeId,
             }
 
+            console.log(userData);
+
+            const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+            if (!token) {
+                toast.error('Unable to load user profile');
+                return;
+            }
+
             const endpoint = userType === 'subAdmins' ? apiEndpoints.CREATE_SUB_ADMIN : apiEndpoints.CREATE_PROF_EMP_USER;
-            const resp = await postData(`${CONFIG.BASE_URL}${endpoint}`, userData);
+            const resp = await postData(`${CONFIG.BASE_URL}${endpoint}`, userData, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
             if (resp.code === "201") {
                 toast.success('User created successfully');
@@ -197,6 +208,12 @@ const CreateUser = () => {
                         />
                     </Grid>
                     <Grid item xs={12}>
+                        <Input
+                            label="Business Name"
+                            {...register('businessName')}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
                         <Controller
                             name="coverURL"
                             control={control}
@@ -224,114 +241,13 @@ const CreateUser = () => {
                             />
                         </Grid>
                     )}
-                    {userType === 'professionals' && (
-                        <>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="Redirect URL"
-                                    type="url"
-                                    {...register('redirectUrl', { required: 'RedirectUrl is required' })}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="Institution"
-                                    {...register('institution')}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="Date of Birth"
-                                    type="date"
-                                    {...register('dateOfBirth')}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Select
-                                    label="Gender"
-                                    options={genderOptions}
-                                    value={watch('gender') || ''}
-                                    onChange={(value) => setValue('gender', value)}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="CV URL"
-                                    {...register('cvUrl')}
-                                />
-                            </Grid>
-                        </>
-                    )}
-                    {userType === 'employers' && (
-                        <>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="Redirect URL"
-                                    type="url"
-                                    {...register('redirectUrl', { required: 'RedirectUrl is required' })}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="Company URL"
-                                    {...register('companyUrl')}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="Business Address"
-                                    {...register('businessAddress')}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="Contact Person Name"
-                                    {...register('contactPersonName')}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="Contact Person Position"
-                                    {...register('contactPersonPosition')}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="Contact Person Phone Number"
-                                    {...register('contactPersonPhoneNumber')}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="Social Media Link"
-                                    {...register('socialMediaLink')}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Input
-                                    label="Industry"
-                                    {...register('industry')}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Controller
-                                    name='status'
-                                    control={control}
-                                    render={({ field: { onChange, value } }) => (
-                                        <Select
-                                        label="Class of Degree"
-                                        value={watch('status')}
-                                        options={[
-                                            { value: '1', label: 'Active' },
-                                            { value: '0', label: 'Inactive' },
-                                        ]}
-                                        onChange={(value) => onChange('status', value)}
-                                        />
-                                    )}
-                                />
-                            </Grid>
-                        </>
-                    )}
+                    <Grid item xs={12}>
+                        <Input
+                            label="Password"
+                            type='password'
+                            {...register('password')}
+                        />
+                    </Grid>
                     <Grid item xs={12}>
                         <Button
                             type="submit"

@@ -9,6 +9,7 @@ import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 type ModalTypes = null | 'userManagement';
 
@@ -16,6 +17,9 @@ type User = {
   id: string;
   name: string;
   email: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
   status: string;
   [key: string]: any;
 };
@@ -73,13 +77,34 @@ const UserManagement = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USERS}?respType=${activeTab}`)
-      if (resp.code === "201") {
-        const data = await resp.json();
-        setUsers(data);
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      if (!token) {
+        toast.error('Unable to load user profile');
+        return;
       }
-      else {
-        throw new Error('Unable to fetch users');
+
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USERS}?respType=${activeTab}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (resp.succeeded === true) {
+        const data = await resp;
+
+        const filteredUsers = data?.data?.filter((user: User) => {
+          switch (activeTab) {
+            case 'subAdmins':
+              return user.userBioDetails.type === 'SuperAdmin';
+            case 'professionals':
+              return user.userBioDetails.type === 'Professional';
+            case 'employers':
+              return user.userBioDetails.type === 'Employer';
+            default:
+              return false;
+          }
+        });
+
+        setUsers(filteredUsers);
+        console.log(users);
       }
     }
     catch (err) {
@@ -114,111 +139,39 @@ const UserManagement = () => {
   };
 
   const columns = [
-    columnHelper.accessor('name', {
-      header: 'Name',
+    columnHelper.accessor('userBioDetails.firstName', {
+      header: 'First Name',
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('email', {
+    columnHelper.accessor('userBioDetails.middleName', {
+      header: 'Middle Name',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('userBioDetails.lastName', {
+      header: 'Last Name',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('userBioDetails.email', {
       header: 'Email',
       cell: (info) => info.getValue(),
     }),
-    ...activeTab === 'subAdmins' ? [
-      columnHelper.accessor('role', {
-        header: 'Role',
-        cell: (info) => info.getValue(),
-      }),
-    ] : activeTab === 'professionals' ? [
-      columnHelper.accessor('phoneNumber', {
-        header: 'Phone Number',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('gender', {
-        header: 'Gender',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('cvUrl', {
-        header: 'CV Url',
-        cell: (info) => <a href={info.getValue()} target="_blank" rel="noopener noreferrer">{info.getValue()}</a>,
-      }),
-      columnHelper.accessor('qualification', {
-        header: 'Qualification(s)',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('courseOfStudy', {
-        header: 'Course of Study',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('institution', {
-        header: 'Institution of Study',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('businessName', {
-        header: 'Business Name',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('businessSector', {
-        header: 'Business Sector',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('businessPhone', {
-        header: 'Business Phone number',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('nyscStateCode', {
-        header: 'NYSC State Code',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('nyscStartDate', {
-        header: 'NYSC Start Date',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('nyscEndDate', {
-        header: 'NYSC End Date',
-        cell: (info) => info.getValue(),
-      }),
-    ] : [
-      columnHelper.accessor('businessName', {
-        header: 'Business Name',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('businessAddress', {
-        header: 'Business Address',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('industry', {
-        header: 'Business Sector',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('phoneNumber', {
-        header: 'Phone Number',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('companyUrl', {
-        header: 'Company URL',
-        cell: (info) => <a href={info.getValue()} target="_blank" rel="noopener noreferrer">{info.getValue()}</a>,
-      }),
-      columnHelper.accessor('location', {
-        header: 'Business Location',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('contactPersonName', {
-        header: 'Contact Person',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('contactPersonPosition', {
-        header: 'Contact Person Role',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('contactPersonPhoneNumber', {
-        header: 'Contact Phone Number',
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('socialMediaLink', {
-        header: 'Social Media Link',
-        cell: (info) => info.getValue(),
-      }),
-    ],
-    columnHelper.accessor('status', {
+    columnHelper.accessor('userBioDetails.phoneNo', {
+      header: 'Phone Number',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('userBioDetails.businessName', {
+      header: 'Business Name',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('userBioDetails.gender', {
+      header: 'Gender',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('userBioDetails.dateOfBirth', {
+      header: 'Date of birth',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('userBioDetails.status', {
       header: 'Status',
       cell: (info) => (
         <span className={`px-2 py-1.5 text-center items-center rounded-full ${
@@ -236,17 +189,17 @@ const UserManagement = () => {
           <Button 
             variant="custom" 
             label="View" 
-            onClick={() => navigate(`/admin/user-management/${activeTab}-view/${row.original.email}`, { state: { user: row.original } })}
+            onClick={() => navigate(`/admin/user-management/${activeTab}-view/${row.original.userBioDetails.email}`, { state: { user: row.original } })}
           />
           <Button 
             variant='neutral' 
             label="Edit" 
-            onClick={() => navigate(`/admin/user-management/edit/${activeTab}/${row.original.email}`)}
+            onClick={() => navigate(`/admin/user-management/edit/${activeTab}/${row.original.userBioDetails.email}`, { state: { user: row.original } })}
           />
           <Button 
-            variant={row.original.status === 'Active' ? 'red' : 'success'} 
-            label={row.original.status === 'Active' ? 'Suspend' : 'Activate'}
-            onClick={() => handleStatusToggle(row.original.email, row.original.status)}
+            variant={row.original.userBioDetails.status === 'Active' ? 'red' : 'success'} 
+            label={row.original.userBioDetails.status === 'Active' ? 'Suspend' : 'Activate'}
+            onClick={() => handleStatusToggle(row.original.userBioDetails.email, row.original.userBioDetails.status)}
           />
         </div>
       ),
