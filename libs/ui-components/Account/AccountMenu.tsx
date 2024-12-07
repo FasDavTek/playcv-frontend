@@ -99,7 +99,7 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
     id: currentUser.id,
     name: currentUser.name,
     email: currentUser.email || '',
-    avatar: '/path/to/default/avatar.png', // You might want to add an avatar field to your user object
+    avatar: '/path/to/default/avatar.png',
     userType: currentUser.userTypeId === 1 ? 'Admin' : currentUser.userTypeId === 2 ? 'Employer' : 'Professional'
   };
 

@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
+import { useNavigate } from 'react-router-dom'
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -22,7 +23,7 @@ root.render(
     {/* <StrictMode> */}
     <QueryClientProvider client={queryClient}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <ToastContainer />
+        <ToastContainer autoClose={9000} />
         <AuthProvider>
           <CartProvider>
             <Routes />

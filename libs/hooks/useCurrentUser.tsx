@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { getData } from './../../libs/utils/apis/apiMethods';
 import CONFIG from './../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../libs/utils/apis/apiEndpoints';
+import { LOCAL_STORAGE_KEYS } from './../../libs/utils/localStorage';
+import { toast } from 'react-toastify';
 
 interface UserProfile {
   id: string;
@@ -19,11 +21,16 @@ export const useCurrentUser = () => {
     const fetchCurrentUser = async () => {
       try {
         setLoading(true);
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch user profile');
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        if (!token) {
+          toast.error('Unable to load user profile');
+          return;
         }
-        const userData = await response.json();
+
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const userData = await response.data;
         setCurrentUser(userData);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('An error occurred while fetching user data'));
