@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 
-import { createBrowserRouter, Navigate, Outlet, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, RouterProvider, useLocation } from 'react-router-dom';
 import { ROUTES } from '../../libs/ui-components/shared/routes';
 
 import AppLayout from '../../apps/video-cv/src/layouts/AppLayout';
@@ -77,10 +77,11 @@ const CandidateLogin = lazy(() => import('../../apps/Candidate/src/pages/Login')
 
 const ProtectedRoute = ({ allowedUserTypes, children }: any) => {
     const { authState } = useAuth();
+    const location = useLocation();
 
     if (!authState.isAuthenticated) {
         toast.warning(`This area is for registered users. Please authenticate to continue.`);
-        return <Navigate to="/auth/login" replace />;
+        return <Navigate to="/auth/login" state={{ from: location }}replace />;
     }
 
     const userTypeId = authState.user?.userTypeId;
@@ -89,16 +90,16 @@ const ProtectedRoute = ({ allowedUserTypes, children }: any) => {
         switch (userTypeId) {
         case 1: // Admin
             toast.error("Secure area detected. Authentication required to enter.");
-            return <Navigate to="/admin/*" replace />;
+            return <Navigate to="/auth/login" state={{ from: location }} replace />;
         case 2: // Employer
             toast.error("Secure area detected. Authentication required to enter.");
-            return <Navigate to="/employer/*" replace />;
+            return <Navigate to="/auth/login" state={{ from: location }} replace />;
         case 3: // Candidate
             toast.error("Secure area detected. Authentication required to enter.");
-            return <Navigate to="/candidate/*" replace />;
+            return <Navigate to="/auth/login" state={{ from: location }} replace />;
         default:
             toast.error("Authentication required. Let's get you logged in.");
-            return <Navigate to="/auth/login" replace />;
+            return <Navigate to="/auth/login" state={{ from: location }} replace />;
         }
     }
 
