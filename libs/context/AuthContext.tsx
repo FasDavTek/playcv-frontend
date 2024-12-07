@@ -9,6 +9,7 @@ interface AuthState {
     username?: string;
     name: string;
     userTypeId?: number;
+    [key: string]: any;
     // Add other relevant user fields
   } | null;
 }

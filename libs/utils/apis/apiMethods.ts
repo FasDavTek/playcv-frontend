@@ -1,25 +1,26 @@
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import { LOCAL_STORAGE_KEYS } from "../localStorage";
+import { toast } from "react-toastify";
 
 export const isTokenExpired = (token: string | null): boolean => {
   if (!token) {
-    return true; // Token is considered expired if it's null or undefined
+    return true;
   }
 
   const [, payloadBase64] = token.split(".");
   if (!payloadBase64) {
-    return true; // Token is considered expired if payload is missing
+    return true;
   }
 
   try {
     const payloadJson = atob(payloadBase64);
     const payload = JSON.parse(payloadJson);
-    const expiryTime = payload.exp * 100000; // Convert expiry time from seconds to milliseconds
+    const expiryTime = payload.exp * 1000;
     const currentTime = Date.now();
-    return currentTime >= expiryTime; // Token is expired if current time is greater than or equal to expiry time
+    return currentTime >= expiryTime;
   } catch (error) {
     console.error("Error decoding token payload:", error);
-    return true; // Assume token is expired if there's an error decoding the payload
+    return true;
   }
 };
 
@@ -34,6 +35,7 @@ export const getToken = (): string | null => {
 
   return token;
 };
+
 export const axiosInstance = axios.create();
 
 axiosInstance.interceptors.request.use(
@@ -42,31 +44,32 @@ axiosInstance.interceptors.request.use(
     config.headers = config.headers || {};
 
     if (config.data instanceof FormData) {
-      // For multipart/form-data, let the browser set the Content-Type
       delete config.headers["Content-Type"];
-    } else {
-      // For other cases, default to application/json
+    }
+    else {
       config.headers["Content-Type"] = "application/json";
     }
 
     config.headers.secureddata = "getall";
 
-    // If there is no token, delete if from the header before making a request
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-    } else {
+    }
+    else {
       delete config.headers.Authorization;
     }
-    // you can also do other modification in config
     return config;
   },
   (error) => Promise.reject(error)
 );
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error?.response?.status === 401 && getToken()) {
       localStorage.clear();
+      toast.error('Your session has expired. Please log in again');
+      window.dispatchEvent(new CustomEvent('tokenExpired'))
       // window.location.replace(ROUTES.SIGNIN);
     }
     return Promise.reject(error);
