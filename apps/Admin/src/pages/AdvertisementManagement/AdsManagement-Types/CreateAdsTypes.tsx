@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@video-cv/ui-components';
-import usePaystack, { PaymentDetails } from '@video-cv/payment';
+import { usePaystack, PaymentDetails } from '@video-cv/payment';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Card, CardContent, CardHeader, CircularProgress, duration, Typography } from '@mui/material';
