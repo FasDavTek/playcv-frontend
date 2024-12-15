@@ -5,7 +5,6 @@ import { Modal } from '@mui/material';
 
 import { formatDate } from '@video-cv/utils';
 import { Button, Table } from '@video-cv/ui-components';
-import { PaymentModal } from './modals';
 import CreateVideoConfirmationModal from '../VideoManagement/modals/CreateVideoConfirmationModal';
 import { useNavigate } from 'react-router-dom';
 import { getData } from './../../../../../libs/utils/apis/apiMethods';
@@ -41,6 +40,8 @@ const Payment = () => {
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
+  const navigate = useNavigate(); // Initialize useNavigate
+
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
   if (!token) {
     toast.error('Your session has expired. Please log in again.');
@@ -75,8 +76,6 @@ const Payment = () => {
   //     openSetModalFn('uploadModal');
   //   }
   // }, [queryParams]);
-
-  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleGenerateInvoice = (id: number) => {
     navigate(`/candidate/payment/details/${id}`); // Navigate to the invoice details page
@@ -139,11 +138,11 @@ const Payment = () => {
         setGlobalFilter={setGlobalFilter}
         tableHeading="All Payments"
       />
-      <Modal open={openModal === 'paymentModal'} onClose={closeModal}>
+      {/* <Modal open={openModal === 'paymentModal'} onClose={closeModal}>
         <>
           <PaymentModal onClose={closeModal} />
         </>
-      </Modal>
+      </Modal> */}
 
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
         <>

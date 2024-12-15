@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@video-cv/ui-components';
 import { VideoLinks } from '@video-cv/constants';
 import { VideoCard, Videos } from '../../components';
-import { CreateVideoConfirmationModal, UploadVideoModal } from './modals';
+import { CreateVideoConfirmationModal } from './modals';
 import { routes } from '../../routes/routes';
 import { getData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
