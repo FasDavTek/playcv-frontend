@@ -17,7 +17,6 @@ import { Loader, StatusSpan } from '../../components';
 import { VIDEO_STATUS } from '@video-cv/constants';
 import { Button, VacancyCard } from '@video-cv/ui-components';
 import { ModalTypes } from '../VideoManagement';
-import { UploadVideoModal } from '../VideoManagement/modals';
 import { DeleteVideoConfirmationModal } from './modals';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CONFIG from './../../../../../libs/utils/helpers/config';
