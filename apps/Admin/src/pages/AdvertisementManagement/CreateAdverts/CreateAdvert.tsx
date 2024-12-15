@@ -37,70 +37,18 @@ const s3Client = new S3Client({
 
 type AdFormData = z.infer<typeof advertSchema>;
 
-interface CheckoutDetails {
-  adType: string;
-  price: number;
-  paymentReference: string;
-  adDetails: {
-    id: string;
-    title: string;
-    description: string;
-  }[];
-  action: string;
-  adTypeId?: string;
-  duration?: string;
-}
-
 const CreateAdvertModal = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [adTypes, setAdTypes] = useState<{ value: string; label: string }[]>([]);
-  const [checkoutDetails, setCheckoutDetails] = useState<CheckoutDetails | null>(null);
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const { register, handleSubmit, watch, setValue, reset, control, formState: { errors },} = useForm<AdFormData>({
     resolver: zodResolver(advertSchema),
-    defaultValues: {
-      action: 'edit',
-      userId: localStorage.getItem('userId') || '',
-    }
   });
 
   const location = useLocation();
   const navigate = useNavigate();
   const { uploadRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
-
-  useEffect(() => {
-    const fetchCheckoutDetails = async () => {
-      if (paymentId) {
-        toast.error('Invalid advert data. Redirecting....');
-        // navigate('/admin/advertisement-management');
-        return;
-      }
-
-      try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${paymentId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch checkout details');
-        }
-        const data: CheckoutDetails = await response.json();
-        setCheckoutDetails(data);
-        
-        if (data.adDetails && data.adDetails.length > 0) {
-          const ad = data.adDetails[0];
-          setValue('adName', ad.title);
-          setValue('adDescription', ad.description);
-        }
-        
-        setValue('adType', data.adType);
-      } catch (error) {
-        console.error('Error fetching checkout details:', error);
-        toast.error('Failed to load ad details. Please try again.');
-        // navigate('/admin/advertisement-management');
-      }
-    };
-
-    fetchCheckoutDetails();
-  }, [paymentId, navigate, setValue]);
 
 
 
@@ -204,10 +152,6 @@ const handleFileChange = async (files: File | File[]) => {
 
 
 const onSubmitHandler = async (data: AdFormData) => {
-  if (!checkoutDetails) {
-    toast.error('Missing ad information. Please try again.');
-    return;
-  }
 
   try {
     toast.info('Uploading files...');
@@ -269,12 +213,11 @@ const onSubmitHandler = async (data: AdFormData) => {
       })),
       action: 'edit',
       coverURL: thumbnailUrl,
-      paymentReference: checkoutDetails.paymentReference,
     };
 
     const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData);
 
-    if (response.code === "201") {
+    if (response.code === "00") {
       toast.success('Ad uploaded and payment confirmed successfully');
       reset();
       navigate('/admin/advertisement-management');
