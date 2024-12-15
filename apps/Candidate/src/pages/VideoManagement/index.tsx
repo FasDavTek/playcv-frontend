@@ -6,13 +6,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@video-cv/ui-components';
 import { VideoLinks } from '@video-cv/constants';
 import { VideoCard, Videos } from '../../components';
-import { CreateVideoConfirmationModal, UploadVideoModal } from './modals';
+import { CreateVideoConfirmationModal } from './modals';
 import { routes } from '../../routes/routes';
 import { getData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 export type ModalTypes = null | 'confirmationModal' | 'uploadModal';
 
@@ -45,15 +46,20 @@ const Dashboard = () => {
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  if (!token) {
+    toast.error('Your session has expired. Please log in again.');
+    navigate('/auth/login', { replace: true });
+    return;
+  }
+
   const checkPaymentStatus = async () => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=10`);
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=100`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
+      const data = await response.data;
       console.log(data);
       
       if (!data || !data.checkoutId) {
@@ -77,33 +83,34 @@ const Dashboard = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_VIDEO_LIST}?Page=1&Limit=10`);
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_VIDEO_LIST}?Page=1&Limit=100`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      if (!resp.ok) {
-        throw new Error('Failed to fetch videos');
+      if (resp.succeded === true) {
+        const data = await resp.data;
+        const currentTime = Date.now();
+        console.log(data);
+        setVideos(data.videos);
+
+        const newVideos = data.videos.filter((video: Video) => new Date(video.startDate).getTime() > lastFetchTime);
+        const approved = data.videos.filter((video: Video) => video.status === 'approved');
+        const pending = data.videos.filter((video: Video) => ['pending', 'rejected'].includes(video.status));
+        setVideos(data.videos);
+        setApprovedVideos(approved);
+        setPendingVideos(pending);
+
+        newVideos.forEach((video: Video) => {
+          if (video.status === 'approved') {
+            toast.success(`Your video "${video.title}" has been approved!`)
+          } 
+          else if (video.status === 'rejected') {
+            toast.error(`Your video "${video.title}" has been rejected. Reason: ${video.rejectionReason}`)
+          }
+        })
+
+        setLastFetchTime(currentTime)
       }
-      const data = await resp.json();
-      const currentTime = Date.now();
-      console.log(data);
-      setVideos(data.videos);
-
-      const newVideos = data.videos.filter((video: Video) => new Date(video.startDate).getTime() > lastFetchTime);
-      const approved = data.videos.filter((video: Video) => video.status === 'approved');
-      const pending = data.videos.filter((video: Video) => ['pending', 'rejected'].includes(video.status));
-      setVideos(data.videos);
-      setApprovedVideos(approved);
-      setPendingVideos(pending);
-
-      newVideos.forEach((video: Video) => {
-        if (video.status === 'approved') {
-          toast.success(`Your video "${video.title}" has been approved!`)
-        } 
-        else if (video.status === 'rejected') {
-          toast.error(`Your video "${video.title}" has been rejected. Reason: ${video.rejectionReason}`)
-        }
-      })
-
-      setLastFetchTime(currentTime)
     }
     catch (err) {
       console.error('Error fetching videos: ', err);

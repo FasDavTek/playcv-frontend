@@ -11,6 +11,7 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import { CreateAdsModal } from './modals';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 type ads = {
   id: string;
@@ -43,21 +44,32 @@ const Payment = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAdId, setSelectedAdId] = useState<string | null>(null);
   const [selectedAdTitle, setSelectedAdTitle] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState<string>('');
   const [reason, setReason] = useState('');
 
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
+  if (!token) {
+    toast.error('Your session has expired. Please log in again.');
+    navigate('/auth/login', { replace: true });
+    return;
+  }
+
+
   const checkPaymentStatus = async () => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Page=1&Limit=10`);
+     
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Page=1&Limit=100`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      console.log(data);
+      const data = await response.data;
       
       if (!data || !data.checkoutId) {
         openSetModalFn('confirmationModal');
@@ -79,15 +91,18 @@ const Payment = () => {
 
 
   const fetchAds = async () => {
+    setLoading(true);
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_ADS}?Page=1&Limit=10`)
-      if (!resp.ok) {
-        throw new Error("Failed to fetch ads");
-      }
 
-      const data = await resp.json();
-      setAds(data);
-      setLoading(false);
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_ADS}?Page=1&Limit=100`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      let data;
+      if (resp.succeeded === true) {
+        data = await resp.data;
+        setAds(data);
+      }
 
       const currentTime = Date.now();
       const newAds = data.filter((ad: ads) => new Date(ad.createdAt).getTime() > lastFetchTime);
@@ -98,7 +113,6 @@ const Payment = () => {
     }
     catch (err) {
       console.error('Error fetching ads:', err)
-      setLoading(false)
       toast.error('Failed to fetch ads')
     }
     finally {
@@ -112,15 +126,15 @@ const Payment = () => {
     // Set up interval to fetch videos every 5 minutes
     const interval = setInterval(fetchAds, 5 * 60 * 1000)
     return () => clearInterval(interval)
-  }, []);
+  }, [search, filter, token]);
 
 
   const handleView = async (adId: string) => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${adId}`);
-      if (!response.ok) {
-        throw new Error('Error fetching ad details');
-      }
+      
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${adId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       const adDetails = await response.json();
       navigate(`/admin/advertisement-management/:${adId}`, {
@@ -132,19 +146,20 @@ const Payment = () => {
       toast.error('Failed to fetch ad details')
     }
   };
+  
 
   const handleAdAction = async (adId: string, action: string, reason?: string) => {
     try {
+
       const apiData = {
         adId,
         action,
         reason
       }
 
-      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_ADS}`, apiData)
-      if (!response.ok) {
-        throw new Error(`Failed to ${action === 'a' ? 'activate' : 'suspend'} ad`)
-      }
+      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_ADS}`, apiData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       await fetchAds();
       toast.success(`Ad ${action === 'a' ? 'activated' : 'suspended'} successfully`)
@@ -287,7 +302,7 @@ const Payment = () => {
         
       )} */}
 
-      <Table loading={false} data={ads} columns={columns} tableHeading="All Ads" />
+      <Table loading={false} data={ads} columns={columns} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} tableHeading="All Ads" />
 
       <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="dialog-title" aria-describedby="dialog-description" PaperProps={{ sx: { padding: 3, borderRadius: 2, boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)', width: { xs: '90%', sm: '500px' }, maxWidth: '750px' }, }} BackdropProps={{ sx: { backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.2)', }, }}>
         <DialogTitle>Suspension Reason</DialogTitle>

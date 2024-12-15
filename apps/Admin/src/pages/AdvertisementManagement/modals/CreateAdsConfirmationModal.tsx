@@ -13,21 +13,21 @@ const CreateAdsConfirmationModal = forwardRef<HTMLDivElement, CreateAdsConfirmat
     const navigate = useNavigate();
     const [price, setPrice] = useState<number>(0);
 
-    const { payButtonFn } = usePaystack(
-      price,
-      () => {
-        console.log('onSuccess callback');
-        navigate('/advertisement-management?uploadModal=true');
-      },
-      () => {
-        console.log('onFailure callback');
-      }
-    );
+    // const { payButtonFn } = usePaystack(
+    //   price,
+    //   () => {
+    //     console.log('onSuccess callback');
+    //     navigate('/advertisement-management?uploadModal=true');
+    //   },
+    //   () => {
+    //     console.log('onFailure callback');
+    //   }
+    // );
 
-    const ProceedToPayment = () => {
-      payButtonFn();
-      onClose();
-    };
+    // const ProceedToPayment = () => {
+    //   payButtonFn();
+    //   onClose();
+    // };
 
     const ProceedToTypes = () => {
       navigate('/admin/advertisement-management/types');

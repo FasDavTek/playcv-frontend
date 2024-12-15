@@ -13,21 +13,21 @@ const CreateVideConfirmationModal = forwardRef<HTMLDivElement, CreateVideoConfir
     const navigate = useNavigate();
     const [price, setPrice] = useState<number>(0);
 
-    const { payButtonFn } = usePaystack(
-      price,
-      () => {
-        console.log('onSuccess callback');
-        navigate('/video-management?uploadModal=true');
-      },
-      () => {
-        console.log('onFailure callback');
-      }
-    );
+    // const { payButtonFn } = usePaystack(
+    //   price,
+    //   () => {
+    //     console.log('onSuccess callback');
+    //     navigate('/video-management?uploadModal=true');
+    //   },
+    //   () => {
+    //     console.log('onFailure callback');
+    //   }
+    // );
 
-    const ProceedToPayment = () => {
-      payButtonFn();
-      onClose();
-    };
+    // const ProceedToPayment = () => {
+    //   payButtonFn();
+    //   onClose();
+    // };
 
     const ProceedToTypes = () => {
       navigate('/candidate/video-management/types');

@@ -29,8 +29,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem(AUTH_LOCALSTORAGE_KEY);
-    localStorage.clear();
+    // localStorage.removeItem(AUTH_LOCALSTORAGE_KEY);
+    // localStorage.clear();
   };
 
   // useEffect(() => {
