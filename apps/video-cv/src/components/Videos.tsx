@@ -5,10 +5,12 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { videoCVs } from '../utils/videoCVs'
 import { ChannelCard, Loader, VideoCard } from '.';
 import { Button } from '@video-cv/ui-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getData } from './../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../libs/utils/helpers/config';
+import { LOCAL_STORAGE_KEYS } from './../../../../libs/utils/localStorage';
+import { toast } from 'react-toastify';
 
 interface Video {
   id: string;
@@ -22,10 +24,17 @@ interface Video {
   price: number;
   description: string;
   pinned?: boolean;
+  category?: string;
+}
+
+interface VideosProps {
+  category?: string
+  limit?: number
 }
 
 // TODO: Rename component
-const Videos = () => {
+const Videos: React.FC<VideosProps> = ({ category, limit = 30 }) => {
+  const navigate = useNavigate();
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
@@ -44,11 +53,20 @@ const Videos = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=100`);
-        if (response.code === "201") {
-          setVideos(response.data);
-        } else {
-          console.error('Unable to fetch videos:', response.message);
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        if (!token) {
+          toast.error('Your session has expired. Please log in again.');
+          navigate('/auth/login', { replace: true });
+          return;
+        }
+
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=${limit}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        let data;
+        if (response.succeeded === true) {
+          data = await response.data;
+          setVideos(data || []);
         }
       } catch (error) {
         console.error('Error fetching videos:', error);
@@ -76,7 +94,8 @@ const Videos = () => {
   if (loading) return <Loader />;
   if (!videos.length) return <p>No videos available</p>;
 
-  const totalPages = Math.ceil(videos.length / videosPerPage);
+  const filteredVideos = category ? videos.filter(video => video.category === category) : videos;
+  const totalPages = Math.ceil(filteredVideos.length / videosPerPage);
 
   const handleNextPage = () => {
     setCurrentPage((prevPage) => (prevPage + 1) % totalPages);

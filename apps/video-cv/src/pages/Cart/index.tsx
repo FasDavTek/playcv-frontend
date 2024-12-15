@@ -6,7 +6,7 @@ import { useCart } from '../../context/CartProvider';
 import { Box, Checkbox, Paper, Stack, styled, Typography } from '@mui/material';
 import { Button } from '@video-cv/ui-components';
 import { Icons } from '@video-cv/assets';
-import { usePaystack } from '@video-cv/payment';
+import { usePaystack, PaymentDetails } from '@video-cv/payment';
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
@@ -26,36 +26,36 @@ const Cart = () => {
   const [selectAll, setSelectAll] = useState(false);
 
 
-  const onPaymentSuccess = async (response: any) => {
+  const onPaymentSuccess = async (response: any, details: PaymentDetails) => {
     try {
       toast.info('Processing payment...');
-      payButtonFn();
+      // payButtonFn();
 
-      if (!paymentDetails) {
+      if (!details) {
         throw new Error('Payment failed or was cancelled');
       }
       
       const PaymentDetailsData = {
         buyerId: authState.user?.id,
-        currency: paymentDetails.currency,
-        total: paymentDetails.amount,
+        currency: details.currency,
+        total: details.amount,
         countryCode: 'NG',
-        datetime: paymentDetails.paidAt || new Date().toISOString(),
-        reference_Id: paymentDetails.reference,
+        datetime: details.paidAt || new Date().toISOString(),
+        reference_Id: details.reference,
         purchaseDetails: selectedItems.map(itemId => {
           const item = cartState.cart.find(cartItem => cartItem.id === itemId);
           return {
             videoId: item?.id,
-            amount: paymentDetails?.amount,
+            amount: details?.amount,
           };
         }),
-        status: paymentDetails.status,
-        cardType: paymentDetails.cardType || "Unknown",
-        cardDetails: `${paymentDetails.cardBrand || "Unknown"} ${paymentDetails.cardType || ""}`,
-        last_Four: paymentDetails.last4 || "Unknown",
+        status: details.status,
+        cardType: details.cardType || "Unknown",
+        cardDetails: `${details.cardDetails || "Unknown"} ${details.cardType || ""}`,
+        last_Four: details.last_Four || "Unknown",
         paymentType: "purchase",
         userIdentifier: authState.user?.email,
-        transactionFee: paymentDetails.fees || 0,
+        transactionFee: details.added_fees || 0,
         chargedTaxAmount: 0,
       };
 
@@ -91,11 +91,7 @@ const Cart = () => {
 
 
 
-  const { payButtonFn, paymentDetails, isProcessing } = usePaystack(
-    price,
-    onPaymentSuccess,
-    onPaymentFailure
-  );
+  const { payButtonFn, isProcessing } = usePaystack(onPaymentSuccess, onPaymentFailure);
 
   useEffect(() => {
     if (selectAll) {
@@ -144,15 +140,32 @@ const Cart = () => {
       }
     };
     
-    payButtonFn();
+    // payButtonFn();
   };
 
-  useEffect(() => {
-    if (triggerPayment) {
-      payButtonFn();
-      setTriggerPayment(false);
-    }
-  }, [price, triggerPayment, payButtonFn]);
+  // const handlePayment = useCallback((type: AdType) => {
+  //     setSelectedType(type);
+  //     const amount = Math.round(Number(type.price));
+  //     const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  //     const email = authState?.user?.username || '';
+  //     const firstName = authState?.user?.firstName || '';
+  //     const lastName = authState?.user?.lastName || '';
+  //     const phone = authState?.user?.phone;
+  
+  //     console.log(type.price)
+  //     console.log(amount)
+  
+  //     if (amount > 0) {
+  //       payButtonFn(amount, email, firstName, lastName, phone);
+  //     }
+  //     // if (authState?.user?.username && token) {
+  //       // payButtonFn(amount, email,);
+  //     // }
+  //     // else {
+  //     //   toast.error('User not found. Please log in again.');
+  //     //   navigate('/auth/login', { replace: true });
+  //     // }
+  //   }, [authState.user, payButtonFn, navigate]);
 
   const ClampedText = styled(Typography)({
     display: '-webkit-box',

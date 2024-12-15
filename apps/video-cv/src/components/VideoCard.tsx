@@ -14,7 +14,7 @@ import {
 } from '../utils/constants';
 import { Button } from '@video-cv/ui-components';
 import { useCart } from '../context/CartProvider';
-import { useAuth } from '../context/AuthProvider';
+import { useAuth } from './../../../../libs/context/AuthContext';
 
 interface Video {
   id: string;
@@ -38,7 +38,7 @@ interface VideoCardProps {
 const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
   const { id, uploaderName, role, views, imageSrc, price, pinned } = video;
   const { cartState, dispatch } = useCart();
-  const { user, isAuthenticated } = useAuth();
+  const { authState } = useAuth();
   const navigate = useNavigate();
   const [isInWishlist, setIsInWishlist] = useState(false);
   const { ref, inView } = useInView({
@@ -52,12 +52,12 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
   }, [cartState, id]);
 
   const handleAddToCart = () => {
-    if (!isAuthenticated) {
+    if (!authState.isAuthenticated) {
       navigate('/auth/login');
       return;
     }
 
-    if (user?.userType !== 'employer') {
+    if (authState?.user?.userType !== 'Employer') {
       return;
     }
 
@@ -129,7 +129,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
             </Typography>
             {pinned && <PushPinIcon sx={{ fontSize: '1rem', color: 'red', ml: '.5rem' }} />}
           </Stack>
-          {(isAuthenticated && user?.userType === 'employer') || !isAuthenticated ? (
+          {(authState?.isAuthenticated && authState?.user?.userType === 'Employer') || !authState?.isAuthenticated ? (
             <Tooltip title='Add to wishlist' placeholder='right-start'>
               <span>
                 <Button variant="custom" color="gray" className='text-[#5c6bc0] hover:text-[#2e3a86]' onClick={handleAddToCart} icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />}></Button>

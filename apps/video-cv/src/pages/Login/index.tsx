@@ -62,20 +62,17 @@ const Login = () => {
       username, password,
     }
     try {
-      console.log(reqBody);
 
       const res = await postData(
         `${CONFIG.BASE_URL}${apiEndpoints.AUTH_LOGIN}`,
         reqBody
       );
 
-      console.log(res);
-
       if (res.code === "200") {
 
         toast.success(`Welcome aboard once again! Let's continue where we left off.`);
 
-        const token = res.jwtToken;
+        const token = res.token;
         const decoded = decodeJWT(token);
         
         localStorage.setItem(
@@ -92,9 +89,12 @@ const Login = () => {
             isAuthenticated: true,
             user: {
               id: res.user.id,
-              username: username,
+              username: res.user.email,
               name: res.user.fullName || 'User',
               userTypeId: res.user.userTypeId,
+              firstName: res.user.firstName,
+              lastName: res.user.lastName,
+              phone: res.user.mobile,
               // Add other relevant user fields
             }
           });
@@ -110,7 +110,7 @@ const Login = () => {
       }   
     }
     catch (err: any) {
-      toast.error(`Oops! Error 404: Correct credentials not found. But don't worry, let's give it another shot!`);
+      toast.error(`Oops! Error 404: Correct credentials not found.`);
     } 
     finally {
       setLoading(false);
@@ -134,7 +134,7 @@ const Login = () => {
         }}
       ></div>
       <div className="border flex-1">
-        <ChevronLeftIcon className="cursor-pointer text-base ml-2 top-2 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
+        <ChevronLeftIcon className="cursor-pointer text-base ml-2 top-4 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.95rem' }} onClick={handleBackClick} />
         <form onSubmit={handleSubmit(onSubmit)} className="w-[90%] md:w-7/12 mx-auto mt-14">
           <h5 className="font-bold text-3xl">Login</h5>
           <p className="">Enter your login details to Sign in</p>

@@ -155,7 +155,7 @@ const Navbar = () => {
           <div className="mt-4 flex xl:hidden" onClick={handleShowNavbar}>
             {showNavbar && <MenuOpenIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 lg:w-24 lg:h-24 z-50 ml-auto sm:mr-0 md:mr-3 lg:mr-4' />}
           </div>
-          <ul>
+          <ul className='items-center'>
             <li>
               <NavLink
                 to="/"
@@ -226,7 +226,7 @@ const Navbar = () => {
                     handleAuthenticatedNavigation('/candidate/dashboard')
                   }}
                 >
-                  Professional
+                  My Dashboard
                 </NavLink>
               </li>
             )}
@@ -248,7 +248,7 @@ const Navbar = () => {
                     handleAuthenticatedNavigation('/employer/dashboard')
                   }}
                 >
-                  Employer
+                  My Dashboard
                 </NavLink>
               </li>
             )}
@@ -270,12 +270,12 @@ const Navbar = () => {
                     handleAuthenticatedNavigation('/admin/dashboard')
                   }}
                 >
-                  Admin
+                  My Dashboard
                 </NavLink>
               </li>
             )}
             {authState.isAuthenticated && (
-              <li>
+              <li className='mt-5 md:mt-0'>
                 {/* TODO: Show logged in if user is logged in */}
                 <IconButton aria-label="cart" onClick={handleCartClick} className='w-5 h-5 lg:w-10 lg:h-10'>
                   <StyledBadge badgeContent={cartState.cart.length} >
@@ -292,6 +292,9 @@ const Navbar = () => {
                 <Button variant='black' className='mt-5 md:mt-0' label='Get Started' onClick={handleGetStartedClick} />
               )
             }
+            {!authState.isAuthenticated && (
+              <Button variant='black' className='mt-5 md:mt-0 md:ml-5' label='Log in' onClick={() => navigate('/auth/login')} />
+            )}
             <Dialog fullScreen={fullScreen} aria-labelledby="responsive-dialog-title" open={openModal} onClose={handleCloseModal}>
               <DialogTitle id="responsive-dialog-title">
                 <strong className=' text-neutral-200'>Get Started</strong>

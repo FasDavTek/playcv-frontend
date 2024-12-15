@@ -10,6 +10,7 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+import { useQuery } from 'react-query';
 
 type ModalTypes = null | 'userManagement';
 
@@ -66,26 +67,34 @@ const UserManagement = () => {
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
   const [activeTab, setActiveTab] = useState<'subAdmins' | 'professionals' | 'employers'>('subAdmins');
   const [users, setUsers] = useState<User[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState<string>('');
   const [loading, setLoading] = useState(true);
   
   const navigate = useNavigate();
 
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
+  console.log(token)
+
   useEffect(() => {
     fetchUsers();
-  }, [activeTab]);
+  }, [activeTab, search, filter]);
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-      if (!token) {
-        toast.error('Unable to load user profile');
-        return;
-      }
+      // if (!token) {
+      //   toast.error('Your session has expired. Please log in again.');
+      //   navigate('/auth/login', { replace: true });
+      //   return;
+      // }
+      
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USERS}?respType=${activeTab}&Page=1&Limit=100`);
 
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USERS}?respType=${activeTab}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      console.log(resp);
 
       if (resp.succeeded === true) {
         const data = await resp;
@@ -104,17 +113,21 @@ const UserManagement = () => {
         });
 
         setUsers(filteredUsers);
-        console.log(users);
       }
     }
     catch (err) {
       console.error('Error fetching users:', err);
-      toast.error('Failed to load users');
+      toast.error('Unable to load users');
     }
     finally {
       setLoading(false);
     }
   };
+
+
+  useEffect(() => {
+    fetchUsers();
+  }, [activeTab, searchQuery]);
 
 
   const handleStatusToggle = async (email: string, currentStatus: string) => {
@@ -244,9 +257,13 @@ const UserManagement = () => {
 
       <div className="mt-4">
         <Table
-          loading={false}
+          loading={loading}
           data={users}
           columns={columns}
+          search={setSearch}
+          filter={filter}
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
           tableHeading={`All ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
         />
       </div>
