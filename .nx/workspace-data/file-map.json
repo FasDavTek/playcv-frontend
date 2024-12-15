@@ -42,6 +42,7 @@
   "fileMap": {
     "nonProjectFiles": [],
     "projectFileMap": {
+<<<<<<< HEAD
       "Employer": [
         {
           "file": "apps/Employer/.eslintrc.json",
@@ -3040,6 +3041,8 @@
           "hash": "6108252040699422176"
         }
       ],
+=======
+>>>>>>> bb7953228a3b4517bf401166d99b77c2680a2274
       "video-cv": [
         {
           "file": "apps/video-cv/.eslintrc.json",
@@ -3806,6 +3809,7 @@
         {
           "file": "apps/video-cv/vite.config.mts.timestamp-1734290683758-3b907b512acca.mjs",
           "hash": "13437398520145597717"
+<<<<<<< HEAD
         },
         {
           "file": "apps/video-cv/vite.config.mts.timestamp-1734290707533-1804caf2b48de.mjs",
@@ -4142,6 +4146,2569 @@
         {
           "file": "apps/video-cv/vite.config.mts.timestamp-1734294274060-305a1af21a761.mjs",
           "hash": "13437398520145597717"
+=======
+        }
+      ],
+      "Candidate": [
+        {
+          "file": "apps/Candidate/.eslintrc.json",
+          "hash": "14830867113928387670"
+        },
+        {
+          "file": "apps/Candidate/index.html",
+          "hash": "8738890303708473994"
+        },
+        {
+          "file": "apps/Candidate/project.json",
+          "hash": "18126072770865512338"
+        },
+        {
+          "file": "apps/Candidate/public/_redirects",
+          "hash": "8738055346875944353"
+        },
+        {
+          "file": "apps/Candidate/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "apps/Candidate/src/app/app.module.scss",
+          "hash": "14507130133388590702"
+        },
+        {
+          "file": "apps/Candidate/src/app/app.spec.tsx",
+          "hash": "1618759317897702198",
+          "deps": [
+            "npm:@testing-library/react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/app/app.tsx",
+          "hash": "15856620052780230662",
+          "deps": [
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/assets/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Candidate/src/components/Loader.tsx",
+          "hash": "9318856193863972624",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/components/StatusSpan.tsx",
+          "hash": "1015230965532866976",
+          "deps": [
+            "npm:react",
+            "npm:classnames"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/components/VideoCard.tsx",
+          "hash": "11186891894762881165",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:classnames"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/components/Videos.tsx",
+          "hash": "7235784531254368135",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/components/dashboard/DashboardCalendar.tsx",
+          "hash": "2969658108169482791",
+          "deps": [
+            "npm:@mui/x-date-pickers"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/components/dashboard/MonthlyRevenueChart.tsx",
+          "hash": "17271769892174713205",
+          "deps": [
+            "npm:react",
+            "npm:chart.js",
+            "npm:react-chartjs-2"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/components/dashboard/PatientActivityChart.tsx",
+          "hash": "864669549014067885",
+          "deps": [
+            "npm:react",
+            "npm:chart.js",
+            "npm:react-chartjs-2"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/components/index.ts",
+          "hash": "11370176103926512170"
+        },
+        {
+          "file": "apps/Candidate/src/components/payment/index.ts",
+          "hash": "17548136851051953380"
+        },
+        {
+          "file": "apps/Candidate/src/components/payment/usePaystack.tsx",
+          "hash": "1301717561330815211",
+          "deps": [
+            "npm:react",
+            "npm:react-paystack"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/context/AuthProvider.tsx",
+          "hash": "6767928601341991420",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/global.d.ts",
+          "hash": "13979906086132750882"
+        },
+        {
+          "file": "apps/Candidate/src/layouts/AuthLayout.tsx",
+          "hash": "9741319841295586565",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/main.tsx",
+          "hash": "16721057661043380030",
+          "deps": [
+            "npm:react",
+            "npm:react-dom",
+            "npm:@mui/x-date-pickers"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/Dashboard/index.tsx",
+          "hash": "977446408466307456",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/FAQ/index.tsx",
+          "hash": "12958248767191257355",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:@hookform/resolvers",
+            "npm:react-hook-form",
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/Feed/index.tsx",
+          "hash": "6724811810397920406",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/Home/index.tsx",
+          "hash": "15079911506816946344",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/JobBoard/index.tsx",
+          "hash": "4026551507477033236",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:dayjs",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/Login/index.tsx",
+          "hash": "13064813302617983682",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/Payment/PaymentInvoice/InvoiceDetails.tsx",
+          "hash": "531859576334367032",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/Payment/index.tsx",
+          "hash": "14429187265125111956",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-table",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/Payment/modals/PaymentModal.tsx",
+          "hash": "5549332649218657881"
+        },
+        {
+          "file": "apps/Candidate/src/pages/Payment/modals/index.ts",
+          "hash": "11559594058071263582"
+        },
+        {
+          "file": "apps/Candidate/src/pages/Profile/index.tsx",
+          "hash": "4744970583388401488",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-hook-form",
+            "npm:dayjs",
+            "npm:@mui/icons-material",
+            "npm:react-quill",
+            "npm:zod",
+            "npm:@hookform/resolvers",
+            "npm:react-toastify",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/Signup/index.tsx",
+          "hash": "7164081745030784412",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:@mui/icons-material",
+            "npm:react-toastify",
+            "npm:zod",
+            "npm:@hookform/resolvers",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/Vacancies/index.tsx",
+          "hash": "13034715929843762280",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/VideoCvGuideline/index.tsx",
+          "hash": "12332692157024591651",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/VideoDetail/index.tsx",
+          "hash": "7594961845325956601",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:react-player",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-share",
+            "npm:react-toastify",
+            "Admin"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/VideoDetail/modals/DeleteVideoConfirmationModal.tsx",
+          "hash": "14847490303716193624"
+        },
+        {
+          "file": "apps/Candidate/src/pages/VideoDetail/modals/index.ts",
+          "hash": "17023421372244838698"
+        },
+        {
+          "file": "apps/Candidate/src/pages/VideoManagement/VideoManagement-Confirmation/VideoUploadConfirmation.tsx",
+          "hash": "13414503197216976149",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:axios",
+            "npm:@mui/material",
+            "npm:react",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/VideoManagement/VideoManagement-Types/VideoUploadTypes.tsx",
+          "hash": "10452248020259988002",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:react",
+            "npm:react-toastify",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/VideoManagement/VideoManagement-VideoUpload/VideoUpload.tsx",
+          "hash": "8482252008992583858",
+          "deps": [
+            "npm:react",
+            "npm:react-hook-form",
+            "npm:@hookform/resolvers",
+            "npm:zod",
+            "npm:react-router-dom",
+            "npm:react-toastify",
+            "npm:@aws-sdk/client-s3",
+            "npm:@mui/icons-material",
+            "video-cv"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/VideoManagement/index.tsx",
+          "hash": "5263114924733960384",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:react-toastify",
+            "npm:dayjs"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/VideoManagement/modals/CreateVideoConfirmationModal.tsx",
+          "hash": "1683222726438761138",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/pages/VideoManagement/modals/UploadVideoModal.tsx",
+          "hash": "5146999944825916643"
+        },
+        {
+          "file": "apps/Candidate/src/pages/VideoManagement/modals/index.ts",
+          "hash": "15596646995010734033"
+        },
+        {
+          "file": "apps/Candidate/src/routes/AuthRoutes.tsx",
+          "hash": "8081510319022063332",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/routes/ErrorBoundary.tsx",
+          "hash": "11535730064995275055",
+          "deps": [
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/routes/ProtectedRoutes.tsx",
+          "hash": "10856362957163589013"
+        },
+        {
+          "file": "apps/Candidate/src/routes/routes.ts",
+          "hash": "13918144804727562428"
+        },
+        {
+          "file": "apps/Candidate/src/schema/formValidations/Faq.schema.ts",
+          "hash": "13622290290328185148",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "apps/Candidate/src/styles.scss",
+          "hash": "11942098638518552077"
+        },
+        {
+          "file": "apps/Candidate/tsconfig.app.json",
+          "hash": "9014817974750934731"
+        },
+        {
+          "file": "apps/Candidate/tsconfig.json",
+          "hash": "8792423286157740794"
+        },
+        {
+          "file": "apps/Candidate/tsconfig.spec.json",
+          "hash": "2338756782167906093"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts",
+          "hash": "12078118147192316771",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react"
+          ]
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734279565006-32cee13e816ca.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734279571582-691a79d72264d.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734279578188-a5656c689de6d.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734279591461-8d1e84eeebaac.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734279598026-7fad4b11dfbc8.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734279604606-ce6f9818468dd.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734279611158-1858d9a19b8aa.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734285102204-3a559e868b1ea.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734285104889-11a590ff10c96.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734285104889-aaadbf1cb28af.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734285773638-97aee76318e07.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734286171464-9a349594522d.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734286354068-140f92e9c544c.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734286390067-8569ff016a44f.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734286409405-22ff5a9cc8744.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734286637977-034932255db97.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734287678388-9e239e06dbd89.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290260053-5c3f5b74ef3ef.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290282162-43396ade4d649.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290283147-c948ec3de6b1d.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290290673-c81bfd51807c9.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290304188-4ae2fad6b6aa5.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290322956-a9a1f62e9a61c.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290331074-ea4a0e7e18238.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290351864-76a74ef293c8c.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290373824-77894fb36649f.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290378238-9e744f95fa024.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290388422-0460ec3f8398c.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290407610-249b7b874bd04.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290413626-42e5c9be952f.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290417358-190e9b89bbafa.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290420535-0002b3d24aa57.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290446356-43cb365f75a5c.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290455480-8170805b061b8.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290466995-9b5ce605ef56e.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290467787-9e2cbdfd3a152.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290469614-2d2d956cbb117.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290665871-20ddb588008e1.mjs",
+          "hash": "5622476726825667342"
+        },
+        {
+          "file": "apps/Candidate/vite.config.mts.timestamp-1734290672038-50217702238f9.mjs",
+          "hash": "5622476726825667342"
+        }
+      ],
+      "@org/source": [
+        {
+          "file": ".editorconfig",
+          "hash": "5443105041930014821"
+        },
+        {
+          "file": ".eslintignore",
+          "hash": "7663861978715868291"
+        },
+        {
+          "file": ".eslintrc.json",
+          "hash": "17866138117546000433"
+        },
+        {
+          "file": ".gitignore",
+          "hash": "1255943610597543046"
+        },
+        {
+          "file": ".prettierignore",
+          "hash": "16448050467312557263"
+        },
+        {
+          "file": ".prettierrc",
+          "hash": "16267754514737964994"
+        },
+        {
+          "file": ".vscode/extensions.json",
+          "hash": "4134969992917317260"
+        },
+        {
+          "file": "README.md",
+          "hash": "12554109194893032355"
+        },
+        {
+          "file": "libs/assets/icons/cart.svg",
+          "hash": "5455207130446488360"
+        },
+        {
+          "file": "libs/assets/icons/clapperboard-solid.svg",
+          "hash": "17957632436504777771"
+        },
+        {
+          "file": "libs/assets/icons/clipboard-list-solid.svg",
+          "hash": "482899617423913046"
+        },
+        {
+          "file": "libs/assets/icons/clipboard-question-solid.svg",
+          "hash": "5022889054411241326"
+        },
+        {
+          "file": "libs/assets/icons/credit-card-solid.svg",
+          "hash": "9757502807483225865"
+        },
+        {
+          "file": "libs/assets/icons/facebook-brands-solid.svg",
+          "hash": "13677452363814405632"
+        },
+        {
+          "file": "libs/assets/icons/facebook.svg",
+          "hash": "1063701521534512435"
+        },
+        {
+          "file": "libs/assets/icons/folder-tree-solid.svg",
+          "hash": "7842201880445925070"
+        },
+        {
+          "file": "libs/assets/icons/hamburger.svg",
+          "hash": "2266862719439470276"
+        },
+        {
+          "file": "libs/assets/icons/house-chimney-solid.svg",
+          "hash": "16904048895088901699"
+        },
+        {
+          "file": "libs/assets/icons/index.ts",
+          "hash": "8768420117838586323"
+        },
+        {
+          "file": "libs/assets/icons/newspaper-solid.svg",
+          "hash": "9013298061335616169"
+        },
+        {
+          "file": "libs/assets/icons/photo-film-solid.svg",
+          "hash": "7257361292554443182"
+        },
+        {
+          "file": "libs/assets/icons/rectangle-ad-solid.svg",
+          "hash": "4002080695741973870"
+        },
+        {
+          "file": "libs/assets/icons/trash.svg",
+          "hash": "5106382331982473199"
+        },
+        {
+          "file": "libs/assets/icons/user-doctor-solid.svg",
+          "hash": "5369589178774312"
+        },
+        {
+          "file": "libs/assets/icons/user-solid.svg",
+          "hash": "16342665852739522195"
+        },
+        {
+          "file": "libs/assets/icons/users-gear-solid.svg",
+          "hash": "3344050524214884390"
+        },
+        {
+          "file": "libs/assets/icons/x.png",
+          "hash": "7897449866946999665"
+        },
+        {
+          "file": "libs/assets/images/Dragnet.png",
+          "hash": "9369652633418206156"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240724-WA0019.jpg",
+          "hash": "10138333913491879774"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240724-WA0020.jpg",
+          "hash": "3435979292946293109"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0003.jpg",
+          "hash": "1326520176726799529"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0004.jpg",
+          "hash": "12772583347721293222"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0005.jpg",
+          "hash": "15616879597795441316"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0006.jpg",
+          "hash": "9473331743090446661"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0007.jpg",
+          "hash": "11307896616779090543"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0008.jpg",
+          "hash": "11952420930040080344"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0009.jpg",
+          "hash": "12423005224980551296"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0010.jpg",
+          "hash": "10696911733575000615"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0011.jpg",
+          "hash": "7916110125930957091"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0012.jpg",
+          "hash": "12608617416972543772"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0013.jpg",
+          "hash": "9032637048546602525"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0014.jpg",
+          "hash": "11546329385677765570"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0015.jpg",
+          "hash": "12953620736768371336"
+        },
+        {
+          "file": "libs/assets/images/IMG-20240726-WA0016.jpg",
+          "hash": "1544526517414142577"
+        },
+        {
+          "file": "libs/assets/images/Job Search.jpg",
+          "hash": "10427610426029684011"
+        },
+        {
+          "file": "libs/assets/images/headerBackground.jpeg",
+          "hash": "5867109704294223611"
+        },
+        {
+          "file": "libs/assets/images/index.ts",
+          "hash": "8419250564222109401"
+        },
+        {
+          "file": "libs/assets/images/loginBG.jpeg",
+          "hash": "16339216535348432051"
+        },
+        {
+          "file": "libs/assets/images/logo.jpeg",
+          "hash": "8126271485900560158"
+        },
+        {
+          "file": "libs/assets/images/logo.png",
+          "hash": "7131407286021868991"
+        },
+        {
+          "file": "libs/assets/index.ts",
+          "hash": "5069906688784725056"
+        },
+        {
+          "file": "libs/constants/Types.ts",
+          "hash": "13374931324263565010"
+        },
+        {
+          "file": "libs/constants/VideoLinks.ts",
+          "hash": "16391869858412197053"
+        },
+        {
+          "file": "libs/constants/error.ts",
+          "hash": "7923929868720273610"
+        },
+        {
+          "file": "libs/constants/index.ts",
+          "hash": "8244660836717244887"
+        },
+        {
+          "file": "libs/context/AuthContext.tsx",
+          "hash": "818868398626262004",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/hooks/index.ts",
+          "hash": "16418409491178286522"
+        },
+        {
+          "file": "libs/hooks/useAllCountries.tsx",
+          "hash": "6655999477635642230",
+          "deps": [
+            "npm:react-query"
+          ]
+        },
+        {
+          "file": "libs/hooks/useAllMisc.tsx",
+          "hash": "8927415813370028638",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/hooks/useAllState.tsx",
+          "hash": "18196246940136717830",
+          "deps": [
+            "npm:react-query"
+          ]
+        },
+        {
+          "file": "libs/hooks/useAllVideoCategories.tsx",
+          "hash": "5066693179404373644"
+        },
+        {
+          "file": "libs/hooks/useCurrentUser.tsx",
+          "hash": "18020611350880361052",
+          "deps": [
+            "npm:react",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "libs/hooks/useDebounce.ts",
+          "hash": "8002635417237653644",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/hooks/useEffectOnce.tsx",
+          "hash": "15244958616707905560",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/hooks/useFilters.tsx",
+          "hash": "10115346602094654254",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/payment/index.ts",
+          "hash": "1735205303495354712"
+        },
+        {
+          "file": "libs/payment/usePaystack.tsx",
+          "hash": "12588772205767774322",
+          "deps": [
+            "npm:react",
+            "npm:react-paystack",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "libs/sharedRoutes/ProtectedRoutes.tsx",
+          "hash": "6508119546886334124",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "video-cv",
+            "npm:react-toastify",
+            [
+              "video-cv",
+              "dynamic"
+            ],
+            [
+              "Candidate",
+              "dynamic"
+            ],
+            [
+              "Employer",
+              "dynamic"
+            ],
+            [
+              "Admin",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "libs/styles/main.scss",
+          "hash": "3007324637513414102"
+        },
+        {
+          "file": "libs/ui-components/Account/AccountMenu.tsx",
+          "hash": "7899348124197361836",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Button/index.tsx",
+          "hash": "4475641492020607118",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/DashboardCard/index.tsx",
+          "hash": "14449470512845461760",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/DatePicker/index.tsx",
+          "hash": "10158101760377391607",
+          "deps": [
+            "npm:react",
+            "npm:dayjs",
+            "npm:@mui/x-date-pickers",
+            "npm:classnames",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Editor/Toolbar.tsx",
+          "hash": "2304876281861026432",
+          "deps": [
+            "npm:@tiptap/react",
+            "npm:@mui/icons-material",
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Editor/index.tsx",
+          "hash": "2692496807082345436",
+          "deps": [
+            "npm:@tiptap/react",
+            "npm:@tiptap/starter-kit",
+            "npm:@tiptap/extension-text-style",
+            "npm:react",
+            "npm:@tiptap/extension-heading"
+          ]
+        },
+        {
+          "file": "libs/ui-components/FileUpload/index.tsx",
+          "hash": "6690057760237847941",
+          "deps": [
+            "npm:react",
+            "npm:react-dropzone"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Input/index.tsx",
+          "hash": "12276435476275417640",
+          "deps": [
+            "npm:react",
+            "npm:classnames",
+            "npm:react-hook-form",
+            "npm:@mui/material",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Layout/Layout.scss",
+          "hash": "10979378659624722197"
+        },
+        {
+          "file": "libs/ui-components/Layout/LogoutModal.tsx",
+          "hash": "10220451364944767526",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Layout/Navbar.tsx",
+          "hash": "10526108193203837244",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Layout/Sidebar.tsx",
+          "hash": "12096044506723080275",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Layout/index.tsx",
+          "hash": "18230790967385252132",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Layout/types.ts",
+          "hash": "735665830044922747"
+        },
+        {
+          "file": "libs/ui-components/Loader/index.tsx",
+          "hash": "9439517962937702790",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Radio/index.tsx",
+          "hash": "3203804326240194515",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Select/index.tsx",
+          "hash": "1285839820483889488",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/ui-components/SelectChip/index.tsx",
+          "hash": "225031535032125326",
+          "deps": [
+            "npm:react",
+            "npm:classnames",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "libs/ui-components/Table/index.tsx",
+          "hash": "16492400786193303623",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-table",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "libs/ui-components/TableSkeleton/index.tsx",
+          "hash": "18166112311912177811",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/TextArea/index.tsx",
+          "hash": "14967342315047629994",
+          "deps": [
+            "npm:react",
+            "npm:classnames",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "libs/ui-components/VideoCard/index.tsx",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/ui-components/VideoUploadWidget/index.tsx",
+          "hash": "9613746121049609817",
+          "deps": [
+            "npm:axios"
+          ]
+        },
+        {
+          "file": "libs/ui-components/VideoUploadWidget/r2Integration.tsx",
+          "hash": "13529454316195551036",
+          "deps": [
+            "npm:react",
+            "npm:@aws-sdk/client-s3",
+            "npm:@aws-sdk/s3-request-presigner"
+          ]
+        },
+        {
+          "file": "libs/ui-components/index.ts",
+          "hash": "17463027169256276920"
+        },
+        {
+          "file": "libs/ui-components/shared/index.tsx",
+          "hash": "2609637157206839241"
+        },
+        {
+          "file": "libs/ui-components/shared/routes.tsx",
+          "hash": "14432607751348302074"
+        },
+        {
+          "file": "libs/ui-components/shared/vacancyCard.tsx",
+          "hash": "4866589232714689436",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "libs/utils/apis/apiEndpoints.ts",
+          "hash": "2040339485101283461"
+        },
+        {
+          "file": "libs/utils/apis/apiMethods.ts",
+          "hash": "17765614489603562748",
+          "deps": [
+            "npm:axios",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "libs/utils/helpers/config.ts",
+          "hash": "14728539643230574068"
+        },
+        {
+          "file": "libs/utils/helpers/decoder.ts",
+          "hash": "2994425642772243034"
+        },
+        {
+          "file": "libs/utils/helpers/model.ts",
+          "hash": "18051394261110982255"
+        },
+        {
+          "file": "libs/utils/helpers/useTokenExpiration.ts",
+          "hash": "8081364465718434703",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "libs/utils/index.ts",
+          "hash": "13600649704045481503",
+          "deps": [
+            "npm:dayjs"
+          ]
+        },
+        {
+          "file": "libs/utils/localStorage.ts",
+          "hash": "14648272891054749107",
+          "deps": [
+            "video-cv"
+          ]
+        },
+        {
+          "file": "netlify.toml",
+          "hash": "4422207704957163478"
+        },
+        {
+          "file": "nx.json",
+          "hash": "14859815733206674866"
+        },
+        {
+          "file": "package.json",
+          "hash": "4899335086235072521",
+          "deps": [
+            "npm:@cloudflare/workers-types",
+            "npm:@nx/eslint",
+            "npm:@nx/eslint-plugin",
+            "npm:@nx/js",
+            "npm:@nx/react",
+            "npm:@nx/web",
+            "npm:@nx/workspace",
+            "npm:@swc-node/register",
+            "npm:@swc/cli",
+            "npm:@swc/core",
+            "npm:@swc/helpers",
+            "npm:@swc/types",
+            "npm:@tanstack/eslint-plugin-query",
+            "npm:@testing-library/react",
+            "npm:@types/node",
+            "npm:@types/react",
+            "npm:@types/react-dom",
+            "npm:@types/uuid",
+            "npm:@typescript-eslint/eslint-plugin",
+            "npm:@typescript-eslint/parser",
+            "npm:@vitejs/plugin-react",
+            "npm:@vitest/coverage-v8",
+            "npm:@vitest/ui",
+            "npm:autoprefixer",
+            "npm:eslint",
+            "npm:eslint-config-prettier",
+            "npm:eslint-plugin-import",
+            "npm:eslint-plugin-jsx-a11y",
+            "npm:eslint-plugin-react",
+            "npm:eslint-plugin-react-hooks",
+            "npm:jsdom",
+            "npm:nx",
+            "npm:postcss",
+            "npm:prettier",
+            "npm:sass",
+            "npm:tailwindcss",
+            "npm:typescript",
+            "npm:vite",
+            "npm:vitest",
+            "npm:wrangler",
+            "npm:@aws-sdk/client-s3",
+            "npm:@aws-sdk/s3-request-presigner",
+            "npm:@cloudinary/react",
+            "npm:@cloudinary/url-gen",
+            "npm:@emotion/react",
+            "npm:@emotion/styled",
+            "npm:@hookform/resolvers",
+            "npm:@mui/icons-material",
+            "npm:@mui/material",
+            "npm:@mui/x-date-pickers",
+            "npm:@paystack/inline-js",
+            "npm:@tanstack/react-query",
+            "npm:@tanstack/react-query-devtools",
+            "npm:@tanstack/react-table",
+            "npm:@tiptap/extension-bubble-menu",
+            "npm:@tiptap/extension-floating-menu",
+            "npm:@tiptap/extension-heading",
+            "npm:@tiptap/extension-image",
+            "npm:@tiptap/extension-list-item",
+            "npm:@tiptap/extension-placeholder",
+            "npm:@tiptap/extension-text",
+            "npm:@tiptap/extension-text-style",
+            "npm:@tiptap/extension-underline",
+            "npm:@tiptap/pm",
+            "npm:@tiptap/react",
+            "npm:@tiptap/starter-kit",
+            "npm:axios",
+            "npm:chart.js",
+            "npm:classnames",
+            "npm:cloudinary",
+            "npm:dayjs",
+            "npm:esbuild",
+            "npm:quill",
+            "npm:react",
+            "npm:react-chartjs-2",
+            "npm:react-dom",
+            "npm:react-dropzone",
+            "npm:react-hook-form",
+            "npm:react-intersection-observer",
+            "npm:react-paystack",
+            "npm:react-player",
+            "npm:react-query",
+            "npm:react-quill",
+            "npm:react-redux",
+            "npm:react-router-dom",
+            "npm:react-share",
+            "npm:react-slick",
+            "npm:react-toastify",
+            "npm:slate",
+            "npm:slate-react",
+            "npm:slick-carousel",
+            "npm:swiper",
+            "npm:uuid",
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "postcss.config.js",
+          "hash": "1579725330904862112"
+        },
+        {
+          "file": "src/index.test.ts",
+          "hash": "1681297175646627580",
+          "deps": [
+            "npm:vitest",
+            "npm:wrangler"
+          ]
+        },
+        {
+          "file": "src/index.ts",
+          "hash": "9563377899313312144",
+          "deps": [
+            "npm:@cloudflare/workers-types"
+          ]
+        },
+        {
+          "file": "tailwind.config.js",
+          "hash": "10521705304834705000"
+        },
+        {
+          "file": "tsconfig.base.json",
+          "hash": "188413515753462976"
+        },
+        {
+          "file": "tsconfig.json",
+          "hash": "432091805247213985"
+        },
+        {
+          "file": "vercel.json",
+          "hash": "10554405000235573292"
+        },
+        {
+          "file": "vite-env.d.ts",
+          "hash": "6983777663419950503"
+        },
+        {
+          "file": "vitest.workspace.ts",
+          "hash": "7870362608836821141"
+        },
+        {
+          "file": "yarn.lock",
+          "hash": "6108252040699422176"
+        }
+      ],
+      "cloudflare-workers-openapi": [
+        {
+          "file": "still-shape-e0a8/.gitignore",
+          "hash": "685028892696904836"
+        },
+        {
+          "file": "still-shape-e0a8/README.md",
+          "hash": "13318742856369700074"
+        },
+        {
+          "file": "still-shape-e0a8/package.json",
+          "hash": "6658572036609050838",
+          "deps": [
+            "npm:@cloudflare/workers-types",
+            "npm:@types/node",
+            "npm:wrangler",
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "still-shape-e0a8/src/endpoints/taskCreate.ts",
+          "hash": "11622221733272549457",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "still-shape-e0a8/src/endpoints/taskDelete.ts",
+          "hash": "10881527497154265623",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "still-shape-e0a8/src/endpoints/taskFetch.ts",
+          "hash": "14720257144497818427",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "still-shape-e0a8/src/endpoints/taskList.ts",
+          "hash": "3793715277168677960",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "still-shape-e0a8/src/index.ts",
+          "hash": "12131845797417606931"
+        },
+        {
+          "file": "still-shape-e0a8/src/types.ts",
+          "hash": "1366114713488307722",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "still-shape-e0a8/tsconfig.json",
+          "hash": "15062598230669292029"
+        },
+        {
+          "file": "still-shape-e0a8/worker-configuration.d.ts",
+          "hash": "14027198842220560327"
+        },
+        {
+          "file": "still-shape-e0a8/wrangler.toml",
+          "hash": "4819088543594650356"
+        },
+        {
+          "file": "still-shape-e0a8/yarn.lock",
+          "hash": "2224849033973224583"
+        }
+      ],
+      "Employer": [
+        {
+          "file": "apps/Employer/.eslintrc.json",
+          "hash": "14830867113928387670"
+        },
+        {
+          "file": "apps/Employer/index.html",
+          "hash": "10569785606312177474"
+        },
+        {
+          "file": "apps/Employer/project.json",
+          "hash": "1027780361161366928"
+        },
+        {
+          "file": "apps/Employer/public/_redirects",
+          "hash": "8738055346875944353"
+        },
+        {
+          "file": "apps/Employer/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "apps/Employer/src/app/app.module.scss",
+          "hash": "14507130133388590702"
+        },
+        {
+          "file": "apps/Employer/src/app/app.spec.tsx",
+          "hash": "10443266894851073941",
+          "deps": [
+            "npm:@testing-library/react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/app/app.tsx",
+          "hash": "10439197567358196365"
+        },
+        {
+          "file": "apps/Employer/src/app/nx-welcome.tsx",
+          "hash": "307543222547804912"
+        },
+        {
+          "file": "apps/Employer/src/assets/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Employer/src/components/dashboard/AppointmentTimeLine.tsx",
+          "hash": "1152992085573159513",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/components/dashboard/DashboardCalendar.tsx",
+          "hash": "2969658108169482791",
+          "deps": [
+            "npm:@mui/x-date-pickers"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/components/dashboard/MonthlyRevenueChart.tsx",
+          "hash": "17271769892174713205",
+          "deps": [
+            "npm:react",
+            "npm:chart.js",
+            "npm:react-chartjs-2"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/components/dashboard/PatientActivityChart.tsx",
+          "hash": "864669549014067885",
+          "deps": [
+            "npm:react",
+            "npm:chart.js",
+            "npm:react-chartjs-2"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/context/AuthProvider.tsx",
+          "hash": "6648895489830339513",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/global.d.ts",
+          "hash": "13979906086132750882"
+        },
+        {
+          "file": "apps/Employer/src/main.tsx",
+          "hash": "17031623790071076628",
+          "deps": [
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Advertisement/AdsManagement-Confirmation/CreateAdsConfirmation.tsx",
+          "hash": "9434924379053389559",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:axios",
+            "npm:@mui/material",
+            "npm:react",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Advertisement/AdsManagement-Types/CreateAdsTypes.tsx",
+          "hash": "15850340074528963284",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:react",
+            "npm:react-toastify",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Advertisement/CreateAdverts/CreateAds.tsx",
+          "hash": "10648673953959784866",
+          "deps": [
+            "npm:react",
+            "npm:react-hook-form",
+            "npm:@mui/icons-material",
+            "npm:zod",
+            "npm:@hookform/resolvers",
+            "video-cv",
+            "npm:react-router-dom",
+            "npm:dayjs",
+            "npm:react-toastify",
+            "npm:@aws-sdk/client-s3"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Advertisement/ManageAds/ViewAds.tsx",
+          "hash": "9233174368772951780",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-toastify",
+            "npm:zod",
+            "npm:@hookform/resolvers",
+            "video-cv",
+            "npm:react-hook-form",
+            "npm:@aws-sdk/client-s3",
+            "npm:dayjs"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Advertisement/index.tsx",
+          "hash": "8196907922932778632",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-table",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Advertisement/manage.tsx",
+          "hash": "16875721610314326704",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:dayjs",
+            "npm:@mui/icons-material",
+            "npm:react-hook-form",
+            "npm:zod",
+            "npm:@hookform/resolvers",
+            "video-cv",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Advertisement/modals/CreateAdsConfirmationModal.tsx",
+          "hash": "5762910153381461033",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Advertisement/modals/CreateAdvert.tsx",
+          "hash": "8008198315045586848"
+        },
+        {
+          "file": "apps/Employer/src/pages/Advertisement/modals/index.tsx",
+          "hash": "11368801623641429570"
+        },
+        {
+          "file": "apps/Employer/src/pages/Dashboard/index.tsx",
+          "hash": "5501033993666294648",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Feed/index.tsx",
+          "hash": "6724811810397920406",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Home/index.tsx",
+          "hash": "15079911506816946344",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/JobBoard/index.tsx",
+          "hash": "16335229760020416258",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-hook-form",
+            "npm:dayjs",
+            "video-cv"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Profile/index.tsx",
+          "hash": "4061065227483226427",
+          "deps": [
+            "npm:react",
+            "npm:@hookform/resolvers",
+            "npm:zod",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:dayjs",
+            "npm:@mui/icons-material",
+            "npm:react-hook-form",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/Signup/index.tsx",
+          "hash": "11101772199295359014",
+          "deps": [
+            "npm:react",
+            "npm:zod",
+            "npm:@hookform/resolvers",
+            "npm:react-router-dom",
+            "npm:@mui/icons-material",
+            "npm:react-toastify",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/VideoDetails/index.tsx",
+          "hash": "220946040362311074",
+          "deps": [
+            "npm:react",
+            "npm:react-player",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:@emotion/styled",
+            "npm:swiper",
+            "npm:@mui/icons-material",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/pages/VideoManagement/index.tsx",
+          "hash": "7708997031114241975",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@tanstack/react-table",
+            "npm:react-router-dom",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/routes/AuthRoutes.tsx",
+          "hash": "14506738675413108477",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/routes/ErrorBoundary.tsx",
+          "hash": "8279720946621186857",
+          "deps": [
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Employer/src/routes/ProtectedRoutes.tsx",
+          "hash": "13189213867450297944"
+        },
+        {
+          "file": "apps/Employer/src/routes/index.tsx",
+          "hash": "1906254425004946070"
+        },
+        {
+          "file": "apps/Employer/src/styles.scss",
+          "hash": "13655978556369479516"
+        },
+        {
+          "file": "apps/Employer/tsconfig.app.json",
+          "hash": "9014817974750934731"
+        },
+        {
+          "file": "apps/Employer/tsconfig.json",
+          "hash": "8792423286157740794"
+        },
+        {
+          "file": "apps/Employer/tsconfig.spec.json",
+          "hash": "2338756782167906093"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts",
+          "hash": "2373347774142229661",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react"
+          ]
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734279565026-e198dba7f7855.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734279571574-8c031342848bf.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734279578195-7dd61d2ce1e69.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734279591462-bc2fb4e296e4d.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734279598025-b5b681112fd0d.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734279604599-bde1f4eff4b7f.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734279611157-826dd8a4a8d68.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734285097142-d0cfeabcd9124.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734286465226-37eb2471f07df.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734287660080-6a4ba006a7ae8.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734287671604-67cd60a6adc4b.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734287675543-44646c0fd75fa.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290254893-40f8c26a1ad42.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290259938-1a03ed5418d28.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290269405-b445f678286f2.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290290588-dff48d20ed5fe.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290309257-6220ce67349b9.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290314867-df63ebe16e19b.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290322886-04de0544a56fe.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290324495-fc038f755dd28.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290324513-472e219e52bb2.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290331091-a7e90597e5c36.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290339232-9a2e6f164b00e.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290351728-71b2ca36966ae.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290373789-aaef23c1a488e.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290378202-4e456146017cf.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290384943-0a5ab94f67562.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290401511-d5398818e694c.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290417423-2c4bc488e347b.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290427893-0bfa24c6e9cf2.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290431840-21f308eb180d2.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290444664-0a51d56fee2ec.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290447438-ff7b014607528.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290447847-ec58e1bac016e.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290451385-caa40bb9e4479.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290455480-244aa817046ca.mjs",
+          "hash": "11542236978427884449"
+        },
+        {
+          "file": "apps/Employer/vite.config.mts.timestamp-1734290462877-167e1c5f407f.mjs",
+          "hash": "11542236978427884449"
+        }
+      ],
+      "Admin": [
+        {
+          "file": "apps/Admin/.eslintrc.json",
+          "hash": "11012487992710232822"
+        },
+        {
+          "file": "apps/Admin/index.html",
+          "hash": "5373941289279890251"
+        },
+        {
+          "file": "apps/Admin/project.json",
+          "hash": "4194120528067997030"
+        },
+        {
+          "file": "apps/Admin/public/_redirects",
+          "hash": "8738055346875944353"
+        },
+        {
+          "file": "apps/Admin/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "apps/Admin/src/app/app.module.scss",
+          "hash": "8887387885984320532"
+        },
+        {
+          "file": "apps/Admin/src/app/app.spec.tsx",
+          "hash": "16196691500261363866",
+          "deps": [
+            "npm:@testing-library/react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/app/app.tsx",
+          "hash": "5020163118075560919",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/app/nx-welcome.tsx",
+          "hash": "729168762476089670"
+        },
+        {
+          "file": "apps/Admin/src/assets/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Admin/src/components/VideoCard/index.tsx",
+          "hash": "13603301055253982965",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/components/dashboard/DashboardCalendar.tsx",
+          "hash": "17745056297390598977",
+          "deps": [
+            "npm:@mui/x-date-pickers"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/components/dashboard/MonthlyRevenueChart.tsx",
+          "hash": "10862245655604323795",
+          "deps": [
+            "npm:react",
+            "npm:chart.js",
+            "npm:react-chartjs-2"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/components/dashboard/PatientActivityChart.tsx",
+          "hash": "12815872945344488089",
+          "deps": [
+            "npm:react",
+            "npm:chart.js",
+            "npm:react-chartjs-2"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/global.d.ts",
+          "hash": "6680716263200826348"
+        },
+        {
+          "file": "apps/Admin/src/main.tsx",
+          "hash": "997408682684988944",
+          "deps": [
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/AdvertisementManagement/AdsManagement-Types/CreateAdsTypes.tsx",
+          "hash": "11146637971460649858",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:react",
+            "npm:react-toastify",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/AdvertisementManagement/AdvertisementManagement/AdsManagement-Confirmation/CreateAdsConfirmation.tsx",
+          "hash": "11031221706589198452",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:axios",
+            "npm:@mui/material",
+            "npm:react",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/AdvertisementManagement/AdvertisementManagement/AdsManagement-Types/CreateAdsTypes.tsx",
+          "hash": "14184324304723328720",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:react",
+            "npm:react-toastify",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/AdvertisementManagement/AdvertisementManagement/CreateAdverts/CreateAdvert.tsx",
+          "hash": "3479620254819626598",
+          "deps": [
+            "npm:react",
+            "npm:react-hook-form",
+            "npm:@mui/icons-material",
+            "npm:zod",
+            "npm:@hookform/resolvers",
+            "npm:react-router-dom",
+            "npm:dayjs",
+            "npm:react-toastify",
+            "npm:@aws-sdk/client-s3"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/AdvertisementManagement/AdvertisementManagement/ManageAds/ViewAds.tsx",
+          "hash": "5490467376667652801",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:dayjs",
+            "npm:@mui/icons-material",
+            "npm:zod",
+            "npm:@hookform/resolvers",
+            "npm:react-hook-form",
+            "npm:@aws-sdk/client-s3",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/AdvertisementManagement/AdvertisementManagement/index.tsx",
+          "hash": "9467561972789554255",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-table",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/AdvertisementManagement/AdvertisementManagement/modals/CreateAdsConfirmationModal.tsx",
+          "hash": "9553202014456738326",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/AdvertisementManagement/AdvertisementManagement/modals/UserModal.tsx",
+          "hash": "5696975519578238179",
+          "deps": [
+            "npm:react",
+            "npm:react-hook-form",
+            "npm:@mui/icons-material",
+            "npm:zod",
+            "npm:@hookform/resolvers",
+            "npm:dayjs"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/AdvertisementManagement/AdvertisementManagement/modals/index.ts",
+          "hash": "7289301334141805869"
+        },
+        {
+          "file": "apps/Admin/src/pages/AdvertisementManagement/modals/CreateAdsConfirmationModal.tsx",
+          "hash": "13936346213335602454",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/ContentManagement/index.tsx",
+          "hash": "11435098900423332293",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-table",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/ContentManagement/modals/CategoryModal.tsx",
+          "hash": "9701488718736013447",
+          "deps": [
+            "npm:react",
+            "npm:react-hook-form",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:@aws-sdk/client-s3",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/ContentManagement/modals/index.ts",
+          "hash": "17446644423847790624"
+        },
+        {
+          "file": "apps/Admin/src/pages/Dashboard/index.tsx",
+          "hash": "10849873481932438155",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/Feed/index.tsx",
+          "hash": "10348076404112975659",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/Home/index.tsx",
+          "hash": "11198742781430417075",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/JobBoard/index.tsx",
+          "hash": "5862858155532319498",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-hook-form",
+            "npm:dayjs"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/JobManagement/ManageVacancy/ManageJob.tsx",
+          "hash": "9332116579672405865",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:@mui/icons-material",
+            "npm:@aws-sdk/client-s3",
+            "npm:dayjs",
+            "npm:react-hook-form",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/JobManagement/Vacancy/Vacancies.tsx",
+          "hash": "3755530057253313939",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-quill",
+            "npm:@hookform/resolvers",
+            "npm:zod",
+            "npm:react-toastify",
+            "npm:react-router-dom",
+            "npm:@aws-sdk/client-s3",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/JobManagement/index.tsx",
+          "hash": "8685831794186407226",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-table",
+            "npm:react-router-dom",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/JobManagement/modal/jobStatusModal.tsx",
+          "hash": "8330918472564772196",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/OrderManagement/id.tsx",
+          "hash": "14463050124372492008",
+          "deps": [
+            "npm:react-router-dom",
+            "npm:@mui/icons-material",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/OrderManagement/index.tsx",
+          "hash": "4667763882692595942",
+          "deps": [
+            "npm:react",
+            "npm:@tanstack/react-table",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/OrderManagement/modals/UserModal.tsx",
+          "hash": "13398081298777548826",
+          "deps": [
+            "npm:react",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/OrderManagement/modals/index.ts",
+          "hash": "15270783992808924004"
+        },
+        {
+          "file": "apps/Admin/src/pages/PriceManagement/index.tsx",
+          "hash": "14892621769855820296",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-toastify",
+            "npm:react-router-dom",
+            "npm:@tanstack/react-table",
+            "Candidate"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/PriceManagement/modal/Price.tsx",
+          "hash": "9203982954403816741",
+          "deps": [
+            "npm:react",
+            "npm:react-hook-form",
+            "npm:react-toastify",
+            "npm:react-quill",
+            "npm:@mui/icons-material",
+            "npm:@aws-sdk/client-s3"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/UserManagement/CreateEditUser/CreateUser.tsx",
+          "hash": "4964280702788415762",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:@hookform/resolvers",
+            "npm:zod",
+            "npm:react-toastify",
+            "npm:react-router-dom",
+            "npm:@aws-sdk/client-s3",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/UserManagement/CreateEditUser/EditUser.tsx",
+          "hash": "7437615035284221751",
+          "deps": [
+            "npm:react",
+            "npm:@mui/icons-material",
+            "npm:react-hook-form",
+            "npm:react-router-dom",
+            "npm:react-toastify",
+            "npm:@mui/material",
+            "npm:@aws-sdk/client-s3",
+            "npm:dayjs"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/UserManagement/Employer/userDetails.tsx",
+          "hash": "10257414236933864563",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/UserManagement/Professional/userDetails.tsx",
+          "hash": "9973177950372875663",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/UserManagement/SubAdmin/userDetails.tsx",
+          "hash": "13087804975586095924",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/UserManagement/index.tsx",
+          "hash": "9618304989099460516",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:@tanstack/react-table",
+            "npm:react-toastify",
+            "npm:react-query"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/UserManagement/modals/UserModal.tsx",
+          "hash": "15303638441066269218",
+          "deps": [
+            "npm:react",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/UserManagement/modals/index.ts",
+          "hash": "15270783992808924004"
+        },
+        {
+          "file": "apps/Admin/src/pages/VideoDetails/index.tsx",
+          "hash": "16397324206193177381",
+          "deps": [
+            "npm:react",
+            "npm:react-player",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:@emotion/styled",
+            "npm:swiper",
+            "npm:@mui/icons-material",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/pages/VideoManagement/index.tsx",
+          "hash": "14172949296240680840",
+          "deps": [
+            "npm:@mui/material",
+            "npm:react",
+            "npm:react-toastify",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/routes/AuthRoutes.tsx",
+          "hash": "4043998235181226329",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/routes/ErrorBoundary.tsx",
+          "hash": "10669288494954738548",
+          "deps": [
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/Admin/src/routes/ProtectedRoutes.tsx",
+          "hash": "12021659793012310107"
+        },
+        {
+          "file": "apps/Admin/src/routes/index.tsx",
+          "hash": "641756527968897526"
+        },
+        {
+          "file": "apps/Admin/src/styles.scss",
+          "hash": "4068965121680126347"
+        },
+        {
+          "file": "apps/Admin/tsconfig.app.json",
+          "hash": "15537277801600690409"
+        },
+        {
+          "file": "apps/Admin/tsconfig.json",
+          "hash": "11166545116916107487"
+        },
+        {
+          "file": "apps/Admin/tsconfig.spec.json",
+          "hash": "9472099605191632308"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts",
+          "hash": "9083714159483196183",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react"
+          ]
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734279565012-00ade1052194b.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734279571567-0e881999b3f53.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734279578181-4ec3f7f063ea3.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734279591455-407a24f012a8c.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734279598013-7fd51831df115.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734279604606-9ac17bd29e5da.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734279611166-373a3f5a1ee68.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734283124091-6451c6efb7405.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734283126434-80ad77acc85b5.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734283133443-d4857e369e5f7.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734285099732-03dd8a478e8e1.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734285102234-60830a535dd4c.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734286044560-6a760d38e1abb.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734286130837-ce52e8fbf5832.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734286354069-ee36f407dae21.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734286389060-1cc8b23b5d213.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734286390622-8b4cb5b93d14f.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734286534158-6e72f4f400a55.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734287667925-8d9f059b3462b.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734287667925-dc95f4acf842b.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290254903-4181bea22e407.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290260002-fc4b5a464e3e7.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290265524-e5923da08e851.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290269405-f6c9857d92ff2.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290290673-04075f7e5e47b.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290307355-3b0c5395b629d.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290318358-d4d525629a711.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290319025-42bddf02a91c1.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290322873-1cbe7d27f2f9c.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290335191-5274b0560afcc.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290353192-12d3713f4a519.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290378198-d962eb6a586e9.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290384893-ffa7d24a35391.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290408665-fe524474a5254.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290417358-ace7ea6b39556.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290453038-49bb7c0c66352.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290455483-3cc4ad33fdaf8.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290460497-c56e4689b4f2d.mjs",
+          "hash": "6670495766102609480"
+        },
+        {
+          "file": "apps/Admin/vite.config.mts.timestamp-1734290557619-e0f098fb7e0e5.mjs",
+          "hash": "6670495766102609480"
+>>>>>>> bb7953228a3b4517bf401166d99b77c2680a2274
         }
       ]
     }
