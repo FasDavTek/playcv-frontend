@@ -9,6 +9,8 @@ import { Loader } from '.';
 import { getData } from './../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../libs/utils/helpers/config';
+import { toast } from 'react-toastify';
+import { LOCAL_STORAGE_KEYS } from './../../../../libs/utils/localStorage';
 
 interface Jobs {
   id: string;
@@ -41,13 +43,20 @@ const fetchJobs: React.FC = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`);
-        if (resp.status === 200) {
-          setJobs(resp.data);
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        if (!token) {
+          toast.error('Unable to load user profile');
+          return;
         }
-        else {
-          console.error('Unable to fetch jobs:', resp.message);
-        }
+
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = resp.data;
+        // if (resp.status === 200) {
+        //   setJobs(resp.data);
+        // }
+        setJobs(resp.data);
       }
       catch (err) {
         console.error('Error fetching jobs:', err);

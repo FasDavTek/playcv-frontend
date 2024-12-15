@@ -4,6 +4,9 @@
   .text-primary-100 {
     color: theme('colors.primary.100');
   }
+  .text-primary-350 {
+    color: theme('colors.primary.350');
+  }
   .border-primary-100 {
     color: theme('colors.primary.100');
   }
@@ -137,7 +140,7 @@ a {
 }
 
 .active-nav-link {
-  @apply text-primary-100 border-b-2 border-primary-100 py-5;
+  @apply text-primary-350 border-b-2 border-primary-100 py-5;
 }
 
 .nav-link {
