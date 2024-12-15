@@ -45,20 +45,30 @@ const Advertisement = () => {
   const [selectedAdId, setSelectedAdId] = useState<string | null>(null);
   const [selectedAdTitle, setSelectedAdTitle] = useState('');
   const [reason, setReason] = useState('');
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState<string>('');
 
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
+  if (!token) {
+    toast.error('Your session has expired. Please log in again.');
+    navigate('/auth/login', { replace: true });
+    return;
+  }
+
+
   const checkPaymentStatus = async () => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Page=1&Limit=10`);
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Page=1&Limit=1000`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      const data = await response.json();
-      console.log(data);
+      const data = await response.data;
       
       if (!data || !data.checkoutId) {
         openSetModalFn('confirmationModal');
@@ -81,18 +91,16 @@ const Advertisement = () => {
   
   const fetchAds = async () => {
     try {
-      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?Page=1&Limit=10`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?Page=1&Limit=100`, {
         headers: { Authorization: `Bearer ${token}` },
-      })
-      if (!resp.ok) {
-        throw new Error("Failed to fetch ads");
-      }
+      });
 
-      const data = await resp.json();
-      setAds(data);
-      setLoading(false);
+      let data;
+      if (resp.succeeded === true) {
+        data = await resp.data;
+        setAds(data);
+      }
 
       const currentTime = Date.now();
       const newAds = data.filter((ad: ads) => new Date(ad.createdAt).getTime() > lastFetchTime);
@@ -115,15 +123,14 @@ const Advertisement = () => {
     fetchAds()
     const interval = setInterval(fetchAds, 5 * 60 * 1000)
     return () => clearInterval(interval)
-  }, []);
+  }, [search, filter, token]);
 
 
   const handleView = async (adId: string) => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${adId}`);
-      if (!response.ok) {
-        throw new Error('Error fetching ad details');
-      }
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${adId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       const adDetails = await response.json();
       navigate(`/employer/advertisement/view/:${adId}`, {
@@ -233,10 +240,12 @@ const Advertisement = () => {
           )
       )} */}
 
-      <Table loading={false} data={ads} columns={columns} tableHeading="All Ads" />
+      <Table loading={false} data={ads} columns={columns} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} tableHeading="All My Ads" />
 
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
-        <CreateAdsConfirmModal onClose={closeModal} />
+        <>
+          <CreateAdsConfirmModal onClose={closeModal} />
+        </>
       </Modal>
     </div>
   );

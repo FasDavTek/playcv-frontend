@@ -26,11 +26,12 @@ export const isTokenExpired = (token: string | null): boolean => {
 
 export const getToken = (): string | null => {
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-  if (!token || isTokenExpired(token)) {
+  if (!token) {
+    return null;
+  } else if (isTokenExpired(token)) {
     localStorage.removeItem(LOCAL_STORAGE_KEYS?.USER);
     localStorage.removeItem(LOCAL_STORAGE_KEYS?.TOKEN);
     // window.location.replace(ROUTES.SIGNIN);
-    return null;
   }
 
   return token;
@@ -63,13 +64,23 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+axiosInstance.interceptors.response.use(undefined, async function (error) {
+  if (error?.response?.status === 401 && getToken()) {
+    toast.error('Your session has expired. Please log/ in again');
+    // localStorage.clear();
+    // window.location.replace(ROUTES.SIGNIN);
+  }
+  return Promise.reject(error);
+});
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error?.response?.status === 401 && getToken()) {
-      localStorage.clear();
-      toast.error('Your session has expired. Please log in again');
-      window.dispatchEvent(new CustomEvent('tokenExpired'))
+      // localStorage.removeItem(LOCAL_STORAGE_KEYS.TOKEN);
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
+      
+      // window.dispatchEvent(new CustomEvent('tokenExpired'))
       // window.location.replace(ROUTES.SIGNIN);
     }
     return Promise.reject(error);

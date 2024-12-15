@@ -1,6 +1,6 @@
 const baseUrl = import.meta.env.VITE_PUBLIC_BASEURL;
 const paystackey = import.meta.env.VITE_PAYSTACK_API_KEY;
-const cloudflarekey = import.meta.env.VITE_CLOUDFLARE_API_KEY;
+const cloudflarekey = import.meta.env.VITE_CLOUDFLARE_API_TOKEN_KEY;
 
 const CONFIG = {
   BASE_URL: baseUrl,

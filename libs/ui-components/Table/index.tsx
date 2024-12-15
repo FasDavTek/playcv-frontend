@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { flexRender, getCoreRowModel, useReactTable, } from '@tanstack/react-table';
+import React, { ChangeEvent, useMemo, useState } from 'react';
+import { flexRender, getCoreRowModel, getFilteredRowModel, useReactTable, } from '@tanstack/react-table';
 import type { ColumnDef } from '@tanstack/react-table';
 
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
@@ -12,9 +12,16 @@ import Button from '../Button';
 
 interface ReactTableProps<T extends object> {
   data: T[];
-  columns: ColumnDef<T, any>[];
+  columns: any[];
+  ColumnFiltersState?: [],
   loading: boolean;
   tableHeading: string;
+  pageCount?: number;
+  search?: string;
+  filter?: string;
+  searchLabel?: string;
+  globalFilter?: string;
+  setGlobalFilter: (value: string) => void;
   tableHeadingColorClassName?: string;
   tableRowOnclickFunction?: (rowData: T) => void;
 }
@@ -24,21 +31,29 @@ const Table: React.FC<any> = <T extends object>({
   columns,
   loading = true,
   tableHeading,
+  pageCount,
+  search,
+  filter = '',
+  globalFilter,
+  setGlobalFilter,
   tableHeadingColorClassName = 'bg-gray-200',
   tableRowOnclickFunction = () => {},
 }: ReactTableProps<T>) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [columnFilters, setColumnFilters] = useState([]);
 
   const filteredData = useMemo(() => {
-    if (!searchQuery) return data;
+    if (!searchQuery && !filter) return data;
+    console.log(data);
     return data.filter((item) =>
       Object.values(item).some((value) =>
-        value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+        value?.toString().toLowerCase().includes(searchQuery.toLowerCase()) || 
+        value?.toString().toLowerCase().includes(filter.toLowerCase())
       )
     );
-  }, [data, searchQuery]);
+  }, [data, searchQuery, filter]);
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
@@ -64,9 +79,20 @@ const Table: React.FC<any> = <T extends object>({
   const table = useReactTable({
     data: paginatedData,
     columns: numberedColumns,
+    state: {
+      columnFilters,
+      globalFilter,
+    },
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    pageCount,
   });
 
+  // const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   search && search(e.target.value) && setSearchQuery(e.target.value);
+  //   console.log(search && search(e.target.value));
+  // };
 
   if (loading) {
     return <TableSkeleton />;
@@ -75,7 +101,7 @@ const Table: React.FC<any> = <T extends object>({
     <div className="relative mt-5 ce-table-holder hide-scrollbar">
       <h5 className="table-heading px-4">{tableHeading}</h5>
       <div className="flex justify-between items-center px-4 mb-2">
-        <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="border rounded-lg outline-none p-2"/>
+          <input type="text" placeholder="Search..." value={globalFilter ?? ''} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGlobalFilter(e.target.value)} className="border rounded-lg outline-none p-2"/>
       </div>
       <table>
         <thead className={tableHeadingColorClassName}>
@@ -102,7 +128,7 @@ const Table: React.FC<any> = <T extends object>({
             </tr>
           ))}
         </thead>
-        {paginatedData.length > 0 && (
+        {filteredData.length > 0 && (
           <tbody className="">
             {table.getRowModel().rows.map((row) => (
               <tr
@@ -120,7 +146,7 @@ const Table: React.FC<any> = <T extends object>({
           </tbody>
         )}
       </table>
-      {filteredData.length === 0 && (
+      {paginatedData.length === 0 && (
         <table className="">
           <tbody className="flex items-center justify-center border py-10 w-full">
             <tr className="flex flex-col items-center justify-center w-full !bg-transparent">

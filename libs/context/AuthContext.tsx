@@ -8,6 +8,8 @@ interface AuthState {
     email?: string;
     username?: string;
     name: string;
+    firstName?: string;
+    lastName?: string;
     userTypeId?: number;
     [key: string]: any;
     // Add other relevant user fields
@@ -30,11 +32,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return {
         isAuthenticated: true,
         user: {
-          id: user.UserId,
+          id: user.id,
           email: user.email,
           username: user.email,
           name: user.name,
           userTypeId: user.userTypeId,
+          firstName: user.firstName,
+          lastName: user.lastName,
           // Add other relevant user fields
         }
       };
@@ -43,11 +47,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   useEffect(() => {
-    if (authState.isAuthenticated && authState.user) {
-      localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(authState.user));
-    } else {
-      localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
-    }
+      if (authState.isAuthenticated && authState.user) {
+        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(authState.user));
+      }
+      else {
+        localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
+      }
   }, [authState]);
 
   const logout = () => {

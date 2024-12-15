@@ -7,12 +7,15 @@ import { ChannelDetail, VideoDetail, SearchFeed, Navbar } from '../components';
 import { useAuth } from '../context/AuthProvider';
 import { Layout } from '@video-cv/ui-components';
 import * as Assets from '@video-cv/assets';
+import { useTokenExpiration } from './../../../../libs/utils/helpers/useTokenExpiration';
 
 const routesWithoutDashboardLayout = ['job-board', 'cart', 'talents', 'video/'];
 
 export default function AppLayout(): React.ReactElement {
   const { authState } = useAuth();
   const location = useLocation();
+
+  useTokenExpiration();
 
   return (
     <div className='min-h-screen flex flex-col'>

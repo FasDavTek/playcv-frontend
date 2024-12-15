@@ -42,8 +42,8 @@ const Feed = () => {
               Announce your amazing business, inventions, products and services as a young entrepreneur via your video profile
             </Typography>
             <Box className="flex items-center gap-10" sx={{ marginBottom: '1.25rem' }}>
-              <Button variant="blue" color="primary" label={'Explore Jobs'} onClick={() => navigate('/job-board')} className="text-lg"></Button>
-              <Button variant="custom" color="primary" label={'Hire a talent'} onClick={() => navigate('/talents')} className="text-lg"></Button>
+              <Button variant="blue" color="primary" label={'Explore Jobs'} onClick={() => navigate('/job-board')} className="text-lg cursor-pointer"></Button>
+              <Button variant="custom" color="primary" label={'Hire a talent'} onClick={() => navigate('/talents')} className="text-lg cursor-pointer"></Button>
             </Box>
             <Typography variant='body2' className="text-lg" sx={{ fontSize: '1rem', color: '#7f8c8d' }}>
                 Reach <span className="text-TColor-150 font-bold">50K+</span> Individuals

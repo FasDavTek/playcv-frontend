@@ -123,9 +123,11 @@ const Profile = () => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
         if (!token) {
-          toast.error('Unable to load user profile');
+          toast.error('Your session has expired. Please log in again.');
+          navigate('/auth/login', { replace: true });
           return;
         }
+        
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_PROFILE}`, {
           headers: { Authorization: `Bearer ${token}` },
         });

@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@video-cv/ui-components';
-import { usePaystack } from '@video-cv/payment';
+import { usePaystack, PaymentDetails } from '@video-cv/payment';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Card, CardContent, CardHeader, CircularProgress, Typography } from '@mui/material';
@@ -8,64 +8,57 @@ import { getData, postData } from './../../../../../../libs/utils/apis/apiMethod
 import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 import { useAuth } from './../../../../../../libs/context/AuthContext';
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
 
 interface UploadType {
   id: string
   name: string
+  price: number;
   description: string
-  price: number
-  imageUrl: string
+  uploadPrice: number
+  imageUrl?: string
+  coverUrl?: string;
 }
 
-interface PaymentDetails {
-  reference: string;
-  status: string;
-  transaction: string;
-  amount: number;
-  currency: string;
-  cardType?: string;
-  cardBrand?: string;
-  last4?: string;
-  bank?: string;
-  channelType?: string;
-  paidAt?: string;
-  createdAt?: string;
-  fees?: number;
-}
-
-const VideoUploadTypes: React.FC = () => {
+const VideoUploadTypes = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get('type');
-  const [price, setPrice] = useState<number>(0);
+  const [uploadPrice, setPrice] = useState<number>(0);
   const { authState } = useAuth();
   const [selectedType, setSelectedType] = useState<UploadType | null>(null);
   const [uploadTypes, setUploadTypes] = useState<UploadType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  if (!token) {
+    toast.error('Your session has expired. Please log in again.');
+    navigate('/auth/login', { replace: true });
+    return;
+  }
 
   const calculatePrice = useCallback((selectedType: UploadType | undefined) => {
     if (selectedType) {
-      setPrice(selectedType.price)
+      setPrice(selectedType.uploadPrice)
     }
   }, [])
 
-
-  useEffect(() => {
-    const fetchUploadTypes = async () => {
+  
+    const fetchUploadTypes = useCallback(async () => {
       try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD_TYPE}?Page=1&Limit=10`)
-        if (!response.ok) {
-          throw new Error('Failed to fetch upload types')
-        }
-        const data: UploadType[] = await response.json()
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD_TYPE}?Page=1&Limit=100`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+       
+        const data = await response.data
         setUploadTypes(data);
-        if (data.length > 0) {
-          setSelectedType(data[0])
-          calculatePrice(data[0])
-        }
+        console.log(data)
+        // if (data.length > 0) {
+        //   setSelectedType(data[0])
+        //   calculatePrice(data[0])
+        // }
       } 
       catch (err: any) {
         setError(err.message)
@@ -74,70 +67,67 @@ const VideoUploadTypes: React.FC = () => {
       finally {
         setIsLoading(false)
       }
-    }
+    }, [navigate, token]);
 
+  useEffect(() => {
     fetchUploadTypes()
   }, [calculatePrice])
 
 
 
-  const onPaymentSuccess = async (reference: string, paymentDetails: PaymentDetails) => {
+  const onPaymentSuccess = useCallback(async (reference: string, details: PaymentDetails) => {
     if (selectedType) {
       try {
         const paymentConfirmationData = {
           userId: authState.user?.id,
-          currency: paymentDetails.currency,
-          total: paymentDetails.amount,
+          currency: details.currency,
+          total: details.amount,
           countryCode: "NG",
-          datetime: paymentDetails.paidAt || new Date().toISOString(),
-          reference_Id: paymentDetails.reference,
-          // purchaseDetails: [{
-          //   videoId: uploadResponse.data.videoId,
-          //   quantity: 1,
-          //   amount: paymentDetails.amount
-          // }],
-          status: paymentDetails.status,
-          cardType: paymentDetails.cardType || "Unknown",
-          cardDetails: `${paymentDetails.cardBrand || "Unknown"} ${paymentDetails.cardType || ""}`,
-          last_Four: paymentDetails.last4 || "Unknown",
+          datetime: details.paidAt || new Date().toISOString(),
+          reference_Id: details.reference,
+          purchaseDetails: [{
+            videoId: selectedType.id,
+            quantity: 1,
+            amount: selectedType.price
+          }],
+          status: details.status,
+          cardType: details.cardType || '',
+          cardDetails: details.cardDetails || '',
+          last_Four: details.last_Four || "Unknown",
           paymentType: "upload",
           uploadType: selectedType.name,
           uploadTypeId: selectedType.id,
           userIdentifier: authState.user?.email,
-          // adTypeId: selectedType.adTypeId,
-          transactionFee: paymentDetails.fees || 0,
+          transactionFee: details.added_fees,
           chargedTaxAmount: 0,
           isUploaded: false, // This indicates that the video has been uploaded
         };
 
 
-        const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData);
-
-
-        if (!paymentResponse.ok) {
-          toast.error('Unable to save payment details');
-          throw new Error('Unable to save payment details');
-        }
-
+        const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         // Create an upload request
         const uploadRequestPayload = {
-          videoId: null, // This will be filled later when the video is uploaded
+          buyerId: authState.user?.id,
+          videoId: null,
           title: "",
-          typeId: selectedType.id,
+          id: selectedType.id,
           description: "",
           transcript: "",
           categoryId: null,
           videoUrl: "",
           action: "create",
-          paymentId: paymentResponse.data.id
+          statusId: null,
+          startDate: null,
+          endDate: null,
+          paymentId: details.id
         };
 
-        const uploadRequestResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, uploadRequestPayload);
-
-        if (!uploadRequestResponse.ok) {
-          throw new Error('Failed to create upload request');
-        }
+        const uploadRequestResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, uploadRequestPayload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         // Navigate to the confirmation page
         navigate(`/candidate/video-management/confirmation`, { 
@@ -145,7 +135,7 @@ const VideoUploadTypes: React.FC = () => {
             uploadRequestId: uploadRequestResponse.data.id,
             uploadTypeId: selectedType.id,
             uploadTypeName: selectedType.name,
-            price: price,
+            uploadPrice: uploadPrice,
             paymentReference: reference,
             paymentId: paymentResponse.data.id
           }
@@ -155,41 +145,41 @@ const VideoUploadTypes: React.FC = () => {
         toast.error('Failed to process your request. Please try again.');
       }
     }
-  };
+  }, []);
 
 
 
-  const onPaymentFailure = () => {
+  const onPaymentFailure = useCallback(() => {
     toast.error('Payment failed');
     setSelectedType(null);
-  };
+  }, []);
 
 
-  const { payButtonFn, isProcessing } = usePaystack(
-    price,
-    onPaymentSuccess,
-    onPaymentFailure
-  );
+  const { payButtonFn, isProcessing } = usePaystack(onPaymentSuccess, onPaymentFailure);
 
-  // useEffect(() => {
-  //   if (triggerPayment) {
-  //     payButtonFn();
-  //     setTriggerPayment(false);
-  //   }
-  // }, [price, triggerPayment, payButtonFn]);
-
-  // const handlePayment = (type: 'Pinned' | 'Regular') => {
-  //   const selectedPrice = type === 'Pinned' ? storedPinnedPrice : storedRegularPrice;
-  //   setPrice(selectedPrice);
-  //   setSelectedType(type);
-  //   payButtonFn();
-  // };
-
-  const handlePayment = (type: UploadType) => {
-    setPrice(type.price)
-    setSelectedType(type)
-    payButtonFn()
-  }
+  const handlePayment = useCallback((type: UploadType) => {
+      setSelectedType(type);
+      const amount = Math.round(Number(type.price));
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      const email = authState?.user?.username || '';
+      const firstName = authState?.user?.firstName || '';
+      const lastName = authState?.user?.lastName || '';
+      const phone = authState?.user?.phone;
+  
+      console.log(type.price)
+      console.log(amount)
+  
+      if (amount > 0) {
+        payButtonFn(amount, email, firstName, lastName, phone);
+      }
+      // if (authState?.user?.username && token) {
+        // payButtonFn(amount, email,);
+      // }
+      // else {
+      //   toast.error('User not found. Please log in again.');
+      //   navigate('/auth/login', { replace: true });
+      // }
+    }, [authState.user, payButtonFn, navigate]);
 
 
   if (isLoading) {
@@ -204,62 +194,25 @@ const VideoUploadTypes: React.FC = () => {
   return (
     <div className="p-5">
       <h2 className="text-2xl font-bold mb-4">Choose Your Video Upload Type</h2>
-      {/* <div className="my-4 p-4 border rounded-lg shadow-md">
-        <h3 className="text-xl font-semibold mb-2">Pinned Video</h3>
-        <p className="mb-2">
-          <strong>Benefit:</strong> Pinned videos are showcased prominently at the top of search results, ensuring greater visibility and a higher chance of being seen by potential clients or employers.
-        </p>
-        <p className="mb-4">
-          <strong>Price:</strong> {storedPinnedPrice.toFixed(2)} NGN. This includes a higher fee for the increased visibility and priority placement.
-        </p>
-        <img
-          src="/images/pinned-video-example.jpg" // Replace with actual image path
-          alt="Pinned Video Example"
-          className="w-full h-auto mb-4"
-        />
-        <Button variant='black' label="Choose Pinned Video" onClick={() => handlePayment('Pinned')} />
-      </div>
-      <div className="my-4 p-4 border rounded-lg shadow-md">
-        <h3 className="text-xl font-semibold mb-2">Regular Video</h3>
-        <p className="mb-2">
-          <strong>Benefit:</strong> Regular videos are listed in the standard search results. This option is suitable for general visibility and standard placement.
-        </p>
-        <p className="mb-4">
-          <strong>Price:</strong> {storedRegularPrice.toFixed(2)} NGN. This option has a lower fee compared to pinned videos but provides good visibility.
-        </p>
-        <img
-          src="/images/regular-video-example.jpg" // Replace with actual image path
-          alt="Regular Video Example"
-          className="w-full h-auto mb-4"
-        />
-        <Button variant='black' label="Choose Regular Video" onClick={() => handlePayment('Regular')} />
-      </div> */}
-      
-        {uploadTypes.map((uploadType) => (
-          <Card key={uploadType.id} className="mb-6">
-            <CardHeader>
-              <Typography>{uploadType.name}</Typography>
-              <Typography>{uploadType.description}</Typography>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4">
-                <strong>Price:</strong> {uploadType.price.toFixed(2)} NGN
-              </p>
-              <img
-                src={uploadType.imageUrl}
-                alt={`${uploadType.name} Example`}
-                className="w-full h-auto mb-4 rounded-lg"
-              />
-              <Button 
-                variant="black" 
-                onClick={() => handlePayment(uploadType)}
-                label={isProcessing ? 'Processing...' : `Choose ${uploadType.name}`}
-                disabled={isProcessing}
-              >
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+      {uploadTypes.map((uploadType) => (
+        <div key={uploadType.id} className="my-4 p-4 border rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold mb-2">{uploadType.name}</h3>
+          <p className="mb-2">
+            <strong>Benefit:</strong> {uploadType.description}
+          </p>
+          <p className="mb-4">
+            <strong>Price:</strong> {uploadType.uploadPrice.toFixed(2)} NGN. This includes a higher fee for the increased visibility and priority placement.
+          </p>
+          {uploadType.imageUrl && (
+            <img
+              src={uploadType.imageUrl}
+              alt={`${uploadType.name} Example`}
+              className="w-full h-auto mb-4"
+            />
+          )}
+          <Button variant='black' onClick={() => handlePayment(uploadType)} label={isProcessing ? 'Processing...' : `Choose ${uploadType.name}`} disabled={isProcessing} />
+        </div>
+      ))}
      
       <div className="my-4 p-4 border rounded-lg shadow-md bg-gray-100">
         <h3 className="text-xl font-semibold mb-2">Additional Notes</h3>

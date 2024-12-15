@@ -1,117 +1,200 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-import { usePaystackPayment } from 'react-paystack';
-import { HookConfig } from 'react-paystack/dist/types';
+import { PaystackButton } from 'react-paystack';
+import { HookConfig, PaystackProps } from 'react-paystack/dist/types';
 import { toast } from 'react-toastify';
 import CONFIG from '../utils/helpers/config';
 import { LOCAL_STORAGE_KEYS } from '../utils/localStorage';
 import { postData } from '../utils/apis/apiMethods';
 import { apiEndpoints } from '../utils/apis/apiEndpoints';
+import React from 'react';
 
-interface PaymentDetails {
-  reference: string;
+interface PaystackConfig {
+  email: string;
+  amount: number;
+  currency: string;
+  reference?: string;
+}
+
+interface VerifyPaymentResponse {
   status: string;
-  transaction: string;
+  message: string;
+  data: {
+    id: number;
+    domain: string;
+    status: string;
+    reference: string;
+    amount: number;
+    message: string;
+    gateway_response: string;
+    paid_at: string;
+    created_at: string;
+    channel: string;
+    currency: string;
+    ip_address: string;
+    metadata: any;
+    log: any;
+    fees: number;
+    fees_split: any;
+    authorization: {
+      authorization_code: string;
+      bin: string;
+      last4: string;
+      exp_month: string;
+      exp_year: string;
+      channel: string;
+      card_type: string;
+      bank: string;
+      country_code: string;
+      brand: string;
+      reusable: boolean;
+      signature: string;
+      account_name: string;
+    };
+    customer: {
+      id: number;
+      first_name: string;
+      last_name: string;
+      email: string;
+      customer_code: string;
+      phone: string;
+      metadata: any;
+      risk_action: string;
+    };
+    plan: any;
+    split: any;
+    order_id: string;
+    paidAt: string;
+    createdAt: string;
+    requested_amount: number;
+    transaction_date: string;
+    plan_object: any;
+    subaccount: any;
+  };
+}
+
+export interface PaymentDetails {
+  id: number;
+  email: string;
+  reference: string;
+  access_code?: string;
+  status: string;
+  transaction?: string;
   amount: number;
   currency: string;
   cardType?: string;
-  cardBrand?: string;
-  last4?: string;
+  cardDetails?: string;
+  last_Four?: string;
   bank?: string;
   channelType?: string;
   paidAt?: string;
   createdAt?: string;
-  fees?: number;
+  added_fees?: number;
+  duration?: string;
 }
 
-const usePaystack = (
-  amount: number,
-  onCompleteCB?: (reference: string, paymentDetails: PaymentDetails) => void,
-  onCloseCB?: () => void,
-  options: Partial<HookConfig> = {}
-) => {
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
-  const [paymentReference, setPaymentReference] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const key = CONFIG.PAYSTACK;
-
-  const userData = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
-  const email = userData ? JSON.parse(userData).email : 'user@example.com';
-
-  const config: HookConfig = {
-    reference: new Date().getTime().toString(),
-    email: email,
-    amount: amount * 100,
-    publicKey: key,
-    currency: 'ngn',
-    ...options,
-  };
-
-  const initializePayment = usePaystackPayment(config);
-
-  // const processPayment = async (paymentDetails: PaymentDetails) => {
-  //   setIsProcessing(true);
-  //   try {
-  //     const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentDetails);
-  //     if (response.code === "201") {
-  //       toast.success('Payment processed successfully');
-  //       return true;
-  //     } else {
-  //       toast.error('Failed to process payment');
-  //       return false;
-  //     }
-  //   }
-  //   catch (error) {
-  //     console.error('Error processing payment:', error);
-  //     toast.error('An error occurred while processing payment');
-  //     return false;
-  //   } 
-  //   finally {
-  //     setIsProcessing(false);
-  //   }
-  // };
+const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) => void = () => {}, onCloseCB: () => void = () => {}) => {
+	const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentReference, setPaymentReference] = useState<PaymentDetails | null>(null);
   
-  const payButtonFn = useCallback(() => {
-    setIsProcessing(true);
-    initializePayment({
-      ...config,
-      onSuccess: async (response: any) => {
-        setIsProcessing(false);
-        const details: PaymentDetails = {
-          reference: response.reference,
-          status: response.status,
-          transaction: response.transaction,
-          amount: response.amount / 100,
-          currency: response.currency,
-          cardType: response.authorization?.card_type,
-          cardBrand: response.authorization?.brand,
-          last4: response.authorization?.last4,
-          bank: response.authorization?.bank,
-          channelType: response.channel,
-          paidAt: response.paid_at,
-          createdAt: response.created_at,
-          fees: response.fees / 100,
-        };
-        setPaymentDetails(details);
-        toast.success('Payment Successful');
-        if (onCompleteCB) {
-          onCompleteCB(response.reference, details);
-        }
-      },
-      onClose: () => {
-        setIsProcessing(false);
-        console.log('Payment dialog closed');
-        toast.success('Payment dialog closed');
-        if (onCloseCB) {
-          onCloseCB();
-        }
-      },
-    })
-   
-  }, [amount, onCompleteCB, onCloseCB, options, config, initializePayment]);
+	const key = CONFIG.PAYSTACK;
 
-  return { payButtonFn, paymentDetails, isProcessing };
+  const verifyTransaction = async (reference: string): Promise<VerifyPaymentResponse> => {
+    const url = `https://api.paystack.co/transaction/verify/${reference}`;
+    const verifyPayment = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${CONFIG.PAYSTACK}`,
+        'Content-Type': 'application/json',
+      }
+    });
+
+    return await verifyPayment.json();
+  }
+  
+	const payButtonFn = useCallback( async(amount: number, email: string, firstName: string, lastName: string, phone?: number, metadata?: {}) => {
+      if (!email || !email.includes('@')) {
+        toast.error('Invalid email address');
+        return;
+      }
+  
+      if (amount <= 0) {
+        toast.error('Invalid amount');
+        return;
+      }
+  
+      const amountInKobo = amount * 100;
+      console.log(amountInKobo);
+  
+      const emailString = email.toString();
+      console.log(emailString);
+  
+      const componentProps = {
+        email: emailString,
+        amount: amountInKobo,
+        publicKey: key,
+        onSuccess: async (response: any) => {
+          console.log(response);
+
+          console.log(response.reference);
+
+          try {
+            const verifyPayment = await verifyTransaction(response.reference);
+            console.log(verifyPayment);
+
+            if (verifyPayment.data.status === "success") {
+              const details: PaymentDetails = {
+                id: verifyPayment.data.id,
+                reference: verifyPayment.data?.reference,
+                // access_code: verifyPayment.data?.access_code,
+                amount: verifyPayment.data?.amount,
+                currency: verifyPayment.data?.currency,
+                email: verifyPayment.data?.customer?.email,
+                status: verifyPayment.data?.status,
+                transaction: response.transaction,
+                cardType: verifyPayment.data?.authorization?.card_type,
+                cardDetails: `${verifyPayment.data?.authorization?.brand || ''} || ${verifyPayment.data?.authorization?.card_type || ''}`,
+                last_Four: verifyPayment.data?.authorization?.last4,
+                bank: verifyPayment.data?.authorization?.bank,
+                channelType: verifyPayment.data?.channel,
+                paidAt: verifyPayment.data?.paid_at,
+                createdAt: verifyPayment.data?.created_at,
+                added_fees: verifyPayment.data?.fees,
+                duration: (verifyPayment.data?.log?.time_spent).toString(),
+              };
+
+              console.log(details);
+
+              setPaymentReference(details);
+              toast.success('Payment Successful');
+              onSuccessCB(verifyPayment.data.reference, details);
+            }
+            else {
+              throw new Error('Payment verification failed');
+            }
+          }
+          catch (err) {
+            toast.error('An error occurred while verifying the payment.');
+          }      
+          finally {
+            setIsProcessing(false);
+          }    
+        },
+        onClose: () => {
+          setIsProcessing(false);
+          toast.info('Payment dialog closed');
+          onCloseCB();
+        },
+      };
+
+      setIsProcessing(true); // Set processing state before rendering the button
+      return <PaystackButton {...componentProps} />;
+    },
+    [ onSuccessCB,  ]
+  );
+  
+  console.log(paymentReference)
+	return { payButtonFn, isProcessing, paymentReference };
 };
 
 export default usePaystack;

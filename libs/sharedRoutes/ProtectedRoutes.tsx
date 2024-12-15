@@ -81,7 +81,7 @@ const ProtectedRoute = ({ allowedUserTypes, children }: any) => {
 
     if (!authState.isAuthenticated) {
         toast.warning(`This area is for registered users. Please authenticate to continue.`);
-        return <Navigate to="/auth/login" state={{ from: location }}replace />;
+        return <Navigate to="/auth/login" state={{ from: location }} replace />;
     }
 
     const userTypeId = authState.user?.userTypeId;
@@ -90,16 +90,16 @@ const ProtectedRoute = ({ allowedUserTypes, children }: any) => {
         switch (userTypeId) {
         case 1: // Admin
             toast.error("Secure area detected. Authentication required to enter.");
-            return <Navigate to="/auth/login" state={{ from: location }} replace />;
+            return <Navigate to="/" state={{ from: location }} replace />;
         case 2: // Employer
             toast.error("Secure area detected. Authentication required to enter.");
-            return <Navigate to="/auth/login" state={{ from: location }} replace />;
+            return <Navigate to="/" state={{ from: location }} replace />;
         case 3: // Candidate
             toast.error("Secure area detected. Authentication required to enter.");
-            return <Navigate to="/auth/login" state={{ from: location }} replace />;
+            return <Navigate to="/" state={{ from: location }} replace />;
         default:
             toast.error("Authentication required. Let's get you logged in.");
-            return <Navigate to="/auth/login" state={{ from: location }} replace />;
+            return <Navigate to="/" state={{ from: location }} replace />;
         }
     }
 
