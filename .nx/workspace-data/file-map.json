@@ -42,348 +42,176 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "README.md",
-        "hash": "12554109194893032355"
-      },
-      {
-        "file": "libs/utils/helpers/config.ts",
-        "hash": "14728539643230574068"
-      },
-      {
-        "file": "tsconfig.json",
-        "hash": "432091805247213985"
-      },
-      {
-        "file": "libs/assets/icons/index.ts",
-        "hash": "8768420117838586323"
-      },
-      {
-        "file": "vercel.json",
-        "hash": "10554405000235573292"
-      },
-      {
-        "file": "still-shape-e0a8/README.md",
-        "hash": "13318742856369700074"
-      },
-      {
-        "file": "libs/ui-components/VideoUploadWidget/r2Integration.tsx",
-        "hash": "13529454316195551036"
-      },
-      {
-        "file": "libs/ui-components/DashboardCard/index.tsx",
-        "hash": "14449470512845461760"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0014.jpg",
-        "hash": "11546329385677765570"
-      },
-      {
-        "file": "still-shape-e0a8/src/endpoints/taskFetch.ts",
-        "hash": "14720257144497818427"
-      },
-      {
-        "file": "libs/assets/icons/clapperboard-solid.svg",
-        "hash": "17957632436504777771"
-      },
-      {
-        "file": "libs/ui-components/DatePicker/index.tsx",
-        "hash": "10158101760377391607"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0004.jpg",
-        "hash": "12772583347721293222"
-      },
-      {
-        "file": "libs/ui-components/Layout/types.ts",
-        "hash": "735665830044922747"
-      },
-      {
-        "file": "libs/ui-components/TableSkeleton/index.tsx",
-        "hash": "18166112311912177811"
-      },
-      {
-        "file": "libs/assets/icons/rectangle-ad-solid.svg",
-        "hash": "4002080695741973870"
-      },
-      {
-        "file": "still-shape-e0a8/src/endpoints/taskDelete.ts",
-        "hash": "10881527497154265623"
-      },
-      {
-        "file": "libs/payment/index.ts",
-        "hash": "18328999520919391486"
-      },
-      {
-        "file": "libs/assets/icons/clipboard-list-solid.svg",
-        "hash": "482899617423913046"
-      },
-      {
-        "file": "libs/assets/icons/facebook-brands-solid.svg",
-        "hash": "13677452363814405632"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0008.jpg",
-        "hash": "11952420930040080344"
-      },
-      {
-        "file": "netlify.toml",
-        "hash": "4422207704957163478"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0006.jpg",
-        "hash": "9473331743090446661"
-      },
-      {
-        "file": "libs/constants/error.ts",
-        "hash": "7923929868720273610"
-      },
-      {
-        "file": "nx.json",
-        "hash": "14859815733206674866"
-      },
-      {
-        "file": "still-shape-e0a8/yarn.lock",
-        "hash": "2224849033973224583"
-      },
-      {
-        "file": "libs/hooks/useAllVideoCategories.tsx",
-        "hash": "5066693179404373644"
-      },
-      {
-        "file": "libs/assets/images/logo.png",
-        "hash": "7131407286021868991"
-      },
-      {
-        "file": "libs/utils/helpers/decoder.ts",
-        "hash": "2994425642772243034"
-      },
-      {
-        "file": "libs/ui-components/index.ts",
-        "hash": "17463027169256276920"
-      },
-      {
-        "file": "libs/ui-components/Layout/Navbar.tsx",
-        "hash": "10526108193203837244"
-      },
-      {
-        "file": "libs/hooks/useAllMisc.tsx",
-        "hash": "8927415813370028638"
-      },
-      {
-        "file": "libs/hooks/useEffectOnce.tsx",
-        "hash": "15244958616707905560"
-      },
-      {
-        "file": "still-shape-e0a8/tsconfig.json",
-        "hash": "15062598230669292029"
+        "file": "libs/assets/images/IMG-20240726-WA0005.jpg",
+        "hash": "15616879597795441316"
       },
       {
         "file": ".prettierignore",
         "hash": "16448050467312557263"
       },
       {
-        "file": "libs/ui-components/Loader/index.tsx",
-        "hash": "9439517962937702790"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0012.jpg",
-        "hash": "12608617416972543772"
-      },
-      {
-        "file": "yarn.lock",
-        "hash": "9969613215483760120"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0016.jpg",
-        "hash": "1544526517414142577"
-      },
-      {
-        "file": "libs/assets/icons/user-solid.svg",
-        "hash": "16342665852739522195"
-      },
-      {
-        "file": "libs/ui-components/Select/index.tsx",
-        "hash": "1285839820483889488"
-      },
-      {
-        "file": "libs/hooks/useFilters.tsx",
-        "hash": "10115346602094654254"
-      },
-      {
-        "file": "libs/assets/icons/credit-card-solid.svg",
-        "hash": "9757502807483225865"
-      },
-      {
-        "file": "libs/assets/images/loginBG.jpeg",
-        "hash": "16339216535348432051"
-      },
-      {
-        "file": "still-shape-e0a8/src/types.ts",
-        "hash": "1366114713488307722"
-      },
-      {
-        "file": "still-shape-e0a8/package.json",
-        "hash": "6658572036609050838"
-      },
-      {
-        "file": "libs/payment/usePaystack.tsx",
-        "hash": "9271599785037491704"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0003.jpg",
-        "hash": "1326520176726799529"
-      },
-      {
-        "file": "vitest.workspace.ts",
-        "hash": "7870362608836821141"
-      },
-      {
-        "file": "libs/assets/icons/photo-film-solid.svg",
-        "hash": "7257361292554443182"
-      },
-      {
-        "file": "libs/ui-components/TextArea/index.tsx",
-        "hash": "14967342315047629994"
-      },
-      {
-        "file": "libs/ui-components/Layout/Sidebar.tsx",
-        "hash": "12096044506723080275"
-      },
-      {
-        "file": "libs/assets/icons/folder-tree-solid.svg",
-        "hash": "7842201880445925070"
-      },
-      {
-        "file": "libs/ui-components/Table/index.tsx",
-        "hash": "13372497810700830361"
-      },
-      {
-        "file": "still-shape-e0a8/.gitignore",
-        "hash": "685028892696904836"
-      },
-      {
-        "file": "postcss.config.js",
-        "hash": "1579725330904862112"
-      },
-      {
-        "file": "libs/assets/images/logo.jpeg",
-        "hash": "8126271485900560158"
-      },
-      {
-        "file": "still-shape-e0a8/wrangler.toml",
-        "hash": "4819088543594650356"
-      },
-      {
-        "file": "libs/ui-components/FileUpload/index.tsx",
-        "hash": "6690057760237847941"
-      },
-      {
-        "file": "libs/ui-components/shared/vacancyCard.tsx",
-        "hash": "4866589232714689436"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "188413515753462976"
-      },
-      {
-        "file": "libs/constants/VideoLinks.ts",
-        "hash": "16391869858412197053"
-      },
-      {
-        "file": "libs/assets/icons/x.png",
-        "hash": "7897449866946999665"
-      },
-      {
         "file": "libs/assets/icons/user-doctor-solid.svg",
         "hash": "5369589178774312"
       },
       {
-        "file": "package.json",
-        "hash": "15736389128343365408"
+        "file": ".eslintrc.json",
+        "hash": "17866138117546000433"
       },
       {
-        "file": "libs/assets/icons/hamburger.svg",
-        "hash": "2266862719439470276"
+        "file": "libs/assets/images/IMG-20240726-WA0004.jpg",
+        "hash": "12772583347721293222"
       },
       {
-        "file": "libs/assets/icons/house-chimney-solid.svg",
-        "hash": "16904048895088901699"
+        "file": "libs/assets/images/IMG-20240724-WA0020.jpg",
+        "hash": "3435979292946293109"
       },
       {
-        "file": "libs/assets/images/IMG-20240726-WA0015.jpg",
-        "hash": "12953620736768371336"
-      },
-      {
-        "file": ".vscode/extensions.json",
-        "hash": "4134969992917317260"
-      },
-      {
-        "file": "libs/ui-components/SelectChip/index.tsx",
-        "hash": "225031535032125326"
-      },
-      {
-        "file": "libs/ui-components/VideoCard/index.tsx",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": ".eslintignore",
-        "hash": "7663861978715868291"
+        "file": "libs/hooks/index.ts",
+        "hash": "16418409491178286522"
       },
       {
         "file": "libs/ui-components/Button/index.tsx",
         "hash": "4475641492020607118"
       },
       {
-        "file": "still-shape-e0a8/src/endpoints/taskList.ts",
-        "hash": "3793715277168677960"
-      },
-      {
-        "file": "libs/utils/helpers/model.ts",
-        "hash": "18051394261110982255"
-      },
-      {
-        "file": "libs/ui-components/Account/AccountMenu.tsx",
-        "hash": "7899348124197361836"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0007.jpg",
-        "hash": "11307896616779090543"
-      },
-      {
-        "file": "libs/assets/images/Dragnet.png",
-        "hash": "9369652633418206156"
-      },
-      {
-        "file": "libs/assets/icons/newspaper-solid.svg",
-        "hash": "9013298061335616169"
-      },
-      {
-        "file": "libs/utils/apis/apiMethods.ts",
-        "hash": "17765614489603562748"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "16267754514737964994"
-      },
-      {
-        "file": "libs/ui-components/Layout/LogoutModal.tsx",
-        "hash": "10220451364944767526"
-      },
-      {
-        "file": "libs/assets/icons/users-gear-solid.svg",
-        "hash": "3344050524214884390"
+        "file": "libs/assets/icons/index.ts",
+        "hash": "8768420117838586323"
       },
       {
         "file": "libs/assets/icons/cart.svg",
         "hash": "5455207130446488360"
       },
       {
-        "file": ".editorconfig",
-        "hash": "5443105041930014821"
+        "file": "still-shape-e0a8/README.md",
+        "hash": "13318742856369700074"
       },
       {
-        "file": "libs/assets/images/IMG-20240724-WA0019.jpg",
-        "hash": "10138333913491879774"
+        "file": "libs/assets/images/IMG-20240726-WA0008.jpg",
+        "hash": "11952420930040080344"
+      },
+      {
+        "file": "libs/utils/helpers/model.ts",
+        "hash": "18051394261110982255"
+      },
+      {
+        "file": "libs/ui-components/TextArea/index.tsx",
+        "hash": "14967342315047629994"
+      },
+      {
+        "file": "libs/constants/error.ts",
+        "hash": "7923929868720273610"
+      },
+      {
+        "file": "libs/ui-components/VideoUploadWidget/index.tsx",
+        "hash": "9613746121049609817"
+      },
+      {
+        "file": "libs/assets/images/IMG-20240726-WA0011.jpg",
+        "hash": "7916110125930957091"
+      },
+      {
+        "file": "libs/assets/icons/facebook.svg",
+        "hash": "1063701521534512435"
+      },
+      {
+        "file": "still-shape-e0a8/src/types.ts",
+        "hash": "1366114713488307722"
+      },
+      {
+        "file": "libs/ui-components/Input/index.tsx",
+        "hash": "12276435476275417640"
+      },
+      {
+        "file": "libs/assets/images/IMG-20240726-WA0006.jpg",
+        "hash": "9473331743090446661"
+      },
+      {
+        "file": "libs/assets/icons/x.png",
+        "hash": "7897449866946999665"
+      },
+      {
+        "file": "libs/constants/VideoLinks.ts",
+        "hash": "16391869858412197053"
+      },
+      {
+        "file": "libs/payment/index.ts",
+        "hash": "18328999520919391486"
+      },
+      {
+        "file": "netlify.toml",
+        "hash": "4422207704957163478"
+      },
+      {
+        "file": "libs/assets/images/IMG-20240726-WA0016.jpg",
+        "hash": "1544526517414142577"
+      },
+      {
+        "file": "libs/ui-components/Account/AccountMenu.tsx",
+        "hash": "7899348124197361836"
+      },
+      {
+        "file": "libs/ui-components/TableSkeleton/index.tsx",
+        "hash": "18166112311912177811"
+      },
+      {
+        "file": "libs/hooks/useAllCountries.tsx",
+        "hash": "6655999477635642230"
+      },
+      {
+        "file": "libs/ui-components/shared/vacancyCard.tsx",
+        "hash": "4866589232714689436"
+      },
+      {
+        "file": "libs/utils/index.ts",
+        "hash": "13600649704045481503"
+      },
+      {
+        "file": "libs/hooks/useFilters.tsx",
+        "hash": "10115346602094654254"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "1255943610597543046"
+      },
+      {
+        "file": "libs/assets/images/IMG-20240726-WA0007.jpg",
+        "hash": "11307896616779090543"
+      },
+      {
+        "file": "vitest.workspace.ts",
+        "hash": "7870362608836821141"
+      },
+      {
+        "file": "package.json",
+        "hash": "15736389128343365408"
+      },
+      {
+        "file": "libs/ui-components/Layout/types.ts",
+        "hash": "735665830044922747"
+      },
+      {
+        "file": "libs/assets/icons/facebook-brands-solid.svg",
+        "hash": "13677452363814405632"
+      },
+      {
+        "file": "libs/ui-components/Layout/LogoutModal.tsx",
+        "hash": "10220451364944767526"
+      },
+      {
+        "file": "libs/ui-components/Editor/Toolbar.tsx",
+        "hash": "2304876281861026432"
+      },
+      {
+        "file": "libs/assets/icons/credit-card-solid.svg",
+        "hash": "9757502807483225865"
+      },
+      {
+        "file": "libs/assets/icons/house-chimney-solid.svg",
+        "hash": "16904048895088901699"
+      },
+      {
+        "file": "nx.json",
+        "hash": "14859815733206674866"
       },
       {
         "file": "libs/assets/images/IMG-20240726-WA0013.jpg",
@@ -394,176 +222,348 @@
         "hash": "10979378659624722197"
       },
       {
-        "file": "src/index.ts",
-        "hash": "9563377899313312144"
+        "file": "libs/constants/index.ts",
+        "hash": "8244660836717244887"
       },
       {
-        "file": "src/index.test.ts",
-        "hash": "1681297175646627580"
+        "file": "libs/payment/usePaystack.tsx",
+        "hash": "9271599785037491704"
       },
       {
-        "file": "libs/assets/images/Job Search.jpg",
-        "hash": "10427610426029684011"
+        "file": "still-shape-e0a8/tsconfig.json",
+        "hash": "15062598230669292029"
       },
       {
-        "file": "libs/utils/helpers/useTokenExpiration.ts",
-        "hash": "13641450641321814259"
+        "file": ".prettierrc",
+        "hash": "16267754514737964994"
       },
       {
-        "file": "libs/assets/images/index.ts",
-        "hash": "8419250564222109401"
+        "file": "still-shape-e0a8/src/endpoints/taskList.ts",
+        "hash": "3793715277168677960"
       },
       {
-        "file": "still-shape-e0a8/src/endpoints/taskCreate.ts",
-        "hash": "11622221733272549457"
-      },
-      {
-        "file": "libs/ui-components/VideoUploadWidget/index.tsx",
-        "hash": "9613746121049609817"
-      },
-      {
-        "file": "libs/ui-components/Layout/index.tsx",
-        "hash": "18230790967385252132"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0010.jpg",
-        "hash": "10696911733575000615"
-      },
-      {
-        "file": "libs/ui-components/Input/index.tsx",
-        "hash": "12276435476275417640"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "1255943610597543046"
-      },
-      {
-        "file": "libs/assets/icons/trash.svg",
-        "hash": "5106382331982473199"
-      },
-      {
-        "file": "libs/assets/images/headerBackground.jpeg",
-        "hash": "5867109704294223611"
-      },
-      {
-        "file": "vite-env.d.ts",
-        "hash": "6983777663419950503"
-      },
-      {
-        "file": "libs/assets/icons/facebook.svg",
-        "hash": "1063701521534512435"
-      },
-      {
-        "file": "libs/ui-components/Editor/Toolbar.tsx",
-        "hash": "2304876281861026432"
-      },
-      {
-        "file": "libs/hooks/useAllCountries.tsx",
-        "hash": "6655999477635642230"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240724-WA0020.jpg",
-        "hash": "3435979292946293109"
+        "file": "libs/ui-components/VideoUploadWidget/r2Integration.tsx",
+        "hash": "13529454316195551036"
       },
       {
         "file": "still-shape-e0a8/src/index.ts",
         "hash": "12131845797417606931"
       },
       {
-        "file": "libs/hooks/index.ts",
-        "hash": "16418409491178286522"
+        "file": "still-shape-e0a8/wrangler.toml",
+        "hash": "4819088543594650356"
       },
       {
-        "file": "libs/constants/Types.ts",
-        "hash": "13374931324263565010"
+        "file": "still-shape-e0a8/src/endpoints/taskFetch.ts",
+        "hash": "14720257144497818427"
       },
       {
-        "file": "still-shape-e0a8/worker-configuration.d.ts",
-        "hash": "14027198842220560327"
+        "file": "libs/assets/images/loginBG.jpeg",
+        "hash": "16339216535348432051"
       },
       {
-        "file": "libs/sharedRoutes/ProtectedRoutes.tsx",
-        "hash": "6508119546886334124"
+        "file": "vercel.json",
+        "hash": "10554405000235573292"
       },
       {
-        "file": "libs/ui-components/Radio/index.tsx",
-        "hash": "3203804326240194515"
+        "file": "libs/ui-components/DatePicker/index.tsx",
+        "hash": "10158101760377391607"
       },
       {
-        "file": "libs/assets/index.ts",
-        "hash": "5069906688784725056"
+        "file": "libs/assets/icons/user-solid.svg",
+        "hash": "16342665852739522195"
       },
       {
-        "file": "libs/hooks/useDebounce.ts",
-        "hash": "8002635417237653644"
+        "file": "libs/ui-components/index.ts",
+        "hash": "17463027169256276920"
       },
       {
-        "file": "libs/utils/apis/apiEndpoints.ts",
-        "hash": "2040339485101283461"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0009.jpg",
-        "hash": "12423005224980551296"
-      },
-      {
-        "file": "libs/ui-components/shared/routes.tsx",
-        "hash": "14432607751348302074"
-      },
-      {
-        "file": "libs/constants/index.ts",
-        "hash": "8244660836717244887"
-      },
-      {
-        "file": "libs/context/AuthContext.tsx",
-        "hash": "818868398626262004"
-      },
-      {
-        "file": "tailwind.config.js",
-        "hash": "10521705304834705000"
-      },
-      {
-        "file": "libs/utils/localStorage.ts",
-        "hash": "14648272891054749107"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0005.jpg",
-        "hash": "15616879597795441316"
-      },
-      {
-        "file": ".eslintrc.json",
-        "hash": "17866138117546000433"
-      },
-      {
-        "file": "libs/ui-components/Editor/index.tsx",
-        "hash": "2692496807082345436"
-      },
-      {
-        "file": "libs/assets/icons/clipboard-question-solid.svg",
-        "hash": "5022889054411241326"
-      },
-      {
-        "file": "libs/ui-components/shared/index.tsx",
-        "hash": "2609637157206839241"
+        "file": "libs/ui-components/SelectChip/index.tsx",
+        "hash": "225031535032125326"
       },
       {
         "file": "libs/styles/main.scss",
         "hash": "3007324637513414102"
       },
       {
-        "file": "libs/hooks/useAllState.tsx",
-        "hash": "18196246940136717830"
-      },
-      {
-        "file": "libs/assets/images/IMG-20240726-WA0011.jpg",
-        "hash": "7916110125930957091"
-      },
-      {
         "file": "libs/hooks/useCurrentUser.tsx",
         "hash": "18020611350880361052"
       },
       {
-        "file": "libs/utils/index.ts",
-        "hash": "13600649704045481503"
+        "file": "libs/assets/images/IMG-20240726-WA0014.jpg",
+        "hash": "11546329385677765570"
+      },
+      {
+        "file": "libs/ui-components/Loader/index.tsx",
+        "hash": "9439517962937702790"
+      },
+      {
+        "file": "libs/ui-components/Layout/Navbar.tsx",
+        "hash": "10526108193203837244"
+      },
+      {
+        "file": "libs/assets/icons/folder-tree-solid.svg",
+        "hash": "7842201880445925070"
+      },
+      {
+        "file": "libs/assets/icons/hamburger.svg",
+        "hash": "2266862719439470276"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "432091805247213985"
+      },
+      {
+        "file": ".eslintignore",
+        "hash": "7663861978715868291"
+      },
+      {
+        "file": "libs/ui-components/Layout/index.tsx",
+        "hash": "18230790967385252132"
+      },
+      {
+        "file": "libs/assets/images/headerBackground.jpeg",
+        "hash": "5867109704294223611"
+      },
+      {
+        "file": "libs/ui-components/shared/routes.tsx",
+        "hash": "14432607751348302074"
+      },
+      {
+        "file": "libs/utils/helpers/useTokenExpiration.ts",
+        "hash": "13641450641321814259"
+      },
+      {
+        "file": "libs/ui-components/DashboardCard/index.tsx",
+        "hash": "14449470512845461760"
+      },
+      {
+        "file": "libs/assets/icons/clipboard-question-solid.svg",
+        "hash": "5022889054411241326"
+      },
+      {
+        "file": "libs/constants/Types.ts",
+        "hash": "13374931324263565010"
+      },
+      {
+        "file": "libs/hooks/useAllState.tsx",
+        "hash": "18196246940136717830"
+      },
+      {
+        "file": "README.md",
+        "hash": "12554109194893032355"
+      },
+      {
+        "file": "libs/utils/apis/apiEndpoints.ts",
+        "hash": "2040339485101283461"
+      },
+      {
+        "file": "libs/assets/icons/clapperboard-solid.svg",
+        "hash": "17957632436504777771"
+      },
+      {
+        "file": "libs/ui-components/FileUpload/index.tsx",
+        "hash": "6690057760237847941"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "188413515753462976"
+      },
+      {
+        "file": "libs/assets/icons/users-gear-solid.svg",
+        "hash": "3344050524214884390"
+      },
+      {
+        "file": "vite-env.d.ts",
+        "hash": "6983777663419950503"
+      },
+      {
+        "file": "libs/assets/images/IMG-20240726-WA0009.jpg",
+        "hash": "12423005224980551296"
+      },
+      {
+        "file": "libs/assets/images/IMG-20240726-WA0003.jpg",
+        "hash": "1326520176726799529"
+      },
+      {
+        "file": "src/index.test.ts",
+        "hash": "1681297175646627580"
+      },
+      {
+        "file": "libs/assets/icons/photo-film-solid.svg",
+        "hash": "7257361292554443182"
+      },
+      {
+        "file": "libs/context/AuthContext.tsx",
+        "hash": "818868398626262004"
+      },
+      {
+        "file": "libs/assets/images/IMG-20240724-WA0019.jpg",
+        "hash": "10138333913491879774"
+      },
+      {
+        "file": "libs/assets/icons/clipboard-list-solid.svg",
+        "hash": "482899617423913046"
+      },
+      {
+        "file": "libs/ui-components/shared/index.tsx",
+        "hash": "2609637157206839241"
+      },
+      {
+        "file": "libs/assets/index.ts",
+        "hash": "5069906688784725056"
+      },
+      {
+        "file": "libs/assets/images/IMG-20240726-WA0015.jpg",
+        "hash": "12953620736768371336"
+      },
+      {
+        "file": "postcss.config.js",
+        "hash": "1579725330904862112"
+      },
+      {
+        "file": "src/index.ts",
+        "hash": "9563377899313312144"
+      },
+      {
+        "file": "tailwind.config.js",
+        "hash": "10521705304834705000"
+      },
+      {
+        "file": "yarn.lock",
+        "hash": "9969613215483760120"
+      },
+      {
+        "file": "libs/ui-components/Select/index.tsx",
+        "hash": "1285839820483889488"
+      },
+      {
+        "file": "libs/ui-components/Table/index.tsx",
+        "hash": "13372497810700830361"
+      },
+      {
+        "file": ".editorconfig",
+        "hash": "5443105041930014821"
+      },
+      {
+        "file": "libs/assets/images/Job Search.jpg",
+        "hash": "10427610426029684011"
+      },
+      {
+        "file": "still-shape-e0a8/package.json",
+        "hash": "6658572036609050838"
+      },
+      {
+        "file": "libs/ui-components/Editor/index.tsx",
+        "hash": "2692496807082345436"
+      },
+      {
+        "file": "libs/assets/icons/newspaper-solid.svg",
+        "hash": "9013298061335616169"
+      },
+      {
+        "file": "libs/hooks/useAllVideoCategories.tsx",
+        "hash": "5066693179404373644"
+      },
+      {
+        "file": "still-shape-e0a8/worker-configuration.d.ts",
+        "hash": "14027198842220560327"
+      },
+      {
+        "file": "libs/utils/apis/apiMethods.ts",
+        "hash": "17765614489603562748"
+      },
+      {
+        "file": "libs/ui-components/VideoCard/index.tsx",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "still-shape-e0a8/src/endpoints/taskCreate.ts",
+        "hash": "11622221733272549457"
+      },
+      {
+        "file": "libs/ui-components/Layout/Sidebar.tsx",
+        "hash": "12096044506723080275"
+      },
+      {
+        "file": "libs/hooks/useEffectOnce.tsx",
+        "hash": "15244958616707905560"
+      },
+      {
+        "file": "libs/sharedRoutes/ProtectedRoutes.tsx",
+        "hash": "6508119546886334124"
+      },
+      {
+        "file": "libs/assets/images/index.ts",
+        "hash": "8419250564222109401"
+      },
+      {
+        "file": "still-shape-e0a8/src/endpoints/taskDelete.ts",
+        "hash": "10881527497154265623"
+      },
+      {
+        "file": "still-shape-e0a8/yarn.lock",
+        "hash": "2224849033973224583"
+      },
+      {
+        "file": "libs/utils/localStorage.ts",
+        "hash": "14648272891054749107"
+      },
+      {
+        "file": "libs/assets/icons/rectangle-ad-solid.svg",
+        "hash": "4002080695741973870"
+      },
+      {
+        "file": "libs/assets/images/logo.png",
+        "hash": "7131407286021868991"
+      },
+      {
+        "file": "libs/utils/helpers/config.ts",
+        "hash": "14728539643230574068"
+      },
+      {
+        "file": "libs/assets/images/IMG-20240726-WA0012.jpg",
+        "hash": "12608617416972543772"
+      },
+      {
+        "file": "libs/assets/icons/trash.svg",
+        "hash": "5106382331982473199"
+      },
+      {
+        "file": "libs/assets/images/Dragnet.png",
+        "hash": "9369652633418206156"
+      },
+      {
+        "file": "libs/assets/images/IMG-20240726-WA0010.jpg",
+        "hash": "10696911733575000615"
+      },
+      {
+        "file": "libs/ui-components/Radio/index.tsx",
+        "hash": "3203804326240194515"
+      },
+      {
+        "file": "libs/utils/helpers/decoder.ts",
+        "hash": "2994425642772243034"
+      },
+      {
+        "file": "still-shape-e0a8/.gitignore",
+        "hash": "685028892696904836"
+      },
+      {
+        "file": "libs/hooks/useDebounce.ts",
+        "hash": "8002635417237653644"
+      },
+      {
+        "file": "libs/hooks/useAllMisc.tsx",
+        "hash": "8927415813370028638"
+      },
+      {
+        "file": ".vscode/extensions.json",
+        "hash": "4134969992917317260"
+      },
+      {
+        "file": "libs/assets/images/logo.jpeg",
+        "hash": "8126271485900560158"
       }
     ],
     "projectFileMap": {
@@ -2056,7 +2056,7 @@
         },
         {
           "file": "apps/Admin/src/pages/AdvertisementManagement/index.tsx",
-          "hash": "3755225743668413675",
+          "hash": "806394194195347659",
           "deps": [
             "npm:react",
             "npm:@tanstack/react-table",
