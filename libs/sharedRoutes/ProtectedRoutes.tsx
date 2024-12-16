@@ -110,6 +110,10 @@ const ProtectedRoute = ({ allowedUserTypes, children }: any) => {
 
 const router = createBrowserRouter([
     {
+        path: '/',
+        element: <Navigate to={ROUTES.LANDINGPAGE} replace />,
+    },
+    {
         path: ROUTES.LANDINGPAGE,
         element: (
             <Suspense fallback={<h1>Loading...</h1>}>{<AppLayout />}</Suspense>
