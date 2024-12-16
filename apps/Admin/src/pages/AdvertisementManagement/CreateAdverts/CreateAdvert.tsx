@@ -42,35 +42,39 @@ const CreateAdvertModal = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [adTypes, setAdTypes] = useState<{ value: string; label: string }[]>([]);
   const [thumbnail, setThumbnail] = useState<string | null>(null);
-  const { register, handleSubmit, watch, setValue, reset, control, formState: { errors },} = useForm<AdFormData>({
-    resolver: zodResolver(advertSchema),
-  });
-
   const location = useLocation();
   const navigate = useNavigate();
   const { uploadRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
+  const { register, handleSubmit, watch, setValue, reset, control, formState: { errors },} = useForm<AdFormData>({
+    resolver: zodResolver(advertSchema),
+    defaultValues: {
+      adTypeName: adTypeName || '',
+      adTypeId: adTypeId || "",
+    },
+  });
 
 
+  console.log(adTypeName, adTypeId);
 
-  useEffect(() => {
-    const fetchAdTypes = async () => {
-      try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
-        if (!response.ok) throw new Error('Failed to fetch ad types')
-        const data: string[] = await response.json()
-        setAdTypes(data.map(type => ({ value: type as 'video' | 'image', label: type })))
-      } 
-      catch (err) {
-        console.error('Error fetching ad types:', err)
-        toast.error('Failed to load ad types')
-      }
-      finally {
-        setIsLoading(false);
-      }
-    }
+//   useEffect(() => {
+//     const fetchAdTypes = async () => {
+//       try {
+//         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
+//         if (!response.ok) throw new Error('Failed to fetch ad types')
+//         const data: string[] = await response.json()
+//         setAdTypes(data.map(type => ({ value: type as 'video' | 'image', label: type })))
+//       } 
+//       catch (err) {
+//         console.error('Error fetching ad types:', err)
+//         toast.error('Failed to load ad types')
+//       }
+//       finally {
+//         setIsLoading(false);
+//       }
+//     }
 
-    fetchAdTypes();
-}, []);
+//     fetchAdTypes();
+// }, []);
 
 
 
@@ -207,7 +211,7 @@ const onSubmitHandler = async (data: AdFormData) => {
       startDate: data.startDate,
       endDate: data.endDate,
       media: uploadedUrls.map((url: any, index: any) => ({
-        type: data.adType,
+        type: data.adTypeName,
         url: url,
         thumbnail: thumbnails[index] || null
       })),
@@ -237,12 +241,6 @@ const onSubmitHandler = async (data: AdFormData) => {
 
 
 
-if (isLoading) {
-  return <div>Loading...</div>;
-}
-
-
-
   return (
     <div className='p-10 overflow-hidden bg-white'>
       <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/advertisement-management')} />
@@ -250,6 +248,7 @@ if (isLoading) {
       <form onSubmit={handleSubmit(onSubmitHandler)} className="bg-white px-10">
         <div className="my-5 flex flex-col gap-5">
           <Input label="Ad Title" {...register('adName', { required: true })} error={errors.adName} />
+          <Input label="Ad Type" {...register('adTypeName', { required: true })} error={errors.adTypeName} />
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
               Ad Description
           </label>

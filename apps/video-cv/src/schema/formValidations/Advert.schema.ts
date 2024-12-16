@@ -19,9 +19,10 @@ export const advertSchema = z.object({
   adName: z.string({required_error: ErrorMessages.required('Ad Name'),}).min(1, "Ad Name is required"),
   adDescription: z.string({required_error: ErrorMessages.required('Ad Description'),}).min(1, "Ad Description is required"),
   adUrl: z.string({required_error: ErrorMessages.required('Ad Url'),}).url("Must be a valid URL"),
-  adType: z.string({
+  adTypeName: z.string({
     required_error: ErrorMessages.required("Ad Type"),
   }).optional(),
+  adTypeId: z.number().optional(),
   files: z.union([
     z.instanceof(File)
       .refine((file) => { return !file || file.size <= MAX_FILE_SIZE; }, `Max file size is 5MB.`)
