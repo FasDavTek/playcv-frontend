@@ -19,7 +19,7 @@ type ads = {
   adName: string;
   redirectUrl: string;
   adType: string;
-  createdAt: string;
+  dateCreated: string;
   authorName: string;
   adDescription: string;
   startDate: string;
@@ -105,7 +105,7 @@ const Payment = () => {
       }
 
       const currentTime = Date.now();
-      const newAds = data.filter((ad: ads) => new Date(ad.createdAt).getTime() > lastFetchTime);
+      const newAds = data.filter((ad: ads) => new Date(ad.dateCreated).getTime() > lastFetchTime);
       if (newAds.length > 0) {
         toast.info(`${newAds.length} new ad(s) uploaded`);
       }
@@ -285,7 +285,7 @@ const Payment = () => {
         <Button
           label="Create Ad"
           variant="black"
-          onClick={() => openSetModalFn('confimationModal')}
+          onClick={() => openSetModalFn('confirmationModal')}
         />
       </div>
 
