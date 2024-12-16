@@ -71,7 +71,7 @@ const CreateAdvertModal = ({
         <Select
           label="Advert Type"
           options={options}
-          value={watch('adType') || ''}
+          value={watch('adTypeName') || ''}
           onChange={(e: any) => console.log('e', e)}
         />
         <div className="">

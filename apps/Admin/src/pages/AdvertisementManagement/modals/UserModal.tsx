@@ -65,7 +65,7 @@ const CreateAdvertModal = () => {
             placeholder='Add description for your advert'
           />
           <Input label="Ad Redirect Url" {...register('adUrl', { required: true })} error={errors.adUrl} />
-          <Select
+          {/* <Select
             label="Advert Type"
             options={options}
             value={watch('adType') || ''}
@@ -76,7 +76,7 @@ const CreateAdvertModal = () => {
                 console.error(`Invalid ad type: ${value}`);
               }
             }}
-          />
+          /> */}
           <div className="">
             <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
               Advert Upload (Multiple Files)
