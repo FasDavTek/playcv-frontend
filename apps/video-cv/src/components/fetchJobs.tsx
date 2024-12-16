@@ -44,10 +44,10 @@ const fetchJobs: React.FC = () => {
     const fetchJobs = async () => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-        if (!token) {
-          toast.error('Unable to load user profile');
-          return;
-        }
+        // if (!token) {
+        //   toast.error('Unable to load user profile');
+        //   return;
+        // }
 
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`, {
           headers: { Authorization: `Bearer ${token}` },
