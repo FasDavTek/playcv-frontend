@@ -174,7 +174,7 @@ const AdUploadTypes = () => {
 
 
   const handleAdTypeSelection = useCallback((adType: AdType) => {
-    navigate('/admin/advertisement-management/upload', { 
+    navigate('/admin/advertisement-management/create', { 
       state: {
         adTypeId: adType.typeId,
         adTypeName: adType.typeName,

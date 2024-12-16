@@ -16,12 +16,12 @@ import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 type ads = {
   id: string;
   status: string;
-  title: string;
-  adUrl: string;
+  adName: string;
+  redirectUrl: string;
   adType: string;
   createdAt: string;
   authorName: string;
-  description: string;
+  adDescription: string;
   startDate: string;
   endDate: string;
   userType: string;
@@ -75,7 +75,7 @@ const Payment = () => {
         openSetModalFn('confirmationModal');
       } else {
         toast.info('You have an existing payment for video upload that you have not yet completed.');
-        navigate(`/candidate/video-management/upload`, { 
+        navigate(`/candidate/video-management/create`, { 
           state: { 
             checkoutId: data.checkoutId,
           } 
@@ -136,7 +136,7 @@ const Payment = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const adDetails = await response.json();
+      const adDetails = await response.data;
       navigate(`/admin/advertisement-management/:${adId}`, {
         state: { adDetails },
       });
@@ -211,23 +211,23 @@ const Payment = () => {
 
 
   const columns = [
-    columnHelper.accessor('title', {
+    columnHelper.accessor('adName', {
       header: 'Ad Name',
     }),
     columnHelper.accessor('authorName', {
       header: 'User Fullname',
     }),
-    columnHelper.accessor('adUrl', {
+    columnHelper.accessor('redirectUrl', {
       header: 'Ad Link',
     }),
     columnHelper.accessor('adType', {
       header: 'Ad Type',
     }),
-    columnHelper.accessor('createdAt', {
+    columnHelper.accessor('dateCreated', {
       header: 'Date Created',
       cell: (info) => formatDate(info.getValue()),
     }),
-    columnHelper.accessor('description', {
+    columnHelper.accessor('adDescription', {
       header: 'Description',
     }),
     columnHelper.accessor('startDate', {
@@ -243,10 +243,10 @@ const Payment = () => {
       cell: (info) => (
         <span
           className={`px-2 py-1.5 text-center items-center rounded-full text-white ${
-            info.getValue() === 'active' ? 'bg-green-500' : 'bg-red-500'
+            info.getValue() === 'Active' ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
           }`}
         >
-          {info.getValue() === 'active' ? 'Active' : 'Suspended'}
+          {info.getValue()}
         </span>
       ),
     }),
@@ -262,7 +262,7 @@ const Payment = () => {
           {row.original.status === 'active' ? (
             <Button
               variant={'red'}
-              onClick={() => handleOpenSuspendDialog(row.original.id, row.original.title)}
+              onClick={() => handleOpenSuspendDialog(row.original.id, row.original.adName)}
               label={'Suspend'}
             >
             </Button>
@@ -285,7 +285,7 @@ const Payment = () => {
         <Button
           label="Create Ad"
           variant="black"
-          onClick={checkPaymentStatus}
+          onClick={() => openSetModalFn('confimationModal')}
         />
       </div>
 
