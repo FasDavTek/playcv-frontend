@@ -256,7 +256,7 @@ const ViewAds = () => {
                         )}
                     />
                 </div>
-                <Controller
+                {/* <Controller
                     name='adType'
                     control={control}
                     render={({ field: { onChange, value } }) => (
@@ -273,7 +273,7 @@ const ViewAds = () => {
                               }}
                         />
                     )}
-                />
+                /> */}
                 <Controller
                     name='files'
                     control={control}
@@ -307,7 +307,7 @@ const ViewAds = () => {
                         <span className="font-semibold text-gray-800">Description:</span> <span className="text-gray-600 text-lg leading-relaxed">{adDetails.adDescription}</span>
                     </div>
                     <div className="mb-3">
-                        <span className="font-semibold text-gray-800">Ad Type:</span> <span className="text-gray-600">{adDetails.adType}</span>
+                        <span className="font-semibold text-gray-800">Ad Type:</span> <span className="text-gray-600">{adDetails.adTypeName}</span>
                     </div>
                     <div className="mb-3">
                         <span className="font-semibold text-gray-800">Redirect URL:</span>

@@ -90,7 +90,7 @@ const ManageAdvertisement = () => {
             setValue('adUrl', state.adDetails.adUrl);
             setValue('startDate', state.adDetails.startDate);
             setValue('endDate', state.adDetails.endDate);
-            setValue('adType', state.adDetails.adType && state.adDetails.adType.toLowerCase() === 'image' ? 'image' : 'video');
+            setValue('adTypeName', state.adDetails.adType && state.adDetails.adType.toLowerCase() === 'image' ? 'image' : 'video');
         }
     }, [state.adDetails, setValue, id]);
 
@@ -250,7 +250,7 @@ const ManageAdvertisement = () => {
                             )}
                         />
                     </div>
-                    <Controller
+                    {/* <Controller
                         name='adType'
                         control={control}
                         render={({ field: { onChange, value } }) => (
@@ -267,7 +267,7 @@ const ManageAdvertisement = () => {
                                 }}
                             />
                         )}
-                    />
+                    /> */}
                     <Controller
                         name='files'
                         control={control}
