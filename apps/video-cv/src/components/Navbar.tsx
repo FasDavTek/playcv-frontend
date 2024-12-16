@@ -100,7 +100,7 @@ const Navbar = () => {
   const handleAuthenticatedNavigation = (path: string) => {
     if (!authState.isAuthenticated) {
       toast.warning(`This area is for registered users. Please authenticate to continue.`)
-      navigate('/auth/login')
+      navigate('/')
       return
     }
 
