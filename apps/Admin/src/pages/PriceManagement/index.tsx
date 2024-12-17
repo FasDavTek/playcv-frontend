@@ -31,6 +31,9 @@ const index = () => {
   const [openModal, setOpenModal] = useState<'add' | 'edit' | null>(null);
   const [activeTab, setActiveTab] = useState<'videoUploadTypes' | 'adsTypes' | 'buyVideoTypes'>('videoUploadTypes');
   const [priceItems, setPriceItems] = useState<PriceItem[]>([]);
+  const [videoUploadTypes, setVideoUploadTypes] = useState<PriceItem[]>([]);
+  const [adsTypes, setAdsTypes] = useState<PriceItem[]>([]);
+  const [buyVideoTypes, setBuyVideoTypes] = useState<PriceItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<PriceItem | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [search, setSearch] = useState("");
@@ -59,8 +62,23 @@ const index = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (resp.code === "00") {
-        let data = resp.data
-        console.log(priceItems);
+        let data = resp?.data?.map((item: any) => ({
+          id: item?.id?.toString(),
+          name: item.name,
+          description: item.description,
+          uploadPrice: item.uploadPrice,
+          buyPrice: item.buyPrice,
+          dateCreated: item.dateCreated,
+          dateUpdated: item.dateUpdated,
+          createdBy: item.createdBy,
+          active: item.active,
+        }));
+        setVideoUploadTypes(data);
+
+        console.log(videoUploadTypes);
+        setBuyVideoTypes(data);
+
+        console.log(buyVideoTypes)
         setPriceItems(data || []);
       }
       else if (activeTab === 'adsTypes') {
@@ -76,6 +94,7 @@ const index = () => {
         }));
 
         setPriceItems(data);
+        setAdsTypes(data);
       }
     }
     catch (err) {
@@ -105,6 +124,7 @@ const index = () => {
       {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       if (resp.code === "00") {
         setPriceItems(priceItems.map(item =>
           (item.id === id || item.typeId === id) ? { ...item, active: newStatus } : item
@@ -239,6 +259,21 @@ const index = () => {
   const closeModal = () => setOpenModal(null);
 
 
+  const getCurrentItems = () => {
+    switch (activeTab) {
+      case 'videoUploadTypes':
+        return videoUploadTypes;
+      case 'adsTypes':
+        return adsTypes;
+      case 'buyVideoTypes':
+        return buyVideoTypes;
+      default:
+        return [];
+    }
+  };
+
+
+
 
   return (
     <Container>
@@ -266,7 +301,7 @@ const index = () => {
 
           <Table
             loading={false}
-            data={priceItems}
+            data={getCurrentItems()}
             columns={columns}
             search={setSearch}
             filter={filter}
