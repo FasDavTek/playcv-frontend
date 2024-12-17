@@ -17,6 +17,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useAllCountry } from './../../../../../../libs/hooks/useAllCountries';
 import { useAllState } from './../../../../../../libs/hooks/useAllState';
 import model from './../../../../../../libs/utils/helpers/model';
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -72,6 +73,7 @@ const Vacancies = () => {
     resolver: zodResolver(vacancySchema),
   });
 
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
   useEffect(() => {
     if (vacancyId) {
@@ -84,9 +86,12 @@ const Vacancies = () => {
   const fetchJobDetails = async (vacancyId: any) => {
     setIsLoading(true);
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       if (!response.ok) {
-        const jobData = await response.json()
+        const jobData = await response.data;
         reset(jobData)
         setAction('edit')
       }
@@ -189,7 +194,9 @@ const Vacancies = () => {
         action: action,
       };
 
-      const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.OPEN_VACANCY}`, jobData);
+      const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.OPEN_VACANCY}`, jobData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       if (resp.code === "00") {
         toast.success(action === 'edit' ? 'Job updated successfully' : 'Job posted successfully!');
