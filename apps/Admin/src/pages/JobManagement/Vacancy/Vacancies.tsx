@@ -14,7 +14,9 @@ import { getData, postData } from './../../../../../../libs/utils/apis/apiMethod
 import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 import { Controller, useForm } from 'react-hook-form';
-import { useAllMisc } from '../../../../../../libs/hooks/useAllMisc'
+import { useAllCountry } from './../../../../../../libs/hooks/useAllCountries';
+import { useAllState } from './../../../../../../libs/hooks/useAllState';
+import model from './../../../../../../libs/utils/helpers/model';
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -33,7 +35,7 @@ const statusOptions = [
 
 const vacancySchema = z.object({
   id: z.string().optional(),
-  title: z.string().min(1, "Job title is required"),
+  jobTitle: z.string().min(1, "Job title is required"),
   companyImage: z.string().optional(),
   companyThumbnail: z.string().optional(),
   companyName: z.string().min(1, "Company name is required"),
@@ -44,7 +46,7 @@ const vacancySchema = z.object({
   keyResponsibilities: z.string().min(1, "Key responsibilities are required"),
   companyEmail: z.string().email("Invalid email address"),
   linkToApply: z.string().url("Invalid URL"),
-  specialisations: z.array(z.string().min(1, "At least one specialisation is required")),
+  specialisations: z.string().min(1, "At least one specialisation is required"),
   status: z.enum(['Active', 'Expired', 'Pending', 'Rejected']),
 });
 
@@ -63,33 +65,11 @@ const Vacancies = () => {
   const location = useLocation();
   const job = location.state?.job;
 
-  const { data: specialisations, isLoading: isLoadingSpecialisations, error: specialisationsError } = useAllMisc({
-    resource: 'specialization',
-    page: 1,
-    limit: 100,
-    download: false,
-  });
+  const { data: countryData, isLoading: isCountryLoading, error: countryError } = useAllCountry();
+  const { data: stateData, isLoading: isStateLoading, error: stateError } = useAllState();
 
-  const { data: countries, isLoading: isLoadingCountries, error: countriesError } = useAllMisc({
-    resource: 'country',
-    page: 1,
-    limit: 100,
-    download: false,
-  });
-
-  const { data: states, isLoading: isLoadingStates, error: statesError } = useAllMisc({
-    resource: 'state',
-    page: 1,
-    limit: 100,
-    download: false,
-  });
-
-  const { register, handleSubmit, control, setValue, reset, watch, formState: { errors } } = useForm<VacancyFormData>({
+  const { register, handleSubmit, control, setValue, reset, watch, formState: { errors }, getValues } = useForm<VacancyFormData>({
     resolver: zodResolver(vacancySchema),
-    defaultValues: {
-      status: 'Pending',
-      specialisations: [],
-    },
   });
 
 
@@ -193,7 +173,7 @@ const Vacancies = () => {
     }
   };
 
-  const onSubmit = async (data: VacancyFormData) => {
+  const onSubmitHandler = async (data: VacancyFormData) => {
     try {
       setIsLoading(true);
 
@@ -211,7 +191,7 @@ const Vacancies = () => {
 
       const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.OPEN_VACANCY}`, jobData);
 
-      if (resp.code === "201") {
+      if (resp.code === "00") {
         toast.success(action === 'edit' ? 'Job updated successfully' : 'Job posted successfully!');
         navigate('/admin/job-management');
       }
@@ -236,13 +216,13 @@ const Vacancies = () => {
         <ChevronLeftIcon className="cursor-pointer text-base mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/job-management')} />
 
         <Container className='py-3'>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={(e) => { e.preventDefault(); const data = getValues(); onSubmitHandler(data) }}>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                 <Input
                     className='rounded-xl'
                     label="Job Title"
-                    {...register('title')}
+                    {...register('jobTitle')}
                 />
                 </Grid>
                 <Grid item xs={12}>
@@ -280,16 +260,12 @@ const Vacancies = () => {
                   <Controller
                     name='countryId'
                     control={control}
-                    render={({ field }) => (
+                    render={({ field: { onChange, value } }) => (
                       <Select 
                         label='Country' 
                         value={watch('countryId')} 
-                        options={countries.map(country => ({ value: country.id, label: country.name }))}
-                        onChange={(value) => {
-                          field.onChange(value);
-                          setSelectedCountryId(value);
-                          setValue('countryId', '');
-                        }}
+                        options={model(countryData, "name", "id")}
+                        onChange={(value) => onChange(value)}
                       />
                     )}
                   />
@@ -302,10 +278,8 @@ const Vacancies = () => {
                       <Select 
                         label='State' 
                         value={watch('stateId')} 
-                        options={states.map(state => ({ value: state.id, label: state.name }))}
-                        onChange={(value) => {
-                          onChange('stateId', value);
-                        }}
+                        options={model(stateData, "name", "id")}
+                        onChange={(value) => onChange(value)}
                       />
                     )}
                   />
@@ -324,12 +298,8 @@ const Vacancies = () => {
                 </Grid>
                 
                 <Grid item xs={12}>
-                  <SelectChip 
-                    label='Specialisation'
-                    id='specialization-select'
-                    options={specialisations.map(spec => spec.name )}
-                    value={watch('specialisations')}
-                    onChange={(value) => setValue('specialisations', value)} />
+                  <Typography variant="subtitle2">Specialisation</Typography>
+                  <RichTextEditor value={watch('specialisations')} onChange={(value) => setValue('specialisations', value)} placeholder={'Enter specialisations'} />
                 </Grid>
                 <Grid item xs={12}>
                   <Input

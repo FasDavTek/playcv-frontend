@@ -212,7 +212,7 @@ const CategoryModal = ({
             </Grid>
           </>
         );
-      case 'industry/Sector':
+      case 'industry':
         return (
           <>
             <Input label="Industry Name" {...register('name', { required: true })} disabled={isViewMode} />
@@ -226,7 +226,7 @@ const CategoryModal = ({
             </Grid>
           </>
         );
-      case 'qualifications':
+      case 'qalification':
         return (
           <>
             <Input label="Qualification" {...register('name', { required: true })} disabled={isViewMode} />
@@ -249,7 +249,7 @@ const CategoryModal = ({
             </Grid>
           </>
         );
-      case 'siteTestimonials':
+      case 'sitetestimonial':
         return (
           <>
             <Input label="Name" {...register('name', { required: true })} disabled={isViewMode} />
@@ -271,7 +271,7 @@ const CategoryModal = ({
             </Grid>
           </>
         );
-      case 'degreeClass':
+      case 'degreeclass':
         return (
           <>
             <Input label="Degree Class" {...register('name', { required: true })} disabled={isViewMode} />
@@ -286,7 +286,7 @@ const CategoryModal = ({
             </Grid>
           </>
         );
-      case 'cvUploadGuideline':
+      case 'cvguideline':
         return (
           <>
             <Input label="Guideline" {...register('guideline', { required: true })} disabled={isViewMode} />
