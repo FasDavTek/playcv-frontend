@@ -57,7 +57,7 @@ const Payment = () => {
 
   if (!token) {
     toast.error('Your session has expired. Please log in again.');
-    navigate('/auth/login', { replace: true });
+    // navigate('/auth/login', { replace: true });
     return;
   }
 

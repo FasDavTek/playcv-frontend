@@ -77,7 +77,7 @@ type guideline = Content & {
 const columnHelper = createColumnHelper<Content>();
 
 const ContentPage = () => {
-  const [activeTab, setActiveTab] = useState<'faq' | 'country' | 'state' | 'institution' | 'course' | 'industry/Sector' | 'qualifications' | 'siteTestimonials' | 'degreeClass' | 'cvUploadGuideline'>('faq');
+  const [activeTab, setActiveTab] = useState<'faq' | 'country' | 'state' | 'institution' | 'course' | 'industry' | 'qalification' | 'sitetestimonial' | 'degreeclass' | 'cvguideline'>('faq');
   const [openModal, setOpenModal] = useState<'create' | 'edit' | 'view' | null>(null);
   const [selectedItem, setSelectedItem] = useState<Content | null>(null);
   const [page, setPage] = useState(1);
@@ -87,6 +87,7 @@ const ContentPage = () => {
     resource: activeTab,
     page: 1,
     limit: 40,
+    enabled: activeTab !== 'country' && activeTab !== 'state',
   });
 
   console.log(miscData)
@@ -200,12 +201,12 @@ const ContentPage = () => {
           }),
           actionColumn,
         ]
-      case 'industry/Sector':
+      case 'industry':
         return [
           ...baseColumns,
           actionColumn,
         ]
-      case 'qualifications':
+      case 'qalification':
         return [
           ...baseColumns,
           columnHelper.accessor('shortName', { header: 'Short Name' }),
@@ -215,7 +216,7 @@ const ContentPage = () => {
           }),
           actionColumn,
         ]
-      case 'siteTestimonials':
+      case 'sitetestimonial':
         return [
           columnHelper.accessor('name', { header: 'Name' }),
           columnHelper.accessor('testimonial', { 
@@ -228,13 +229,13 @@ const ContentPage = () => {
           }),
           actionColumn,
         ]
-      case 'degreeClass':
+      case 'degreeclass':
         return [
           ...baseColumns,
           columnHelper.accessor('shortName', { header: 'Short Name' }),
           actionColumn,
         ]
-      case 'cvUploadGuideline':
+      case 'cvguideline':
         return [
           columnHelper.accessor('guideline', { header: 'Guideline' }),
           columnHelper.accessor('description', { 
@@ -265,7 +266,7 @@ const ContentPage = () => {
 
       <div className="bg-gray-300 border-b border-gray-200 rounded-lg">
         <div className="flex p-1 overflow-auto gap-3">
-          {['faq', 'country', 'state', 'institution', 'course', 'industry/Sector', 'qualifications', 'siteTestimonials', 'degreeClass', 'cvUploadGuideline'].map((tab) => (
+          {['faq', 'country', 'state', 'institution', 'course', 'industry', 'qalification', 'sitetestimonial', 'degreeclass', 'cvguideline'].map((tab) => (
             <button
               key={tab}
               className={`py-2 px-4 text-sm font-medium ${activeTab === tab ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}

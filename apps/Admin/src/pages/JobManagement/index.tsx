@@ -38,19 +38,21 @@ const JobManagement = () => {
   const [loading, setLoading] = useState(true);
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState<string>('');
 
-  const { data: countryData, isLoading: isCountryLoading, error: countryError } = useAllCountry();
-  const { data: stateData, isLoading: isStateLoading, error: stateError } = useAllState();
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
   const fetchJobs = async () => {
     try {
-      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
       if (!token) {
         toast.error('Unable to load user profile');
         return;
       }
 
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=30`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -85,10 +87,9 @@ const JobManagement = () => {
 
   const handleView = async (vacancyId: string) => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
-      if (!response.ok) {
-        throw new Error('Error fetching job details');
-      }
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       const jobDetails = await response.json();
       navigate(`/admin/job-management/view/:${vacancyId}`, {
@@ -104,10 +105,9 @@ const JobManagement = () => {
 
   const handleEdit = async (vacancyId: string) => {
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
-      if (!resp.ok) {
-        throw new Error('Error fetching job details');
-      }
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       const jobDetails = await resp.json();
       navigate(`/admin/job-management/vacancy`, {
@@ -251,6 +251,10 @@ const JobManagement = () => {
           loading={false}
           data={filteredJobs}
           columns={columns}
+          search={setSearch}
+          filter={filter}
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
           tableHeading={`${
             activeTab === 'active' ? 'Active/Expired Vacancies' : 'Pending/Rejected Vacancies'
           }`}

@@ -20,8 +20,9 @@ const s3Client = new S3Client({
 
 interface AdTypeItem {
     id?: string;
-    typeName: string;
+    name: string;
     typeDescription: string;
+    price: number;
     thumbnailUrl?: string;
     dateCreated?: string;
     dateUpdated?: string;
@@ -68,13 +69,7 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
     const [isLoading, setIsLoading] = useState(false)
     const [action, setAction] = useState<'create' | 'edit'>('create');
 
-    const { register, control, watch, handleSubmit, setValue, formState: { errors } } = useForm<PriceItem>({
-        defaultValues: {
-            // itemName: item?.itemName ?? '',
-            action: modalType === 'add' ? "create" : "edit",
-            status: 'Active',
-        }
-    });
+    const { register, control, watch, handleSubmit, setValue, reset, formState: { errors } } = useForm<PriceItem>({});
 
     useEffect(() => {
         if (item) {
@@ -90,10 +85,19 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
             }
           });
         }
-      }, [item, setValue]);
+    }, [item, setValue]);
+
+    useEffect(() => {
+        if (item) {
+            reset(item);
+        } else {
+            reset({});
+        }
+    }, [item, reset]);
 
     if (!open) return null;
 
+    console.log(item);
     // const currentType = watch('type');
 
     const tabOptions = {
@@ -132,29 +136,28 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
     const onSubmit = async (data: PriceItem) => {
         setIsLoading(true)
         try {
-            let thumbnailUrl = data.thumbnailUrl;
-            if (thumbnailFile) {
-                thumbnailUrl = await handleImageUpload(thumbnailFile);
-            }
+          let thumbnailUrl = data.thumbnailUrl;
+          if (thumbnailFile) {
+              thumbnailUrl = await handleImageUpload(thumbnailFile);
+          }
 
-            const now = new Date().toISOString();
+          const now = new Date().toISOString();
 
-            const priceData = {
-                ...data,
-                thumbnailUrl: thumbnailUrl,
-                action: modalType === 'add' ? 'create' : 'edit',
-                dateCreated: modalType === 'add' ? now : data.dateCreated,
-                dateUpdated: modalType === 'edit' ? now : undefined,
-                createdBy: modalType === 'add' ? currentUser : data.createdBy,
-                active: data.status === 'Active',
-            }
+          const priceData = {
+              ...data,
+              thumbnailUrl: thumbnailUrl,
+              action: modalType === 'add' ? 'create' : 'edit',
+              createdBy: modalType === 'add' ? currentUser : data.createdBy,
+              active: data.status === 'Active',
+              ...(currentTab === 'adsTypes' && { typeName: data.name }),
+          }
           const endpoint = currentTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE
           const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, priceData)
           if (response.code === "00") {
-            toast.success(`${modalType === 'add' ? 'Added' : 'Updated'} successfully`)
-            onClose()
+              toast.success(`${modalType === 'add' ? 'Added' : 'Updated'} successfully`)
+              onClose()
           } else {
-            throw new Error('Failed to save')
+              throw new Error('Failed to save')
           }
         } 
         catch (error) {
@@ -187,20 +190,22 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
                     />
                 )}
             /> */}
-            <Controller
+            
+            {/* <Controller
                 name={currentTab === 'videoUploadTypes' ? 'name' : 'typeName' }
                 control={control}
                 rules={{ required: 'Type (name) is required' }}
                 render={({ field }) => (
-                    <Input
-                        label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : 'Ad'} Type`}
-                        {...register(`${currentTab === 'videoUploadTypes' ? 'name' : 'typeName'}`)}
-                        placeholder="Enter type name"
-                    />
+                    
                 )}
-            />
+            /> */}
             {currentTab === 'videoUploadTypes' && (
                 <>
+                    <Input
+                        label={`Video Upload Type`}
+                        {...register(`name`)}
+                        placeholder="Enter vdieo type name"
+                    />
                     <Controller
                         name='shortName'
                         control={control}
@@ -249,6 +254,28 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
                                 {...register('transactionFee')}
                                 type="number"
                                 placeholder={`Enter Transaction fee`}
+                            />
+                        )}
+                    />
+                </>
+            )}
+            {currentTab === 'adsTypes' && (
+                <>
+                    <Input
+                        label={`Ad Upload Type`}
+                        {...register(`name`)}
+                        placeholder="Enter ad type name"
+                    />
+                    <Controller
+                        name="price"
+                        control={control}
+                        rules={{ required: 'Amount is required' }}
+                        render={({ field }) => (
+                            <Input
+                                label={`Ad Upload Price`}
+                                {...register('price')}
+                                type="number"
+                                placeholder={`Enter ad upload price`}
                             />
                         )}
                     />

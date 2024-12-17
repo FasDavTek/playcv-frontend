@@ -16,6 +16,7 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../../libs/utils/helpers/config';
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -39,17 +40,18 @@ type AdFormData = z.infer<typeof advertSchema>;
 
 const CreateAdvertModal = () => {
   const [isUploading, setIsUploading] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [adTypes, setAdTypes] = useState<{ value: string; label: string }[]>([]);
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const { uploadRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
-  const { register, handleSubmit, watch, setValue, reset, control, formState: { errors },} = useForm<AdFormData>({
+  const { adTypeId, adTypeName } = location.state || {};
+  const userId = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
+
+  const { register, handleSubmit, watch, setValue, reset, control, formState: { errors }, getValues} = useForm<AdFormData>({
     resolver: zodResolver(advertSchema),
     defaultValues: {
       adTypeName: adTypeName || '',
       adTypeId: adTypeId || "",
+      userId: userId || "",
     },
   });
 
@@ -79,11 +81,14 @@ const CreateAdvertModal = () => {
 
 
 const handleFileUpload = useCallback(async (file: File) => {
-  if (!file) throw new Error('File is not defined.');
+  // if (!file) throw new Error('File is not defined.');
 
   try {
     const fileName = `${Date.now()}-${file.name}`;
     const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET;
+
+    console.log('Uploading file:', fileName);
+    console.log('Bucket:', bucketName);
 
     const command = new PutObjectCommand({
       Bucket: bucketName,
@@ -92,11 +97,13 @@ const handleFileUpload = useCallback(async (file: File) => {
       ContentType: file.type,
     });
 
-    await s3Client.send(command);
+    const result = await s3Client.send(command);
+    console.log('Upload result:', result);
     const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`;
+    console.log('Uploaded URL:', uploadedUrl);
     return uploadedUrl;
-  } catch (err) {
-    toast.error(`Upload Failed: ${err}`);
+  } 
+  catch (err) {
     console.error('Upload failed:', err);
     throw err;
   }
@@ -106,6 +113,7 @@ const handleFileUpload = useCallback(async (file: File) => {
 
 const generateThumbnail = async (file: File) => {
   return new Promise<string>((resolve, reject) => {
+    
     if (file.type.startsWith('video/')) {
       const video = document.createElement('video');
       video.preload = 'metadata';
@@ -158,8 +166,8 @@ const handleFileChange = async (files: File | File[]) => {
 const onSubmitHandler = async (data: AdFormData) => {
 
   try {
-    toast.info('Uploading files...');
     setIsUploading(true);
+    toast.info('Uploading files...');
 
     const files = data.files;
     let mediaUrl = '';
@@ -215,8 +223,9 @@ const onSubmitHandler = async (data: AdFormData) => {
         url: url,
         thumbnail: thumbnails[index] || null
       })),
-      action: 'edit',
+      action: 'create',
       coverURL: thumbnailUrl,
+      userId: userId,
     };
 
     const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData);
@@ -245,7 +254,7 @@ const onSubmitHandler = async (data: AdFormData) => {
     <div className='p-10 overflow-hidden bg-white'>
       <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/advertisement-management')} />
       <h3 className="text-center font-semibold text-xl">Add Advert</h3>
-      <form onSubmit={handleSubmit(onSubmitHandler)} className="bg-white px-10">
+      <form onSubmit={(e) => { e.preventDefault(); const data = getValues(); onSubmitHandler(data) }} className="bg-white px-10">
         <div className="my-5 flex flex-col gap-5">
           <Input label="Ad Title" {...register('adName', { required: true })} error={errors.adName} />
           <Input label="Ad Type" {...register('adTypeName', { required: true })} error={errors.adTypeName} />

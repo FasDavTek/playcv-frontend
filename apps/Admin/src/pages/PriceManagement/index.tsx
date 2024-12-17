@@ -31,7 +31,11 @@ const index = () => {
   const [openModal, setOpenModal] = useState<'add' | 'edit' | null>(null);
   const [activeTab, setActiveTab] = useState<'videoUploadTypes' | 'adsTypes' | 'buyVideoTypes'>('videoUploadTypes');
   const [priceItems, setPriceItems] = useState<PriceItem[]>([]);
-  const [selectedItem, setSelectedItem] = useState<PriceItem | null>(null)
+  const [selectedItem, setSelectedItem] = useState<PriceItem | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -58,7 +62,6 @@ const index = () => {
         let data = resp.data
         console.log(priceItems);
         setPriceItems(data || []);
-        console.log(priceItems)
       }
       else if (activeTab === 'adsTypes') {
         let data = resp.map((item: any) => ({
@@ -66,13 +69,13 @@ const index = () => {
           name: item.typeName,
           typeDescription: item.typeDescription,
           dateCreated: item.dateCreated,
+          price: item.price,
           dateUpdated: item.dateUpdated,
           createdBy: item.createdBy,
           active: true
         }));
 
         setPriceItems(data);
-        console.log(priceItems);
       }
     }
     catch (err) {
@@ -167,7 +170,7 @@ const index = () => {
       case 'adsTypes':
         return [
           ...baseColumn,
-          columnHelper.accessor('AdPrice', { header: 'Price', }),
+          columnHelper.accessor('price', { header: 'Price', }),
           columnHelper.accessor('typeDescription', { header: 'Description' }),
           statusColumn,
           actionColumn,
@@ -265,6 +268,10 @@ const index = () => {
             loading={false}
             data={priceItems}
             columns={columns}
+            search={setSearch}
+            filter={filter}
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
             tableHeading={`All ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
           />
         </div>

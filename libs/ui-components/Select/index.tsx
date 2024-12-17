@@ -140,7 +140,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
             <em>{placeholder}</em>
           </MenuItem>
         )}
-        {options.map((option) => (
+        {options?.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}
           </MenuItem>

@@ -8,6 +8,7 @@ interface MiscQueryParams {
     limit?: number;
     download?: boolean;
     resource: string;
+    enabled?: boolean;
 }
 
 interface MiscItem {
@@ -30,6 +31,12 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
 
     useEffect(() => {
         const fetchData = async () => {
+            if (params.enabled === false) {
+                setData([]);
+                setIsLoading(false);
+                return;
+            }
+
             try {
                 setIsLoading(true);
                 const queryParams = new URLSearchParams({
@@ -57,7 +64,7 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
         };
 
         fetchData();
-    }, [params.page, params.limit, params.download, params.resource]);
+    }, [params.page, params.limit, params.download, params.resource, params.enabled]);
 
     return { data, isLoading, error };
 };

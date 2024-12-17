@@ -54,11 +54,11 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 30 }) => {
     const fetchVideos = async () => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-        // if (!token) {
-        //   toast.error('Your session has expired. Please log in again.');
-        //   navigate('/auth/login', { replace: true });
-        //   return;
-        // }
+        if (!token) {
+          toast.error('Your session has expired. Please log in again.');
+          // navigate('/auth/login', { replace: true });
+          return;
+        }
 
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=${limit}`, {
           headers: { Authorization: `Bearer ${token}` },
