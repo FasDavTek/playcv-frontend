@@ -37,28 +37,34 @@ interface Video {
 
 
 const index = () => {
+  const navigate = useNavigate();
   const [videos, setVideos] = useState<Video[]>([]);
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState('');
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState<string>('');
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
 
-  const navigate = useNavigate();
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
   const fetchVideos = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      
       if (!token) {
         toast.error('Unable to load user profile');
         return;
       }
 
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=30`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=100`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       let data;
       if (resp.succeeded === true) {
         data = await resp.data;
@@ -110,10 +116,13 @@ const index = () => {
 
   const handleView = async (videoId: string) => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${videoId}`);
-      if (!response.ok) {
-        throw new Error('Error fetching video details');
-      }
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${videoId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // if (!response.ok) {
+      //   throw new Error('Error fetching video details');
+      // }
 
       const videoDetails = await response.json();
       navigate(`/admin/video-management/:${videoId}`, {
@@ -134,10 +143,12 @@ const index = () => {
         reason,
       };
 
-      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_VIDEO}`, apiData)
-      if (!response.ok) {
-        throw new Error(`Failed to ${action} video`)
-      }
+      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_VIDEO}`, apiData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // if (!response.ok) {
+      //   throw new Error(`Failed to ${action} video`)
+      // }
 
       await fetchVideos();
       toast.success(`Video ${action === 'a' ? 'approved' : 'rejected'} successfully`)
@@ -218,7 +229,7 @@ const index = () => {
         )
       )} */}
 
-      <Table loading={false} columns={columns} data={videos} />
+      <Table loading={false} columns={columns} data={videos} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="dialog-title" aria-describedby="dialog-description" PaperProps={{ sx: { padding: 3, borderRadius: 2, boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)', width: { xs: '90%', sm: '500px' }, maxWidth: '750px' }, }} BackdropProps={{ sx: { backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.2)', }, }} >
         <DialogTitle>Rejection Reason</DialogTitle>
