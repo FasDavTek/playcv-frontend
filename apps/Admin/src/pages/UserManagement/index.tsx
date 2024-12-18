@@ -77,7 +77,6 @@ const UserManagement = () => {
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-  console.log(token)
 
   useEffect(() => {
     fetchUsers();
@@ -86,15 +85,11 @@ const UserManagement = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      // if (!token) {
-      //   toast.error('Your session has expired. Please log in again.');
-      //   navigate('/auth/login', { replace: true });
-      //   return;
-      // }
       
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USERS}?respType=${activeTab}&Page=1&Limit=100`);
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USERS}?respType=${activeTab}&Page=1&Limit=100`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      console.log(resp);
 
       if (resp.succeeded === true) {
         const data = await resp;
@@ -136,6 +131,8 @@ const UserManagement = () => {
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_PROF_EMP_USER}`, {
         userEmail: email,
         status: newStatus
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (response.code === "201") {
         setUsers(users.map(user => 

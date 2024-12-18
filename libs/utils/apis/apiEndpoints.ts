@@ -43,7 +43,7 @@ export enum apiEndpoints {
     // vacancy flow
     OPEN_VACANCY = '/api/v1/vacancy/create-edit',
     VACANCY_LIST = '/api/v1/vacancy/fetch/all',
-    VACANCY_BY_ID = '/api/v1/vacancy/get/{vacancyEmail}',
+    VACANCY_BY_ID = '/api/v1/vacancy/get/{vacancyId}',
 
     // misc
     COUNTRY = '/api/v1/helper/location/countries/create-edit',

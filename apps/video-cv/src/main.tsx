@@ -66,17 +66,17 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <>
-    {/* <StrictMode> */}
-    <QueryClientProvider client={queryClient}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <ToastContainer autoClose={9000} />
-        <AuthProvider>
-          <CartProvider>
-            <Routes />
-          </CartProvider>
-        </AuthProvider>
-      </LocalizationProvider>
-    </QueryClientProvider>
-    {/* </StrictMode> */}
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <ToastContainer autoClose={9000} />
+          <AuthProvider>
+            <CartProvider>
+              <Routes />
+            </CartProvider>
+          </AuthProvider>
+        </LocalizationProvider>
+      </QueryClientProvider>
+    </StrictMode>
   </>
 );

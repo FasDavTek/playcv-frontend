@@ -31,7 +31,7 @@ const schema = z.object({
   userTypeId: z.number(),
   isBusinessUser: z.boolean(),
   isProfessional: z.boolean(),
-}).refine((data) => data.password === data.confirmPassword, {
+}).refine((data) => data.password !== data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
 });
@@ -40,7 +40,7 @@ type FormData = z.infer<typeof schema>;
 
 const Index = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, reset, formState: { errors }, getValues } = useForm<FormData>({
+  const { register, handleSubmit, reset, watch, formState: { errors }, getValues } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       isTracked: true,
@@ -102,7 +102,7 @@ const Index = () => {
         reset();
         setTermsAccepted(false);
 
-        navigate('/employer/profile');
+        navigate('/auth/login');
       }
       else {
         toast.error(`We couldn't complete your registration. Please verify your details and give it another go.`);
@@ -132,6 +132,8 @@ const Index = () => {
     navigate(-1);
   };
 
+  const watchedFields = watch();
+
   return (
     <div className="overflow-hidden flex">
       <div className="border w-0 md:flex-1 min-h-screen" style={{ backgroundImage: `url(${Images.AuthBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', height: '100%', }}></div>
@@ -145,14 +147,14 @@ const Index = () => {
           submitForm(data);
         }}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Input type='text' label="First Name" placeholder="First Name" error={errors.firstName} {...register('firstName')} />
-            <Input type='text' label="Middle Name" placeholder="Middle Name" error={errors.middleName} {...register('middleName')} />
-            <Input type='text' label="Surname" placeholder="Surname" error={errors.surname} {...register('surname')} />
-            <Input type='text' label="Business Name" placeholder="Business Name" error={errors.businessName} {...register('businessName')} />
-            <Input type='number' label="Phone Number" placeholder="Phone Number" error={errors.phoneNumber} {...register('phoneNumber')} />
-            <Input type='email' label="Email" placeholder="Email" error={errors.email} {...register('email')} />
-            <Input type='password' label="Password" placeholder="Enter Password" error={errors.password} {...register('password')} />
-            <Input type='password' label="Confirm Password" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} />
+            <Input type='text' label="First Name" placeholder="First Name" error={errors.firstName} {...register('firstName')} isValid={!errors.firstName && !!watchedFields.firstName} />
+            <Input type='text' label="Middle Name" placeholder="Middle Name" error={errors.middleName} {...register('middleName')} isValid={!errors.middleName && !!watchedFields.middleName} />
+            <Input type='text' label="Surname" placeholder="Surname" error={errors.surname} {...register('surname')} isValid={!errors.surname && !!watchedFields.surname} />
+            <Input type='text' label="Business Name" placeholder="Business Name" error={errors.businessName} {...register('businessName')} isValid={!errors.businessName && !!watchedFields.businessName} />
+            <Input type='number' label="Phone Number" placeholder="Phone Number" error={errors.phoneNumber} {...register('phoneNumber')} isValid={!errors.phoneNumber && !!watchedFields.phoneNumber} />
+            <Input type='email' label="Email" placeholder="Email" error={errors.email} {...register('email')} isValid={!errors.email && !!watchedFields.email} />
+            <Input type='password' label="Password" placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors.password && !!watchedFields.password} />
+            <Input type='password' label="Confirm Password" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
           </div>
           <div className="mt-5">
             <label className="inline-flex items-center">

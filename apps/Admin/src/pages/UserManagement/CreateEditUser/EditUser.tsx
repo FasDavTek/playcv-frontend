@@ -83,6 +83,11 @@ const CreateEditUSer: React.FC = () => {
 
   const { register, handleSubmit, watch, control, setValue, reset } = useForm<IForm>();
 
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  if (!token) {
+    toast.error('Unable to load user profile. Please log in again.');
+  };
+
   useEffect(() => {
     if (location.state?.user) {
       const userData = location.state.user.userBioDetails;
@@ -97,11 +102,6 @@ const CreateEditUSer: React.FC = () => {
   const fetchUserDetails = async (userEmail: string) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-      if (!token) {
-        toast.error('Unable to load user profile');
-        return;
-      }
 
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USER}/${userEmail}`, {
         headers: { Authorization: `Bearer ${token}` },

@@ -31,11 +31,6 @@ const AdUploadTypes = () => {
   const [error, setError] = useState(null);
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-  if (!token) {
-    toast.error('Your session has expired. Please log in again.');
-    navigate('/auth/login', { replace: true });
-    return;
-  }
 
   const fetchUploadTypes = useCallback(async () => {
     try {

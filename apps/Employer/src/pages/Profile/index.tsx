@@ -18,6 +18,7 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 import { useAllMisc } from './../../../../../libs/hooks/useAllMisc';
+import model from './../../../../../libs/utils/helpers/model'
 
 interface State extends SnackbarOrigin {
   open: boolean;
@@ -27,7 +28,7 @@ const schema = z.object({
   userProfile: z.object({
     userDetails: z.object({
       firstName: z.string().min(1, "First name is required"),
-      middleName: z.string().optional(),
+      middleName: z.string().min(1, "Middle name is required"),
       lastName: z.string().min(1, "Surname is required"),
       email: z.string().email("Invalid email format"),
       phoneNo: z.string().min(10, "Phone number must be at least 10 digits").max(11, 'Phone number must not be more than 11 digits'),
@@ -79,16 +80,15 @@ const Profile = () => {
   const [open, setOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(true);
 
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  if (!token) {
+    toast.error('Unable to load user profile. Please log in again.');
+    return;
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-        if (!token) {
-          toast.error('Your session has expired. Please log in again.');
-          navigate('/auth/login', { replace: true });
-          return;
-        };
-        
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_PROFILE}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -199,9 +199,7 @@ const Profile = () => {
           ...data.userProfile,
           userDetails: {
             ...data.userProfile.userDetails,
-            dateOfBirth: data.userProfile.userDetails.dateOfBirth 
-              ? dayjs(data.userProfile.userDetails.dateOfBirth).format('DD-MM-YYYY')
-              : null,
+            dateOfBirth: data.userProfile.userDetails.dateOfBirth || null,
             isBusinessUser: true,
           },
           businessDetails: {
@@ -213,10 +211,6 @@ const Profile = () => {
       };
 
       const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-      if (!token) {
-        toast.error('You are not authenticated. Please log in again.');
-        return;
-      }
 
       // const endpoint = isSignup ? apiEndpoints.AUTH_REGISTER : apiEndpoints.PROFILE;
       const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, combinedData, {
@@ -292,7 +286,7 @@ const Profile = () => {
                 </IconButton>
               </Box>
             )}
-            {editField === 'userProfile.userDetails.middleName' ? (
+            {editField === 'userProfile?.userDetails?.middleName' ? (
               <Input
                 {...register('userProfile.userDetails.middleName')}
                 label="Middle Name"
@@ -301,10 +295,10 @@ const Profile = () => {
                 error={errors.userProfile?.userDetails?.middleName}
               />
             ) : (
-              <Box className="input-box" onClick={() => handleEditClick('userProfile.userDetails.middleName')}>
+              <Box className="input-box" onClick={() => handleEditClick('userProfile?.userDetails?.middleName')}>
                 <label>Middle Name</label>
                 <Typography className="input-like">{watch('userProfile.userDetails.middleName')}</Typography>
-                <IconButton onClick={() => handleEditClick('userProfile.userDetails.middleName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                <IconButton onClick={() => handleEditClick('userProfile?.userDetails?.middleName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>
@@ -432,16 +426,15 @@ const Profile = () => {
                 </IconButton>
               </Box>
             )}
-            {editField === 'userProfile.businessDetails.industry' ? (
+            {editField === 'userProfile.businessDetails.industryId' ? (
               <Controller
-                {...register('userProfile.businessDetails.industry')}
+                {...register('userProfile.businessDetails.industryId')}
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <Select
-                    label="Industry"
-                    value={value}
-                    {...register('userProfile.businessDetails.industry')}
-                    options={[{ value: 'product', label: 'Product' }]}
+                    label="Business Industry"
+                    value={value !== undefined ? String(value) : ''}
+                    options={model(industry, 'name', 'id')}
                     onChange={(value) => onChange(value)}
                   />
                 )}

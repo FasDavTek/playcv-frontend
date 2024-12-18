@@ -2,10 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Box, Stack, Typography, Paper } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-
-import { fetchFromAPI } from '../../utils/fetchFromAPI';
-import { Videos, Sidebar, JobBoard } from '../../components';
+import { Videos, Sidebar, JobCardBoard } from '../../components';
 // import { Videos as VideosConstant } from '../../utils/Videos';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -14,9 +11,6 @@ import 'swiper/css/autoplay';
 import { EffectCreative, Autoplay } from 'swiper/modules';
 import { Images } from '@video-cv/assets';
 import { Button } from '@video-cv/ui-components';
-import { videoCVs } from './../../utils/videoCVs';
-import fetchJobs from '../../components/fetchJobs';
-import { mockJobs } from '../../utils/jobs';
 
 const heroImages = [Images.HeroImage1, Images.HeroImage2, Images.HeroImage3, Images.HeroImage4, Images.HeroImage5];
 
@@ -96,8 +90,8 @@ const Feed = () => {
            mb={2}
            sx={{ color: 'black' }}
            className="font-bold text-3xl my-5">LATEST JOBS</Typography>
-          {/* <JobBoard jobs={jobs}> */}
-          <JobBoard />
+          {/* <JobCardBoard jobs={jobs}> */}
+          <JobCardBoard filterOptions={{ searchText: '', selectedCategories: [], selectedLocations: [], selectedDates: [], selectedStatus: 'all' }} />
         </Box>
 
         <Box className="mt-20 ">

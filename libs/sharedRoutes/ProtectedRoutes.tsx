@@ -80,7 +80,7 @@ const ProtectedRoute = ({ allowedUserTypes, children }: any) => {
     const location = useLocation();
 
     if (!authState.isAuthenticated) {
-        toast.warning(`This area is for registered users. Please authenticate to continue.`);
+        // toast.warning(`This area is for registered users. Please authenticate to continue.`);
         return <Navigate to="/" state={{ from: location }} replace />;
     }
 

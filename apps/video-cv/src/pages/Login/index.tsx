@@ -89,6 +89,7 @@ const Login = () => {
             isAuthenticated: true,
             user: {
               id: res.user.id,
+              email: res.user.email,
               username: res.user.email,
               name: res.user.fullName || 'User',
               userTypeId: res.user.userTypeId,

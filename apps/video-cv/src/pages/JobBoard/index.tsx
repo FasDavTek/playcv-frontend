@@ -14,7 +14,7 @@ import { EffectCreative, Autoplay } from 'swiper/modules';
 import { Images } from '@video-cv/assets';
 import { Button } from '@video-cv/ui-components';
 import { mockJobs } from '../../utils/jobs';
-import { JobCard } from '../../components';
+import { JobCard, JobCardBoard } from '../../components';
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Controller, FieldError, useForm } from 'react-hook-form';
@@ -26,13 +26,26 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 interface Jobs {
   id: string;
   jobTitle: string;
-  datePosted: Date;
+  dateCreated: Date;
   startDate: Date;
   endDate: Date;
-  description?: string;
+  jobDetails?: string;
   companyName?: string;
+  companyEmail?: string;
   specialization: string;
+  qualifications?: string;
+  keyResponsibilities?: string;
   location: string;
+  linkToApply?: string;
+    // url: string;
+}
+
+interface FilterOptions {
+  searchText: string;
+  selectedCategories: string[];
+  selectedLocations: string[];
+  selectedDates: string[];
+  selectedStatus: string;
 }
 
 const heroImages = [Images.HeroImage10, Images.HeroImage11, Images.HeroImage12, Images.HeroImage13, Images.HeroImage14];
@@ -42,6 +55,14 @@ const JobBoard = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    searchText: '',
+    selectedCategories: [],
+    selectedLocations: [],
+    selectedDates: [],
+    selectedStatus: 'all'
+  });
 
   const { control } = useForm();
 
@@ -103,7 +124,7 @@ const JobBoard = () => {
           // const matchesCategory = setSelectedCategories.length === 0 || selectedCategories.includes(video.category);
           const matchesLocation = selectedLocations.length === 0 || selectedLocations.includes(job.location);
 
-          const jobDate = dayjs(job.datePosted).startOf('day');
+          const jobDate = dayjs(job.dateCreated).startOf('day');
           const matchesDate = selectedDates.length === 0 || selectedDates.some(date => 
             dayjs(date).startOf('day').isSame(jobDate)
           );
@@ -134,37 +155,39 @@ const JobBoard = () => {
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchText(e.target.value);
-      setIsFilterApplied(true);
+    setFilterOptions(prev => ({ ...prev, searchText: e.target.value }));
+    setIsFilterApplied(true);
   };
   
   const handleCategoryChange = (value: string) => {
-      setSelectedCategories([...selectedCategories, value]);
-      setIsFilterApplied(true);
+    setFilterOptions(prev => ({ ...prev, selectedCategories: [...prev.selectedCategories, value] }));
+    setIsFilterApplied(true);
   };
 
   const handleLocationChange = (value: string) => {
-    setSelectedLocations([...selectedLocations, value]);
+    setFilterOptions(prev => ({ ...prev, selectedLocations: [...prev.selectedLocations, value] }));
     setIsFilterApplied(true);
   };
 
   const handleDateChange = (e: ChangeEvent<{ value: string[] }>) => {
-    setSelectedDates(e.target.value);
+    setFilterOptions(prev => ({ ...prev, selectedDates: e.target.value }));
     setIsFilterApplied(true);
   };
 
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSelectedStatus(e.target.value);
+    setFilterOptions(prev => ({ ...prev, selectedStatus: e.target.value }));
     setIsFilterApplied(true);
   };
   
   const handleClearFilters = () => {
-      setSearchText('');
-      setSelectedCategories([]);
-      setSelectedLocations([]);
-      setSelectedDates([]);
-      setSelectedStatus('all');
-      setIsFilterApplied(false);
+    setFilterOptions({
+      searchText: '',
+      selectedCategories: [],
+      selectedLocations: [],
+      selectedDates: [],
+      selectedStatus: 'all'
+    });
+    setIsFilterApplied(false);
   };
 
   return (
@@ -221,21 +244,21 @@ const JobBoard = () => {
               placeholder="Search..."
               containerClass="flex-1"
               name="role"
-              value={searchText}
+              value={filterOptions.searchText}
               onChange={handleSearchChange}
             />
 
             <Select
               options={categoryOptions.map(option => ({ label: option, value: option }))} // Replace with actual options
               label="Categories"
-              value={selectedCategories.join(', ')}
+              value={filterOptions.selectedCategories.join(', ')}
               onChange={handleCategoryChange}
             />
 
             <Select
               options={[]} // Replace with actual options
               label="Location"
-              value={selectedLocations.join(', ')}
+              value={filterOptions.selectedLocations.join(', ')}
               onChange={handleLocationChange}
             />
 
@@ -262,7 +285,7 @@ const JobBoard = () => {
               defaultValue={'all'}
               name="jobStatus"
               onChange={handleStatusChange}
-              value={selectedStatus}
+              value={filterOptions.selectedStatus}
             />
 
             <div className=""></div>
@@ -274,7 +297,9 @@ const JobBoard = () => {
 
           {filteredJobs.length > 0 ? (
             <h4 className="font-black text-xl text-gray-700">{filteredJobs.length} Job Results</h4>
-          ) : null}
+          ) : (
+            <p>No jobs match your search criteria.</p>
+          )}
           <div className="mt-10 mx-auto">
             <Typography
               variant="h5"
@@ -283,14 +308,17 @@ const JobBoard = () => {
               sx={{ color: 'black' }}
               className="font-bold text-3xl my-5">LATEST JOBS</Typography>
             <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-              {paginatedJobs.map((job) => (
-                <JobCard key={job.id} job={job} />
-              ))}
+              {/* {paginatedJobs.map((job: Jobs) => (
+                <Box key={job?.id}>
+                  <JobCard job={job} />
+                </Box>
+              ))} */}
+              <JobCardBoard filterOptions={filterOptions} />
             </div>
-            <div className="flex justify-end gap-2 mt-4">
+            {/* <div className="flex justify-end gap-2 mt-4">
                 <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
                 <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

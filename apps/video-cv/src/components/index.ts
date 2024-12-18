@@ -9,4 +9,4 @@ export { default as SearchFeed } from './SearchFeed';
 export { default as Videos } from './Videos';
 export { default as Sidebar } from './Sidebar';
 export { default as JobCard } from './JobCard';
-export { default as JobBoard } from './fetchJobs'
+export { default as JobCardBoard } from './fetchJobs'
