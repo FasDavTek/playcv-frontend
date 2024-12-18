@@ -164,14 +164,14 @@ const Index = () => {
                 checked={termsAccepted} 
                 onChange={handleCheckboxChange} 
               />
-              <span className="ml-2 text-sm text-neutral-300">I agree to the <a href="/terms" className="text-green-500 underline">Terms of Service</a></span>
+              <span className="ml-2 text-sm text-neutral-300">I agree to the <a href="/terms-and-conditions" className="text-green-500 underline">Terms of Service</a></span>
             </label>
           </div>
           <div className="flex justify-start gap-5 mt-5">
             <Button type='submit' variant="black" label={loading ? "Signing up..." : "Sign up"} className='w-[60%]' disabled={loading} />
           </div>
         </form>
-        <p className='text-lg mt-5 text-center text-neutral-300'>Already have an account? <span onClick={handleSignIn} className='text-blue-400 font-medium hover:underline cursor-pointer'>SignIn</span></p>
+        <p className='text-lg mt-5 text-center text-neutral-300'>Already have an account? <span onClick={handleSignIn} className='text-blue-400 font-medium hover:underline cursor-pointer'>Sign In</span></p>
       </div>
     </div>
   );
