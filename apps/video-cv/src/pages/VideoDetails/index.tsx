@@ -11,7 +11,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import styled from '@emotion/styled';
 import { Images } from '@video-cv/assets';
 import './../../styles.scss';
-import { JobBoard, VideoCard } from '../../components';
+import { JobCardBoard, VideoCard } from '../../components';
 import { mockJobs } from '../../utils/jobs';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthProvider';
@@ -329,7 +329,7 @@ const VideoDetails = () => {
         )}
         {/* CART ITEM ENDS */}
         
-        <JobBoard />
+        <JobCardBoard filterOptions={{ searchText: '', selectedCategories: [], selectedLocations: [], selectedDates: [], selectedStatus: 'all' }} />
       </Stack>
 
       <Box className={`flex-col w-[30%] gap-4 lg:flex hidden`}>
