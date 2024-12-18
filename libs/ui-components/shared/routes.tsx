@@ -4,7 +4,7 @@ export const ROUTES = {
   VIDEO_DETAILS: "/video/:id",
   JOB_BOARD: "/job-board",
   CART: "/cart",
-  JOB_DETAIL: "/job-board/:id",
+  JOB_DETAIL: "/job/:id",
   EMPLOYER: "/employer",
   EMPLOYER_DASHBOARD: "dashboard",
   EMPLOYER_PROFILE: "profile",
@@ -59,4 +59,7 @@ export const ROUTES = {
   CANDIDATE_SIGNUP: "professional-signup",
   EMPLOYER_SIGNUP: "employer-signup",
   NOT_FOUND: "/Home",
+  TERMS_AND_CONDITION: "/terms-and-conditions",
+  PRIVACY_POLICY: "/privacy-policy",
+  ADVERT_POLICY: "/advert-policy",
 };

@@ -77,7 +77,7 @@ const JobCard: React.FC<JobProps> = ({ job }: any) => {
       </div>
       <div className="flex justify-end mt-2">
         <Link
-          to={`/job-board/${vId}`}
+          to={`/job/${vId}`}
           className="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
         >
           Read More

@@ -21,6 +21,9 @@ const Cart = lazy(() => import('../../apps/video-cv/src/pages/Cart'));
 const Login = lazy(() => import('../../apps/video-cv/src/pages/Login'));
 const Signup = lazy(() => import('../../apps/Candidate/src/pages/Signup'));
 const EmployerSignup = lazy(() => import('../../apps/Employer/src/pages/Signup'));
+const Terms = lazy(() => import("../../apps/video-cv/src/pages/Terms, Conditions , Advert and Privacy Policies/Terms and Conditions/index"));
+const Privacy = lazy(() => import("../../apps/video-cv/src/pages/Terms, Conditions , Advert and Privacy Policies/Privacy Policy/index"));
+const AdsPolicy = lazy(() => import("../../apps/video-cv/src/pages/Terms, Conditions , Advert and Privacy Policies/Advert Policy/index"));
 
 // EMPLOYER ROUTES
 const Dashboard = lazy(() => import('../../apps/Employer/src/pages/Dashboard'));
@@ -142,6 +145,18 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.VIDEO_DETAILS,
                 element: <VideoDetails />,
+            },
+            {
+                path: ROUTES.TERMS_AND_CONDITION,
+                element: <Terms />,
+            },
+            {
+                path: ROUTES.PRIVACY_POLICY,
+                element: <Privacy />,
+            },
+            {
+                path: ROUTES.ADVERT_POLICY,
+                element: <AdsPolicy />,
             },
           ],
     },

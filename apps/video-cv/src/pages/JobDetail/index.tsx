@@ -44,7 +44,9 @@ const JobDetail = () => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vId}`, {
+        console.log(vId);
+
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}?${vId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log(resp);
