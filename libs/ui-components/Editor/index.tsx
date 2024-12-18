@@ -36,15 +36,15 @@ const index = ({ value, onChange, placeholder }: RichTextEditorProps) => {
       }
     },
     onUpdate: ({ editor }) => {
-      const htmlContent = editor.getText();
-      // const cleanContent = htmlContent.replace(/^<p>(.*)<\/p>$/, '$1');
+      const plainTextContent = editor.getText();
+      // const cleanContent = plainTextContent.replace(/^<p>(.*)<\/p>$/, '$1');
       // onChange(cleanContent);
-      onChange(htmlContent);
+      onChange(plainTextContent);
     },
   });
 
   useEffect(() => {
-    if (editor && value !== editor.getHTML()) {
+    if (editor && value !== editor.getText()) {
       editor.commands.setContent(value);
     }
   }, [value, editor]);

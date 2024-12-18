@@ -47,10 +47,6 @@ const JobManagement = () => {
 
   const fetchJobs = async () => {
     try {
-      if (!token) {
-        toast.error('Unable to load user profile');
-        return;
-      }
 
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`, {
         headers: { Authorization: `Bearer ${token}` },

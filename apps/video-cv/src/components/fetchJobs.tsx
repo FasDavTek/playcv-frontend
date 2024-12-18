@@ -10,21 +10,40 @@ import { getData } from './../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../libs/utils/helpers/config';
 import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
 import { LOCAL_STORAGE_KEYS } from './../../../../libs/utils/localStorage';
 
 interface Jobs {
-  id: string;
+  vId: string;
   jobTitle: string;
-  datePosted: Date;
+  dateCreated: Date;
   startDate: Date;
   endDate: Date;
-  description?: string;
+  jobDetails?: string;
   companyName?: string;
+  companyEmail?: string;
   specialization: string;
+  qualifications?: string;
+  keyResponsibilities?: string;
   location: string;
+  linkToApply?: string;
+  status?: string;
+    // url: string;
 }
 
-const fetchJobs: React.FC = () => {
+interface FilterOptions {
+  searchText: string;
+  selectedCategories: string[];
+  selectedLocations: string[];
+  selectedDates: string[];
+  selectedStatus: string;
+}
+
+interface FetchJobsProps {
+  filterOptions: FilterOptions;
+}
+
+const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
   const [jobs, setJobs] = useState<Jobs[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
@@ -44,10 +63,6 @@ const fetchJobs: React.FC = () => {
     const fetchJobs = async () => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-        if (!token) {
-          toast.error('Unable to load user profile');
-          return;
-        }
 
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -56,7 +71,7 @@ const fetchJobs: React.FC = () => {
         // if (resp.status === 200) {
         //   setJobs(resp.data);
         // }
-        setJobs(resp.data);
+        setJobs(data);
       }
       catch (err) {
         console.error('Error fetching jobs:', err);
@@ -81,11 +96,34 @@ const fetchJobs: React.FC = () => {
     
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+
+
+  const filterJobs = (jobs: Jobs[]) => {
+    return jobs.filter((job) => {
+      const matchesText = job.jobTitle.toLowerCase().includes(filterOptions.searchText.toLowerCase());
+      const matchesCategory = filterOptions.selectedCategories.length === 0 || filterOptions.selectedCategories.includes(job.specialization);
+      const matchesLocation = filterOptions.selectedLocations.length === 0 || filterOptions.selectedLocations.includes(job.location);
+
+      const jobDate = dayjs(job.dateCreated).startOf('day');
+      const matchesDate = filterOptions.selectedDates.length === 0 || filterOptions.selectedDates.some(date => 
+        dayjs(date).startOf('day').isSame(jobDate)
+      );
+
+      // Assuming job status is part of the job object. If not, you'll need to adjust this.
+      const matchesStatus = filterOptions.selectedStatus === 'all' || job?.status === filterOptions.selectedStatus;
+
+      return matchesText && matchesCategory && matchesLocation && matchesDate && matchesStatus;
+    });
+  };
+
+
   
   if (loading) return <Loader />;
   if (!jobs?.length) return <p>No jobs found</p>;
 
-  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+  const filteredJobs = filterJobs(jobs);
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   const handleNextPage = () => {
     setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
@@ -96,13 +134,13 @@ const fetchJobs: React.FC = () => {
   };
 
   const startIndex = currentPage * jobsPerPage;
-  const currentJobs = jobs.slice(startIndex, startIndex + jobsPerPage);
+  const currentJobs = filteredJobs.slice(startIndex, startIndex + jobsPerPage);
 
   return (
     <div>
       <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
         {currentJobs.map((job: Jobs) => (
-          <Box key={job.id}>
+          <Box key={job?.vId}>
             <JobCard job={job} />
           </Box>
         ))}

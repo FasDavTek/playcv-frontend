@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import { LOCAL_STORAGE_KEYS } from "../localStorage";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export const isTokenExpired = (token: string | null): boolean => {
   if (!token) {
@@ -65,8 +66,10 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(undefined, async function (error) {
+  const navigate = useNavigate();
   if (error?.response?.status === 401 && getToken()) {
     toast.error('Your session has expired. Please log/ in again');
+    navigate('/auth/login', { replace: true });
     // localStorage.clear();
     // window.location.replace(ROUTES.SIGNIN);
   }

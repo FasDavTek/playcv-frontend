@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react';
 
+// import PaystackPop from '@paystack/inline-js'
+
 import { PaystackButton } from 'react-paystack';
 import { HookConfig, PaystackProps } from 'react-paystack/dist/types';
 import { toast } from 'react-toastify';
@@ -96,6 +98,8 @@ export interface PaymentDetails {
 const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) => void = () => {}, onCloseCB: () => void = () => {}) => {
 	const [isProcessing, setIsProcessing] = useState(false);
   const [paymentReference, setPaymentReference] = useState<PaymentDetails | null>(null);
+
+  // const popup = new PaystackPop()
   
 	const key = CONFIG.PAYSTACK;
 
@@ -129,16 +133,18 @@ const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) =
       const emailString = email.toString();
       console.log(emailString);
   
-      const componentProps = {
+      const componentProps = ({
         email: emailString,
         amount: amountInKobo,
         publicKey: key,
+        text: `Pay ${amountInKobo / 100} NGN}`,
         onSuccess: async (response: any) => {
           console.log(response);
 
           console.log(response.reference);
 
           try {
+            setIsProcessing(false);
             const verifyPayment = await verifyTransaction(response.reference);
             console.log(verifyPayment);
 
@@ -175,17 +181,14 @@ const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) =
           }
           catch (err) {
             toast.error('An error occurred while verifying the payment.');
-          }      
-          finally {
-            setIsProcessing(false);
-          }    
+          }  
         },
         onClose: () => {
           setIsProcessing(false);
           toast.info('Payment dialog closed');
           onCloseCB();
         },
-      };
+      });
 
       setIsProcessing(true); // Set processing state before rendering the button
       return <PaystackButton {...componentProps} />;

@@ -88,6 +88,8 @@ const CreateUser = () => {
         },
     });
 
+    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
     console.log(userType);
 
     const handleImageUpload = async (file: File | null) => {
@@ -137,12 +139,6 @@ const CreateUser = () => {
             }
 
             console.log(userData);
-
-            const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-            if (!token) {
-                toast.error('Unable to load user profile');
-                return;
-            }
 
             const endpoint = userType === 'subAdmins' ? apiEndpoints.CREATE_SUB_ADMIN : apiEndpoints.CREATE_PROF_EMP_USER;
             const resp = await postData(`${CONFIG.BASE_URL}${endpoint}`, userData, {

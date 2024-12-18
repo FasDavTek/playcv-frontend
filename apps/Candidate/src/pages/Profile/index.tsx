@@ -104,7 +104,6 @@ const Profile = () => {
   const navigate = useNavigate();
   const [values, setValues] = useState(0);
   const [editField, setEditField] = useState<string | null>(null);
-  const [lastEditedField, setLastEditedField] = useState<string | null>(null);
   const { register, control, setValue, watch, handleSubmit, formState: { errors }, getValues } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -117,17 +116,16 @@ const Profile = () => {
 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  if (!token) {
+    toast.error('Unable to load user profile. Please log in again.');
+    return;
+  };
   
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-        if (!token) {
-          toast.error('Your session has expired. Please log in again.');
-          navigate('/auth/login', { replace: true });
-          return;
-        }
-        
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_PROFILE}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -224,7 +222,7 @@ const Profile = () => {
   });
 
   const { data: degreeClasses, isLoading: isLoadingDegreeClasses } = useAllMisc({
-    resource: 'degree-class',
+    resource: 'degreeclass',
     page: 1,
     limit: 100,
     download: false,
@@ -253,11 +251,6 @@ const Profile = () => {
 
   const createNewEntry = async (resource: string, data: any) => {
     try {
-      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-      if (!token) {
-        toast.error('Unable to load user data');
-        return;
-      }
       console.log(resource);
       const endpoint = resource === 'course' ? apiEndpoints.COURSE : resource === 'degree-class' ? apiEndpoints.DEGREE_CLASS : resource === 'industry' ? apiEndpoints.INDUSTRY : apiEndpoints.INSTITUTION;
       const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, data, {
@@ -379,12 +372,6 @@ const Profile = () => {
           }
         }
       };
-
-      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-      if (!token) {
-        toast.error('You are not authenticated. Please log in again.');
-        return;
-      }
 
       const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, formattedData, {
         headers: { Authorization: `Bearer ${token}` },

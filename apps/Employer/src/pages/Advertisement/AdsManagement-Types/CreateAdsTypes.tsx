@@ -134,7 +134,7 @@ const AdUploadTypes = () => {
       console.error('Error creating upload request:', err);
       toast.error('Failed to process your request. Please try again.');
     }
-  }, []);
+  }, [selectedType, authState.user, token, navigate]);
 
 
 
@@ -158,8 +158,19 @@ const AdUploadTypes = () => {
     console.log(type.price)
     console.log(amount)
 
-    if (amount > 0) {
-      payButtonFn(amount, email, firstName, lastName, phone);
+    if (amount > 0 && email) {
+      const paystackButton = payButtonFn(amount, email, firstName, lastName, phone);
+      console.log('Paystack button generated:', paystackButton);
+      if (paystackButton) {
+        console.log('Rendering Paystack button');
+        return paystackButton;
+      } else {
+        console.error('Failed to generate Paystack button');
+        toast.error('Failed to initiate payment. Please try again.');
+      }
+    } else {
+      console.error('Invalid amount or email');
+      toast.error('Invalid payment information. Please try again.');
     }
     // if (authState?.user?.username && token) {
       // payButtonFn(amount, email,);
@@ -168,7 +179,7 @@ const AdUploadTypes = () => {
     //   toast.error('User not found. Please log in again.');
     //   navigate('/auth/login', { replace: true });
     // }
-  }, [authState.user, payButtonFn, navigate]);
+  }, [authState.user, payButtonFn]);
 
 
   if (isLoading) {

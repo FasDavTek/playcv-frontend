@@ -53,18 +53,13 @@ const Advertisement = () => {
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-
-  if (!token) {
-    toast.error('Your session has expired. Please log in again.');
-    navigate('/auth/login', { replace: true });
-    return;
-  }
+  const userId = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
 
 
   const checkPaymentStatus = async () => {
     try {
 
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Page=1&Limit=1000`, {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -92,7 +87,7 @@ const Advertisement = () => {
   const fetchAds = async () => {
     try {
 
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?Page=1&Limit=100`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?UserId=${userId}&Page=1&Limit=100`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

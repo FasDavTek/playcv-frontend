@@ -14,10 +14,11 @@ interface InputProps<T extends object>
   register?: UseFormRegister<T>;
   error?: FieldError;
   startAdornment?: React.ReactNode;
+  isValid?: boolean;
 }
 
 const FormInput = forwardRef<HTMLInputElement, InputProps<any>>(
-  ({ className, label, id, containerClass, error, type, startAdornment, ...rest }, ref) => {
+  ({ className, label, id, containerClass, error, type, startAdornment, isValid, ...rest }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -51,7 +52,7 @@ const FormInput = forwardRef<HTMLInputElement, InputProps<any>>(
             className={cx(
               `py-2.5 pr-2 ${inputPaddingLeft} rounded-xl focus:outline-none w-full outline-none border`,
               className,
-              { 'outline-red-500 border border-red-500': error }
+              { 'outline-red-500 border border-red-500': error, 'outline-green-500 border-green-500': isValid }
             )}
             id={id}
             {...rest}

@@ -43,6 +43,8 @@ const index = () => {
 
   const navigate = useNavigate();
   const { authState } = useAuth();
+
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
   
   useEffect(() => {
     fetchPriceItems()
@@ -51,11 +53,6 @@ const index = () => {
   const fetchPriceItems = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-      if (!token) {
-        toast.error('Unable to load user profile');
-        return;
-      }
 
       const endpoint = activeTab === 'videoUploadTypes' ? apiEndpoints.VIDEO_UPLOAD_TYPE : apiEndpoints.ADS_TYPE;
       const resp = await getData(`${CONFIG.BASE_URL}${endpoint}`, {
@@ -109,11 +106,6 @@ const index = () => {
 
   const handleStatusToggle = async (id: string, currentStatus: string) => {
     try {
-      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-      if (!token) {
-        toast.error('Unable to load user profile');
-        return;
-      }
       
       const newStatus = !currentStatus;
       const endpoint = activeTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE;

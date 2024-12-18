@@ -18,7 +18,7 @@ const schema = z.object({
     firstName: z.string().min(1, "First name is required"),
     middleName: z.string().min(1, "Middle name is required"),
     surname: z.string().min(1, "Surname is required"),
-    businessName: z.string().min(1, "Business name is required"),
+    businessName: z.string().optional(),
     phoneNumber: z.string().min(10, "Phone number must be at least 11 digits"),
     email: z.string().email("Invalid email format"),
     password: z.string()
@@ -27,12 +27,12 @@ const schema = z.object({
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
       .regex(/[0-9]/, "Password must contain at least one number")
       .regex(/[\W_]/, "Password must contain at least one special character"),
-    confirmPassword: z.string().optional(),
+    confirmPassword: z.string(),
     isTracked: z.boolean(),
     userTypeId: z.number(),
     isBusinessUser: z.boolean(),
     isProfessional: z.boolean(),
-}).refine((data) => data.password === data.confirmPassword, {
+}).refine((data) => data.password !== data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
 });
@@ -41,7 +41,7 @@ type FormData = z.infer<typeof schema>;
 
 const index = () => {
     const navigate = useNavigate();
-    const { register, handleSubmit, reset, formState: { errors }, getValues } = useForm<FormData>({
+    const { register, handleSubmit, reset, watch, formState: { errors }, getValues } = useForm<FormData>({
         resolver: zodResolver(schema),
         defaultValues: {
             isTracked: true,
@@ -103,7 +103,7 @@ const index = () => {
                 reset();
                 setTermsAccepted(false);
 
-                navigate('/candidate/profile');
+                navigate('/auth/login');
             }
             else {
                 toast.error(`We couldn't complete your registration. Please verify your details and give it another go.`);
@@ -132,6 +132,8 @@ const index = () => {
     const handleBackClick = () => {
         navigate(-1);
     };
+
+    const watchedFields = watch();
   
   return (
     <div className="overflow-hidden flex">
@@ -146,14 +148,14 @@ const index = () => {
                     submitForm(data);
                 }}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <Input label="First Name" placeholder="First Name" error={errors.firstName} {...register('firstName')} />
-                        <Input label="Middle Name" placeholder="Middle Name" error={errors.middleName} {...register('middleName')} />
-                        <Input label="Surname" placeholder="Surname" error={errors.surname} {...register('surname')} />
-                        <Input type='text' label="Business Name" placeholder="Business Name" error={errors.businessName} {...register('businessName')} />
-                        <Input label="Phone Number" placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} />
-                        <Input label="Email Address" placeholder="Email Address" error={errors.email} {...register('email')} />
-                        <Input type='password' label="Password" placeholder="Enter Password" error={errors.password} {...register('password')}  />
-                        <Input type='password' label="Confirm Password" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')}  />
+                        <Input label="First Name" placeholder="First Name" error={errors.firstName} {...register('firstName')} isValid={!errors.firstName && !!watchedFields.firstName} />
+                        <Input label="Middle Name" placeholder="Middle Name" error={errors.middleName} {...register('middleName')} isValid={!errors.middleName && !!watchedFields.middleName} />
+                        <Input label="Surname" placeholder="Surname" error={errors.surname} {...register('surname')} isValid={!errors.surname && !!watchedFields.surname} />
+                        <Input type='text' label="Business Name" placeholder="Business Name" error={errors.businessName} {...register('businessName')} isValid={!errors.businessName && !!watchedFields.businessName} />
+                        <Input label="Phone Number" placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} isValid={!errors.phoneNumber && !!watchedFields.phoneNumber} />
+                        <Input label="Email Address" placeholder="Email Address" error={errors.email} {...register('email')} isValid={!errors.email && !!watchedFields.email} />
+                        <Input type='password' label="Password" placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors.password && !!watchedFields.password} />
+                        <Input type='password' label="Confirm Password" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
                     </div>
                     <div className="mt-5">
                         <label className="inline-flex items-center">

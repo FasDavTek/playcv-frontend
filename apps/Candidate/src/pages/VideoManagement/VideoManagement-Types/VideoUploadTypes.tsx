@@ -33,11 +33,6 @@ const VideoUploadTypes = () => {
   const [error, setError] = useState(null);
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-  if (!token) {
-    toast.error('Your session has expired. Please log in again.');
-    navigate('/auth/login', { replace: true });
-    return;
-  }
 
   const calculatePrice = useCallback((selectedType: UploadType | undefined) => {
     if (selectedType) {

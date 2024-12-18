@@ -54,12 +54,7 @@ const index = () => {
 
   const fetchVideos = async () => {
     setLoading(true);
-    try {
-      
-      if (!token) {
-        toast.error('Unable to load user profile');
-        return;
-      }
+    try {  
 
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=100`, {
         headers: { Authorization: `Bearer ${token}` },

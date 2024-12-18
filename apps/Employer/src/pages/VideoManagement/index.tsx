@@ -12,6 +12,7 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@mui/material';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 interface Video {
   id: string;
@@ -34,118 +35,6 @@ interface Video {
   action: string;
 }
 
-// const data = [
-//   {
-//     id: '1',
-//     authorName: 'John Smith',
-//     email: 'john.smith@example.com',
-//     courseOfStudy: 'Mathematics',
-//     gender: 'Male',
-//     phone: '1234567890',
-//     stateOfOrigin: 'California',
-//     grade: '1st class',
-//   },
-//   {
-//     id: '2',
-//     authorName: 'John Smith',
-//     email: 'john.smith@example.com',
-//     courseOfStudy: 'Zoology',
-//     gender: 'Male',
-//     phone: '1234567890',
-//     stateOfOrigin: 'California',
-//     grade: '1st class',
-//   },
-//   {
-//     id: '3',
-//     authorName: 'Johnson Smith',
-//     email: 'john.smith@example.com',
-//     courseOfStudy: 'Plant Biology',
-//     gender: 'Male',
-//     phone: '1234567890',
-//     stateOfOrigin: 'California',
-//     grade: '1st class',
-//   },
-//   {
-//     id: '4',
-//     authorName: 'John Smith',
-//     email: 'john.smith@example.com',
-//     courseOfStudy: 'Mechanical Engineering',
-//     gender: 'Male',
-//     phone: '1234567890',
-//     stateOfOrigin: 'California',
-//     grade: '1st class',
-//   },
-//   {
-//     id: '5',
-//     authorName: 'John Smith',
-//     email: 'john.smith@example.com',
-//     courseOfStudy: 'Mathematics',
-//     gender: 'Male',
-//     phone: '1234567890',
-//     stateOfOrigin: 'California',
-//     grade: '1st class',
-//   },
-//   {
-//     id: '6',
-//     authorName: 'John Smith',
-//     email: 'john.smith@example.com',
-//     courseOfStudy: 'Mathematics',
-//     gender: 'Male',
-//     phone: '1234567890',
-//     stateOfOrigin: 'California',
-//     grade: '1st class',
-//   },
-//   {
-//     id: '7',
-//     authorName: 'John Smith',
-//     email: 'john.smith@example.com',
-//     courseOfStudy: 'Mathematics',
-//     gender: 'Male',
-//     phone: '1234567890',
-//     stateOfOrigin: 'California',
-//     grade: '1st class',
-//   },
-//   {
-//     id: '8',
-//     authorName: 'John Smith',
-//     email: 'john.smith@example.com',
-//     courseOfStudy: 'Physics',
-//     gender: 'Male',
-//     phone: '1234567890',
-//     stateOfOrigin: 'California',
-//     grade: '1st class',
-//   },
-//   {
-//     id: '9',
-//     authorName: 'John Smith',
-//     email: 'john.smith@example.com',
-//     courseOfStudy: 'English',
-//     gender: 'Male',
-//     phone: '1234567890',
-//     stateOfOrigin: 'California',
-//     grade: '1st class',
-//   },
-//   {
-//     id: '10',
-//     authorName: 'John Smith',
-//     email: 'john.smith@example.com',
-//     courseOfStudy: 'Geology',
-//     gender: 'Male',
-//     phone: '1234567890',
-//     stateOfOrigin: 'California',
-//     grade: '1st class',
-//   },
-//   {
-//     id: '11',
-//     authorName: 'John Smith',
-//     email: 'john.smith@example.com',
-//     courseOfStudy: 'Civil Engineering',
-//     gender: 'Male',
-//     phone: '1234567890',
-//     stateOfOrigin: 'California',
-//     grade: '1st class',
-//   },
-// ];
 
 const columnHelper = createColumnHelper<Video>();
 
@@ -156,27 +45,34 @@ const VideoManagement = () => {
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState<string>('');
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
 
   const navigate = useNavigate();
 
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
   const fetchVideos = async () => {
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.EMPLOYER_AUTH_VIDEO_LIST}?Page=1&Limit=1000`)
-      if (!resp.ok) {
-        throw new Error("Failed to fetch videos");
-      }
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.EMPLOYER_AUTH_VIDEO_LIST}?Page=1&Limit=100`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
 
-      const data = await resp.json();
-      setVideos(data);
-      setLoading(false);
+      if (resp.succeeded === true) {
+        const data = await resp.data;
+        setVideos(data);
+        setLoading(false);
 
-      const currentTime = Date.now();
-      const newVideos = data.filter((video: Video) => new Date(video.uploadDate).getTime() > lastFetchTime);
-      if (newVideos.length > 0) {
-        toast.info(`${newVideos.length} new video(s) uploaded`);
+        const currentTime = Date.now();
+        const newVideos = data.filter((video: Video) => new Date(video.uploadDate).getTime() > lastFetchTime);
+        if (newVideos.length > 0) {
+          toast.info(`${newVideos.length} new video(s) uploaded`);
+        }
+        setLastFetchTime(currentTime);
       }
-      setLastFetchTime(currentTime);
     }
     catch (err) {
       console.error('Error fetching videos:', err)
@@ -190,17 +86,16 @@ const VideoManagement = () => {
     // Set up interval to fetch videos every 5 minutes
     const interval = setInterval(fetchVideos, 5 * 60 * 1000)
     return () => clearInterval(interval)
-  }, []);
+  }, [searchQuery]);
 
 
   const handleView = async (videoId: string) => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${videoId}`);
-      if (!response.ok) {
-        throw new Error('Error fetching video details');
-      }
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${videoId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      const videoDetails = await response.json();
+      const videoDetails = await response.data;
 
       setViewedVideos(prevVideos => {
         const newVideos = [videoDetails, ...prevVideos];
@@ -265,22 +160,44 @@ const VideoManagement = () => {
   return (
     <div className="min-h-screen px-3 md:px-10 py-10">
         {/* Table comes here */}
-        <div>
-          <Typography variant="subtitle2" className="my-4">
-            Recently Viewed Videos
-          </Typography>
-          {/* {viewedVideos.length > 0 ? (
-            
-          ) : (
-            <p>No viewed videos yet</p>
-          )} */}
+        <div className='flex flex-col justify-between gap-8 w-full'>
+          <div>
+            <Typography variant="subtitle1" className="my-4">
+              Recently Viewed Videos
+            </Typography>
+            {/* {viewedVideos.length > 0 ? (
+              
+            ) : (
+              <p>No viewed videos yet</p>
+            )} */}
 
             <Table
               loading={false}
               data={viewedVideos}
               columns={columns}
+              search={setSearch}
+              filter={filter}
+              globalFilter={globalFilter}
+              setGlobalFilter={setGlobalFilter}
               tableHeading="Recently Viewed Videos"
             />
+          </div>
+
+          <div>
+            <Typography variant="subtitle1" marginTop='8' className="mt-20 mb-1">
+                My Videos
+            </Typography>
+            <Table
+              loading={false}
+              data={videos}
+              columns={columns}
+              search={setSearch}
+              filter={filter}
+              globalFilter={globalFilter}
+              setGlobalFilter={setGlobalFilter}
+              tableHeading="All Video CV"
+            />
+          </div>
         </div>
         {/* filter logic comes here */}
         {/* {loading ? (
@@ -294,13 +211,6 @@ const VideoManagement = () => {
             <p>No videos available</p>
           )
         )} */}
-
-        <Table
-          loading={false}
-          data={videos}
-          columns={columns}
-          tableHeading="All Video CV"
-        />
         
     </div>
   );
