@@ -98,8 +98,6 @@ export interface PaymentDetails {
 const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) => void = () => {}, onCloseCB: () => void = () => {}) => {
 	const [isProcessing, setIsProcessing] = useState(false);
   const [paymentReference, setPaymentReference] = useState<PaymentDetails | null>(null);
-
-  // const popup = new PaystackPop();
   
 	const key = CONFIG.PAYSTACK;
 

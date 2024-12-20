@@ -29,12 +29,22 @@ type Vacancy = {
 };
 
 
+const truncateText = (text: string, wordLimit: number) => {
+  const words = text.split(' ');
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+  return text;
+};
+
+
+
 const columnHelper = createColumnHelper<Vacancy>();
 
 const JobManagement = () => {
   const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active');
   const [jobs, setJobs] = useState<Vacancy[]>([]);
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const [selectedItem, setSelectedIte,] = useState<Vacancy | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
   const navigate = useNavigate();
@@ -54,6 +64,7 @@ const JobManagement = () => {
 
       const data = await resp.data;
       setJobs(data);
+      console.log(jobs)
       setLoading(false);
 
       const currentTime = Date.now();
@@ -81,48 +92,28 @@ const JobManagement = () => {
 
 
 
-  const handleView = async (vacancyId: string) => {
-    try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const jobDetails = await response.json();
-      navigate(`/admin/job-management/view/:${vacancyId}`, {
-        state: { jobDetails },
-      })
-    }
-    catch (err) {
-      console.error('Error fetching job details:', err)
-      toast.error('Failed to fetch job details')
-    }
+  const handleView = async (item: Vacancy) => {
+    setSelectedItem(item);
+    navigate(`/admin/job-management/view/:${item.id}`, {
+      state: { item },
+    })
   };
 
 
-  const handleEdit = async (vacancyId: string) => {
-    try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const jobDetails = await resp.json();
-      navigate(`/admin/job-management/vacancy`, {
-        state: { jobDetails },
-      }) 
-    }
-    catch (err) {
-      console.error('Error fetching job details:', err)
-      toast.error('Failed to fetch job details');
-    }
+  const handleEdit = async (item: Vacancy) => {
+    setSelectedItem(item);
+    navigate(`/admin/job-management/vacancy`, {
+      state: { jobDetails },
+    }) 
   };
 
 
   const columns = [
-    columnHelper.accessor('title', {
+    columnHelper.accessor('jobTitle', {
       header: 'Job Title',
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('employerName', {
+    columnHelper.accessor('companyName', {
       header: 'Employer/Organization Name',
       cell: (info) => info.getValue(),
     }),
@@ -130,7 +121,7 @@ const JobManagement = () => {
       header: 'Company Email',
       cell: (info) => <a href={`mailto:${info.getValue()}`}>{info.getValue()}</a>,
     }),
-    columnHelper.accessor('jobUrl', {
+    columnHelper.accessor('linkToApply', {
       header: 'Job URL',
       cell: (info) => (
         <a href={info.getValue()} target="_blank" rel="noopener noreferrer">
@@ -138,23 +129,27 @@ const JobManagement = () => {
         </a>
       ),
     }),
-    columnHelper.accessor('qualifications', {
-      header: 'Qualifications',
-      cell: (info) => info.getValue(),
-    }),
     columnHelper.accessor('jobDetails', {
       header: 'Job Details',
-      cell: (info) => info.getValue(),
+      cell: (info) => truncateText(info.getValue() as string, 10),
+    }),
+    columnHelper.accessor('qualifications', {
+      header: 'Qualifications',
+      cell: (info) => truncateText(info.getValue() as string, 10),
+    }),
+    columnHelper.accessor('specialization', {
+      header: 'Specializations',
+      cell: (info) => truncateText(info.getValue() as string, 10),
+    }),
+    columnHelper.accessor('keyResponsibilities', {
+      header: 'Key Responsibilities',
+      cell: (info) => truncateText(info.getValue() as string, 10),
     }),
     columnHelper.accessor('location', {
       header: 'Location',
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('keyResponsibilities', {
-      header: 'Key Responsibilities',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('startDate', {
+    columnHelper.accessor('dateCreated', {
       header: 'Start Date',
       cell: (info) => info.getValue(),
     }),
@@ -195,12 +190,16 @@ const JobManagement = () => {
         );
       },
     }),
-    columnHelper.accessor('actions', {
+    columnHelper.display({
+      id: 'actions',
       header: 'Actions',
-      cell: ({ row: { original } }) => {
+      cell: ({ row }) => {
         <div className="flex gap-2">
-          <Button variant="custom" label="View" onClick={() => handleView(original.id.toString())} />
-          <Button variant="success" label="Edit" onClick={() => handleEdit(original.id.toString())} />
+          <Button variant="custom" label="View" onClick={() => handleView(row.original)} />
+          <Button variant="success" label="Edit" onClick={() => handleEdit(row.original)} />
+          {row.original.status && (
+            <Button variant={row.original.status === 'Active' ? 'red' : 'success'} label={row.original.status === 'Active' ? 'Deactivate' : 'Activate'} />
+          )}
         </div>
       },
     }),
@@ -245,7 +244,7 @@ const JobManagement = () => {
         </div>
         <Table
           loading={false}
-          data={filteredJobs}
+          data={jobs}
           columns={columns}
           search={setSearch}
           filter={filter}

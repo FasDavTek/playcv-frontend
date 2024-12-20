@@ -31,20 +31,20 @@ interface Jobs {
 }
 
 const JobDetail = () => {
-  const location = useLocation();
+  const { vacancyId } = useParams<{ vId: any }>();
  
   const [job, setJob] = useState<Jobs | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const vId = location.pathname.split('/').pop();
+  console.log(vacancyId);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}?${vId}`, {
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -61,8 +61,10 @@ const JobDetail = () => {
       }
     }
 
-    fetchJobDetails();
-  }, [vId]);
+    if (vacancyId) {
+      fetchJobDetails();
+    }
+  }, [vacancyId]);
 
   // if (loading) return <Loader />;
   // if (error) return <div className="text-red-500">{error}</div>;

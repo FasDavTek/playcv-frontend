@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 export const isTokenExpired = (token: string | null): boolean => {
   if (!token) {
+    toast.error('Your session has expired. Please log in again');
     return true;
   }
 
