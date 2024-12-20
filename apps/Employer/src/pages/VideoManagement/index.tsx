@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useNavigate } from 'react-router-dom';
 import { Button, Table, } from '@video-cv/ui-components';
@@ -11,7 +8,6 @@ import { getData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
-import { CircularProgress } from '@mui/material';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 interface Video {
@@ -42,8 +38,6 @@ const VideoManagement = () => {
   const [value, setValue] = React.useState(0);
   const [videos, setVideos] = useState<Video[]>([]);
   const [viewedVideos, setViewedVideos] = useState<Video[]>([]);
-  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
-  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [search, setSearch] = useState("");
@@ -55,7 +49,7 @@ const VideoManagement = () => {
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-  const fetchVideos = async () => {
+  const fetchVideos = useCallback(async () => {
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.EMPLOYER_AUTH_VIDEO_LIST}?Page=1&Limit=100`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -79,14 +73,14 @@ const VideoManagement = () => {
       setLoading(false)
       toast.error('Failed to fetch videos')
     }
-  }
+  }, [token, lastFetchTime]);
 
   useEffect(() => {
     fetchVideos()
     // Set up interval to fetch videos every 5 minutes
     const interval = setInterval(fetchVideos, 5 * 60 * 1000)
     return () => clearInterval(interval)
-  }, [searchQuery]);
+  }, [fetchVideos]);
 
 
   const handleView = async (videoId: string) => {
@@ -142,9 +136,6 @@ const VideoManagement = () => {
     }),
     columnHelper.accessor('phone', {
       header: 'Phone',
-    }),
-    columnHelper.accessor('status', {
-      header: 'Status',
     }),
     columnHelper.accessor('status', {
       header: 'Status',

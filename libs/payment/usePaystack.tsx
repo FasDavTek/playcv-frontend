@@ -99,7 +99,7 @@ const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) =
 	const [isProcessing, setIsProcessing] = useState(false);
   const [paymentReference, setPaymentReference] = useState<PaymentDetails | null>(null);
 
-  // const popup = new PaystackPop()
+  // const popup = new PaystackPop();
   
 	const key = CONFIG.PAYSTACK;
 
@@ -133,18 +133,18 @@ const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) =
       const emailString = email.toString();
       console.log(emailString);
   
-      const componentProps = ({
+      const componentProps: PaystackProps = ({
         email: emailString,
         amount: amountInKobo,
         publicKey: key,
-        text: `Pay ${amountInKobo / 100} NGN}`,
+        text: `Pay ${amount.toFixed(2)} NGN}`,
         onSuccess: async (response: any) => {
           console.log(response);
 
           console.log(response.reference);
 
           try {
-            setIsProcessing(false);
+            setIsProcessing(true);
             const verifyPayment = await verifyTransaction(response.reference);
             console.log(verifyPayment);
 
@@ -190,10 +190,9 @@ const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) =
         },
       });
 
-      setIsProcessing(true); // Set processing state before rendering the button
       return <PaystackButton {...componentProps} />;
     },
-    [ onSuccessCB,  ]
+    [ key, verifyTransaction, onSuccessCB, onCloseCB  ]
   );
   
   console.log(paymentReference)

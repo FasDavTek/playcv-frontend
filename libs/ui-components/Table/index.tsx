@@ -107,24 +107,13 @@ const Table: React.FC<any> = <T extends object>({
         <thead className={tableHeadingColorClassName}>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
-              {headerGroup.headers.map(
-                (
-                  header //style={{ width: header.column.columnDef.meta?.width }}
-                ) => (
-                  <th
-                    className="!font-semibold"
-                    key={header.id}
-                    // style={{ width: header.column.columnDef.meta?.width }}
-                  >
+              {headerGroup.headers.map((header) => (
+                  <th className="!font-semibold" key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      : flexRender( header.column.columnDef.header, header.getContext() )}
                   </th>
-                )
-              )}
+                ))}
             </tr>
           ))}
         </thead>

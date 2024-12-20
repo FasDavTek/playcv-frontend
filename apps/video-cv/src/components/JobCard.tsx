@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import clsx from 'clsx';
 
-interface Job {
+interface Jobs {
   vId: string;
   jobTitle: string;
   dateCreated: Date;
@@ -23,7 +23,7 @@ interface Job {
 }
 
 interface JobProps {
-  job: Job;
+  job: Jobs;
 }
 
 const JobCard: React.FC<JobProps> = ({ job }: any) => {

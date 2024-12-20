@@ -24,7 +24,7 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 
 interface Jobs {
-  id: string;
+  vid: string;
   jobTitle: string;
   dateCreated: Date;
   startDate: Date;
@@ -78,7 +78,7 @@ const JobBoard = () => {
     const fetchJobs = async () => {
       try {
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`);
-        if (resp.status === 200) {
+        if (resp.succeeded === true) {
           setJobs(resp.data);
         }
         else {

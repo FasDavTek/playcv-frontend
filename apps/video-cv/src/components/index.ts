@@ -10,3 +10,4 @@ export { default as Videos } from './Videos';
 export { default as Sidebar } from './Sidebar';
 export { default as JobCard } from './JobCard';
 export { default as JobCardBoard } from './fetchJobs'
+export { default as SimilarJobs } from './SimilarJobs'

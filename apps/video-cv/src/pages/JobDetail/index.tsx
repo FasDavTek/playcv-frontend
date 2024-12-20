@@ -10,8 +10,9 @@ import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 import { Button, Loader } from '@video-cv/ui-components';
 import { useParams } from 'react-router-dom';
+import SimilarJobs from './../../components/SimilarJobs';
 
-interface Job {
+interface Jobs {
   vId: string;
   jobTitle: string;
   dateCreated: Date;
@@ -32,30 +33,28 @@ interface Job {
 const JobDetail = () => {
   const location = useLocation();
  
-  const [job, setJob] = useState<Job | null>(null);
+  const [job, setJob] = useState<Jobs | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const vId = location.pathname.split('/').pop();
-  console.log(vId)
 
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-        console.log(vId);
-
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}?${vId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(resp);
+
         if (resp && resp.data) {
           setJob(resp.data);
         }
+
       }
       catch (err) {
-        console.error('Error fetching jobs:', err);
+        toast.error('Error fetching job detail');
       }
       finally {
         setLoading(false);
@@ -65,8 +64,8 @@ const JobDetail = () => {
     fetchJobDetails();
   }, [vId]);
 
-  if (loading) return <Loader />;
-  if (error) return <div className="text-red-500">{error}</div>;
+  // if (loading) return <Loader />;
+  // if (error) return <div className="text-red-500">{error}</div>;
   if (!job) return <div>No job found</div>;
 
   return (
@@ -117,6 +116,7 @@ const JobDetail = () => {
       </section>
       <section className="border flex-[3] rounded-lg min-h-[400px] overflow-y-scroll">
         <h5 className="mt-3 mb-2 font-bold text-2xl p-5">Similar roles</h5>
+        <SimilarJobs  currentJobId={job.vId} jobTitle={job.jobTitle} specialization={job.specialization} location={job.location} />
       </section>
     </div>
   );
