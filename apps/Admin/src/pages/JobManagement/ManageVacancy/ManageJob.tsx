@@ -22,7 +22,7 @@ const s3Client = new S3Client({
 
 
 interface Job {
-    id: number;
+    vId: number;
     jobTitle: string;
     startDate: string;
     location: string;
@@ -43,7 +43,7 @@ interface Job {
 const ManageJob: React.FC  = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { vacancyId } = useParams<{ vacancyId: any }>();
+  const { vId } = useParams<{ vId: any }>();
 
   const [job, setJob] = useState<Job | undefined>(location.state?.job);
   const [loading, setLoading] = useState(false);
@@ -53,33 +53,13 @@ const ManageJob: React.FC  = () => {
   const { register, handleSubmit, watch, control, setValue, reset } = useForm<Job>();
 
   useEffect(() => {
-    if (vacancyId) {
-      fetchJobDetails(vacancyId)
-    } else if (location.state?.job) {
-      reset(location.state.job)
+    if (vId) {
+      setError('No job data found')
     }
-  }, [vacancyId, location.state, reset]);
-
-  const fetchJobDetails = async (vacancyId: any) => {
-    setLoading(true);
-    try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
-      if (!response.ok) {
-        const jobData = await response.data
-        reset(jobData)
-      }
-      else {
-        throw new Error('Unable to fetch job details');
-      }
-    } 
-    catch (err) {
-      console.error('Error fetching job details:', err);
-      setError('Error fetching job details');
-    } 
-    finally {
+    else {
       setLoading(false);
     }
-  };
+  }, [vId]);
 
 
   if (loading) return <CircularProgress />;

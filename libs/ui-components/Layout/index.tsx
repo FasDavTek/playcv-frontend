@@ -95,7 +95,7 @@ const Layout = ({
           <div className="container mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
               {/* Contact Section */}
-              <div className="flex flex-col items-center md:items-start">
+              <div className="flex flex-col items-center md:items-start text-sm md:text-base">
                 <h3 className="font-semibold mb-2">Contact Us</h3>
                 <a 
                   href="https://wa.me/2347065245969" 
@@ -115,9 +115,9 @@ const Layout = ({
               {/* Navigation Links */}
               <div className="flex flex-col items-center md:items-start">
                 <h3 className="font-semibold mb-2">Quick Links</h3>
-                <Link to="/terms-and-conditions" className="hover:underline mb-1">Terms and Conditions</Link>
-                <Link to="/advert-policy" className="hover:underline mb-1">Advert Policy</Link>
-                <Link to="/privacy-policy" className="hover:underline">Privacy Policy</Link>
+                <Link to="/terms-and-conditions" className="hover:underline mb-1 text-sm md:text-base">Terms and Conditions</Link>
+                <Link to="/advert-policy" className="hover:underline mb-1 text-sm md:text-base">Advert Policy</Link>
+                <Link to="/privacy-policy" className="hover:underline text-sm md:text-base">Privacy Policy</Link>
               </div>
 
               {/* Social Media and Copyright */}
@@ -129,7 +129,7 @@ const Layout = ({
                     alt="Facebook icon"
                   />
                 </a>
-                <p className="text-center md:text-right text-xs md:text-sm">
+                <p className="text-center md:text-right text-sm md:text-base">
                   Powered by National Youth Service Corps | BLOGME | DRAGNET. <br />
                   All rights reserved.
                 </p>

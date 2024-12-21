@@ -30,9 +30,9 @@ export default function AppLayout(): React.ReactElement {
           </Suspense>
           <footer className="bg-[#F6F9F8] py-4 md:py-8 px-4 md:px-10 text-sm md:text-base mt-auto z-10 bottom-0 left-0 right-0 sticky">
             <div className="container mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+              <div className="flex flex-row items-stretch justify-between gap-6 md:gap-10 w-full">
                 {/* Contact Section */}
-                <div className="flex flex-col items-center md:items-start">
+                <div className="flex flex-col items-center md:items-start text-sm md:text-base">
                   <h3 className="font-semibold mb-2">Contact Us</h3>
                   <a 
                     href="https://wa.me/2347065245969" 
@@ -52,9 +52,9 @@ export default function AppLayout(): React.ReactElement {
                 {/* Navigation Links */}
                 <div className="flex flex-col items-center md:items-start">
                   <h3 className="font-semibold mb-2">Quick Links</h3>
-                  <Link to="/terms-and-conditions" className="hover:underline mb-1">Terms and Conditions</Link>
-                  <Link to="/advert-policy" className="hover:underline mb-1">Advert Policy</Link>
-                  <Link to="/privacy-policy" className="hover:underline">Privacy Policy</Link>
+                  <Link to="/terms-and-conditions" className="hover:underline mb-1 text-sm md:text-base">Terms and Conditions</Link>
+                  <Link to="/advert-policy" className="hover:underline mb-1 text-sm md:text-base">Advert Policy</Link>
+                  <Link to="/privacy-policy" className="hover:underline text-sm md:text-base">Privacy Policy</Link>
                 </div>
   
                 {/* Social Media and Copyright */}
@@ -66,7 +66,7 @@ export default function AppLayout(): React.ReactElement {
                       alt="Facebook icon"
                     />
                   </a>
-                  <p className="text-center md:text-right text-xs md:text-sm">
+                  <p className="text-center md:text-right text-sm md:text-base">
                     Powered by National Youth Service Corps | BLOGME | DRAGNET. <br />
                     All rights reserved.
                   </p>

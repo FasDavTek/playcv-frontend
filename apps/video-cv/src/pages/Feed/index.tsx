@@ -19,7 +19,7 @@ const Feed = () => {
 
   return (
     <Stack className="flex flex-col">
-      <Box className="min-h-[500px] bg-[#F7FaFF] px-3 md:px-7 lg:px-10 flex justify-center w-full items-start py-10 flex-col gap-6 border-2 border-b-red-700">
+      <Box className="min-h-[500px] bg-[#F7FaFF] px-3 md:px-7 lg:px-10 flex justify-center w-full items-start py-10 flex-col gap-6">
         <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'flex-start', md: 'center' }} justifyContent='space-between' spacing={4} width='100%'>
           <Box flex={2} width={['100%', '70%']}>
             <Typography variant="h3" className="font-bold text-lg md:text-[42px] leading-[60px] md:leading-[72px] text-[#2c3e50]" fontSize={{ xs: '32px', md: '42px' }} sx={{ marginBottom: '1.25rem' }}>
