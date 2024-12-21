@@ -11,7 +11,6 @@ import { postData } from '../utils/apis/apiMethods';
 import { apiEndpoints } from '../utils/apis/apiEndpoints';
 import React from 'react';
 import { options } from 'apps/Employer/src/components/dashboard/PatientActivityChart';
-import { config } from 'process';
 
 interface PaystackConfig {
   email: string;
@@ -198,7 +197,7 @@ const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) =
       });
 
     },
-    [ key, verifyTransaction, onSuccessCB, onCloseCB, config ]
+    [ key, verifyTransaction, onSuccessCB, onCloseCB ]
   );
   
   console.log(paymentReference)
