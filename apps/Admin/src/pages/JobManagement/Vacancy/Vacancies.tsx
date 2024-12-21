@@ -54,7 +54,7 @@ const vacancySchema = z.object({
 type VacancyFormData = z.infer<typeof vacancySchema>;
 
 
-const Vacancies = () => {
+const Vacancies = (selectedItem: any) => {
   const { vacancyId } = useParams<{ vacancyId: any }>();
   const [companyImageFile, setCompanyImageFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -76,12 +76,12 @@ const Vacancies = () => {
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
   useEffect(() => {
-    if (vacancyId) {
+    if (selectedItem && vacancyId) {
       fetchJobDetails(vacancyId)
     } else if (location.state?.job) {
       reset(location.state.job)
     }
-  }, [vacancyId, location.state, reset]);
+  }, [selectedItem, vacancyId, location.state, reset]);
 
   const fetchJobDetails = async (vacancyId: any) => {
     setIsLoading(true);

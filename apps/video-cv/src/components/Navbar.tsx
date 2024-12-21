@@ -48,10 +48,26 @@ const Navbar = () => {
 
   const navbarRef = useRef<HTMLDivElement | null>(null);
 
+  const [isScrolled, setIsScrolled] = useState(false);
   const [showNavbar, setShowNavbar] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const handleShowNavbar = () => {
     setShowNavbar(!showNavbar);
@@ -136,7 +152,9 @@ const Navbar = () => {
   return (
     <div
       ref={navbarRef}
-      className={`flex items-center px-3 md:px-7 sticky bg-white top-0 justify-center z-20 navbar`}
+      className={`flex items-center px-3 md:px-7 sticky bg-white top-0 justify-center z-20 navbar ${
+        isScrolled ? 'scrolled' : ''
+      } bg-white`}
     >
       <div className="w-full mx-auto flex items-center justify-between h-dvh">
         <Link

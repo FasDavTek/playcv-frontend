@@ -31,29 +31,33 @@ interface Jobs {
 }
 
 const JobDetail = () => {
-  const { vacancyId } = useParams<{ vId: any }>();
+  const { vId } = useParams<{ vId: any }>();
  
   const [job, setJob] = useState<Jobs | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  console.log(vacancyId);
+  console.log(vId);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}`, {
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}?vacancyId=${vId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (resp && resp.data) {
           setJob(resp.data);
         }
-
+        else {
+          setError('No job data found');
+        }
       }
       catch (err) {
+        console.error('Error fetching job detail:', err);
+        setError('Error fetching job detail');
         toast.error('Error fetching job detail');
       }
       finally {
@@ -61,14 +65,14 @@ const JobDetail = () => {
       }
     }
 
-    if (vacancyId) {
+    if (vId) {
       fetchJobDetails();
     }
-  }, [vacancyId]);
+  }, [vId]);
 
-  // if (loading) return <Loader />;
-  // if (error) return <div className="text-red-500">{error}</div>;
-  if (!job) return <div>No job found</div>;
+  if (loading) return <Loader />;
+  if (error) return <div className="text-red-500">{error}</div>;
+  if (!job) return <div className='items-center flex text-center'>No job found</div>;
 
   return (
     <div className="job-detail h-[88dvh] overflow-hidden flex flex-col md:flex-row py-10 px-3 md:px-10 gap-5 md:gap-10">

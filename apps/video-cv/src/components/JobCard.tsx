@@ -36,7 +36,7 @@ const JobCard: React.FC<JobProps> = ({ job }: any) => {
         "bg-white p-4 h-72 max-w-[400px] flex flex-col justify-between",
         "transition-all duration-300 ease-in-out hover:shadow-lg"
       )}
-      key={job.vId}
+      key={vId}
     >
       <div className="flex flex-col space-y-1 gap-2">
         <Typography variant="h5" component="h3" className="font-bold truncate">
@@ -77,7 +77,7 @@ const JobCard: React.FC<JobProps> = ({ job }: any) => {
       </div>
       <div className="flex justify-end mt-2">
         <Link
-          to={`/job/${vId}`}
+          to={`/job/${job.vId}`}
           className="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
         >
           Read More

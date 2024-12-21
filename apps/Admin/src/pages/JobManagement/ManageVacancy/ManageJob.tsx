@@ -23,7 +23,7 @@ const s3Client = new S3Client({
 
 interface Job {
     id: number;
-    title: string;
+    jobTitle: string;
     startDate: string;
     location: string;
     locationId: number;
@@ -65,7 +65,7 @@ const ManageJob: React.FC  = () => {
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vacancyId}`);
       if (!response.ok) {
-        const jobData = await response.json()
+        const jobData = await response.data
         reset(jobData)
       }
       else {
@@ -109,7 +109,7 @@ const ManageJob: React.FC  = () => {
         <div className="transform flex-1 transition-all duration-300">
           <div className="mb-3 flex flex-col">
               <span className="font-semibold text-gray-800">Job Title: </span> 
-              <span className="text-gray-600">{job.title}</span>
+              <span className="text-gray-600">{job.jobTitle}</span>
           </div>
           <div className="mb-3 flex flex-col">
               <span className="font-semibold text-gray-800">Job Details: </span> 

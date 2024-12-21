@@ -5,7 +5,7 @@ const index: React.FC = () => {
   return (
     <Container maxWidth="lg" className="py-8">
       <Paper elevation={3} className="p-8">
-        <Typography variant="h4" component="h1" className="mb-10 text-center font-bold">
+        <Typography variant="h4" component="h1" marginBottom='3rem' className="mb-10 text-center font-bold">
           Privacy Policy
         </Typography>
 

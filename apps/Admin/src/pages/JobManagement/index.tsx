@@ -11,30 +11,31 @@ import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 import { useAllCountry } from './../../../../../libs/hooks/useAllCountries';
 import { useAllState } from './../../../../../libs/hooks/useAllState';
 
-type Vacancy = {
-  id: number;
-  title: string;
-  startDate: string;
-  location: string;
-  createdAt: string;
-  employerName: string;
-  companyImage: string;
-  jobDetails: string;
-  qualifications: string;
-  keyResponsibilities: string;
-  companyEmail: string;
-  status: string;
-  jobUrl: string;
-  actions: string;
-};
-
-
 const truncateText = (text: string, wordLimit: number) => {
   const words = text.split(' ');
   if (words.length > wordLimit) {
     return words.slice(0, wordLimit).join(' ') + '...';
   }
   return text;
+};
+
+type Vacancy = {
+  id: number;
+  jobTitle: string;
+  startDate: string;
+  location: string;
+  createdAt: string;
+  companyName: string;
+  companyImage: string;
+  jobDetails: string;
+  qualifications: string;
+  keyResponsibilities: string;
+  specialization: string;
+  companyEmail: string;
+  status: string;
+  dateCreated: string;
+  linkToApply: string;
+  actions: string;
 };
 
 
@@ -44,7 +45,7 @@ const columnHelper = createColumnHelper<Vacancy>();
 const JobManagement = () => {
   const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active');
   const [jobs, setJobs] = useState<Vacancy[]>([]);
-  const [selectedItem, setSelectedIte,] = useState<Vacancy | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Vacancy | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
   const navigate = useNavigate();
@@ -103,7 +104,7 @@ const JobManagement = () => {
   const handleEdit = async (item: Vacancy) => {
     setSelectedItem(item);
     navigate(`/admin/job-management/vacancy`, {
-      state: { jobDetails },
+      state: { item },
     }) 
   };
 

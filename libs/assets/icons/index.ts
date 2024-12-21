@@ -16,5 +16,6 @@ import VideoManagement from './clapperboard-solid.svg';
 import VideoWareHouse from './photo-film-solid.svg';
 import Guideline from './clipboard-list-solid.svg';
 import FacebookLink from './facebook-brands-solid.svg'
+import WhatsAppLink from './whatsapp-svgrepo-com.svg'
 
-export { Hamburger, X, Trash, Cart, Facebook, HouseIcon, User, Vacancy, UserMagnagement, Advert, FAQ, Payment, Content, OrderManagement, VideoManagement, VideoWareHouse, Guideline, FacebookLink };
+export { Hamburger, X, Trash, Cart, Facebook, HouseIcon, User, Vacancy, UserMagnagement, Advert, FAQ, Payment, Content, OrderManagement, VideoManagement, VideoWareHouse, Guideline, FacebookLink, WhatsAppLink };

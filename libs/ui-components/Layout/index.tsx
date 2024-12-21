@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, } from 'react';
 
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { Modal } from '@mui/material';
 
 import './Layout.scss';
@@ -91,18 +91,51 @@ const Layout = ({
         <div className="min-h-screen flex-1 overflow-auto">
           <Outlet />.
         </div>
-        <footer className="bg-[#F6F9F8] py-1 md:py-5 px-3 md:px-10 text-center flex gap-3 justify-center bottom-0 left-0 right-0 sticky">
-          <a href="https://facebook.com/" className="">
-            <img
-              src={Assets.Icons.FacebookLink}
-              className="w-[2.125rem] h-[2.125rem] md:w-[25px] md:h-[25px] icon-blue"
-              alt="facebook icon"
-            />
-          </a>
-          <p className="">
-            Powered by National Youth Service Corps | BLOGME | DRAGNET. All
-            rights reserved.
-          </p>
+        <footer className="bg-[#F6F9F8] py-4 md:py-8 px-4 md:px-10 text-sm md:text-base mt-auto z-10 bottom-0 left-0 right-0 sticky">
+          <div className="container mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+              {/* Contact Section */}
+              <div className="flex flex-col items-center md:items-start">
+                <h3 className="font-semibold mb-2">Contact Us</h3>
+                <a 
+                  href="https://wa.me/2347065245969" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center text-green-600 hover:text-green-700 transition-colors"
+                >
+                  <img
+                    src={Assets.Icons.WhatsAppLink}
+                    alt="WhatsApp"
+                    className="w-5 h-5 mr-2"
+                  />
+                  WhatsApp Chat Support
+                </a>
+              </div>
+
+              {/* Navigation Links */}
+              <div className="flex flex-col items-center md:items-start">
+                <h3 className="font-semibold mb-2">Quick Links</h3>
+                <Link to="/terms-and-conditions" className="hover:underline mb-1">Terms and Conditions</Link>
+                <Link to="/advert-policy" className="hover:underline mb-1">Advert Policy</Link>
+                <Link to="/privacy-policy" className="hover:underline">Privacy Policy</Link>
+              </div>
+
+              {/* Social Media and Copyright */}
+              <div className="flex flex-col items-center md:items-end">
+                <a href="https://facebook.com/" className="mb-2" aria-label="Facebook">
+                  <img
+                    src={Assets.Icons.FacebookLink}
+                    className="w-8 h-8 md:w-6 md:h-6 icon-blue"
+                    alt="Facebook icon"
+                  />
+                </a>
+                <p className="text-center md:text-right text-xs md:text-sm">
+                  Powered by National Youth Service Corps | BLOGME | DRAGNET. <br />
+                  All rights reserved.
+                </p>
+              </div>
+            </div>
+          </div>
         </footer>
       </main>
 

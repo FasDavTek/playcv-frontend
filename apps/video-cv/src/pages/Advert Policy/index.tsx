@@ -5,12 +5,12 @@ const index: React.FC = () => {
   return (
     <Container maxWidth="lg" className="py-8">
       <Paper elevation={3} className="p-8">
-        <Typography variant="h4" component="h1" className="mb-10 text-center font-bold">
+        <Typography variant="h4" component="h1" marginBottom='3rem' className="mb-10 text-center font-bold">
           Advert Policy
         </Typography>
 
         <Box component="section" className="mb-6">
-          <Typography variant="h6" className="mb-2 font-semibold">
+          <Typography variant="h6" marginBottom={'1rem'} className="mb-28 font-bold">
             Advert Placements/Publisher's rights
           </Typography>
           <Typography paragraph>
@@ -43,7 +43,7 @@ const index: React.FC = () => {
         </Box>
 
         <Box component="section" className="mb-6">
-          <Typography variant="h6" className="mb-2 font-semibold">
+          <Typography variant="h6" marginBottom={'.5rem'} className="mb-2 font-semibold">
             Identification and Indemnification
           </Typography>
           <Typography paragraph>
@@ -65,20 +65,20 @@ const index: React.FC = () => {
         </Box>
 
         <Box component="section" className="mb-6">
-          <Typography variant="h6" className="mb-2 font-semibold">
+          <Typography variant="h6" marginBottom={'.5rem'} className="mb-2 font-semibold">
             Contact Us for Advertising
           </Typography>
           <Typography paragraph>
             Thank you for opting for the playCV (Video) platform as an advertising medium to reach your teeming customers/clients. 
             You want to expand the reach of your product/service to the graduate youth market?
           </Typography>
-          <Typography paragraph>
+          <Typography paragraph className='font-extrabold'>
             Then contact us for Advert details:
           </Typography>
-          <Typography paragraph>
+          <Typography paragraph className='font-extrabold'>
             Tel: 07065245969 (WhatsApp chat)
           </Typography>
-          <Typography paragraph>
+          <Typography paragraph className='font-extrabold'>
             E-mail: contact@nyscjobs.ng
           </Typography>
           <Typography paragraph>

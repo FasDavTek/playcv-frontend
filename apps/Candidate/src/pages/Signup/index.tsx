@@ -21,6 +21,10 @@ const schema = z.object({
     businessName: z.string().optional(),
     phoneNumber: z.string().min(10, "Phone number must be at least 11 digits"),
     email: z.string().email("Invalid email format"),
+    isTracked: z.boolean(),
+    userTypeId: z.number(),
+    isBusinessUser: z.boolean(),
+    isProfessional: z.boolean(),
     password: z.string()
       .min(8, "Password must be at least 6 characters long")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
@@ -28,10 +32,6 @@ const schema = z.object({
       .regex(/[0-9]/, "Password must contain at least one number")
       .regex(/[\W_]/, "Password must contain at least one special character"),
     confirmPassword: z.string(),
-    isTracked: z.boolean(),
-    userTypeId: z.number(),
-    isBusinessUser: z.boolean(),
-    isProfessional: z.boolean(),
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
@@ -66,6 +66,8 @@ const index = () => {
 
         setLoading(true);
 
+        let resp;
+
         try {
             const defaultValues = {
                 isTracked: true,
@@ -89,7 +91,7 @@ const index = () => {
                 ...defaultValues,
             };
 
-            const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_REGISTER}`, combinedData);
+            resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_REGISTER}`, combinedData);
 
             if (resp.code === "201") {
                 toast.success(`You're in! Your account has been successfully created.`);
@@ -110,6 +112,7 @@ const index = () => {
             }
         } 
         catch (err: any) {
+            console.log(err)
             if (err.response.data.error.message.includes("User with this email")) {
                 toast.error("This email is already registered. Please use a different email or try logging in.");
             }
