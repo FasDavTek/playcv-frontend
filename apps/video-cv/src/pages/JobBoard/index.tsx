@@ -48,7 +48,7 @@ interface FilterOptions {
   selectedStatus: string;
 }
 
-const heroImages = [Images.HeroImage10, Images.HeroImage11, Images.HeroImage12, Images.HeroImage13, Images.HeroImage14];
+const heroImages = [Images.HeroImage16, Images.HeroImage17, Images.HeroImage18, Images.HeroImage2, Images.HeroImage3];
 
 const JobBoard = () => {
   const [jobs, setJobs] = useState<Jobs[]>([]);
@@ -200,14 +200,14 @@ const JobBoard = () => {
               display: { xs: 'none', md: 'flex' },
               alignSelf: 'center',
               textAlign: 'center',
+              height: '600px'
             }}
             width='40%'
-            height='100%'
           >
-            <Swiper grabCursor={false} loop={true} autoplay={{ delay: 3000, disableOnInteraction: false }} speed={3000} effect={'creative'} creativeEffect={{ prev: { shadow: true, translate: ['-20%', 0, -1], }, next: { translate: ['100%', 0, 0] } }} modules={[EffectCreative, Autoplay]} style={{ width: '100%', maxWidth: '100%', height: '100%', borderRadius: '.75rem' }}>
+            <Swiper grabCursor={false} loop={true} autoplay={{ delay: 3000, disableOnInteraction: false }} speed={3000} effect={'creative'} creativeEffect={{ prev: { shadow: true, translate: ['-20%', 0, -1], }, next: { translate: ['100%', 0, 0] } }} modules={[EffectCreative, Autoplay]} style={{ width: '550px', alignItems: 'center', justifyContent: 'center', height: '600px', borderRadius: '.75rem' }}>
                 {heroImages.map((image: any, index: any) => (
                   <SwiperSlide key={index}>
-                    <img className='!rounded-lg h-full' src={image} alt={`Hero image ${index + 1}`} style={{ width: '100%', objectFit: 'cover', maxWidth: '100%', borderRadius: 'lg' }} />
+                    <img className='!rounded-lg h-full' src={image} alt={`Hero image ${index + 1}`} style={{ objectFit: 'contain', borderRadius: 'lg' }} />
                   </SwiperSlide>
                     
                 ))}

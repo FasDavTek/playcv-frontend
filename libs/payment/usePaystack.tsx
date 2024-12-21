@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 // import PaystackPop from '@paystack/inline-js'
 
-import { PaystackButton } from 'react-paystack';
+import { usePaystackPayment } from 'react-paystack';
 import { HookConfig, PaystackProps } from 'react-paystack/dist/types';
 import { toast } from 'react-toastify';
 import CONFIG from '../utils/helpers/config';
@@ -10,6 +10,8 @@ import { LOCAL_STORAGE_KEYS } from '../utils/localStorage';
 import { postData } from '../utils/apis/apiMethods';
 import { apiEndpoints } from '../utils/apis/apiEndpoints';
 import React from 'react';
+import { options } from 'apps/Employer/src/components/dashboard/PatientActivityChart';
+import { config } from 'process';
 
 interface PaystackConfig {
   email: string;
@@ -95,7 +97,7 @@ export interface PaymentDetails {
   duration?: string;
 }
 
-const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) => void = () => {}, onCloseCB: () => void = () => {}) => {
+const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) => void = () => {}, onCloseCB: () => void = () => {}, options: Partial<HookConfig> = {}) => {
 	const [isProcessing, setIsProcessing] = useState(false);
   const [paymentReference, setPaymentReference] = useState<PaymentDetails | null>(null);
   
@@ -130,19 +132,26 @@ const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) =
   
       const emailString = email.toString();
       console.log(emailString);
-  
-      const componentProps: PaystackProps = ({
+
+      const config: HookConfig = {
         email: emailString,
         amount: amountInKobo,
         publicKey: key,
-        text: `Pay ${amount.toFixed(2)} NGN}`,
+        ...options,
+      }
+
+      const initializePayment = usePaystackPayment(config);
+  
+      setIsProcessing(true);
+
+      initializePayment({
+        ...config,
         onSuccess: async (response: any) => {
           console.log(response);
 
           console.log(response.reference);
-
+          setIsProcessing(false);
           try {
-            setIsProcessing(true);
             const verifyPayment = await verifyTransaction(response.reference);
             console.log(verifyPayment);
 
@@ -188,9 +197,8 @@ const usePaystack = (onSuccessCB: (reference: string, details: PaymentDetails) =
         },
       });
 
-      return <PaystackButton {...componentProps} />;
     },
-    [ key, verifyTransaction, onSuccessCB, onCloseCB  ]
+    [ key, verifyTransaction, onSuccessCB, onCloseCB, config ]
   );
   
   console.log(paymentReference)

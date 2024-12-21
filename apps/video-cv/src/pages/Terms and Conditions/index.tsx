@@ -122,4 +122,3 @@ const index: React.FC = () => {
 };
 
 export default index;
-
