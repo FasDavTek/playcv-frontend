@@ -6,7 +6,7 @@ import { LOCAL_STORAGE_KEYS } from '../../../../libs/utils/localStorage';
 import JobCard from './JobCard';
 
 interface Jobs {
-  vId: string;
+  vId: number;
   jobTitle: string;
   dateCreated: Date;
   startDate: Date;
@@ -24,7 +24,7 @@ interface Jobs {
 }
 
 interface SimilarJobsProps {
-  currentJobId: string;
+  currentJobId: number;
   jobTitle: string;
   specialization: string;
   location: string;

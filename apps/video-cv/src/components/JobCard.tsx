@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Paper, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import clsx from 'clsx';
 
 interface Jobs {
-  vId: string;
+  vId: number;
   jobTitle: string;
   dateCreated: Date;
   startDate: Date;
@@ -26,17 +26,25 @@ interface JobProps {
   job: Jobs;
 }
 
-const JobCard: React.FC<JobProps> = ({ job }: any) => {
-  const { vId, jobTitle, specialization, dateCreated, jobDetails, companyName, companyEmail, keyResponsibilities, linkToApply, qualifications, views, location } = job;
+const JobCard: React.FC<JobProps> = ({ job }) => {
+  const navigate = useNavigate();
+  const { vId, jobTitle, specialization, dateCreated, jobDetails, companyName, companyEmail, keyResponsibilities, linkToApply, qualifications, location } = job;
+  const [selectedItem, setSelectedItem] = useState<Jobs | null>(null);
+
+  const handleViewDetails = async (item: Jobs) => {
+    setSelectedItem(item);
+    navigate(`/job/${item.vId}`, { state: { job: item } });
+  };
+
   return (
     <Paper
       elevation={4}
       square={false}
+      onClick={() => handleViewDetails(job)}
       className={clsx(
         "bg-white p-4 h-72 max-w-[400px] flex flex-col justify-between",
         "transition-all duration-300 ease-in-out hover:shadow-lg"
       )}
-      key={vId}
     >
       <div className="flex flex-col space-y-1 gap-2">
         <Typography variant="h5" component="h3" className="font-bold truncate">
@@ -76,12 +84,13 @@ const JobCard: React.FC<JobProps> = ({ job }: any) => {
         </Typography>
       </div>
       <div className="flex justify-end mt-2">
-        <Link
-          to={`/job/${job.vId}`}
+        <button 
+          type='button'
+          onClick={() => handleViewDetails(job)}
           className="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
         >
           Read More
-        </Link>
+        </button>
       </div>
     </Paper>
   )

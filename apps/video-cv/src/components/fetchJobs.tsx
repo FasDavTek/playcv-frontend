@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import { LOCAL_STORAGE_KEYS } from './../../../../libs/utils/localStorage';
 
 interface Jobs {
-  vId: string;
+  vId: number;
   jobTitle: string;
   dateCreated: Date;
   startDate: Date;

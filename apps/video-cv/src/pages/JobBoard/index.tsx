@@ -24,7 +24,7 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 
 interface Jobs {
-  vid: string;
+  vid: number;
   jobTitle: string;
   dateCreated: Date;
   startDate: Date;

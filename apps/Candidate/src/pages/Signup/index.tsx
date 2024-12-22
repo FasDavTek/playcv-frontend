@@ -33,7 +33,7 @@ const schema = z.object({
       .regex(/[\W_]/, "Password must contain at least one special character"),
     confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
 });
   
@@ -112,21 +112,23 @@ const index = () => {
 
                 navigate('/auth/login');
             }
-            else if (resp.error.code === '400') {
+            else if (resp.code === '400') {
                 toast.error(`We couldn't complete your registration. Please verify your details and give it another go.`);
             }
         } 
         catch (err: any) {
             console.log(err)
-            if (err.response.data.error.message.includes("User with this email")) {
-                toast.error("This email is already registered. Please use a different email or try logging in.");
+            if (err.response.data.error.code === "400") {
+                if (err.response.data.error.message.includes("User with this email")) {
+                    toast.error("This email is already registered. Please use a different email or try logging in.");
+                }
+                else if (err.response.data.error.message.includes("User with phone number")) {
+                    toast.error("This phone number is already registered. Please use a different number or try logging in.");
+                }
+                else {
+                    toast.error(err.message || "An error occurred during signup. Please try again.");
+                };
             }
-            else if (err.response.data.error.message.includes("User with phone number")) {
-                toast.error("This phone number is already registered. Please use a different number or try logging in.");
-            }
-            else {
-                toast.error(err.message || "An error occurred during signup. Please try again.");
-            };
         } 
         finally {
             setLoading(false);

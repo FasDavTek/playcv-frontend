@@ -7,6 +7,7 @@ import { getData, postData } from './../../../../../../libs/utils/apis/apiMethod
 import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
 import dayjs from 'dayjs';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -27,7 +28,7 @@ interface Job {
     startDate: string;
     location: string;
     locationId: number;
-    employerName: string;
+    companyName: string;
     companyImage: string;
     jobDetails: string;
     qualifications: string;
@@ -35,7 +36,7 @@ interface Job {
     companyEmail: string;
     status: 'Active' | 'Expired' | 'Pending' | 'Rejected';
     statusId: number;
-    jobUrl: string;
+    linkToApply: string;
     coverURL: string;
     action: string;
 }
@@ -48,18 +49,32 @@ const ManageJob: React.FC  = () => {
   const [job, setJob] = useState<Job | undefined>(location.state?.job);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-
-  const { register, handleSubmit, watch, control, setValue, reset } = useForm<Job>();
 
   useEffect(() => {
-    if (vId) {
-      setError('No job data found')
-    }
-    else {
-      setLoading(false);
-    }
-  }, [vId]);
+    const fetchJob = async () => {
+      if (!job && vId) {
+        setLoading(true);
+        try {
+          const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+          const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (response.succeeded) {
+            setJob(response.data);
+          } else {
+            setError('Failed to fetch job details');
+          }
+        } catch (err) {
+          console.error('Error fetching job:', err);
+          setError('An error occurred while fetching job details');
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchJob();
+  }, [job, vId]);
 
 
   if (loading) return <CircularProgress />;
@@ -76,11 +91,11 @@ const ManageJob: React.FC  = () => {
         <div className='flex items-center justify-between w-full mb-3'>
           <div className="mb-3 flex flex-col">
               <span className="font-semibold text-gray-800">Company/Employer Name: </span> 
-              <span className="text-xl font-semibold text-gray-700 leading-relaxed">{job. employerName}</span>
+              <span className="text-xl font-semibold text-gray-700 leading-relaxed">{job.companyName}</span>
           </div>
           <img
             src={job?.companyImage}
-            alt={job?.employerName}
+            alt={job?.companyName}
             className="w-24 h-24 rounded-full object-cover"
           />
         </div>
@@ -117,7 +132,7 @@ const ManageJob: React.FC  = () => {
           </div>
           <div className="mb-3 flex flex-col">
               <span className="font-semibold text-gray-800">Application link: </span> 
-              <a href={job.jobUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline transition duration-200 hover:text-blue-800">Job URL</a>
+              <a href={job.linkToApply} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline transition duration-200 hover:text-blue-800">{job.linkToApply}</a>
           </div>
           <div className="mb-3 flex flex-col">
             <span className="font-semibold text-gray-800">Status: </span> 

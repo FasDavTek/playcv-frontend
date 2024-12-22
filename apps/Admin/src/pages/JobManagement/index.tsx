@@ -93,9 +93,10 @@ const JobManagement = () => {
 
 
   const handleView = async (item: Vacancy) => {
+    console.log(selectedItem)
     setSelectedItem(item);
     navigate(`/admin/job-management/view/:${item.vId}`, {
-      state: { item },
+      state: { job: item },
     })
   };
 
@@ -103,7 +104,7 @@ const JobManagement = () => {
   const handleEdit = async (item: Vacancy) => {
     setSelectedItem(item);
     navigate(`/admin/job-management/vacancy`, {
-      state: { item },
+      state: { job: item },
     }) 
   };
 
@@ -151,16 +152,43 @@ const JobManagement = () => {
     }),
     columnHelper.accessor('dateCreated', {
       header: 'Start Date',
-      cell: (info) => info.getValue(),
+      cell: (info) => new Date(info.getValue()).toLocaleDateString(),
     }),
     columnHelper.accessor('status', {
       header: 'Status',
       cell: (info) => {
-        <span className={`px-2 py-1.5 text-center items-center rounded-full ${
-          info.getValue() === 'Active' ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
-        }`}>
-          {info.getValue()}
-        </span>
+        const status = info.getValue();
+        let bgColor = '';
+        let textColor = '';
+
+        switch (status) {
+          case 'Active':
+            bgColor = 'bg-green-200';
+            textColor = 'text-green-700';
+            break;
+          case 'Expired':
+            bgColor = 'bg-gray-200';
+            textColor = 'text-gray-700';
+            break;
+          case 'Pending':
+            bgColor = 'bg-yellow-200';
+            textColor = 'text-yellow-700';
+            break;
+          case 'Rejected':
+            bgColor = 'bg-red-200';
+            textColor = 'text-red-700';
+            break;
+          default:
+            bgColor = 'bg-gray-200';
+            textColor = 'text-gray-700';
+            break;
+        }
+
+        return (
+          <span className={`px-2 py-1.5 rounded-full text-center ${bgColor} ${textColor}`}>
+            {status}
+          </span>
+        );
       },
     }),
     columnHelper.display({
@@ -168,7 +196,7 @@ const JobManagement = () => {
       header: 'Actions',
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Button variant="custom" label="View" onClick={() => navigate(`/admin/job-management/view/:${row.original.vId}`, {state: { jobs: row.original } })} />
+          <Button variant="custom" label="View" onClick={() => handleView(row.original)} />
           <Button variant="success" label="Edit" onClick={() => handleEdit(row.original)} />
           {row.original.status && (
             <Button variant={row.original.status === 'Active' ? 'red' : 'success'} label={row.original.status === 'Active' ? 'Deactivate' : 'Activate'} />

@@ -32,7 +32,7 @@ const schema = z.object({
   isBusinessUser: z.boolean(),
   isProfessional: z.boolean(),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "Passwords do not match",
   path: ["confirmPassword"],
 });
 
@@ -88,11 +88,6 @@ const Index = () => {
         ...defaultValues,
       };
 
-      if (data.password !== data.confirmPassword) {
-        setError("confirmPassword", { message: "Passwords do not match" });
-        return;
-      }
-
       const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_REGISTER}`, combinedData);
 
       if (resp.code === "201") {
@@ -114,10 +109,10 @@ const Index = () => {
       }
     } 
     catch (err: any) {
-      if (err.response.data.error.message.includes("User with this email")) {
+      if (err.response.message.includes("User with this email")) {
         toast.error("This email is already registered. Please use a different email or try logging in.");
       }
-      else if (err.response.data.error.message.includes("User with phone number")) {
+      else if (err.response.message.includes("User with phone number")) {
           toast.error("This phone number is already registered. Please use a different number or try logging in.");
       }
       else {

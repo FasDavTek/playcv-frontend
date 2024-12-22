@@ -67,8 +67,8 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(undefined, async function (error) {
-  const navigate = useNavigate();
   if (error?.response?.status === 401 && getToken()) {
+    const navigate = useNavigate();
     toast.error('Your session has expired. Please log/ in again');
     navigate('/auth/login', { replace: true });
     // localStorage.clear();
@@ -100,23 +100,23 @@ export const getData = async (url: string, config?: AxiosRequestConfig) => {
 };
 
 export const postData = async (url: string, reqBody: any, config?: AxiosRequestConfig) => {
-  // const { data } = await axiosInstance.post(
-  //   url,
-  //   reqBody,
-  //   config,
-  // );
-  // return data;
-  try {
-    const { data } = await axiosInstance.post(url, reqBody, config);
-    return data;
-  } catch (error) {
-      // If the error is an Axios error, throw it to be caught in the calling function
-      if (axios.isAxiosError(error)) {
-          throw error; // This will allow you to catch it in the calling function
-      } else {
-          throw new Error("An unexpected error occurred");
-      }
-  }
+  const { data } = await axiosInstance.post(
+    url,
+    reqBody,
+    config,
+  );
+  return data;
+  // try {
+  //   const { data } = await axiosInstance.post(url, reqBody, config);
+  //   return data;
+  // } catch (error) {
+  //     // If the error is an Axios error, throw it to be caught in the calling function
+  //     if (axios.isAxiosError(error)) {
+  //         throw error; // This will allow you to catch it in the calling function
+  //     } else {
+  //         throw new Error("An unexpected error occurred");
+  //     }
+  // }
 };
 
 export const patchData = async (url: string, reqBody: any, config?: AxiosRequestConfig) => {

@@ -13,7 +13,7 @@ import { useParams } from 'react-router-dom';
 import SimilarJobs from './../../components/SimilarJobs';
 
 interface Jobs {
-  vId: string;
+  vId: number;
   jobTitle: string;
   dateCreated: Date;
   startDate: Date;
@@ -32,43 +32,44 @@ interface Jobs {
 
 const JobDetail = () => {
   const { vId } = useParams<{ vId: any }>();
- 
-  const [job, setJob] = useState<Jobs | null>(null);
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const [job, setJob] = useState<Jobs | undefined>(location.state?.job);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  console.log(vId);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
-      try {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}?vacancyId=${vId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (resp && resp.data) {
-          setJob(resp.data);
-        }
-        else {
-          setError('No job data found');
-        }
-      }
-      catch (err) {
-        console.error('Error fetching job detail:', err);
-        setError('Error fetching job detail');
-        toast.error('Error fetching job detail');
-      }
-      finally {
+      if (!job && vId) {
         setLoading(false);
+        try {
+          const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+          const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+  
+          if (resp && resp.data) {
+            setJob(resp.data);
+            setLoading(false);
+          } else {
+            setError('No job data found');
+          }
+        } catch (err) {
+          console.error('Error fetching job detail:', err);
+          setError('Error fetching job detail');
+          toast.error('Error fetching job detail');
+        } finally {
+          setLoading(false);
+        }
       }
-    }
+      else if (!vId) {
+        setError('No job ID provided');
+        setLoading(false);
+        return;
+      }
+    };
 
-    if (vId) {
-      fetchJobDetails();
-    }
-  }, [vId]);
+    fetchJobDetails();
+  }, [job, vId]);
 
   if (loading) return <Loader />;
   if (error) return <div className="text-red-500">{error}</div>;
@@ -77,9 +78,9 @@ const JobDetail = () => {
   return (
     <div className="job-detail h-[88dvh] overflow-hidden flex flex-col md:flex-row py-10 px-3 md:px-10 gap-5 md:gap-10">
       <section className="flex-[9] overflow-x-scroll">
-      <div className="flex flex-col items-start justify-start md:flex-row md:items-center md:justify-between mb-3">
-          <h5 className="font-bold text-3xl my-5">{job.jobTitle}</h5>
-          <Button label="Apply Now" onClick={() => window.open(job.linkToApply, '_blank')} />
+        <div className="flex flex-col items-start justify-start md:flex-row md:items-center md:justify-between mb-3">
+            <h5 className="font-bold text-3xl my-5">{job.jobTitle}</h5>
+            <Button variant='black' label="Apply Now" onClick={() => window.open(job.linkToApply, '_blank')} />
         </div>
         <div className="flex gap-3">
           <div className="h-16 w-16 border rounded-lg"></div>
@@ -92,23 +93,29 @@ const JobDetail = () => {
           </div>
         </div>
         <div className="mt-6">
-          <section>
-            <h5 className="mt-3 mb-2 font-bold text-2xl">About this role</h5>
-            <p className="whitespace-pre-wrap">{job.jobDetails}</p>
-          </section>
-          <section className="mt-6">
-            <h5 className="mt-3 mb-2 font-bold text-2xl">Qualifications</h5>
-            <p className="whitespace-pre-wrap">{job.qualifications}</p>
-          </section>
-          <section className="mt-6">
-            <h5 className="mt-3 mb-2 font-bold text-2xl">Responsibilities</h5>
-            <ul className="list-disc list-inside">
-              {/* {job.keyResponsibilities.split('\n').map((responsibility, index) => (
-                <li key={index} className="mb-2">{responsibility.trim()}</li>
-              ))} */}
-            </ul>
-            <p className="whitespace-pre-wrap">{job.keyResponsibilities}</p>
-          </section>
+          {job.jobDetails && (
+            <section>
+              <h5 className="mt-3 mb-2 font-bold text-2xl">About this role</h5>
+              <p className="whitespace-pre-wrap">{job.jobDetails}</p>
+            </section>
+          )}
+          {job.qualifications && (
+            <section className="mt-6">
+              <h5 className="mt-3 mb-2 font-bold text-2xl">Qualifications</h5>
+              <p className="whitespace-pre-wrap">{job.qualifications}</p>
+            </section>
+          )}          
+          {job.keyResponsibilities && (
+            <section className="mt-6">
+              <h5 className="mt-3 mb-2 font-bold text-2xl">Responsibilities</h5>
+              <ul className="list-disc list-inside">
+                {/* {job.keyResponsibilities.split('\n').map((responsibility, index) => (
+                  <li key={index} className="mb-2">{responsibility.trim()}</li>
+                ))} */}
+              </ul>
+              <p className="whitespace-pre-wrap">{job.keyResponsibilities}</p>
+            </section>
+          )}
           <div className="flex flex-col gap-2 mt-6">
             <h5 className="my-0 py-0 font-bold text-2xl">How to apply</h5>
             <span className="my-0 py-0">
