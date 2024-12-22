@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 import { CreateAdsModal } from './modals';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
-type ads = {
+type Advert = {
   id: string;
   status: string;
   adName: string;
@@ -26,17 +26,17 @@ type ads = {
   endDate: string;
   userType: string;
   userId: string;
-  action: string;
+  media: { type: string; url: string }[];
 };
 
 type ModalTypes = null | 'confirmationModal' | 'createAds';
 
-const columnHelper = createColumnHelper<ads>();
+const columnHelper = createColumnHelper<Advert>();
 
 const Payment = () => {
-  const [ads, setAds] = useState<ads[]>([]);
+  const [ads, setAds] = useState<Advert[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Advert | null>(null);
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ const Payment = () => {
       }
 
       const currentTime = Date.now();
-      const newAds = data.filter((ad: ads) => new Date(ad.dateCreated).getTime() > lastFetchTime);
+      const newAds = data.filter((ad: Advert) => new Date(ad.dateCreated).getTime() > lastFetchTime);
       if (newAds.length > 0) {
         toast.info(`${newAds.length} new ad(s) uploaded`);
       }
@@ -95,22 +95,11 @@ const Payment = () => {
   }, [search, filter, token]);
 
 
-  const handleView = async (adId: string) => {
-    try {
-      
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${adId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+  const handleView = async (item: Advert) => {
+      setSelectedItem(item);
+      navigate(`/admin/advertisement-management/view/:${item.id}`, {
+        state: { ads: item },
       });
-
-      const adDetails = await response.data;
-      navigate(`/admin/advertisement-management/:${adId}`, {
-        state: { adDetails },
-      });
-    }
-    catch (err) {
-      console.error('Error fetching ad details:', err)
-      toast.error('Failed to fetch ad details')
-    }
   };
   
 
@@ -221,7 +210,7 @@ const Payment = () => {
       cell: ({ row }) => (
         <div className="flex gap-2">
           <Button variant="custom"
-            onClick={() => handleView(row.original.id)}
+            onClick={() => handleView(row.original)}
             label={'View'}  
           >
           </Button>

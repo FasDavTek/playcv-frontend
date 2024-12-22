@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../../libs/utils/helpers/config';
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
 
 
 const s3Client = new S3Client({
@@ -26,6 +27,22 @@ const s3Client = new S3Client({
       secretAccessKey: import.meta.env.VITE_CLOUDFLARE_R2_SECRET_ACCESS_KEY,
     },
 });
+
+interface Advert {
+    id: number;
+    status: string;
+    adName: string;
+    redirectUrl: string;
+    adType: string;
+    dateCreated: string;
+    authorName: string;
+    adDescription: string;
+    startDate: string;
+    endDate: string;
+    userType: string;
+    userId: string;
+    media: { type: string; url: string }[];
+}
 
 type AdFormData = z.infer<typeof advertSchema>;
 
@@ -41,13 +58,15 @@ interface AdDetails extends Omit<AdFormData, 'files'> {
 }
 
 const ViewAds = () => {
-    const { id } = useParams<{ id: string }>();
+    const { id } = useParams<{ id: any }>();
     const location = useLocation();
     const navigate = useNavigate();
     const [adDetails, setAdDetails] = useState<AdDetails | null>(null)
+    const [ads, setAds] = useState<Advert | undefined>(location.state?.ads);
     const [adTypes, setAdTypes] = useState<AdType[]>([])
     const [isEditing, setIsEditing] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null)
     const [newMedia, setNewMedia] = useState<File[]>([])
     const { register, handleSubmit, reset, watch, setValue, control, formState: { errors }, } = useForm<AdFormData>({
@@ -89,30 +108,39 @@ const ViewAds = () => {
 
     useEffect(() => {
         const fetchAdDetails = async () => {
-          try {
-            if (!id) throw new Error('Ad ID is not defined')
-            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${id}`)
-            if (!response.ok) throw new Error('Failed to fetch ad details')
-            const data: AdDetails = await response.json()
-            setAdDetails(data)
-            reset({
-                ...data,
-                action: 'edit',
-                adId: data.adId,
-            });
-          } 
-          catch (err) {
-            console.error('Error fetching ad details:', err)
-            setError('Failed to load ad details')
-            toast.error('Failed to load ad details')
-          }
+            if (!ads && id) {
+                setLoading(true);
+                try {
+                    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+                    const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${id}`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    })
+                    if (response.succeeded) {
+                        const data = await response.data;
+                        setAds(data)
+                        reset({
+                            ...data,
+                            action: 'edit',
+                            adId: data.adId,
+                        });
+                    }
+                } 
+                catch (err) {
+                console.error('Error fetching ad details:', err)
+                setError('Failed to load ad details')
+                toast.error('Failed to load ad details')
+                }
+            }
         }
     
         const fetchAdTypes = async () => {
           try {
-            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
-            if (!response.ok) throw new Error('Failed to fetch ad types')
-            const data: string[] = await response.json()
+            const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            const data: string[] = await response;
+            console.log("", data)
             setAdTypes(data.map(type => ({ value: type as string, label: type })))
           } 
           catch (err) {
@@ -127,9 +155,9 @@ const ViewAds = () => {
 
     const onSubmit = async (data: AdFormData) => {
         try {
-            if (!adDetails || !id) throw new Error('Ad details are not available')
+            if (!ads || !id) throw new Error('Ad details are not available')
 
-            let updatedMedia: { type: string; url: string }[] = [...adDetails.media]
+            let updatedMedia: { type: string; url: string }[] = [...ads.media]
     
           if (newMedia.length > 0) {
               const uploadPromises = newMedia.map(async (file) => {
@@ -141,11 +169,11 @@ const ViewAds = () => {
             updatedMedia = [...updatedMedia, ...uploadedMedia] as { type: string; url: string }[]
           }
     
-          const updatedData: AdDetails = {
+          const updatedData = {
             ...data,
             id,
             media: updatedMedia,
-            status: adDetails.status,
+            status: ads.status,
           }
     
           const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData)
@@ -153,7 +181,7 @@ const ViewAds = () => {
           
           toast.success('Ad updated successfully')
           setIsEditing(false)
-          setAdDetails(updatedData)
+        //   setAdDetails(response)
           reset(updatedData)
           setNewMedia([])
         } catch (err) {
@@ -172,7 +200,7 @@ const ViewAds = () => {
         );
     }
 
-    if (error || !adDetails) {
+    if (error || !ads) {
         return (
           <div className="items-center justify-center min-h-screen">
             <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/advertisement-management')} />
@@ -181,7 +209,7 @@ const ViewAds = () => {
         )
     };
 
-    const isAdStarted = adDetails.status === 'approved' && new Date(adDetails.startDate) <= new Date();
+    const isAdStarted = ads.status === 'approved' && new Date(ads.startDate) <= new Date();
 
   return (
     <div className="p-6 bg-gray-50 mb-8">
@@ -302,28 +330,28 @@ const ViewAds = () => {
             </form>
             ) : (
                 <>
-                    <h1 className="text-3xl font-semibold text-gray-700 mb-4">{adDetails.adName}</h1>
+                    <h1 className="text-3xl font-semibold text-gray-700 mb-4">{ads.adName}</h1>
                     <div className="mb-3">
-                        <span className="font-semibold text-gray-800">Description:</span> <span className="text-gray-600 text-lg leading-relaxed">{adDetails.adDescription}</span>
+                        <span className="font-semibold text-gray-800">Description:</span> <span className="text-gray-600 text-lg leading-relaxed">{ads.adDescription}</span>
                     </div>
                     <div className="mb-3">
-                        <span className="font-semibold text-gray-800">Ad Type:</span> <span className="text-gray-600">{adDetails.adTypeName}</span>
+                        <span className="font-semibold text-gray-800">Ad Type:</span> <span className="text-gray-600">{ads.adType}</span>
                     </div>
                     <div className="mb-3">
                         <span className="font-semibold text-gray-800">Redirect URL:</span>
-                        <a href={adDetails.adUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 ml-2 underline transition duration-200 hover:text-blue-800">
-                            {adDetails.adUrl}
+                        <a href={ads.redirectUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 ml-2 underline transition duration-200 hover:text-blue-800">
+                            {ads.redirectUrl}
                         </a>
                     </div>
                     <div className="mb-3">
-                        <span className="font-semibold text-gray-800">Start Date:</span> <span className="text-gray-600">{formatDate(adDetails.startDate)}</span>
+                        <span className="font-semibold text-gray-800">Start Date:</span> <span className="text-gray-600">{formatDate(ads.startDate)}</span>
                     </div>
                     <div className="mb-3">
-                        <span className="font-semibold text-gray-800">End Date:</span> <span className="text-gray-600">{formatDate(adDetails.endDate)}</span>
+                        <span className="font-semibold text-gray-800">End Date:</span> <span className="text-gray-600">{formatDate(ads.endDate)}</span>
                     </div>
                     <h2 className="text-xl font-semibold mt-10 mb-6 text-gray-800">Media</h2>
                     <Grid container spacing={4}>
-                        {[...(adDetails.media ? adDetails.media : []), ...newMedia.map(file => ({
+                        {[...(ads.media ? ads.media : []), ...newMedia.map(file => ({
                             type: file.type.startsWith('image/') ? 'image' as const : 'video' as const,
                             url: URL.createObjectURL(file)
                         }))].map((item, index) => (

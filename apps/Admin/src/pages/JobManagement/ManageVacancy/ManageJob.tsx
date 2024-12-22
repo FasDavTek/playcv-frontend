@@ -87,7 +87,7 @@ const ManageJob: React.FC  = () => {
     <div className='p-6 bg-gray-50 mb-8'>
       <ChevronLeftIcon className="cursor-pointer text-base mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/job-management')} />
 
-      <div className="bg-white flex flex-col p-10 shadow-md rounded-2xl transform transition-all duration-300 hover:shadow-2xl">
+      <div className="bg-white flex flex-col p-10 shadow-md rounded-2xl transform transition-all duration-300">
         <div className='flex items-center justify-between w-full mb-3'>
           <div className="mb-3 flex flex-col">
               <span className="font-semibold text-gray-800">Company/Employer Name: </span> 

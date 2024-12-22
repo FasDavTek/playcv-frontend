@@ -93,7 +93,6 @@ const JobManagement = () => {
 
 
   const handleView = async (item: Vacancy) => {
-    console.log(selectedItem)
     setSelectedItem(item);
     navigate(`/admin/job-management/view/:${item.vId}`, {
       state: { job: item },
