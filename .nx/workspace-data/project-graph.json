@@ -1,5 +1,88 @@
 {
   "nodes": {
+    "<TBD>": {
+      "name": "<TBD>",
+      "type": "lib",
+      "data": {
+        "root": "bold-limit-3469",
+        "metadata": {},
+        "targets": {
+          "typecheck": {
+            "cache": true,
+            "inputs": [
+              "production",
+              "^production",
+              {
+                "externalDependencies": [
+                  "typescript"
+                ]
+              }
+            ],
+            "options": {
+              "cwd": "bold-limit-3469",
+              "command": "tsc --noEmit -p tsconfig.json"
+            },
+            "metadata": {
+              "description": "Run Typechecking",
+              "help": {
+                "command": "yarn tsc --help -p tsconfig.json",
+                "example": {
+                  "options": {
+                    "noEmit": true
+                  }
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          },
+          "test": {
+            "options": {
+              "cwd": "bold-limit-3469",
+              "command": "vitest"
+            },
+            "cache": true,
+            "inputs": [
+              "default",
+              "^production",
+              {
+                "externalDependencies": [
+                  "vitest"
+                ]
+              },
+              {
+                "env": "CI"
+              }
+            ],
+            "outputs": [
+              "{workspaceRoot}/coverage/{projectRoot}"
+            ],
+            "metadata": {
+              "technologies": [
+                "vite"
+              ],
+              "description": "Run Vite tests",
+              "help": {
+                "command": "yarn vitest --help",
+                "example": {
+                  "options": {
+                    "bail": 1,
+                    "coverage": true
+                  }
+                }
+              }
+            },
+            "executor": "nx:run-commands",
+            "configurations": {},
+            "parallelism": true
+          }
+        },
+        "name": "<TBD>",
+        "implicitDependencies": [],
+        "tags": []
+      }
+    },
     "Candidate": {
       "name": "Candidate",
       "type": "app",
@@ -8007,18 +8090,18 @@
         "hash": "sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA=="
       }
     },
-    "npm:caniuse-lite": {
+    "npm:caniuse-lite@1.0.30001689": {
       "type": "npm",
-      "name": "npm:caniuse-lite",
+      "name": "npm:caniuse-lite@1.0.30001689",
       "data": {
         "version": "1.0.30001689",
         "packageName": "caniuse-lite",
         "hash": "sha512-CmeR2VBycfa+5/jOfnp/NpWPGd06nf1XYiefUvhXFfZE4GkRc9jv+eGPS4nT558WS/8lYCzV8SlANCIPvbWP1g=="
       }
     },
-    "npm:caniuse-lite@1.0.30001683": {
+    "npm:caniuse-lite": {
       "type": "npm",
-      "name": "npm:caniuse-lite@1.0.30001683",
+      "name": "npm:caniuse-lite",
       "data": {
         "version": "1.0.30001683",
         "packageName": "caniuse-lite",
@@ -8385,18 +8468,18 @@
         "hash": "sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA=="
       }
     },
-    "npm:convert-source-map@1.9.0": {
+    "npm:convert-source-map": {
       "type": "npm",
-      "name": "npm:convert-source-map@1.9.0",
+      "name": "npm:convert-source-map",
       "data": {
         "version": "1.9.0",
         "packageName": "convert-source-map",
         "hash": "sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A=="
       }
     },
-    "npm:convert-source-map": {
+    "npm:convert-source-map@2.0.0": {
       "type": "npm",
-      "name": "npm:convert-source-map",
+      "name": "npm:convert-source-map@2.0.0",
       "data": {
         "version": "2.0.0",
         "packageName": "convert-source-map",
@@ -8412,18 +8495,18 @@
         "hash": "sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ=="
       }
     },
-    "npm:cookie@0.7.1": {
+    "npm:cookie": {
       "type": "npm",
-      "name": "npm:cookie@0.7.1",
+      "name": "npm:cookie",
       "data": {
         "version": "0.7.1",
         "packageName": "cookie",
         "hash": "sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w=="
       }
     },
-    "npm:cookie": {
+    "npm:cookie@0.7.2": {
       "type": "npm",
-      "name": "npm:cookie",
+      "name": "npm:cookie@0.7.2",
       "data": {
         "version": "0.7.2",
         "packageName": "cookie",
@@ -10383,18 +10466,18 @@
         "hash": "sha512-hkLPepehmnKk41pUGm3sYxoFs/umurYfYJCerbXEyFIWcAzvpipAgVkBqqT9RBKMGjnq6kMuyYwha6csxbiM1A=="
       }
     },
-    "npm:glob": {
+    "npm:glob@10.4.5": {
       "type": "npm",
-      "name": "npm:glob",
+      "name": "npm:glob@10.4.5",
       "data": {
         "version": "10.4.5",
         "packageName": "glob",
         "hash": "sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg=="
       }
     },
-    "npm:glob@7.2.3": {
+    "npm:glob": {
       "type": "npm",
-      "name": "npm:glob@7.2.3",
+      "name": "npm:glob",
       "data": {
         "version": "7.2.3",
         "packageName": "glob",
@@ -16136,6 +16219,23 @@
     }
   },
   "dependencies": {
+    "<TBD>": [
+      {
+        "source": "<TBD>",
+        "target": "npm:typescript",
+        "type": "static"
+      },
+      {
+        "source": "<TBD>",
+        "target": "npm:vitest",
+        "type": "static"
+      },
+      {
+        "source": "<TBD>",
+        "target": "npm:wrangler",
+        "type": "static"
+      }
+    ],
     "Candidate": [
       {
         "source": "Candidate",
@@ -18738,7 +18838,7 @@
       },
       {
         "source": "npm:@babel/core@7.24.5",
-        "target": "npm:convert-source-map",
+        "target": "npm:convert-source-map@2.0.0",
         "type": "static"
       },
       {
@@ -18815,7 +18915,7 @@
       },
       {
         "source": "npm:@babel/core",
-        "target": "npm:convert-source-map",
+        "target": "npm:convert-source-map@2.0.0",
         "type": "static"
       },
       {
@@ -20649,7 +20749,7 @@
       },
       {
         "source": "npm:@emotion/babel-plugin",
-        "target": "npm:convert-source-map@1.9.0",
+        "target": "npm:convert-source-map",
         "type": "static"
       },
       {
@@ -23041,7 +23141,7 @@
       },
       {
         "source": "npm:@rspack/core",
-        "target": "npm:caniuse-lite",
+        "target": "npm:caniuse-lite@1.0.30001689",
         "type": "static"
       }
     ],
@@ -26004,7 +26104,7 @@
       },
       {
         "source": "npm:autoprefixer",
-        "target": "npm:caniuse-lite@1.0.30001683",
+        "target": "npm:caniuse-lite",
         "type": "static"
       },
       {
@@ -26361,7 +26461,7 @@
     "npm:browserslist@4.24.3": [
       {
         "source": "npm:browserslist@4.24.3",
-        "target": "npm:caniuse-lite",
+        "target": "npm:caniuse-lite@1.0.30001689",
         "type": "static"
       },
       {
@@ -26383,7 +26483,7 @@
     "npm:browserslist": [
       {
         "source": "npm:browserslist",
-        "target": "npm:caniuse-lite@1.0.30001683",
+        "target": "npm:caniuse-lite",
         "type": "static"
       },
       {
@@ -27409,7 +27509,7 @@
       },
       {
         "source": "npm:engine.io",
-        "target": "npm:cookie",
+        "target": "npm:cookie@0.7.2",
         "type": "static"
       },
       {
@@ -28901,7 +29001,7 @@
       },
       {
         "source": "npm:express",
-        "target": "npm:cookie@0.7.1",
+        "target": "npm:cookie",
         "type": "static"
       },
       {
@@ -29542,66 +29642,66 @@
         "type": "static"
       }
     ],
-    "npm:glob": [
+    "npm:glob@10.4.5": [
       {
-        "source": "npm:glob",
+        "source": "npm:glob@10.4.5",
         "target": "npm:foreground-child",
         "type": "static"
       },
       {
-        "source": "npm:glob",
+        "source": "npm:glob@10.4.5",
         "target": "npm:jackspeak",
         "type": "static"
       },
       {
-        "source": "npm:glob",
+        "source": "npm:glob@10.4.5",
         "target": "npm:minimatch@9.0.5",
         "type": "static"
       },
       {
-        "source": "npm:glob",
+        "source": "npm:glob@10.4.5",
         "target": "npm:minipass",
         "type": "static"
       },
       {
-        "source": "npm:glob",
+        "source": "npm:glob@10.4.5",
         "target": "npm:package-json-from-dist",
         "type": "static"
       },
       {
-        "source": "npm:glob",
+        "source": "npm:glob@10.4.5",
         "target": "npm:path-scurry",
         "type": "static"
       }
     ],
-    "npm:glob@7.2.3": [
+    "npm:glob": [
       {
-        "source": "npm:glob@7.2.3",
+        "source": "npm:glob",
         "target": "npm:fs.realpath",
         "type": "static"
       },
       {
-        "source": "npm:glob@7.2.3",
+        "source": "npm:glob",
         "target": "npm:inflight",
         "type": "static"
       },
       {
-        "source": "npm:glob@7.2.3",
+        "source": "npm:glob",
         "target": "npm:inherits",
         "type": "static"
       },
       {
-        "source": "npm:glob@7.2.3",
+        "source": "npm:glob",
         "target": "npm:minimatch",
         "type": "static"
       },
       {
-        "source": "npm:glob@7.2.3",
+        "source": "npm:glob",
         "target": "npm:once",
         "type": "static"
       },
       {
-        "source": "npm:glob@7.2.3",
+        "source": "npm:glob",
         "target": "npm:path-is-absolute",
         "type": "static"
       }
@@ -30457,7 +30557,7 @@
       },
       {
         "source": "npm:js-beautify",
-        "target": "npm:glob",
+        "target": "npm:glob@10.4.5",
         "type": "static"
       },
       {
@@ -31236,7 +31336,7 @@
       },
       {
         "source": "npm:next",
-        "target": "npm:caniuse-lite",
+        "target": "npm:caniuse-lite@1.0.30001689",
         "type": "static"
       },
       {
@@ -33696,7 +33796,7 @@
     "npm:rimraf": [
       {
         "source": "npm:rimraf",
-        "target": "npm:glob@7.2.3",
+        "target": "npm:glob",
         "type": "static"
       }
     ],
@@ -34797,7 +34897,7 @@
       },
       {
         "source": "npm:sucrase",
-        "target": "npm:glob",
+        "target": "npm:glob@10.4.5",
         "type": "static"
       },
       {
@@ -35068,7 +35168,7 @@
       },
       {
         "source": "npm:test-exclude",
-        "target": "npm:glob@7.2.3",
+        "target": "npm:glob",
         "type": "static"
       },
       {
@@ -36230,7 +36330,7 @@
     "npm:youch": [
       {
         "source": "npm:youch",
-        "target": "npm:cookie",
+        "target": "npm:cookie@0.7.2",
         "type": "static"
       },
       {

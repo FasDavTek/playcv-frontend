@@ -56,34 +56,6 @@ const Payment = () => {
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
 
-  const checkPaymentStatus = async () => {
-    try {
-     
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Page=1&Limit=100`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const data = await response.data;
-      
-      if (!data || !data.checkoutId) {
-        openSetModalFn('confirmationModal');
-      } else {
-        toast.info('You have an existing payment for video upload that you have not yet completed.');
-        navigate(`/candidate/video-management/create`, { 
-          state: { 
-            checkoutId: data.checkoutId,
-          } 
-        });
-      }
-    } 
-    catch (error) {
-      console.error('Error checking payment status:', error);
-      toast.warning('There was an error checking your payment status. Please try again later.');
-    }
-  };
-
-
-
   const fetchAds = async () => {
     setLoading(true);
     try {
