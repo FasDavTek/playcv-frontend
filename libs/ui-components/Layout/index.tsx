@@ -93,9 +93,9 @@ const Layout = ({
         </div>
         <footer className="bg-[#F6F9F8] py-4 md:py-8 px-4 md:px-10 text-sm md:text-base mt-auto z-10 bottom-0 left-0 right-0 sticky">
           <div className="container mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
+            <div className="flex flex-col md:flex-row items-start md:items-stretch md:justify-between gap-6 md:gap-10 w-full">
               {/* Contact Section */}
-              <div className="flex flex-col items-center md:items-start text-sm md:text-base">
+              <div className="flex flex-col items-start text-sm md:text-base">
                 <h3 className="font-semibold mb-2">Contact Us</h3>
                 <a 
                   href="https://wa.me/2347065245969" 
@@ -113,7 +113,7 @@ const Layout = ({
               </div>
 
               {/* Navigation Links */}
-              <div className="flex flex-col items-center md:items-start">
+              <div className="flex flex-col items-start">
                 <h3 className="font-semibold mb-2">Quick Links</h3>
                 <Link to="/terms-and-conditions" className="hover:underline mb-1 text-sm md:text-base">Terms and Conditions</Link>
                 <Link to="/advert-policy" className="hover:underline mb-1 text-sm md:text-base">Advert Policy</Link>
@@ -121,7 +121,7 @@ const Layout = ({
               </div>
 
               {/* Social Media and Copyright */}
-              <div className="flex flex-col items-center md:items-end">
+              <div className="flex flex-col items-start md:items-end">
                 <a href="https://facebook.com/" className="mb-2" aria-label="Facebook">
                   <img
                     src={Assets.Icons.FacebookLink}
@@ -129,7 +129,7 @@ const Layout = ({
                     alt="Facebook icon"
                   />
                 </a>
-                <p className="text-center md:text-right text-sm md:text-base">
+                <p className="text-left md:text-right text-sm md:text-base">
                   Powered by National Youth Service Corps | BLOGME | DRAGNET. <br />
                   All rights reserved.
                 </p>
