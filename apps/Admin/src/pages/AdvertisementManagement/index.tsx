@@ -26,7 +26,7 @@ type Advert = {
   endDate: string;
   userType: string;
   userId: string;
-  media: { type: string; url: string }[];
+  coverUrl: string;
 };
 
 type ModalTypes = null | 'confirmationModal' | 'createAds';
@@ -103,11 +103,11 @@ const Payment = () => {
   };
   
 
-  const handleAdAction = async (adId: string, action: string, reason?: string) => {
+  const handleAdAction = async (id: string, action: string, reason?: string) => {
     try {
 
       const apiData = {
-        adId,
+        id,
         action,
         reason
       }
@@ -124,10 +124,10 @@ const Payment = () => {
     };
   };
 
-  const handleActivate = (adId: string) => handleAdAction(adId, 'a')
+  const handleActivate = (id: string) => handleAdAction(id, 'a')
 
-  const handleOpenSuspendDialog = (adId: string, title: string) => {
-    setSelectedAdId(adId)
+  const handleOpenSuspendDialog = (id: string, title: string) => {
+    setSelectedAdId(id)
     setSelectedAdTitle(title)
     setOpenDialog(true)
   }
@@ -146,13 +146,13 @@ const Payment = () => {
     setReason('')
   }
 
-  const handleStatusToggle = async (adId: string, currentStatus: string) => {
+  const handleStatusToggle = async (id: string, currentStatus: string) => {
     try {
       const newStatus = currentStatus === 'active' ? 'suspended' : 'active'
       
       setAds((prevAds) =>
         prevAds.map((ad) =>
-          ad.id === adId ? { ...ad, status: newStatus } : ad
+          ad.id === id ? { ...ad, status: newStatus } : ad
         )
       )
       toast.success(`Ad ${newStatus === 'active' ? 'activated' : 'suspended'} successfully`)
@@ -205,7 +205,8 @@ const Payment = () => {
         </span>
       ),
     }),
-    columnHelper.accessor('id', {
+    columnHelper.display({
+      id: 'actions',
       header: 'Action',
       cell: ({ row }) => (
         <div className="flex gap-2">

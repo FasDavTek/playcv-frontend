@@ -19,7 +19,7 @@ export const advertSchema = z.object({
   adName: z.string({required_error: ErrorMessages.required('Ad Name'),}).min(1, "Ad Name is required"),
   adDescription: z.string({required_error: ErrorMessages.required('Ad Description'),}).min(1, "Ad Description is required"),
   adUrl: z.string({required_error: ErrorMessages.required('Ad Url'),}).url("Must be a valid URL"),
-  adTypeName: z.string({
+  adType: z.string({
     required_error: ErrorMessages.required("Ad Type"),
   }).optional(),
   adTypeId: z.number().optional(),

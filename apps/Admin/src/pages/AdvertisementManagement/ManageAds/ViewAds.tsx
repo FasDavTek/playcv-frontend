@@ -41,7 +41,7 @@ interface Advert {
     endDate: string;
     userType: string;
     userId: string;
-    media: { type: string; url: string }[];
+    coverUrl: { type: string; url: string }[];
 }
 
 type AdFormData = z.infer<typeof advertSchema>;
@@ -49,7 +49,7 @@ type AdFormData = z.infer<typeof advertSchema>;
 interface AdType {
     value: string
     label: string
-  }
+}
 
 interface AdDetails extends Omit<AdFormData, 'files'> {
     id: string
@@ -72,6 +72,9 @@ const ViewAds = () => {
     const { register, handleSubmit, reset, watch, setValue, control, formState: { errors }, } = useForm<AdFormData>({
         resolver: zodResolver(advertSchema),
     });
+
+
+    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
 
     const handleFileUpload = useCallback(async (file: File) => {
@@ -111,7 +114,6 @@ const ViewAds = () => {
             if (!ads && id) {
                 setLoading(true);
                 try {
-                    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
                     const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${id}`, {
                         headers: { Authorization: `Bearer ${token}` },
                     })
@@ -119,9 +121,14 @@ const ViewAds = () => {
                         const data = await response.data;
                         setAds(data)
                         reset({
-                            ...data,
+                            adName: data.adName,
+                            adDescription: data.adDescription,
+                            adUrl: data.redirectUrl,
+                            startDate: new Date(data.startDate),
+                            endDate: new Date(data.endDate),
+                            adType: data.adType,
                             action: 'edit',
-                            adId: data.adId,
+                            adId: data.id,
                         });
                     }
                 } 
@@ -131,16 +138,27 @@ const ViewAds = () => {
                 toast.error('Failed to load ad details')
                 }
             }
+            else if (ads) {
+                // If ads data is already available (from location state), populate form fields
+                reset({
+                    adName: ads.adName,
+                    adDescription: ads.adDescription,
+                    adUrl: ads.redirectUrl,
+                    startDate: new Date(ads.startDate),
+                    endDate: new Date(ads.endDate),
+                    adType: ads.adType,
+                    action: 'edit',
+                    adId: ads.id,
+                });
+            }
         }
     
         const fetchAdTypes = async () => {
           try {
-            const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
             const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             const data: string[] = await response;
-            console.log("", data)
             setAdTypes(data.map(type => ({ value: type as string, label: type })))
           } 
           catch (err) {
@@ -151,39 +169,50 @@ const ViewAds = () => {
     
         Promise.all([fetchAdDetails(), fetchAdTypes()]).finally(() => setIsLoading(false))
     }, [id, reset]);
-
+    
 
     const onSubmit = async (data: AdFormData) => {
         try {
-            if (!ads || !id) throw new Error('Ad details are not available')
+          if (!ads || !id) throw new Error('Ad details are not available')
 
-            let updatedMedia: { type: string; url: string }[] = [...ads.media]
+          let updatedMedia = [...ads.coverUrl]
     
           if (newMedia.length > 0) {
               const uploadPromises = newMedia.map(async (file) => {
                 const uploadedUrl = await handleFileUpload(file)
-                return { type: file.type.startsWith('image/') ? 'image' : 'video' as const, url: uploadedUrl }
-            })
+                return { type: file.type.startsWith('image/') ? 'image' : 'video' as const, url: uploadedUrl };
+              })
     
-            const uploadedMedia = await Promise.all(uploadPromises)
-            updatedMedia = [...updatedMedia, ...uploadedMedia] as { type: string; url: string }[]
+          const uploadedMedia = await Promise.all(uploadPromises)
+            updatedMedia = [...updatedMedia, ...uploadedMedia] as { type: string; url: string }[];
           }
+    
+          const userBiodata = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
     
           const updatedData = {
-            ...data,
-            id,
-            media: updatedMedia,
-            status: ads.status,
+            name: data.adName,
+            description: data.adDescription,
+            redirectUrl: data.adUrl,
+            adTypeId: data.adTypeId,
+            userId: userBiodata,
+            statusId: ads.status === 'approved' ? 2 : 1, // Assuming 1 for pending, 2 for approved
+            coverUrl: updatedMedia[0]?.url || '',
+            startDate: data.startDate,
+            endDate: data.endDate,
+            action: 'edit',
+            id: id
           }
     
-          const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData)
-          if (!response.ok) throw new Error('Failed to update ad')
+          const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
           
           toast.success('Ad updated successfully')
           setIsEditing(false)
         //   setAdDetails(response)
-          reset(updatedData)
-          setNewMedia([])
+        //   reset(updatedData)
+          setNewMedia([]);
+          if (!response.ok) throw new Error('Failed to update ad')
         } catch (err) {
           console.error('Error updating ad:', err)
           toast.error('Failed to update ad')
@@ -217,7 +246,7 @@ const ViewAds = () => {
       
       <div className="bg-white p-10 shadow-md rounded-2xl transform transition-all duration-300">
         <div className="flex justify-end items-center mb-4">
-            <Button variant={isEditing? 'red' : 'success'} label={isEditing ? 'Cancel' : 'Edit Advert'} onClick={() => setIsEditing(isEditing)} />
+            <Button variant={isEditing? 'red' : 'success'} label={isEditing ? 'Cancel' : 'Edit Advert'} onClick={() => setIsEditing(!isEditing)} />
         </div>
         
         {isEditing ? (
@@ -351,7 +380,7 @@ const ViewAds = () => {
                     </div>
                     <h2 className="text-xl font-semibold mt-10 mb-6 text-gray-800">Media</h2>
                     <Grid container spacing={4}>
-                        {[...(ads.media ? ads.media : []), ...newMedia.map(file => ({
+                        {[...(ads.coverUrl ? ads.coverUrl : []), ...newMedia.map(file => ({
                             type: file.type.startsWith('image/') ? 'image' as const : 'video' as const,
                             url: URL.createObjectURL(file)
                         }))].map((item, index) => (

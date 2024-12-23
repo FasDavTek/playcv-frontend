@@ -1,5 +1,5 @@
 {
-  "11313526262689043403bold-limit-3469/vitest.config.mts": {
+  "3337136687766706942bold-limit-3469/vitest.config.mts": {
     "targets": {
       "typecheck": {
         "cache": true,
@@ -68,163 +68,7 @@
     },
     "metadata": {}
   },
-  "9051621921147695553apps/Admin/vite.config.ts": {
-    "targets": {
-      "build": {
-        "command": "vite build",
-        "options": {
-          "cwd": "apps/Admin"
-        },
-        "cache": true,
-        "dependsOn": [
-          "^build"
-        ],
-        "inputs": [
-          "production",
-          "^production",
-          {
-            "externalDependencies": [
-              "vite"
-            ]
-          }
-        ],
-        "outputs": [
-          "{workspaceRoot}\\dist\\apps\\Admin"
-        ],
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Run Vite build",
-          "help": {
-            "command": "yarn vite build --help",
-            "example": {
-              "options": {
-                "sourcemap": true,
-                "manifest": "manifest.json"
-              }
-            }
-          }
-        }
-      },
-      "serve": {
-        "command": "vite serve",
-        "options": {
-          "cwd": "apps/Admin"
-        },
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Starts Vite dev server",
-          "help": {
-            "command": "yarn vite --help",
-            "example": {
-              "options": {
-                "port": 3000
-              }
-            }
-          }
-        }
-      },
-      "preview": {
-        "command": "vite preview",
-        "dependsOn": [
-          "build"
-        ],
-        "options": {
-          "cwd": "apps/Admin"
-        },
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Locally preview Vite production build",
-          "help": {
-            "command": "yarn vite preview --help",
-            "example": {
-              "options": {
-                "port": 3000
-              }
-            }
-          }
-        }
-      },
-      "serve-static": {
-        "executor": "@nx/web:file-server",
-        "options": {
-          "buildTarget": "build",
-          "spa": true
-        }
-      },
-      "typecheck": {
-        "cache": true,
-        "inputs": [
-          "production",
-          "^production",
-          {
-            "externalDependencies": [
-              "typescript"
-            ]
-          }
-        ],
-        "command": "tsc --noEmit -p tsconfig.app.json",
-        "options": {
-          "cwd": "apps/Admin"
-        },
-        "metadata": {
-          "description": "Run Typechecking",
-          "help": {
-            "command": "yarn tsc --help -p tsconfig.app.json",
-            "example": {
-              "options": {
-                "noEmit": true
-              }
-            }
-          }
-        }
-      },
-      "test": {
-        "command": "vitest",
-        "options": {
-          "cwd": "apps/Admin"
-        },
-        "cache": true,
-        "inputs": [
-          "default",
-          "^production",
-          {
-            "externalDependencies": [
-              "vitest"
-            ]
-          },
-          {
-            "env": "CI"
-          }
-        ],
-        "outputs": [
-          "{workspaceRoot}\\coverage\\apps\\Admin"
-        ],
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Run Vite tests",
-          "help": {
-            "command": "yarn vitest --help",
-            "example": {
-              "options": {
-                "bail": 1,
-                "coverage": true
-              }
-            }
-          }
-        }
-      }
-    },
-    "metadata": {}
-  },
-  "5623735279077438746apps/Candidate/vite.config.mts": {
+  "2905212289368789789apps/Candidate/vite.config.mts": {
     "targets": {
       "build": {
         "command": "vite build",
@@ -380,7 +224,7 @@
     },
     "metadata": {}
   },
-  "8888023171870589448apps/Employer/vite.config.mts": {
+  "16660267769059272243apps/Employer/vite.config.mts": {
     "targets": {
       "build": {
         "command": "vite build",
@@ -536,319 +380,7 @@
     },
     "metadata": {}
   },
-  "15016271513782923505apps/video-cv/vite.config.mts": {
-    "targets": {
-      "build": {
-        "command": "vite build",
-        "options": {
-          "cwd": "apps/video-cv"
-        },
-        "cache": true,
-        "dependsOn": [
-          "^build"
-        ],
-        "inputs": [
-          "production",
-          "^production",
-          {
-            "externalDependencies": [
-              "vite"
-            ]
-          }
-        ],
-        "outputs": [
-          "{workspaceRoot}\\dist\\apps\\video-cv"
-        ],
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Run Vite build",
-          "help": {
-            "command": "yarn vite build --help",
-            "example": {
-              "options": {
-                "sourcemap": true,
-                "manifest": "manifest.json"
-              }
-            }
-          }
-        }
-      },
-      "serve": {
-        "command": "vite serve",
-        "options": {
-          "cwd": "apps/video-cv"
-        },
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Starts Vite dev server",
-          "help": {
-            "command": "yarn vite --help",
-            "example": {
-              "options": {
-                "port": 3000
-              }
-            }
-          }
-        }
-      },
-      "preview": {
-        "command": "vite preview",
-        "dependsOn": [
-          "build"
-        ],
-        "options": {
-          "cwd": "apps/video-cv"
-        },
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Locally preview Vite production build",
-          "help": {
-            "command": "yarn vite preview --help",
-            "example": {
-              "options": {
-                "port": 3000
-              }
-            }
-          }
-        }
-      },
-      "serve-static": {
-        "executor": "@nx/web:file-server",
-        "options": {
-          "buildTarget": "build",
-          "spa": true
-        }
-      },
-      "typecheck": {
-        "cache": true,
-        "inputs": [
-          "production",
-          "^production",
-          {
-            "externalDependencies": [
-              "typescript"
-            ]
-          }
-        ],
-        "command": "tsc --noEmit -p tsconfig.app.json",
-        "options": {
-          "cwd": "apps/video-cv"
-        },
-        "metadata": {
-          "description": "Run Typechecking",
-          "help": {
-            "command": "yarn tsc --help -p tsconfig.app.json",
-            "example": {
-              "options": {
-                "noEmit": true
-              }
-            }
-          }
-        }
-      },
-      "test": {
-        "command": "vitest",
-        "options": {
-          "cwd": "apps/video-cv"
-        },
-        "cache": true,
-        "inputs": [
-          "default",
-          "^production",
-          {
-            "externalDependencies": [
-              "vitest"
-            ]
-          },
-          {
-            "env": "CI"
-          }
-        ],
-        "outputs": [
-          "{workspaceRoot}\\coverage\\apps\\video-cv"
-        ],
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Run Vite tests",
-          "help": {
-            "command": "yarn vitest --help",
-            "example": {
-              "options": {
-                "bail": 1,
-                "coverage": true
-              }
-            }
-          }
-        }
-      }
-    },
-    "metadata": {}
-  },
-  "10179836171920485984apps/video-cv/vite.config.ts": {
-    "targets": {
-      "build": {
-        "command": "vite build",
-        "options": {
-          "cwd": "apps/video-cv"
-        },
-        "cache": true,
-        "dependsOn": [
-          "^build"
-        ],
-        "inputs": [
-          "production",
-          "^production",
-          {
-            "externalDependencies": [
-              "vite"
-            ]
-          }
-        ],
-        "outputs": [
-          "{workspaceRoot}\\dist\\apps\\video-cv"
-        ],
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Run Vite build",
-          "help": {
-            "command": "yarn vite build --help",
-            "example": {
-              "options": {
-                "sourcemap": true,
-                "manifest": "manifest.json"
-              }
-            }
-          }
-        }
-      },
-      "serve": {
-        "command": "vite serve",
-        "options": {
-          "cwd": "apps/video-cv"
-        },
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Starts Vite dev server",
-          "help": {
-            "command": "yarn vite --help",
-            "example": {
-              "options": {
-                "port": 3000
-              }
-            }
-          }
-        }
-      },
-      "preview": {
-        "command": "vite preview",
-        "dependsOn": [
-          "build"
-        ],
-        "options": {
-          "cwd": "apps/video-cv"
-        },
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Locally preview Vite production build",
-          "help": {
-            "command": "yarn vite preview --help",
-            "example": {
-              "options": {
-                "port": 3000
-              }
-            }
-          }
-        }
-      },
-      "serve-static": {
-        "executor": "@nx/web:file-server",
-        "options": {
-          "buildTarget": "build",
-          "spa": true
-        }
-      },
-      "typecheck": {
-        "cache": true,
-        "inputs": [
-          "production",
-          "^production",
-          {
-            "externalDependencies": [
-              "typescript"
-            ]
-          }
-        ],
-        "command": "tsc --noEmit -p tsconfig.app.json",
-        "options": {
-          "cwd": "apps/video-cv"
-        },
-        "metadata": {
-          "description": "Run Typechecking",
-          "help": {
-            "command": "yarn tsc --help -p tsconfig.app.json",
-            "example": {
-              "options": {
-                "noEmit": true
-              }
-            }
-          }
-        }
-      },
-      "test": {
-        "command": "vitest",
-        "options": {
-          "cwd": "apps/video-cv"
-        },
-        "cache": true,
-        "inputs": [
-          "default",
-          "^production",
-          {
-            "externalDependencies": [
-              "vitest"
-            ]
-          },
-          {
-            "env": "CI"
-          }
-        ],
-        "outputs": [
-          "{workspaceRoot}\\coverage\\apps\\video-cv"
-        ],
-        "metadata": {
-          "technologies": [
-            "vite"
-          ],
-          "description": "Run Vite tests",
-          "help": {
-            "command": "yarn vitest --help",
-            "example": {
-              "options": {
-                "bail": 1,
-                "coverage": true
-              }
-            }
-          }
-        }
-      }
-    },
-    "metadata": {}
-  },
-  "17713234458491717709apps/Admin/vite.config.mts": {
+  "8674642510845324585apps/Admin/vite.config.mts": {
     "targets": {
       "build": {
         "command": "vite build",
@@ -1004,12 +536,12 @@
     },
     "metadata": {}
   },
-  "6272497476989402977apps/Employer/vite.config.mts": {
+  "17552116219304334362apps/video-cv/vite.config.ts": {
     "targets": {
       "build": {
         "command": "vite build",
         "options": {
-          "cwd": "apps/Employer"
+          "cwd": "apps/video-cv"
         },
         "cache": true,
         "dependsOn": [
@@ -1025,7 +557,7 @@
           }
         ],
         "outputs": [
-          "{workspaceRoot}\\dist\\apps\\Employer"
+          "{workspaceRoot}\\dist\\apps\\video-cv"
         ],
         "metadata": {
           "technologies": [
@@ -1046,7 +578,7 @@
       "serve": {
         "command": "vite serve",
         "options": {
-          "cwd": "apps/Employer"
+          "cwd": "apps/video-cv"
         },
         "metadata": {
           "technologies": [
@@ -1069,7 +601,7 @@
           "build"
         ],
         "options": {
-          "cwd": "apps/Employer"
+          "cwd": "apps/video-cv"
         },
         "metadata": {
           "technologies": [
@@ -1106,7 +638,7 @@
         ],
         "command": "tsc --noEmit -p tsconfig.app.json",
         "options": {
-          "cwd": "apps/Employer"
+          "cwd": "apps/video-cv"
         },
         "metadata": {
           "description": "Run Typechecking",
@@ -1123,7 +655,7 @@
       "test": {
         "command": "vitest",
         "options": {
-          "cwd": "apps/Employer"
+          "cwd": "apps/video-cv"
         },
         "cache": true,
         "inputs": [
@@ -1139,7 +671,7 @@
           }
         ],
         "outputs": [
-          "{workspaceRoot}\\coverage\\apps\\Employer"
+          "{workspaceRoot}\\coverage\\apps\\video-cv"
         ],
         "metadata": {
           "technologies": [
