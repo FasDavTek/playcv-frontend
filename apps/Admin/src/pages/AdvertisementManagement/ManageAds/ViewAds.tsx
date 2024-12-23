@@ -84,7 +84,7 @@ const ViewAds = () => {
 
     const handleFileUpload = useCallback(async (file: File) => {
         console.log('Uploading file:', file);
-        
+        if (!file) throw new Error('File is not defined.')
         
         try {
             const fileName = `${Date.now()}-${file.name}`
@@ -188,6 +188,7 @@ const ViewAds = () => {
                 setAdTypeId(matchingAdType.typeId);
             }
         }
+        console.log(adTypes)
       } 
       catch (err) {
         console.error('Error fetching ad types:', err)
@@ -200,49 +201,51 @@ const ViewAds = () => {
         Promise.all([fetchAdDetails(), fetchAdTypes()]).finally(() => setIsLoading(false))
     }, [id, ads, reset, token]);
 
+    console.log(ads)
+
+
     
     const SubmitForm = async (data: AdFormData) => {
-        
+        console.log('I am submitting')
         try {
           if (!ads || !id) throw new Error('Ad details are not available')
 
           let updatedMedia = ads.coverUrl
     
           if (newMedia.length > 0) {
-            console.log('I am submitting')
             const uploadedUrl = await handleFileUpload(newMedia[0]);
             updatedMedia = uploadedUrl;
             console.log(updatedMedia)
           }
     
-        //   const userBiodata = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
+          const userBiodata = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
     
-        //   const updatedData = {
-        //     name: data.adName,
-        //     description: data.adDescription,
-        //     redirectUrl: data.adUrl,
-        //     adTypeId: adTypeId,
-        //     userId: userBiodata,
-        //     statusId: ads.statusId,
-        //     coverUrl: updatedMedia,
-        //     startDate: data.startDate,
-        //     endDate: data.endDate,
-        //     action: 'edit',
-        //     adId: id
-        //   }
+          const updatedData = {
+            name: data.adName,
+            description: data.adDescription,
+            redirectUrl: data.adUrl,
+            adTypeId: adTypeId,
+            userId: userBiodata,
+            statusId: ads.statusId,
+            coverUrl: updatedMedia,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            action: 'edit',
+            adId: id
+          }
     
-        //   const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData, {
-        //     headers: { Authorization: `Bearer ${token}` },
-        //   })
+          const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
 
-        //   if (response.code === '00') {
-        //     toast.success('Ad updated successfully')
-        //     setIsEditing(false)
-        //     //   setAdDetails(response)
-        //     //   reset(updatedData)
-        //     setNewMedia([]);
-        //     await fetchAdDetails();
-        //   }
+          if (response.code === '00') {
+            toast.success('Ad updated successfully')
+            setIsEditing(false)
+            //   setAdDetails(response)
+            //   reset(updatedData)
+            setNewMedia([]);
+            await fetchAdDetails();
+          }
 
         } catch (err) {
           console.error('Error updating ad:', err)
