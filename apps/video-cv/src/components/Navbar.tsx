@@ -169,11 +169,11 @@ const Navbar = () => {
         <div className="menu-icon" onClick={handleShowNavbar}>
           {showNavbar ? <MenuOpenIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 z-50' /> : <MenuIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 z-50' />}
         </div>
-        <div className={`nav-elements ${showNavbar && 'active'} justify-start px-3`}>
+        <div className={`nav-elements ${showNavbar && 'active'} justify-start md:px-3`}>
           <div className="mt-4 flex xl:hidden" onClick={handleShowNavbar}>
             {showNavbar && <MenuOpenIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 lg:w-24 lg:h-24 z-50 ml-auto sm:mr-0 md:mr-3 lg:mr-4' />}
           </div>
-          <ul className='items-center'>
+          <ul className='items-start'>
             <li>
               <NavLink
                 to="/"

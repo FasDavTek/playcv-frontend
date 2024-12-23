@@ -31,9 +31,11 @@ const s3Client = new S3Client({
 interface Advert {
     id: number;
     status: string;
+    statusId: number;
     adName: string;
     redirectUrl: string;
     adType: string;
+    adTypeId: number;
     dateCreated: string;
     authorName: string;
     adDescription: string;
@@ -41,14 +43,16 @@ interface Advert {
     endDate: string;
     userType: string;
     userId: string;
-    coverUrl: { type: string; url: string }[];
+    coverUrl: string;
 }
 
 type AdFormData = z.infer<typeof advertSchema>;
 
 interface AdType {
-    value: string
-    label: string
+    typeId: number;
+    typeName: string;
+    // typeDescription: string;
+    // price: number;
 }
 
 interface AdDetails extends Omit<AdFormData, 'files'> {
@@ -64,12 +68,13 @@ const ViewAds = () => {
     const [adDetails, setAdDetails] = useState<AdDetails | null>(null)
     const [ads, setAds] = useState<Advert | undefined>(location.state?.ads);
     const [adTypes, setAdTypes] = useState<AdType[]>([])
+    const [adTypeId, setAdTypeId] = useState(0);
     const [isEditing, setIsEditing] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null)
     const [newMedia, setNewMedia] = useState<File[]>([])
-    const { register, handleSubmit, reset, watch, setValue, control, formState: { errors }, } = useForm<AdFormData>({
+    const { register, handleSubmit, reset, watch, setValue, getValues, control, formState: { errors }, } = useForm<AdFormData>({
         resolver: zodResolver(advertSchema),
     });
 
@@ -78,21 +83,22 @@ const ViewAds = () => {
 
 
     const handleFileUpload = useCallback(async (file: File) => {
-        if (!file) throw new Error('File is not defined.')
+        console.log('Uploading file:', file);
+        
         
         try {
             const fileName = `${Date.now()}-${file.name}`
             const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET
 
             if (!bucketName) {
-            throw new Error('Bucket name is not defined in environment variables.')
+                throw new Error('Bucket name is not defined in environment variables.')
             }
 
             const command = new PutObjectCommand({
-            Bucket: bucketName,
-            Key: fileName,
-            Body: file,
-            ContentType: file.type,
+                Bucket: bucketName,
+                Key: fileName,
+                Body: file,
+                ContentType: file.type,
             })
 
             await s3Client.send(command)
@@ -109,110 +115,135 @@ const ViewAds = () => {
     }, []);
 
 
-    useEffect(() => {
-        const fetchAdDetails = async () => {
-            if (!ads && id) {
-                setLoading(true);
-                try {
-                    const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${id}`, {
-                        headers: { Authorization: `Bearer ${token}` },
-                    })
-                    if (response.succeeded) {
-                        const data = await response.data;
-                        setAds(data)
-                        reset({
-                            adName: data.adName,
-                            adDescription: data.adDescription,
-                            adUrl: data.redirectUrl,
-                            startDate: new Date(data.startDate),
-                            endDate: new Date(data.endDate),
-                            adType: data.adType,
-                            action: 'edit',
-                            adId: data.id,
-                        });
-                    }
-                } 
-                catch (err) {
-                console.error('Error fetching ad details:', err)
-                setError('Failed to load ad details')
-                toast.error('Failed to load ad details')
+    const fetchAdDetails = async () => {
+        if (!ads && id) {
+            setLoading(true);
+            try {
+                const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                if (response.succeeded) {
+                    const data = await response.data;
+                    setAds(data)
+                    reset({
+                        adName: data.adName,
+                        adDescription: data.adDescription,
+                        adUrl: data.redirectUrl,
+                        startDate: new Date(data.startDate),
+                        endDate: new Date(data.endDate),
+                        adType: data.adType,
+                        adTypeId: data.adTypeId,
+                        files: data.coverUrl,
+                        action: 'edit',
+                        adId: data.id,
+                    });
+                }
+            } 
+            catch (err) {
+            console.error('Error fetching ad details:', err)
+            setError('Failed to load ad details')
+            toast.error('Failed to load ad details')
+            }
+        }
+        else if (ads) {
+            // If ads data is already available (from location state), populate form fields
+            reset({
+                adName: ads.adName,
+                adDescription: ads.adDescription,
+                adUrl: ads.redirectUrl,
+                startDate: new Date(ads.startDate),
+                endDate: new Date(ads.endDate),
+                adType: ads.adType,
+                adTypeId: ads.adTypeId,
+                action: 'edit',
+                adId: ads.id,
+            });
+            // setValue('files', '')
+        }
+    }
+
+    const fetchAdTypes = async () => {
+      try {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+        const data: AdType[] = await response;
+        if (data.length === 0) {
+            console.warn('Ad types array is empty. Using fallback method.');
+            // Fallback: Create an AdType object based on the current ad's type
+            if (ads) {
+                setAdTypes([{
+                    typeId: ads.adTypeId,
+                    typeName: ads.adType,
+                }]);
+                const matchingAdType = data.find(adType => adType.typeName === ads?.adType);
+                if (matchingAdType) {
+                    setAdTypeId(matchingAdType.typeId);
                 }
             }
-            else if (ads) {
-                // If ads data is already available (from location state), populate form fields
-                reset({
-                    adName: ads.adName,
-                    adDescription: ads.adDescription,
-                    adUrl: ads.redirectUrl,
-                    startDate: new Date(ads.startDate),
-                    endDate: new Date(ads.endDate),
-                    adType: ads.adType,
-                    action: 'edit',
-                    adId: ads.id,
-                });
+        } else {
+            setAdTypes(data);
+            const matchingAdType = data.find(adType => adType.typeName === ads?.adType);
+            if (matchingAdType) {
+                setAdTypeId(matchingAdType.typeId);
             }
         }
-    
-        const fetchAdTypes = async () => {
-          try {
-            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            const data: string[] = await response;
-            setAdTypes(data.map(type => ({ value: type as string, label: type })))
-          } 
-          catch (err) {
-            console.error('Error fetching ad types:', err)
-            toast.error('Failed to load ad types')
-          }
-        }
-    
-        Promise.all([fetchAdDetails(), fetchAdTypes()]).finally(() => setIsLoading(false))
-    }, [id, reset]);
-    
+      } 
+      catch (err) {
+        console.error('Error fetching ad types:', err)
+        toast.error('Failed to load ad types')
+      }
+    }
 
-    const onSubmit = async (data: AdFormData) => {
+
+    useEffect(() => {
+        Promise.all([fetchAdDetails(), fetchAdTypes()]).finally(() => setIsLoading(false))
+    }, [id, ads, reset, token]);
+
+    
+    const SubmitForm = async (data: AdFormData) => {
+        
         try {
           if (!ads || !id) throw new Error('Ad details are not available')
 
-          let updatedMedia = [...ads.coverUrl]
+          let updatedMedia = ads.coverUrl
     
           if (newMedia.length > 0) {
-              const uploadPromises = newMedia.map(async (file) => {
-                const uploadedUrl = await handleFileUpload(file)
-                return { type: file.type.startsWith('image/') ? 'image' : 'video' as const, url: uploadedUrl };
-              })
-    
-          const uploadedMedia = await Promise.all(uploadPromises)
-            updatedMedia = [...updatedMedia, ...uploadedMedia] as { type: string; url: string }[];
+            console.log('I am submitting')
+            const uploadedUrl = await handleFileUpload(newMedia[0]);
+            updatedMedia = uploadedUrl;
+            console.log(updatedMedia)
           }
     
-          const userBiodata = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
+        //   const userBiodata = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
     
-          const updatedData = {
-            name: data.adName,
-            description: data.adDescription,
-            redirectUrl: data.adUrl,
-            adTypeId: data.adTypeId,
-            userId: userBiodata,
-            statusId: ads.status === 'approved' ? 2 : 1, // Assuming 1 for pending, 2 for approved
-            coverUrl: updatedMedia[0]?.url || '',
-            startDate: data.startDate,
-            endDate: data.endDate,
-            action: 'edit',
-            id: id
-          }
+        //   const updatedData = {
+        //     name: data.adName,
+        //     description: data.adDescription,
+        //     redirectUrl: data.adUrl,
+        //     adTypeId: adTypeId,
+        //     userId: userBiodata,
+        //     statusId: ads.statusId,
+        //     coverUrl: updatedMedia,
+        //     startDate: data.startDate,
+        //     endDate: data.endDate,
+        //     action: 'edit',
+        //     adId: id
+        //   }
     
-          const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          
-          toast.success('Ad updated successfully')
-          setIsEditing(false)
-        //   setAdDetails(response)
-        //   reset(updatedData)
-          setNewMedia([]);
-          if (!response.ok) throw new Error('Failed to update ad')
+        //   const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData, {
+        //     headers: { Authorization: `Bearer ${token}` },
+        //   })
+
+        //   if (response.code === '00') {
+        //     toast.success('Ad updated successfully')
+        //     setIsEditing(false)
+        //     //   setAdDetails(response)
+        //     //   reset(updatedData)
+        //     setNewMedia([]);
+        //     await fetchAdDetails();
+        //   }
+
         } catch (err) {
           console.error('Error updating ad:', err)
           toast.error('Failed to update ad')
@@ -220,8 +251,7 @@ const ViewAds = () => {
     }
 
 
-
-    if (isLoading) {
+    if (isLoading || !ads) {
         return (
           <div className="flex justify-center items-center h-screen">
             <CircularProgress />
@@ -250,7 +280,7 @@ const ViewAds = () => {
         </div>
         
         {isEditing ? (
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={(e) => {e.preventDefault(); const data = getValues(); SubmitForm(data) }}>
                 <Controller
                     name='adName'
                     control={control}
@@ -342,6 +372,7 @@ const ViewAds = () => {
                             uploadRestrictionText="Accepted formats: images, videos (max size: 8MB)"
                             setFile={(files) => {
                                 const fileArray = Array.isArray(files) ? files : files ? [files] : [];
+                                console.log('Selected files:', fileArray);
                                 setNewMedia(fileArray);
                                 onChange(fileArray);
                             }}
@@ -385,7 +416,7 @@ const ViewAds = () => {
                             url: URL.createObjectURL(file)
                         }))].map((item, index) => (
                             <Grid item xs={12} md={6} key={index}>
-                                {item.type === 'image' ? (
+                                {/* {item.type === 'image' ? (
                                     <img
                                         src={item.url}
                                         alt={`Ad Media ${index + 1}`}
@@ -397,6 +428,21 @@ const ViewAds = () => {
                                         controls
                                         className="rounded-lg shadow-md"
                                     />
+                                )} */}
+                                {ads.coverUrl && (
+                                    ads.coverUrl.toLowerCase().endsWith('.mp4') ? (
+                                        <video
+                                            src={ads.coverUrl}
+                                            controls
+                                            className="rounded-lg shadow-md w-full"
+                                        />
+                                    ) : (
+                                        <img
+                                            src={ads.coverUrl}
+                                            alt="Ad Media"
+                                            className="rounded-lg shadow-md w-full"
+                                        />
+                                    )
                                 )}
                             </Grid>
                         ))}

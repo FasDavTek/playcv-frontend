@@ -16,9 +16,11 @@ import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 type Advert = {
   id: string;
   status: string;
+  statusId: number;
   adName: string;
   redirectUrl: string;
   adType: string;
+  adTypeId: number;
   dateCreated: string;
   authorName: string;
   adDescription: string;
@@ -97,7 +99,7 @@ const Payment = () => {
 
   const handleView = async (item: Advert) => {
       setSelectedItem(item);
-      navigate(`/admin/advertisement-management/view/:${item.id}`, {
+      navigate(`/admin/advertisement-management/view/${item.id}`, {
         state: { ads: item },
       });
   };
@@ -108,8 +110,8 @@ const Payment = () => {
 
       const apiData = {
         id,
-        action,
-        reason
+        action: 'edit',
+        reason: action === 'a' ? undefined : reason
       }
 
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_ADS}`, apiData, {
