@@ -49,7 +49,7 @@ const CreateAdvertModal = () => {
   const { register, handleSubmit, watch, setValue, reset, control, formState: { errors }, getValues} = useForm<AdFormData>({
     resolver: zodResolver(advertSchema),
     defaultValues: {
-      adTypeName: adTypeName || '',
+      adType: adTypeName || '',
       adTypeId: adTypeId || "",
       userId: userId || "",
     },
@@ -219,7 +219,7 @@ const onSubmitHandler = async (data: AdFormData) => {
       startDate: data.startDate,
       endDate: data.endDate,
       media: uploadedUrls.map((url: any, index: any) => ({
-        type: data.adTypeName,
+        type: data.adType,
         url: url,
         thumbnail: thumbnails[index] || null
       })),
@@ -257,7 +257,7 @@ const onSubmitHandler = async (data: AdFormData) => {
       <form onSubmit={(e) => { e.preventDefault(); const data = getValues(); onSubmitHandler(data) }} className="bg-white px-10">
         <div className="my-5 flex flex-col gap-5">
           <Input label="Ad Title" {...register('adName', { required: true })} error={errors.adName} />
-          <Input label="Ad Type" {...register('adTypeName', { required: true })} error={errors.adTypeName} />
+          <Input label="Ad Type" {...register('adType', { required: true })} error={errors.adType} />
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
               Ad Description
           </label>

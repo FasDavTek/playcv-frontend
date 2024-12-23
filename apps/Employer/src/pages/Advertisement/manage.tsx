@@ -90,7 +90,7 @@ const ManageAdvertisement = () => {
             setValue('adUrl', state.adDetails.adUrl);
             setValue('startDate', state.adDetails.startDate);
             setValue('endDate', state.adDetails.endDate);
-            setValue('adTypeName', state.adDetails.adType && state.adDetails.adType.toLowerCase() === 'image' ? 'image' : 'video');
+            setValue('adType', state.adDetails.adType && state.adDetails.adType.toLowerCase() === 'image' ? 'image' : 'video');
         }
     }, [state.adDetails, setValue, id]);
 

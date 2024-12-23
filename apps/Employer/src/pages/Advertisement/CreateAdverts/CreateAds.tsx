@@ -92,7 +92,7 @@ const CreateAds = () => {
           setValue('adDescription', ad.description);
         }
         
-        setValue('adTypeName', data.adType);
+        setValue('adType', data.adType);
       } catch (error) {
         console.error('Error fetching checkout details:', error);
         toast.error('Failed to load ad details. Please try again.');
@@ -263,7 +263,7 @@ const CreateAds = () => {
         startDate: data.startDate,
         endDate: data.endDate,
         media: uploadedUrls.map((url: any, index: any) => ({
-          type: data.adTypeName,
+          type: data.adType,
           url: url,
           thumbnail: thumbnails[index] || null
         })),
