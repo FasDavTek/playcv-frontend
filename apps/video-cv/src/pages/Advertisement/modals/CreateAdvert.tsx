@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -78,10 +78,28 @@ const CreateAdvertModal = ({
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
             Advert Upload
           </label>
-          <FileUpload
-            uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
-            containerClass=""
-            uploadLabel="Drag and Drop or Browse"
+          <Controller
+              name='files'
+              control={control}
+              render={({ field: { onChange } }) => (
+                  <FileUpload
+                      uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
+                      containerClass="mt-3"
+                      uploadLabel="Drag and Drop or Browse"
+                      uploadRestrictionText="Accepted formats: images, videos (max size: 8MB)"
+                      setFile={(files) => {
+                          console.log('Files received by FileUpload:', files);
+                          const fileArray = Array.isArray(files) ? files : files ? [files] : [];
+                          console.log('Selected files:', fileArray);
+                          onChange(fileArray);
+                      }}
+                      // onFilesChange={(files) => {
+                      //     console.log('Files changed:', files);
+                      //     const fileArray = Array.isArray(files) ? files : [files];
+                      //     setNewMedia(fileArray);
+                      // }}
+                  />
+              )}
           />
         </div>
 

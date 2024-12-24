@@ -237,19 +237,22 @@ const Vacancies = (selectedItem: any) => {
                     <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
                       Upload Company Image
                     </label>
-                    <FileUpload
-                      uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
-                      containerClass=""
-                      uploadLabel="Drag and Drop or Browse"
-                      setFile={(files: File | File[] | null) => {
-                        if (files) {
-                          if (Array.isArray(files)) {
-                            handleImageUpload(files[0]);
-                          } else {
-                            handleImageUpload(files);
-                          }
-                        }
-                      }}
+                    <Controller
+                      name='companyImage'
+                      control={control}
+                      render={({ field: { onChange } }) => (
+                        <FileUpload
+                          uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
+                          containerClass=""
+                          uploadLabel="Drag and Drop or Browse"
+                          setFile={(files) => {
+                            console.log('Files received by FileUpload:', files);
+                            const fileArray = Array.isArray(files) ? files : files ? [files] : [];
+                            console.log('Selected files:', fileArray);
+                            onChange(fileArray);
+                          }}
+                        />
+                      )}
                     />
                   </div>
                   {watch('companyImage') && (

@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { useForm, Controller } from 'react-hook-form';
 
-import { Button, Input, TextArea, FileUpload, Select, } from '@video-cv/ui-components';
+import { Button, Input, TextArea, Select, } from '@video-cv/ui-components';
 
 interface IForm {
   name: string;

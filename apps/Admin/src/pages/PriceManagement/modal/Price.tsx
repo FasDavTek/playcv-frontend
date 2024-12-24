@@ -23,6 +23,7 @@ interface AdTypeItem {
     name: string;
     typeDescription: string;
     price: number;
+    coverUrl: string;
     thumbnailUrl?: string;
     dateCreated?: string;
     dateUpdated?: string;
@@ -36,6 +37,7 @@ interface AdTypeItem {
     name: string;
     shortName: string;
     description: string;
+    coverUrl: string;
     thumbnailUrl?: string;
     uploadPrice: number;
     transactionFee: number;
@@ -306,19 +308,22 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
                     />
                 )}
             />
-            <FileUpload
-                uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
-                containerClass=""
-                uploadLabel="Drag and Drop or Browse"
-                setFile={(files: File | File[] | null) => {
-                if (files) {
-                    if (Array.isArray(files)) {
-                    handleImageUpload(files[0]);
-                    } else {
-                    handleImageUpload(files);
-                    }
-                }
-                }}
+            <Controller
+                name='coverUrl'
+                control={control}
+                render={({ field: { onChange } }) => (
+                    <FileUpload
+                        uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
+                        containerClass=""
+                        uploadLabel="Drag and Drop or Browse"
+                        setFile={(files) => {
+                            console.log('Files received by FileUpload:', files);
+                            const fileArray = Array.isArray(files) ? files : files ? [files] : [];
+                            console.log('Selected files:', fileArray);
+                            onChange(fileArray);
+                        }}
+                    />
+                )}
             />
             <Button
                 type="submit"

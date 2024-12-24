@@ -263,10 +263,21 @@ const CategoryModal = ({
             </Grid>       
             <Grid item xs={12}>
               <Typography variant="subtitle2">Profile Image</Typography>
-              <FileUpload
-                uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
-                uploadLabel="Upload Profile Image"
-                setFile={(file) => setValue('profileImage', file)}
+              <Controller
+                name='profileImage'
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <FileUpload
+                    uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
+                    uploadLabel="Upload Profile Image"
+                    setFile={(files) => {
+                      console.log('Files received by FileUpload:', files);
+                      const fileArray = Array.isArray(files) ? files : files ? [files] : [];
+                      console.log('Selected files:', fileArray);
+                      onChange(fileArray);
+                    }}
+                  />
+                )}
               />
             </Grid>
           </>
@@ -303,7 +314,7 @@ const CategoryModal = ({
   }
 
   const handleImageUpload = async (file: File) => {
-    if (!file) throw new Error('File is not defined.');
+    // if (!file) throw new Error('File is not defined.');
 
     try {
       const fileName = `${Date.now()}-${file.name}`;

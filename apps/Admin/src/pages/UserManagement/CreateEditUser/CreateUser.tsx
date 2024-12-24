@@ -213,15 +213,15 @@ const CreateUser = () => {
                         <Controller
                             name="coverURL"
                             control={control}
-                            render={({ field }) => (
+                            render={({ field: { onChange } }) => (
                                 <FileUpload
                                     uploadIcon={<CloudUploadIcon />}
                                     uploadLabel="Upload Profile Picture"
-                                    setFile={(file) => {
-                                        if (file instanceof File) {
-                                            setImageFile(file);
-                                            field.onChange(file);
-                                        }
+                                    setFile={(files) => {
+                                        console.log('Files received by FileUpload:', files);
+                                        const fileArray = Array.isArray(files) ? files : files ? [files] : [];
+                                        console.log('Selected files:', fileArray);
+                                        onChange(fileArray);
                                     }}
                                 />
                             )}

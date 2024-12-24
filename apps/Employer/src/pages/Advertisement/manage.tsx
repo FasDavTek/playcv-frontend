@@ -277,7 +277,12 @@ const ManageAdvertisement = () => {
                                 containerClass="mt-3"
                                 uploadLabel="Drag and Drop or Browse"
                                 uploadRestrictionText="Accepted formats: images, videos (max size: 8MB)"
-                                setFile={(files) => onChange(files)}
+                                setFile={(files) => {
+                                    console.log('Files received by FileUpload:', files);
+                                    const fileArray = Array.isArray(files) ? files : files ? [files] : [];
+                                    console.log('Selected files:', fileArray);
+                                    onChange(fileArray);
+                                }}
                             />
                         )}
                     />

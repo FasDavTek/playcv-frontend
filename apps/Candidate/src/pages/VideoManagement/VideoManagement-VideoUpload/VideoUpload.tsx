@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -49,7 +49,7 @@ const VideoUpload: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [categories, setCategories] = useState<Category[]>([]);
   const [thumbnail, setThumbnail] = useState<string | null>(null);
-  const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, setValue, control, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(videoUploadSchema),
   });
   const location = useLocation();
@@ -297,13 +297,24 @@ const VideoUpload: React.FC = () => {
             <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
               Video CV
             </label>
-            <FileUpload
-              uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
-              containerClass=""
-              uploadLabel="Drag and Drop or Browse"
-              {...register('media')}
-              setFile={handleFileChange}
-            />
+            <Controller
+                name='media'
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <FileUpload
+                    uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
+                    containerClass=""
+                    uploadLabel="Drag and Drop or Browse"
+                    {...register('media')}
+                    setFile={(files) => {
+                      console.log('Files received by FileUpload:', files);
+                      const fileArray = Array.isArray(files) ? files : files ? [files] : [];
+                      console.log('Selected files:', fileArray);
+                      onChange(fileArray);
+                    }}
+                  />
+                )}
+              />
             {errors.media && <p className="text-red-500">{errors.media.message}</p>}
           </div>
           <Button 

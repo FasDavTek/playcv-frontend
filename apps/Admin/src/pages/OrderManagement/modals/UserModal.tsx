@@ -6,7 +6,6 @@ import {
   Button,
   Input,
   TextArea,
-  FileUpload,
   Select,
 } from '@video-cv/ui-components';
 
