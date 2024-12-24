@@ -303,7 +303,7 @@ const Navbar = () => {
               </li>
             )}
             {authState.isAuthenticated && authState?.user?.userTypeId === 3 && (
-              <li>
+              <li className='my-3 md:my-0'>
                 <NavLink
                   to="/candidate/video-guideline"
                   className={({ isActive, isPending }) =>
@@ -326,10 +326,10 @@ const Navbar = () => {
             )}
             {authState.isAuthenticated ? 
               (
-                <Button variant='black' className='mt-5 md:mt-0' label='Logout' onClick={logout} />
+                <Button variant='black' className='mt-5 md:mt-0 ml-4 md:ml-0' label='Logout' onClick={logout} />
               ) : 
               (
-                <Button variant='black' className='mt-5 md:mt-0' label='Get Started' onClick={handleGetStartedClick} />
+                <Button variant='black' className='mt-5 md:mt-0 ml-4 md:ml-0' label='Get Started' onClick={handleGetStartedClick} />
               )
             }
             {!authState.isAuthenticated && (
