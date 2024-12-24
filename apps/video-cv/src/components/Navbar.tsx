@@ -302,6 +302,28 @@ const Navbar = () => {
                 </IconButton>
               </li>
             )}
+            {authState.isAuthenticated && authState?.user?.userTypeId === 3 && (
+              <li>
+                <NavLink
+                  to="/candidate/video-guideline"
+                  className={({ isActive, isPending }) =>
+                    `text-black text-lg  ${
+                      isPending
+                        ? 'pending'
+                        : isActive
+                        ? 'active-nav-link'
+                        : 'nav-link'
+                    }`
+                  }
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleAuthenticatedNavigation('/candidate/video-guideline')
+                  }}
+                >
+                  Cv Guidelines
+                </NavLink>
+              </li>
+            )}
             {authState.isAuthenticated ? 
               (
                 <Button variant='black' className='mt-5 md:mt-0' label='Logout' onClick={logout} />
