@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 export const isTokenExpired = (token: string | null): boolean => {
   if (!token) {
-    toast.error('Your session has expired. Please log in again');
     return true;
   }
 
@@ -83,7 +82,6 @@ axiosInstance.interceptors.response.use(
     if (error?.response?.status === 401 && getToken()) {
       // localStorage.removeItem(LOCAL_STORAGE_KEYS.TOKEN);
       localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
-      
       // window.dispatchEvent(new CustomEvent('tokenExpired'))
       // window.location.replace(ROUTES.SIGNIN);
     }

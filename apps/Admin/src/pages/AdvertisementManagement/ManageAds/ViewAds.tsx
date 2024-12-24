@@ -65,7 +65,7 @@ const ViewAds = () => {
     const { id } = useParams<{ id: any }>();
     const location = useLocation();
     const navigate = useNavigate();
-    const [adDetails, setAdDetails] = useState<AdDetails | null>(null)
+    const [adDetails, setAdDetails] = useState<Advert | null>(null)
     const [ads, setAds] = useState<Advert | undefined>(location.state?.ads);
     const [adTypes, setAdTypes] = useState<AdType[]>([])
     const [adTypeId, setAdTypeId] = useState(0);
@@ -80,19 +80,22 @@ const ViewAds = () => {
 
 
     const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+    if (!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/')
+    }
 
 
     const handleFileUpload = useCallback(async (file: File) => {
-        console.log('Uploading file:', file);
-        if (!file) throw new Error('File is not defined.')
+        // if (!file) throw new Error('File is not defined.')
         
         try {
             const fileName = `${Date.now()}-${file.name}`
             const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET
 
-            if (!bucketName) {
-                throw new Error('Bucket name is not defined in environment variables.')
-            }
+            // if (!bucketName) {
+            //     throw new Error('Bucket name is not defined in environment variables.')
+            // }
 
             const command = new PutObjectCommand({
                 Bucket: bucketName,
@@ -105,7 +108,6 @@ const ViewAds = () => {
 
             const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`
             toast.success('Upload successful')
-            console.log('Upload successful:', uploadedUrl)
             return uploadedUrl
         } catch (err) {
             toast.error(`Upload Failed: ${err}`)
@@ -140,9 +142,9 @@ const ViewAds = () => {
                 }
             } 
             catch (err) {
-            console.error('Error fetching ad details:', err)
-            setError('Failed to load ad details')
-            toast.error('Failed to load ad details')
+                console.error('Error fetching ad details:', err)
+                setError('Failed to load ad details')
+                toast.error('Failed to load ad details')
             }
         }
         else if (ads) {
@@ -188,7 +190,6 @@ const ViewAds = () => {
                 setAdTypeId(matchingAdType.typeId);
             }
         }
-        console.log(adTypes)
       } 
       catch (err) {
         console.error('Error fetching ad types:', err)
@@ -201,22 +202,22 @@ const ViewAds = () => {
         Promise.all([fetchAdDetails(), fetchAdTypes()]).finally(() => setIsLoading(false))
     }, [id, ads, reset, token]);
 
-    console.log(ads)
 
 
     
     const SubmitForm = async (data: AdFormData) => {
-        console.log('I am submitting')
-        try {
-          if (!ads || !id) throw new Error('Ad details are not available')
 
-          let updatedMedia = ads.coverUrl
+        try {
+            if (!ads || !id) throw new Error('Ad details are not available')
+
     
-          if (newMedia.length > 0) {
-            const uploadedUrl = await handleFileUpload(newMedia[0]);
-            updatedMedia = uploadedUrl;
-            console.log(updatedMedia)
-          }
+            let updatedMedia = ads.coverUrl
+        
+    
+            if (newMedia.length > 0) {
+                const uploadedUrl = await handleFileUpload(newMedia[0]);
+                updatedMedia = uploadedUrl;
+            }
     
           const userBiodata = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
     
@@ -243,15 +244,16 @@ const ViewAds = () => {
             setIsEditing(false)
             //   setAdDetails(response)
             //   reset(updatedData)
-            setNewMedia([]);
+            // setNewMedia([]);
             await fetchAdDetails();
+            navigate('/admin/advertisement-management');
           }
 
         } catch (err) {
           console.error('Error updating ad:', err)
           toast.error('Failed to update ad')
         }
-    }
+    };
 
 
     if (isLoading || !ads) {
@@ -270,6 +272,8 @@ const ViewAds = () => {
           </div>
         )
     };
+
+    console.log(ads)
 
     const isAdStarted = ads.status === 'approved' && new Date(ads.startDate) <= new Date();
 
@@ -374,11 +378,17 @@ const ViewAds = () => {
                             uploadLabel="Drag and Drop or Browse"
                             uploadRestrictionText="Accepted formats: images, videos (max size: 8MB)"
                             setFile={(files) => {
+                                console.log('Files received by FileUpload:', files);
                                 const fileArray = Array.isArray(files) ? files : files ? [files] : [];
                                 console.log('Selected files:', fileArray);
                                 setNewMedia(fileArray);
                                 onChange(fileArray);
                             }}
+                            // onFilesChange={(files) => {
+                            //     console.log('Files changed:', files);
+                            //     const fileArray = Array.isArray(files) ? files : [files];
+                            //     setNewMedia(fileArray);
+                            // }}
                         />
                     )}
                 />
@@ -414,41 +424,23 @@ const ViewAds = () => {
                     </div>
                     <h2 className="text-xl font-semibold mt-10 mb-6 text-gray-800">Media</h2>
                     <Grid container spacing={4}>
-                        {[...(ads.coverUrl ? ads.coverUrl : []), ...newMedia.map(file => ({
-                            type: file.type.startsWith('image/') ? 'image' as const : 'video' as const,
-                            url: URL.createObjectURL(file)
-                        }))].map((item, index) => (
-                            <Grid item xs={12} md={6} key={index}>
-                                {/* {item.type === 'image' ? (
-                                    <img
-                                        src={item.url}
-                                        alt={`Ad Media ${index + 1}`}
-                                        className="rounded-lg shadow-md"
+                        {ads.coverUrl &&  (
+                            <Grid item xs={12} md={6}>
+                                {ads.coverUrl.toLowerCase().endsWith('.mp4') ? (
+                                    <video
+                                        src={ads.coverUrl}
+                                        controls
+                                        className="rounded-lg shadow-md w-full"
                                     />
                                 ) : (
-                                    <video
-                                        src={item.url}
-                                        controls
-                                        className="rounded-lg shadow-md"
+                                    <img
+                                        src={ads.coverUrl}
+                                        alt="Ad Media"
+                                        className="rounded-lg shadow-md w-full"
                                     />
-                                )} */}
-                                {ads.coverUrl && (
-                                    ads.coverUrl.toLowerCase().endsWith('.mp4') ? (
-                                        <video
-                                            src={ads.coverUrl}
-                                            controls
-                                            className="rounded-lg shadow-md w-full"
-                                        />
-                                    ) : (
-                                        <img
-                                            src={ads.coverUrl}
-                                            alt="Ad Media"
-                                            className="rounded-lg shadow-md w-full"
-                                        />
-                                    )
                                 )}
                             </Grid>
-                        ))}
+                        )}
                     </Grid>
                 </>
             )}

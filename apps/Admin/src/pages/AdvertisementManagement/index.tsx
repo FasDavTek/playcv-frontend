@@ -56,6 +56,10 @@ const Payment = () => {
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  if (!token) {
+    toast.error('Your session has expired. Please log in again');
+    navigate('/')
+  }
 
 
   const fetchAds = async () => {

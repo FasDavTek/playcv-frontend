@@ -108,6 +108,9 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
   const [files, setFiles] = useState<PreviewFile[]>([]);
 
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+    console.log('onDrop called');
+    console.log('Accepted files:', acceptedFiles);
+    console.log('Rejected files:', rejectedFiles);
     if (rejectedFiles.length) {
       console.log('rejectedFiles', rejectedFiles);
       return;
@@ -116,8 +119,14 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
     const newFiles = acceptedFiles.map((file: File) => {
       return Object.assign(file, { preview: (URL as any).createObjectURL(file) }) as PreviewFile;
     });
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    onFilesChange(newFiles);
+    console.log('New files with preview:', newFiles);
+    setFiles((prevFiles) => {
+      console.log('Previous files:', prevFiles);
+      const updatedFiles = [...prevFiles, ...newFiles];
+      console.log('Updated files:', updatedFiles);
+      onFilesChange(updatedFiles);
+      return updatedFiles;
+    });
   }, [onFilesChange, setFiles]);
 
   const {
@@ -136,16 +145,22 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
     maxSize: 8388608,
   });
 
-  const handleDelete = (fileToDelete: PreviewFile) => {
-    const updatedFiles = files.filter((file) => file !== fileToDelete);
-    setFiles(updatedFiles);
-    setFiles(updatedFiles);
-  };
+  const handleDelete = useCallback((fileToDelete: PreviewFile) => {
+    setFiles(prevFiles => {
+      const updatedFiles = prevFiles.filter(file => file !== fileToDelete);
+      console.log('Files after deletion:', updatedFiles);
+      onFilesChange(updatedFiles);
+      return updatedFiles;
+    });
+  }, [onFilesChange]);
 
   useEffect(() => {
-    return () => {
-      files.forEach((file) => (URL as any).revokeObjectURL(file.preview));
-    };
+    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
+  }, [files]);
+
+  useEffect(() => {
+    console.log('Files state changed:', files);
+    setFile(files);
   }, [files]);
 
   // const handleSubmit = async () => {
