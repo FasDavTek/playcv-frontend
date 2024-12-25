@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useForm, Controller, FieldError } from 'react-hook-form';
 import UploadFile from '@mui/icons-material/UploadFileOutlined';
@@ -8,13 +8,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Input, TextArea, FileUpload, DatePicker, Select, VideoUploadWidget, RichTextEditor } from '@video-cv/ui-components';
 import { advertSchema } from './../../../../../video-cv/src/schema/formValidations/Advert.schema';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { toast } from 'react-toastify';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getData, postData } from './../../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../../libs/utils/helpers/config';
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
 
 const s3Client = new S3Client({
   region: 'auto',
@@ -34,121 +35,84 @@ const s3Client = new S3Client({
 //   videoTranscript: string;
 // }
 
+interface Advert {
+  id: number;
+  status: string;
+  statusId: number;
+  adName: string;
+  redirectUrl: string;
+  adType: string;
+  adTypeId: number;
+  dateCreated: string;
+  authorName: string;
+  adDescription: string;
+  startDate: string;
+  endDate: string;
+  userType: string;
+  userId: string;
+  coverUrl: string;
+}
+
 type AdFormData = z.infer<typeof advertSchema>;
 
-interface CheckoutDetails {
-  adType: string;
-  price: number;
-  paymentReference: string;
-  adDetails: {
-    id: string;
-    title: string;
-    description: string;
-  }[];
-  action: string;
-  adTypeId?: string;
-  duration?: string;
+interface AdType {
+  typeId: number;
+  typeName: string;
+  // typeDescription: string;
+  // price: number;
 }
 
 const CreateAds = () => {
-  const [isUploading, setIsUploading] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [adTypes, setAdTypes] = useState<{ value: string; label: string }[]>([]);
-  const [checkoutDetails, setCheckoutDetails] = useState<CheckoutDetails | null>(null);
-  const [thumbnail, setThumbnail] = useState<string | null>(null);
-  const { register, handleSubmit, watch, setValue, reset, control, formState: { errors },} = useForm<AdFormData>({
-    resolver: zodResolver(advertSchema),
-    defaultValues: {
-      action: 'edit',
-      userId: localStorage.getItem('userId') || '',
-    }
-  });
-  console.log('errors', errors);
-
   const location = useLocation();
   const navigate = useNavigate();
+  const [isUploading, setIsUploading] = useState(false);
+  const [ads, setAds] = useState<Advert | undefined>(location.state?.ads);
+  const [adTypes, setAdTypes] = useState<AdType[]>([])
+  const [isEditing, setIsEditing] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
+  const [newMedia, setNewMedia] = useState<File[]>([])
+  const userId = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
+  const { register, handleSubmit, watch, setValue, reset, control, formState: { errors },} = useForm<AdFormData>({
+    resolver: zodResolver(advertSchema),
+  });
+
+  
   const { uploadRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
 
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  if (!token) {
+      toast.error('Your session has expired. Please log in again');
+      navigate('/')
+  }
 
-  useEffect(() => {
-    const fetchCheckoutDetails = async () => {
-      if (paymentId) {
-        toast.error('Invalid upload data. Redirecting....');
-        // navigate('/admin/advertisement-management');
-        return;
-      }
 
+  const handleFileUpload = useCallback(async (file: File) => {
+          
       try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.CHECKOUT_DETAILS}/${paymentId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch checkout details');
-        }
-        const data: CheckoutDetails = await response.json();
-        setCheckoutDetails(data);
-        
-        if (data.adDetails && data.adDetails.length > 0) {
-          const ad = data.adDetails[0];
-          setValue('adName', ad.title);
-          setValue('adDescription', ad.description);
-        }
-        
-        setValue('adType', data.adType);
-      } catch (error) {
-        console.error('Error fetching checkout details:', error);
-        toast.error('Failed to load ad details. Please try again.');
-        // navigate('/admin/advertisement-management');
+          const fileName = `${Date.now()}-${file.name}`
+          const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET
+
+          const command = new PutObjectCommand({
+              Bucket: bucketName,
+              Key: fileName,
+              Body: file,
+              ContentType: file.type,
+          })
+
+          await s3Client.send(command)
+
+          const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`
+          toast.success('Upload successful')
+          return uploadedUrl
+      } catch (err) {
+          toast.error(`Upload Failed: ${err}`)
+          console.error('Upload failed:', err)
+          throw err
       }
-    };
-
-    fetchCheckoutDetails();
-  }, [paymentId, navigate, setValue]);
-
-
-
-  useEffect(() => {
-    const fetchAdTypes = async () => {
-      try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
-        if (!response.ok) throw new Error('Failed to fetch ad types')
-        const data: string[] = await response.json()
-        setAdTypes(data.map(type => ({ value: type as 'video' | 'image', label: type })))
-      } 
-      catch (err) {
-        console.error('Error fetching ad types:', err)
-        toast.error('Failed to load ad types')
-      }
-      finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchAdTypes();
-}, []);
-
-
-  const handleFileUpload = async (file: File) => {
-    if (!file) throw new Error('File is not defined.');
-
-    try {
-      const fileName = `${Date.now()}-${file.name}`;
-      const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET;
-
-      const command = new PutObjectCommand({
-        Bucket: bucketName,
-        Key: fileName,
-        Body: file,
-        ContentType: file.type,
-      });
-
-      await s3Client.send(command);
-      const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`;
-      return uploadedUrl;
-    } catch (err) {
-      toast.error(`Upload Failed: ${err}`);
-      console.error('Upload failed:', err);
-      throw err;
-    }
-  };
+  }, []);
 
 
 
@@ -185,32 +149,13 @@ const CreateAds = () => {
       }
     });
   };
-  
-  
-  
-  const handleFileChange = async (files: File | File[]) => {
-    const fileArray = Array.isArray(files) ? files : [files];
-    if (fileArray.length > 0) {
-      setValue('files', fileArray as [File, ...File[]]);
-      generateThumbnail(fileArray[0])
-        .then(thumbnailUrl => setThumbnail(thumbnailUrl))
-        .catch(error => {
-          console.error('Error generating thumbnail:', error);
-          toast.error('Failed to generate thumbnail');
-        });
-    }
-  };
 
 
 
   const onSubmit = async (data: AdFormData) => {
-    if (!checkoutDetails) {
-      toast.error('Missing ad information. Please try again.');
-      return;
-    }
-
     try {
-      toast.info('Uploading files...');
+      if (!ads) throw new Error('Ad details are not available');
+
       setIsUploading(true);
 
       const files = data.files;
@@ -249,33 +194,29 @@ const CreateAds = () => {
 
         thumbnailUrl = thumbnails.length > 0 ? thumbnails[0] : null;
         mediaUrl = uploadedUrls[0];
-      }
-
-      toast.success('Files uploaded successfully!');
+      };
 
       const adData = {
         // ...data,
         name: data.adName,
         adType: adTypeName,
         adTypeId: adTypeId,
+        userId: userId,
+        statusId: ads.statusId,
         description: data.adDescription,
         redirectUrl: data.adUrl,
         startDate: data.startDate,
         endDate: data.endDate,
-        media: uploadedUrls.map((url: any, index: any) => ({
-          type: data.adType,
-          url: url,
-          thumbnail: thumbnails[index] || null
-        })),
-        action: 'edit',
+        action: 'create',
         coverURL: thumbnailUrl,
-        paymentReference: checkoutDetails.paymentReference,
       };
 
-      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData);
+      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      if (response.code === "201") {
-          toast.success('Ad uploaded and payment confirmed successfully');
+      if (response.code === "00") {
+          toast.success('Ad uploaded successfully');
           reset();
           navigate('/admin/advertisement-management');
       }
@@ -296,6 +237,9 @@ const CreateAds = () => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
+
+  console.log(ads);
 
 
   return (

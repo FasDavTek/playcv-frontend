@@ -87,15 +87,10 @@ const ViewAds = () => {
 
 
     const handleFileUpload = useCallback(async (file: File) => {
-        // if (!file) throw new Error('File is not defined.')
         
         try {
             const fileName = `${Date.now()}-${file.name}`
             const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET
-
-            // if (!bucketName) {
-            //     throw new Error('Bucket name is not defined in environment variables.')
-            // }
 
             const command = new PutObjectCommand({
                 Bucket: bucketName,
@@ -206,21 +201,19 @@ const ViewAds = () => {
 
     
     const SubmitForm = async (data: AdFormData) => {
+       try {
+          if (!ads || !id) throw new Error('Ad details are not available');
 
-        try {
-            if (!ads || !id) throw new Error('Ad details are not available')
-
-    
-            let updatedMedia = ads.coverUrl
+          let updatedMedia = ads.coverUrl
         
-    
-            if (newMedia.length > 0) {
+
+          if (newMedia.length > 0) {
                 const uploadedUrl = await handleFileUpload(newMedia[0]);
                 updatedMedia = uploadedUrl;
-            }
-    
+          }
+
           const userBiodata = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
-    
+
           const updatedData = {
             name: data.adName,
             description: data.adDescription,
@@ -234,7 +227,7 @@ const ViewAds = () => {
             action: 'edit',
             adId: id
           }
-    
+
           const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData, {
             headers: { Authorization: `Bearer ${token}` },
           })
@@ -249,10 +242,11 @@ const ViewAds = () => {
             navigate('/admin/advertisement-management');
           }
 
-        } catch (err) {
-          console.error('Error updating ad:', err)
-          toast.error('Failed to update ad')
-        }
+       }
+       catch (err) {
+            console.error('Error updating ad:', err)
+            toast.error('Failed to update ad')
+       }
     };
 
 

@@ -20,7 +20,7 @@ const VideoUploadConfirmation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState<LocationState | null>(null);
 
-  const { uploadRequestId, uploadTypeId, uploadTypeName, price, paymentReference, paymentDetails } = location.state || {};
+  const { uploadRequestId, uploadTypeId, uploadTypeName, price, paymentReference, paymentId } = location.state || {};
 
   const handleUploadNow = () => {
     navigate('/candidate/video-management/upload', {
@@ -30,7 +30,7 @@ const VideoUploadConfirmation = () => {
         uploadTypeName,
         price,
         paymentReference,
-        paymentDetails
+        paymentId
       }
     });
   };

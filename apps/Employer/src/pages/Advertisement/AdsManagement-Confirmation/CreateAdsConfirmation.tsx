@@ -20,76 +20,97 @@ const CreateAdsConfirmation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState<LocationState | null>(null);
 
-  useEffect(() => {
-    if (location.state) {
-      const { AdType, price, paymentReference } = location.state as LocationState;
-      if (AdType && price && paymentReference) {
-        setState({ AdType, price, paymentReference });
-      } else {
-        toast.error('Invalid creation data. Redirecting....');
-        navigate('/employer/advertisement/');
-      }
-    } else {
-      toast.error('Error occured. Redirecting....');
-      navigate('/employer/advertisement/');
-    }
-  }, [location.state, navigate]);
+  // useEffect(() => {
+  //   if (location.state) {
+  //     const { AdType, price, paymentReference } = location.state as LocationState;
+  //     if (AdType && price && paymentReference) {
+  //       setState({ AdType, price, paymentReference });
+  //     } else {
+  //       toast.error('Invalid creation data. Redirecting....');
+  //       navigate('/employer/advertisement/');
+  //     }
+  //   } else {
+  //     toast.error('Error occured. Redirecting....');
+  //     navigate('/employer/advertisement/');
+  //   }
+  // }, [location.state, navigate]);
+
+  // const handleCreateNow = () => {
+  //   if (state) {
+  //     navigate('/employer/advertisement/upload', {
+  //       state: {
+  //         AdType: state.AdType,
+  //         videoPrice: state.price,
+  //         paymentReference: state.paymentReference
+  //       }
+  //     });
+  //   } else {
+  //     toast.error('Missing Ad information. Please try again.');
+  //     navigate('/employer/advertisement/');
+  //   }
+  // };
+
+  // const handleCreateLater = async () => {
+  //   if (!state) {
+  //     toast.error('Missing Ad information. Please try again.');
+  //     navigate('/employer/advertisement/');
+  //     return;
+  //   }
+
+  //   setIsLoading(true)
+  //   try {
+  //     const userId = localStorage.getItem('userId')
+
+  //     if (!userId) {
+  //       throw new Error('User ID not found')
+  //     }
+
+  //     const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, {
+  //       AdType: state.AdType,
+  //       AdPrice: state.price,
+  //       paymentReference: state.paymentReference,
+  //       userId
+  //     });
+  //     // const userId = 'user-id';
+  //     // const AdId = 'Ad-id';
+
+  //     // await axios.post('/api/Ad-drafts', { userId, AdId });
+
+  //     if (response.status === 200) {
+  //       toast.success('Your payment has been saved. You can create your Ad later.')
+  //       navigate('/employer/advertisement');
+  //     } else {
+  //       throw new Error('Failed to save payment information')
+  //     }
+  //   } 
+  //   catch (error) {
+  //     console.error('Failed to create Ad draft:', error);
+  //     toast.error('Failed to save payment information. Please try again.');
+  //   }
+  //   finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+
+
+  const { uploadRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
 
   const handleCreateNow = () => {
-    if (state) {
-      navigate('/employer/advertisement/upload', {
-        state: {
-          AdType: state.AdType,
-          videoPrice: state.price,
-          paymentReference: state.paymentReference
-        }
-      });
-    } else {
-      toast.error('Missing Ad information. Please try again.');
-      navigate('/employer/advertisement/');
-    }
+    navigate('/candidate/video-management/upload', {
+      state: {
+        uploadRequestId,
+        adTypeId,
+        adTypeName,
+        price,
+        paymentReference,
+        paymentId
+      }
+    });
   };
 
-  const handleCreateLater = async () => {
-    if (!state) {
-      toast.error('Missing Ad information. Please try again.');
-      navigate('/employer/advertisement/');
-      return;
-    }
-
-    setIsLoading(true)
-    try {
-      const userId = localStorage.getItem('userId')
-
-      if (!userId) {
-        throw new Error('User ID not found')
-      }
-
-      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, {
-        AdType: state.AdType,
-        AdPrice: state.price,
-        paymentReference: state.paymentReference,
-        userId
-      });
-      // const userId = 'user-id';
-      // const AdId = 'Ad-id';
-
-      // await axios.post('/api/Ad-drafts', { userId, AdId });
-
-      if (response.status === 200) {
-        toast.success('Your payment has been saved. You can create your Ad later.')
-        navigate('/employer/advertisement');
-      } else {
-        throw new Error('Failed to save payment information')
-      }
-    } 
-    catch (error) {
-      console.error('Failed to create Ad draft:', error);
-      toast.error('Failed to save payment information. Please try again.');
-    }
-    finally {
-      setIsLoading(false);
-    }
+  const handleCreateLater = () => {
+    navigate('/candidate/video-management');
   };
 
   return (

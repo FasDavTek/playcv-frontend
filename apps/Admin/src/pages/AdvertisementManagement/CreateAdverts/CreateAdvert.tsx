@@ -231,7 +231,7 @@ const onSubmitHandler = async (data: AdFormData) => {
     const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData);
 
     if (response.code === "00") {
-      toast.success('Ad uploaded and payment confirmed successfully');
+      toast.success('Ad uploaded successfully');
       reset();
       navigate('/admin/advertisement-management');
     }
