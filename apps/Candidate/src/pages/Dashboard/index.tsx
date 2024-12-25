@@ -13,11 +13,36 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 // import queries from '../../services/queries/dashboard';
+import { useAuth } from './../../../../../libs/context/AuthContext';
+
+
+interface Account {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  userType: string;
+}
 
 type ModalTypes = null | 'uploadModal' | 'confirmationModal' | 'paymentModal';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { authState } = useAuth();
+  
+  const currentUser = authState.user;
+
+  if (!currentUser) {
+    return null;
+  };
+
+  const currentAccount: Account = {
+    id: currentUser.id,
+    name: currentUser.name,
+    email: currentUser.email || '',
+    avatar: '/path/to/default/avatar.png',
+    userType: currentUser.userTypeId === 1 ? 'Admin' : currentUser.userTypeId === 2 ? 'Employer' : 'Professional'
+  };
   // const { useGetDashboardSummary } = queries;
   // const { isLoading, data: DashboardSummary } = useGetDashboardSummary(
   //   `/dashboard-manager/superadmin/cards`
@@ -69,7 +94,7 @@ const Dashboard = () => {
             /> */}
             <div>
               <h3 className="text-ce-green text-2xl">
-                <span className="font-normal">Hello,</span> Emma Taylor
+                <span className="font-normal">Hello,</span> {currentAccount.name}
               </h3>
               <p className="text-greyText2">
                 Check your activities in this dashboard.

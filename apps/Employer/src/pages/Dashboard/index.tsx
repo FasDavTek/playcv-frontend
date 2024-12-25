@@ -6,8 +6,35 @@ import { DashboardCard } from '@video-cv/ui-components';
 import ProfileVisitsChart from '../../components/dashboard/PatientActivityChart';
 import JobVacancyChart from '../../components/dashboard/MonthlyRevenueChart';
 // import queries from '../../services/queries/dashboard';
+import { useAuth } from './../../../../../libs/context/AuthContext';
+
+
+interface Account {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  userType: string;
+}
+
 
 const Dashboard = () => {
+  const { authState } = useAuth();
+
+  const currentUser = authState.user;
+
+  if (!currentUser) {
+    return null;
+  };
+
+  const currentAccount: Account = {
+    id: currentUser.id,
+    name: currentUser.name,
+    email: currentUser.email || '',
+    avatar: '/path/to/default/avatar.png',
+    userType: currentUser.userTypeId === 1 ? 'Admin' : currentUser.userTypeId === 2 ? 'Employer' : 'Professional'
+  };
+
   return (
     <section className="ce-px ce-py grid xl:grid-cols-[1fr_auto] gap-5">
       <div>
@@ -15,7 +42,7 @@ const Dashboard = () => {
           <div className="flex gap-2 items-center">
             <div>
               <h3 className="text-ce-green text-2xl">
-                <span className="font-normal">Hello,</span> Emma Taylor
+                <span className="font-normal">Hello,</span> {currentAccount.name}
               </h3>
               <p className="text-greyText2">
                 Check your activities in this dashboard.

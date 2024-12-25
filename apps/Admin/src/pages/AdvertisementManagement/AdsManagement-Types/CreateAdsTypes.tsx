@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@video-cv/ui-components';
-import { usePaystack, PaymentDetails } from '@video-cv/payment';
+import { usePaystack } from '@video-cv/payment';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Card, CardContent, CardHeader, CircularProgress, duration, Typography } from '@mui/material';
@@ -58,114 +58,6 @@ const AdUploadTypes = () => {
   useEffect(() => {
     fetchUploadTypes();
   }, [fetchUploadTypes]);
-
-
-
-  // const onPaymentSuccess = useCallback(async (reference: string, details: PaymentDetails) => {
-  //   if (!selectedType || !authState.user) return;
-
-  //   try {
-  //     const paymentConfirmationData = {
-  //       buyerId: authState.user?.id,
-  //       currency: details.currency,
-  //       total: details.amount / 100,
-  //       countryCode: "NG",
-  //       reference_Id: reference,
-  //       status: details.status === 'success' ? 's' : details.status === 'failed' ? 'f' : 'a',
-  //       cardType: details.cardType || '',
-  //       cardDetails: details.cardDetails || '',
-  //       last_Four: details.last_Four || "Unknown",
-  //       purchaseDetails: [{
-  //         adId: selectedType.typeId,
-  //         quantity: 1,
-  //         amount: selectedType.price
-  //       }],
-  //       paymentType: "upload",
-  //       uploadType: selectedType.typeName,
-  //       uploadTypeId: selectedType.typeId,
-  //       userIdentifier: authState?.user?.username,
-  //       adTypeId: selectedType.typeId,
-  //       transactionFee: details?.added_fees,
-  //       chargedTaxAmount: 0,
-  //       isUploaded: false,
-  //       duration: details?.duration,
-  //     };
-
-  //     const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-
-
-  //     const uploadRequestPayload = {
-  //       buyerId: authState.user?.id,
-  //       adId: null, // This will be filled later when the ad is uploaded
-  //       name: selectedType?.typeName.charAt(0).toUpperCase(),
-  //       adTypeId: selectedType.typeId,
-  //       description: "",
-  //       coverUrl: "",
-  //       redirectUrl: "",
-  //       action: "create",
-  //       statusId: null,
-  //       startDate: null,
-  //       endDate: null,
-  //       paymentId: details.id
-  //     };
-
-  //     const uploadRequestResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, uploadRequestPayload, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-
-
-  //     navigate(`/admin/advertisement-management/confirmation`, { 
-  //       state: {
-  //         uploadRequestId: uploadRequestResponse.data.id,
-  //         adTypeId: selectedType.typeId,
-  //         adTypeName: selectedType.typeName,
-  //         price: price,
-  //         paymentReference: reference,
-  //         paymentId: paymentResponse.data.id
-  //       }
-  //     });
-  //   }
-  //   catch(err: any) {
-  //     console.error('Error creating upload request:', err);
-  //     toast.error('Failed to process your request. Please try again.');
-  //   }
-  // }, []);
-
-
-
-  // const onPaymentFailure = useCallback(() => {
-  //   toast.error('Payment failed');
-  //   setSelectedType(null);
-  // }, []);
-
-  // const { payButtonFn, isProcessing } = usePaystack(onPaymentSuccess, onPaymentFailure);
-
-
-  // const handlePayment = useCallback((type: AdType) => {
-  //   setSelectedType(type);
-  //   const amount = Math.round(Number(type.price));
-  //   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-  //   const email = authState?.user?.username || '';
-  //   const firstName = authState?.user?.firstName || '';
-  //   const lastName = authState?.user?.lastName || '';
-  //   const phone = authState?.user?.phone;
-
-  //   console.log(type.price)
-  //   console.log(amount)
-
-  //   if (amount > 0) {
-  //     payButtonFn(amount, email, firstName, lastName, phone);
-  //   }
-  //   // if (authState?.user?.username && token) {
-  //     // payButtonFn(amount, email,);
-  //   // }
-  //   // else {
-  //   //   toast.error('User not found. Please log in again.');
-  //   //   navigate('/auth/login', { replace: true });
-  //   // }
-  // }, [authState.user, payButtonFn, navigate]);
 
 
   const handleAdTypeSelection = useCallback((adType: AdType) => {

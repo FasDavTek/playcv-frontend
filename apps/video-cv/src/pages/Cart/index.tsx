@@ -6,13 +6,95 @@ import { useCart } from '../../context/CartProvider';
 import { Box, Checkbox, Paper, Stack, styled, Typography } from '@mui/material';
 import { Button } from '@video-cv/ui-components';
 import { Icons } from '@video-cv/assets';
-import { usePaystack, PaymentDetails } from '@video-cv/payment';
+import { usePaystack } from '@video-cv/payment';
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import { useAuth } from './../../../../../libs/context/AuthContext'
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+
+
+
+interface VerifyPaymentResponse {
+  status: string;
+  message: string;
+  data: {
+    id: number;
+    domain: string;
+    status: string;
+    reference: string;
+    amount: number;
+    message: string;
+    gateway_response: string;
+    paid_at: string;
+    created_at: string;
+    channel: string;
+    currency: string;
+    ip_address: string;
+    metadata: any;
+    log: any;
+    fees: number;
+    fees_split: any;
+    authorization: {
+      authorization_code: string;
+      bin: string;
+      last4: string;
+      exp_month: string;
+      exp_year: string;
+      channel: string;
+      card_type: string;
+      bank: string;
+      country_code: string;
+      brand: string;
+      reusable: boolean;
+      signature: string;
+      account_name: string;
+    };
+    customer: {
+      id: number;
+      first_name: string;
+      last_name: string;
+      email: string;
+      customer_code: string;
+      phone: string;
+      metadata: any;
+      risk_action: string;
+    };
+    plan: any;
+    split: any;
+    order_id: string;
+    paidAt: string;
+    createdAt: string;
+    requested_amount: number;
+    transaction_date: string;
+    plan_object: any;
+    subaccount: any;
+  };
+}
+
+export interface PaymentDetails {
+  id: number;
+  email: string;
+  reference: string;
+  access_code?: string;
+  status: string;
+  transaction?: string;
+  amount: number;
+  currency: string;
+  cardType?: string;
+  cardDetails?: string;
+  last_Four?: string;
+  bank?: string;
+  channelType?: string;
+  paidAt?: string;
+  createdAt?: string;
+  added_fees?: number;
+  duration?: string;
+}
+
+
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -24,52 +106,107 @@ const Cart = () => {
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [paymentReference, setPaymentReference] = useState<PaymentDetails | null>(null);
 
 
-  const onPaymentSuccess = async (response: any, details: PaymentDetails) => {
+
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  if (!token) {
+    toast.error('Your session has expired. Please log in again');
+    navigate('/')
+  };
+
+
+  const verifyTransaction = async (reference: string): Promise<VerifyPaymentResponse> => {
+    const url = `https://api.paystack.co/transaction/verify/${reference}`;
+    const verifyPayment = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${CONFIG.PAYSTACK}`,
+        'Content-Type': 'application/json',
+      }
+    });
+
+    return await verifyPayment.json();
+  }
+
+
+
+  const onPaymentInitiated = useCallback(async (reference: string, response: any) => {
     try {
       toast.info('Processing payment...');
-      // payButtonFn();
 
-      if (!details) {
-        throw new Error('Payment failed or was cancelled');
-      }
-      
-      const PaymentDetailsData = {
-        buyerId: authState.user?.id,
-        currency: details.currency,
-        total: details.amount,
-        countryCode: 'NG',
-        datetime: details.paidAt || new Date().toISOString(),
-        reference_Id: details.reference,
-        purchaseDetails: selectedItems.map(itemId => {
-          const item = cartState.cart.find(cartItem => cartItem.id === itemId);
-          return {
-            videoId: item?.id,
-            amount: details?.amount,
-          };
-        }),
-        status: details.status,
-        cardType: details.cardType || "Unknown",
-        cardDetails: `${details.cardDetails || "Unknown"} ${details.cardType || ""}`,
-        last_Four: details.last_Four || "Unknown",
-        paymentType: "purchase",
-        userIdentifier: authState.user?.email,
-        transactionFee: details.added_fees || 0,
-        chargedTaxAmount: 0,
-      };
+      const verifyPayment = await verifyTransaction(reference);
+      console.log(verifyPayment);
 
-      const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, PaymentDetailsData);
-      if (resp.code === "201") {
-        console.log('Payment successful');
-        // toast.success("Payment details saved successfully");
-        // Clear cart or remove purchased items
-        selectedItems.forEach(id => dispatch({ type: 'REMOVE_FROM_CART', payload: { id } }));
-        setSelectedItems([]);
-        setSelectAll(false);
+      if (verifyPayment.data.status === "success") {
+        const details: PaymentDetails = {
+          id: verifyPayment.data.id,
+          reference: verifyPayment.data?.reference,
+          // access_code: verifyPayment.data?.access_code,
+          amount: verifyPayment.data?.amount,
+          currency: verifyPayment.data?.currency,
+          email: verifyPayment.data?.customer?.email,
+          status: verifyPayment.data?.status,
+          // transaction: transaction,
+          cardType: verifyPayment.data?.authorization?.card_type,
+          cardDetails: `${verifyPayment.data?.authorization?.brand || ''} || ${verifyPayment.data?.authorization?.card_type || ''}`,
+          last_Four: verifyPayment.data?.authorization?.last4,
+          bank: verifyPayment.data?.authorization?.bank,
+          channelType: verifyPayment.data?.channel,
+          paidAt: verifyPayment.data?.paid_at,
+          createdAt: verifyPayment.data?.created_at,
+          added_fees: verifyPayment.data?.fees,
+          duration: (verifyPayment.data?.log?.time_spent).toString(),
+        };
+
+        console.log(details);
+
+        setPaymentReference(details);
+
+        const PaymentDetailsData = {
+          buyerId: authState.user?.id,
+          currency: details.currency,
+          total: details.amount,
+          countryCode: 'NG',
+          datetime: details.paidAt || new Date().toISOString(),
+          reference_Id: details.reference,
+          purchaseDetails: selectedItems.map(itemId => {
+            const item = cartState.cart.find(cartItem => cartItem.id === itemId);
+            return {
+              videoId: item?.id,
+              amount: details?.amount,
+              quantity: 1,
+            };
+          }),
+          status: details.status,
+          cardType: details.cardType || "Unknown",
+          cardDetails: `${details.cardDetails || "Unknown"} ${details.cardType || ""}`,
+          last_Four: details.last_Four || "Unknown",
+          paymentType: "purchase",
+          userIdentifier: authState.user?.email,
+          transactionFee: details.added_fees || 0,
+          chargedTaxAmount: 0,
+        };
+
+        const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, PaymentDetailsData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (resp.code === "00") {
+          console.log('Payment successful');
+          toast.success("Payment successful");
+          // Clear cart or remove purchased items
+          selectedItems.forEach(id => dispatch({ type: 'REMOVE_FROM_CART', payload: { id } }));
+          setSelectedItems([]);
+          setSelectAll(false);
+        }
+        else {
+          toast.error("Unable to save payment details");
+        }
       }
       else {
-        toast.error("Unable to save payment details");
+        throw new Error('Payment verification failed');
       }
     }
     catch (err) {
@@ -79,7 +216,7 @@ const Cart = () => {
 
     const from = location.state?.from || '/';
     navigate(from, { replace: true });
-  };
+  }, [authState.user, navigate, selectedItems, cartState.cart, dispatch, ]);
 
 
 
@@ -91,7 +228,19 @@ const Cart = () => {
 
 
 
-  const { payButtonFn, isProcessing } = usePaystack(onPaymentSuccess, onPaymentFailure);
+  const { payButtonFn, isProcessing } = usePaystack(onPaymentInitiated, onPaymentFailure);
+
+  const handlePayment = useCallback(() => {
+    const amount = price;
+    const email = authState?.user?.username || '';
+    const firstName = authState?.user?.firstName || '';
+    const lastName = authState?.user?.lastName || '';
+    const phone = authState?.user?.phone;
+
+    if (amount > 0) {
+      payButtonFn(amount, email, firstName, lastName, phone);
+    }
+  }, [authState.user, payButtonFn, price]);
 
   useEffect(() => {
     if (selectAll) {
@@ -126,46 +275,10 @@ const Cart = () => {
       toast.info('Please select items to purchase');
     }
 
-    const paymentConfig = {
-      email: authState.user?.email || '',
-      amount: price * 100, // Paystack expects amount in kobo
-      metadata: {
-        custom_fields: [
-          {
-            display_name: "User ID",
-            variable_name: "user_id",
-            value: authState.user?.id || ''
-          }
-        ]
-      }
-    };
+    handlePayment();
     
     // payButtonFn();
   };
-
-  // const handlePayment = useCallback((type: AdType) => {
-  //     setSelectedType(type);
-  //     const amount = Math.round(Number(type.price));
-  //     const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-  //     const email = authState?.user?.username || '';
-  //     const firstName = authState?.user?.firstName || '';
-  //     const lastName = authState?.user?.lastName || '';
-  //     const phone = authState?.user?.phone;
-  
-  //     console.log(type.price)
-  //     console.log(amount)
-  
-  //     if (amount > 0) {
-  //       payButtonFn(amount, email, firstName, lastName, phone);
-  //     }
-  //     // if (authState?.user?.username && token) {
-  //       // payButtonFn(amount, email,);
-  //     // }
-  //     // else {
-  //     //   toast.error('User not found. Please log in again.');
-  //     //   navigate('/auth/login', { replace: true });
-  //     // }
-  //   }, [authState.user, payButtonFn, navigate]);
 
   const ClampedText = styled(Typography)({
     display: '-webkit-box',
