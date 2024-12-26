@@ -111,7 +111,6 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
     const options = tabOptions[currentTab];
 
     const handleImageUpload = async (file: File) => {
-        if (!file) throw new Error('File is not defined.');
     
         try {
           const fileName = `${Date.now()}-${file.name}`;
@@ -286,12 +285,14 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
             <Controller
                 name="status"
                 control={control}
-                render={({ field: { onChange, value } }) => (
+                render={({ field }) => (
                     <Select
-                        label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Status`}
+                        name={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Status`}
                         options={statusOptions}
-                        value={value || ''}
-                        onChange={(newValue: string) => onChange(newValue)}
+                        control={control}
+                        placeholder="Select Status"
+                        defaultValue={field.value}
+                        handleChange={(newValue) => field.onChange(newValue)}
                     />
                 )}
             />

@@ -45,6 +45,7 @@ const Table: React.FC<any> = <T extends object>({
   const [columnFilters, setColumnFilters] = useState([]);
 
   const filteredData = useMemo(() => {
+    if (!data || !Array.isArray(data)) return [];
     if (!searchQuery && !filter) return data;
     console.log(data);
     return data.filter((item) =>
@@ -56,12 +57,13 @@ const Table: React.FC<any> = <T extends object>({
   }, [data, searchQuery, filter]);
 
   const paginatedData = useMemo(() => {
+    if (!Array.isArray(filteredData)) return [];
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    return filteredData.slice(startIndex, endIndex);
+    return filteredData?.slice(startIndex, endIndex);
   }, [filteredData, currentPage, pageSize]);
 
-  const totalPages = Math.ceil(filteredData.length / pageSize);
+  const totalPages = Math.ceil((Array.isArray(filteredData) ? filteredData.length : 0) / pageSize);
 
   const numberedColumns = useMemo<ColumnDef<T, any>[]>(() => [
     {
@@ -117,7 +119,7 @@ const Table: React.FC<any> = <T extends object>({
             </tr>
           ))}
         </thead>
-        {filteredData.length > 0 && (
+        {filteredData?.length > 0 && (
           <tbody className="">
             {table.getRowModel().rows.map((row) => (
               <tr
@@ -135,7 +137,7 @@ const Table: React.FC<any> = <T extends object>({
           </tbody>
         )}
       </table>
-      {paginatedData.length === 0 && (
+      {paginatedData?.length === 0 && (
         <table className="">
           <tbody className="flex items-center justify-center border py-10 w-full">
             <tr className="flex flex-col items-center justify-center w-full !bg-transparent">

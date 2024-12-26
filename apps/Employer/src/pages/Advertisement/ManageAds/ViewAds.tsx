@@ -258,19 +258,14 @@ const ViewAds = () => {
                 <Controller
                     name='adType'
                     control={control}
-                    render={({ field: { onChange, value } }) => (
+                    render={({ field }) => (
                         <Select
-                            label="Advert Type"
+                            name="adType"
+                            control={control}
+                            defaultValue={adTypes.find(type => type.value === adDetails.adType) || null}
                             options={adTypes}
-                            value={watch('adType') || ''}
-                            onChange={(value: string) => {
-                                if (value === "video" || value === "image") {
-                                  setValue('adType', value);
-                                  onChange(value);
-                                } else {
-                                  console.error(`Invalid ad type: ${value}`);
-                                }
-                              }}
+                            handleChange={(newValue) => field.onChange(newValue?.value)}
+                            errors={errors}
                         />
                     )}
                 />

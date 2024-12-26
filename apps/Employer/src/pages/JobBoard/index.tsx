@@ -28,13 +28,21 @@ interface Jobs {
   location: string;
 }
 
+
+type Option = {
+  label: string;
+  value: string;
+};
+
+
 const JobBoard = () => {
   const [jobs, setJobs] = useState<Jobs[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
-  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
+  const [locationOptions, setLocationOptions] = useState<Option[]>([]);
   const [searchText, setSearchText] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
@@ -49,6 +57,19 @@ const JobBoard = () => {
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`);
         if (resp.status === 200) {
           setJobs(resp.data);
+
+          // const categories: Option[] = [...new Set(resp.data.map((job: Jobs) => job.specialization))].map(cat => ({
+          //   label: cat,
+          //   value: cat,
+          // }));
+  
+          // const locations: Option[] = [...new Set(resp.data.map((job: Jobs) => job.location))].map(loc => ({
+          //   label: loc,
+          //   value: loc,
+          // }));
+  
+          // setCategoryOptions(categories);
+          // setLocationOptions(locations);
         }
         else {
           console.error('Unable to fetch jobs:', resp.message);
@@ -132,13 +153,13 @@ const JobBoard = () => {
       setIsFilterApplied(true);
   };
 
-  const handleCategoryChange = (value: string) => {
-      setSelectedCategories([...selectedCategories, value]);
+  const handleCategoryChange = (newValue: any) => {
+      setSelectedCategories(newValue ? [newValue.value] : []);
       setIsFilterApplied(true);
   };
 
-  const handleLocationChange = (value: string) => {
-    setSelectedLocations([...selectedLocations, value]);
+  const handleLocationChange = (newValue: any) => {
+    setSelectedLocations(newValue ? [newValue.value] : []);
     setIsFilterApplied(true);
   };
 
@@ -205,28 +226,44 @@ const JobBoard = () => {
             <p className="text-red-500" role="button" onClick={handleClearFilters}>Clear All</p>
           </div>
           <div className="p-3 mx-auto flex flex-col gap-3">
-          <Input
-              label="Role"
-              placeholder="Search..."
-              containerClass="flex-1"
-              name="role"
-              value={searchText}
-              onChange={handleSearchChange}
+            <Input
+                label="Role"
+                placeholder="Search..."
+                containerClass="flex-1"
+                name="role"
+                value={searchText}
+                onChange={handleSearchChange}
+              />
+
+          {/* <Controller
+              name="categories"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  name="Categories"
+                  options={categoryOptions}
+                  control={control}
+                  placeholder="Select Categories"
+                  defaultValue={selectedCategories[0]}
+                  handleChange={handleCategoryChange}
+                />
+              )}
             />
 
-            <Select
-              options={categoryOptions.map(option => ({ label: option, value: option }))} // Replace with actual options
-              label="Categories"
-              value={selectedCategories.join(', ')}
-              onChange={handleCategoryChange}
-            />
-
-            <Select
-              options={[]} // Replace with actual options
-              label="Location"
-              value={selectedLocations.join(', ')}
-              onChange={handleLocationChange}
-            />
+            <Controller
+              name="location"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  name="Location"
+                  options={locationOptions}
+                  control={control}
+                  placeholder="Select Location"
+                  defaultValue={selectedLocations[0]}
+                  handleChange={handleLocationChange}
+                />
+              )}
+            /> */}
 
             <Controller
                 name='datePosted'
@@ -264,9 +301,9 @@ const JobBoard = () => {
           <div className="mt-20 mx-auto">
             <h5 className="font-bold text-5xl my-5">LATEST JOBS</h5>
             <div className={` items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-              {paginatedJobs.map((job) => (
+              {/* {paginatedJobs.map((job) => (
                 <JobCard key={job.id} job={job} />
-              ))}
+              ))} */}
               <div className="flex justify-end gap-2 mt-4">
                 <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
                 <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>

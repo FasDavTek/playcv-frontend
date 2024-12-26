@@ -324,17 +324,16 @@ const Navbar = () => {
                 </NavLink>
               </li>
             )}
-            {authState.isAuthenticated ? 
-              (
-                <Button variant='black' className='mt-5 md:mt-0 ml-4 md:ml-0' label='Logout' onClick={logout} />
-              ) : 
-              (
-                <Button variant='black' className='mt-5 md:mt-0 ml-4 md:ml-0' label='Get Started' onClick={handleGetStartedClick} />
-              )
-            }
-            {!authState.isAuthenticated && (
-              <Button variant='black' className='mt-5 md:mt-0 md:ml-5' label='Log in' onClick={() => navigate('/auth/login')} />
-            )}
+            <div className="flex flex-col mlg:flex-row justify-start gap-4 mt-5 mlg:mt-0 mlg:ml-0">
+              {authState.isAuthenticated ? (
+                <Button variant='black' className='w-full md:w-auto' label='Logout' onClick={logout} />
+              ) : (
+                <>
+                  <Button variant='black' className='w-full md:w-auto' label='Get Started' onClick={handleGetStartedClick} />
+                  <Button variant='black' className='w-full md:w-auto' label='Log in' onClick={() => navigate('/auth/login')} />
+                </>
+              )}
+            </div>
             <Dialog fullScreen={fullScreen} aria-labelledby="responsive-dialog-title" open={openModal} onClose={handleCloseModal}>
               <DialogTitle id="responsive-dialog-title">
                 <strong className=' text-neutral-200'>Get Started</strong>

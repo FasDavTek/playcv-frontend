@@ -48,16 +48,13 @@ const UserModal = ({
         <Controller
           name="role"
           control={control}
-          rules={{ required: 'Role is required' }}
-          render={({ field: { onChange, value } }) => (
-            <Select
-              label="Role"
-              options={options}
-              value={value}
-              onChange={onChange}
-              // onChange={(e: any) => console.log('e', e)}
-              // {...{ field }}
-            />
+          render={({ field }) => (
+              <Select
+                name="Role"
+                control={control}
+                options={options}
+                handleChange={(newValue) => field.onChange(newValue?.value)}
+              />
           )}
         />
         <Input

@@ -212,7 +212,7 @@ const AdUploadTypes = () => {
           paymentType: "upload",
           uploadType: selectedType.typeName,
           uploadTypeId: selectedType.typeId,
-          userIdentifier: authState?.user?.username,
+          userIdentifier: authState?.user?.id,
           adTypeId: selectedType.typeId,
           transactionFee: details?.added_fees,
           chargedTaxAmount: 0,

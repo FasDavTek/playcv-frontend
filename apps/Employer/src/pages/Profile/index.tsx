@@ -41,7 +41,7 @@ const schema = z.object({
       businessName: z.string().min(1, "Business name is required"),
       businessPhoneNumber: z.string().min(10, "Business phone number must be at least 10 digits"),
       industry: z.string().min(1, "Business sector is required"),
-      industryId: z.number().optional(),
+      industryId: z.string(),
       businessEmail: z.string().email("Invalid email format"),
       websiteUrl: z.string().url().optional().or(z.literal('')),
       fbLink: z.string().url().optional().or(z.literal('')),
@@ -117,9 +117,9 @@ const Profile = () => {
               if (fieldSchema instanceof z.ZodString && typeof value === 'string') {
                 setValue(`userProfile.businessDetails.${fieldKey}`, value);
               } 
-              else if (fieldSchema instanceof z.ZodNumber && typeof value === 'number') {
-                setValue(`userProfile.businessDetails.${fieldKey}`, value);
-              }
+              // else if (fieldSchema instanceof z.ZodNumber && typeof value === 'number') {
+              //   setValue(`userProfile.businessDetails.${fieldKey}`, value);
+              // }
             }
           });
 
@@ -139,8 +139,8 @@ const Profile = () => {
 
 
 
-  const { data: industry, isLoading: isLoadingDegreeClasses } = useAllMisc({
-    resource: 'industry',
+  const { data: industry, isLoading: isLoadingIndustries } = useAllMisc({
+    resource: 'industries',
     page: 1,
     limit: 100,
     download: false,
@@ -428,16 +428,19 @@ const Profile = () => {
             )}
             {editField === 'userProfile.businessDetails.industryId' ? (
               <Controller
-                {...register('userProfile.businessDetails.industryId')}
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Select
-                    label="Business Industry"
-                    value={value !== undefined ? String(value) : ''}
-                    options={model(industry, 'name', 'id')}
-                    onChange={(value) => onChange(value)}
-                  />
-                )}
+                  {...register('userProfile.businessDetails.industryId')}
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      name="Business Sector"
+                      control={control}
+                      defaultValue={Array.isArray(industry) ? industry?.find(i => i.id === watch('userProfile.businessDetails.industryId')) : null}
+                      options={model(industry, 'name', 'id')}
+                      handleChange={(newValue) => field.onChange(newValue?.value)}
+                      isDisabled={isLoadingIndustries}
+                      errors={errors}
+                    />
+                  )}
               />
             ) : (
               <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.industry')}>

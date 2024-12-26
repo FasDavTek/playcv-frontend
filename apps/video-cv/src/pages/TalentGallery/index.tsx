@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { getData } from './../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
+import { Controller, useForm } from 'react-hook-form';
 
 interface Video {
     id: string;
@@ -42,6 +43,7 @@ const index = () => {
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [isFilterApplied, setIsFilterApplied] = useState(false);
     const navigate = useNavigate();
+    const { control } = useForm();
 
     useEffect(() => {
         const fetchVideos = async () => {
@@ -183,11 +185,19 @@ const index = () => {
                         value={searchText}
                         onChange={handleSearchChange}
                     />
-                    <Select
-                        options={categoryOptions.map(option => ({ label: option, value: option }))}
-                        label="Categories"
-                        value={selectedCategories.join(', ')}
-                        onChange={handleCategoryChange}
+                    <Controller
+                        name="categories"
+                        control={control}
+                        render={({ field }) => (
+                            <Select
+                                name="Categories"
+                                options={categoryOptions.map(option => ({ label: option, value: option }))}
+                                control={control}
+                                placeholder="Select Categories"
+                                defaultValue={selectedCategories[0]}
+                                handleChange={handleCategoryChange}
+                            />
+                        )}
                     />
 
                     {/* <Select

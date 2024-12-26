@@ -287,11 +287,18 @@ const VideoUpload: React.FC = () => {
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
             Video Category
           </label>
-          <Select
-            label="Select your video category"
-            options={categories.map(category => ({ value: category.id, label: category.name }))}
-            value={watch('Category')}
-            onChange={(value) => setValue('Category', value)}
+          <Controller
+            name="Category"
+            control={control}
+            render={({ field }) => (
+                <Select
+                  name="Category"
+                  control={control}
+                  placeholder="Select your video category"
+                  options={categories.map(category => ({ value: category.id, label: category.name }))}
+                  handleChange={(newValue) => field.onChange(newValue?.value)}
+                />
+            )}
           />
           <div className="">
             <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">

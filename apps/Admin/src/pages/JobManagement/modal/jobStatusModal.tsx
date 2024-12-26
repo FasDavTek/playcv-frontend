@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Modal, Box, Typography, TextField, FormControl, InputLabel, MenuItem, CircularProgress } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { Button, Select } from '@video-cv/ui-components';
+import { watch } from 'fs';
+import model from './../../../../../../libs/utils/helpers/model';
+import { Controller } from 'react-hook-form';
 
 interface JobStatusModalProps {
   open: boolean;
@@ -116,19 +119,25 @@ const JobStatusModal: React.FC<JobStatusModalProps> = ({ open, onClose, job, onU
             </div>
 
             <FormControl size='medium' margin="normal" variant="outlined">
-                <Select
+                {/* <Select
                     value={status}
                     onChange={handleStatusChange}
                     options={statusOptions}
                     label="Status"
-                    // className=" bg-white border-gray-300 rounded-md w-48"
                 >
-                    {/* {statusOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                    </MenuItem>
-                    ))} */}
                 </Select>
+                <Controller
+                  {...register('userProfile.businessDetails.industryId')}
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      options={statusOptions}
+                      placeholder="Select Status"
+                    />
+                  )}
+              />
+                 */}
             </FormControl>
           </Box>
         </Box>

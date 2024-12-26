@@ -214,7 +214,7 @@ const VideoUploadTypes = () => {
             paymentType: "upload",
             uploadType: selectedType.name,
             uploadTypeId: selectedType.id,
-            userIdentifier: authState.user?.email,
+            userIdentifier: authState.user?.id,
             transactionFee: details.added_fees,
             chargedTaxAmount: 0,
             isUploaded: false, // This indicates that the video has been uploaded

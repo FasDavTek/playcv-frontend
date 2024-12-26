@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Images } from '@video-cv/assets';
-import { useTheme } from '@mui/material';
+import { FormControl, FormHelperText, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import { Input, Button, } from '@video-cv/ui-components';
@@ -15,6 +15,21 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 const schema = z.object({
+    employerInfo: z.object({
+      businessName: z.string().min(1, "Business name is required"),
+      businessPhoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
+      email: z.string().email("Invalid email format"),
+      websiteUrl: z.string().url().optional().or(z.literal('')),
+      fbLink: z.string().url().optional().or(z.literal('')),
+      twitter: z.string().url().optional().or(z.literal('')),
+      instagramUrl: z.string().url().optional().or(z.literal('')),
+      address: z.string().min(10, "Business address is required"),
+      industry: z.string().min(3, "Business sector is required"),
+      industryId: z.number().optional(),
+      contactName: z.string().min(1, "Contact person name is required"),
+      contactPosition: z.string().min(1, "Contact person role is required"),
+      isActive: z.boolean(),
+    }).nullable(),
     firstName: z.string().min(1, "First name is required"),
     middleName: z.string().min(1, "Middle name is required"),
     surname: z.string().min(1, "Surname is required"),
@@ -48,6 +63,7 @@ const index = () => {
             userTypeId: 3,
             isBusinessUser: false,
             isProfessional: true,
+            employerInfo: null,
         },
     });
 
@@ -84,6 +100,7 @@ const index = () => {
                 phoneNumber: data.phoneNumber,
                 businessName: data.businessName,
                 password: data.password,
+                employerInfo: null,
             }
           
             const combinedData = {
@@ -164,8 +181,14 @@ const index = () => {
                         <Input type='text' label="Business Name" placeholder="Business Name" error={errors.businessName} {...register('businessName')} isValid={!errors.businessName && !!watchedFields.businessName} />
                         <Input label="Phone Number" placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} isValid={!errors.phoneNumber && !!watchedFields.phoneNumber} />
                         <Input label="Email Address" placeholder="Email Address" error={errors.email} {...register('email')} isValid={!errors.email && !!watchedFields.email} />
-                        <Input type='password' label="Password" placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors.password && !!watchedFields.password} />
-                        <Input type='password' label="Confirm Password" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
+                        <FormControl>
+                            <Input type='password' label="Password" id='password' placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors?.password && !!watchedFields.password} />
+                            <FormHelperText>Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.</FormHelperText>
+                        </FormControl>
+                        <FormControl>
+                            <Input type='password' label="Confirm Password" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
+                            <FormHelperText>Passwords must match.</FormHelperText>
+                        </FormControl>
                     </div>
                     <div className="mt-5">
                         <label className="inline-flex items-center">

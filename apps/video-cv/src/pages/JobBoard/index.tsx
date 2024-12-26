@@ -248,7 +248,7 @@ const JobBoard = () => {
               onChange={handleSearchChange}
             />
 
-            <Select
+            {/* <Select
               options={categoryOptions.map(option => ({ label: option, value: option }))} // Replace with actual options
               label="Categories"
               value={filterOptions.selectedCategories.join(', ')}
@@ -260,6 +260,36 @@ const JobBoard = () => {
               label="Location"
               value={filterOptions.selectedLocations.join(', ')}
               onChange={handleLocationChange}
+            /> */}
+
+            <Controller
+              name="categories"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  name="Categories"
+                  options={[]}
+                  control={control}
+                  placeholder="Select Categories"
+                  defaultValue={selectedCategories[0]}
+                  handleChange={handleCategoryChange}
+                />
+              )}
+            />
+
+            <Controller
+              name="location"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  name="Location"
+                  options={[]}
+                  control={control}
+                  placeholder="Select Location"
+                  defaultValue={selectedLocations[0]}
+                  handleChange={handleLocationChange}
+                />
+              )}
             />
 
             <Controller

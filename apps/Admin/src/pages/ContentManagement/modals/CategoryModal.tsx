@@ -43,13 +43,19 @@ const CategoryModal = ({
   selectedItem,
   currentTab,
 }: CategoryModalProps) => {
-  const { register, handleSubmit, watch, setValue, reset, control } = useForm<ContentItem>();
+  const { register, handleSubmit, watch, setValue, reset, formState: { errors }, control } = useForm<ContentItem>();
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
 
   const { data: itemData, isLoading, error } = useAllMisc({
-    resource: currentTab,
+    resource: 
+      currentTab === 'industry' ? 'industries' :
+      currentTab === 'cvguideline' ? 'cv-guideline' :
+      currentTab === 'degreeclass' ? 'degree-class' :
+      currentTab === 'sitetestimonial' ? 'site-testimonials' :
+      currentTab,
     page: 1,
-    limit: 1,
+    limit: 100,
+    enabled: currentTab !== 'country' && currentTab !== 'state',
   });
 
   const { data: countryData, isLoading: isCountryLoading, error: countryError } = useAllCountry();
@@ -166,16 +172,19 @@ const CategoryModal = ({
             <Input label="Abbreviation" {...register('shortName', { required: true })} disabled={isViewMode} />
             {/* <Input label="Country ID" type="number" {...register('countryId', { required: true })} disabled={isViewMode} /> */}
             <Controller
-              name='countryId'
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  label="Country"
-                  value={watch('countryId', { required: true })}
-                  options={model(countryData, "name", "id")}
-                  onChange={(value) => onChange(value)}
-                />
-              )}
+                {...register('countryId')}
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    name="Country"
+                    control={control}
+                    defaultValue={Array.isArray(countryData) ? countryData?.find(i => i.id === watch('countryId')) : null}
+                    options={model(countryData, 'name', 'id')}
+                    handleChange={(newValue) => field.onChange(newValue?.value)}
+                    isDisabled={isCountryLoading}
+                    errors={errors}
+                  />
+                )}
             />
           </>
         );
@@ -184,14 +193,17 @@ const CategoryModal = ({
           <>
             <Input label="Institution Name" {...register('name', { required: true })} disabled={isViewMode} />
             <Controller
-              name='countryId'
+              {...register('countryId')}
               control={control}
-              render={({ field: { onChange, value } }) => (
+              render={({ field }) => (
                 <Select
-                  label="Country"
-                  value={watch('countryId', { required: true })}
-                  options={model(countryData, "name", "id")}
-                  onChange={(value) => onChange(value)}
+                  name="Country"
+                  control={control}
+                  defaultValue={Array.isArray(countryData) ? countryData?.find(i => i.id === watch('countryId')) : null}
+                  options={model(countryData, 'name', 'id')}
+                  handleChange={(newValue) => field.onChange(newValue?.value)}
+                  isDisabled={isCountryLoading}
+                  errors={errors}
                 />
               )}
             />

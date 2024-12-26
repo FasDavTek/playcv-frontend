@@ -77,17 +77,23 @@ type guideline = Content & {
 const columnHelper = createColumnHelper<Content>();
 
 const ContentPage = () => {
-  const [activeTab, setActiveTab] = useState<'faq' | 'country' | 'state' | 'institution' | 'course' | 'industry' | 'qalification' | 'sitetestimonial' | 'degreeclass' | 'cvguideline'>('faq');
+  const [activeTab, setActiveTab] = useState<'faq' | 'country' | 'state' | 'institution' | 'course' | 'industry' | 'qualification' | 'sitetestimonial' | 'degreeclass' | 'cvguideline'>('faq');
   const [openModal, setOpenModal] = useState<'create' | 'edit' | 'view' | null>(null);
   const [selectedItem, setSelectedItem] = useState<Content | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(40);
 
   const { data: miscData, isLoading: isMiscLoading, error: miscError } = useAllMisc({
-    resource: activeTab,
+    resource: 
+      activeTab === 'industry' ? 'industries' :
+      activeTab === 'cvguideline' ? 'cv-guideline' :
+      activeTab === 'degreeclass' ? 'degree-class' :
+      activeTab === 'sitetestimonial' ? 'site-testimonials' :
+      activeTab,
     page: 1,
-    limit: 40,
+    limit: 100,
     enabled: activeTab !== 'country' && activeTab !== 'state',
+    structureType: 'data',
   });
 
   console.log(miscData)
@@ -203,10 +209,11 @@ const ContentPage = () => {
         ]
       case 'industry':
         return [
-          ...baseColumns,
+          columnHelper.accessor('name', { header: 'Industry Name' }),
+          columnHelper.accessor('description', { header: 'Description' }),
           actionColumn,
         ]
-      case 'qalification':
+      case 'qualification':
         return [
           ...baseColumns,
           columnHelper.accessor('shortName', { header: 'Short Name' }),
@@ -266,7 +273,7 @@ const ContentPage = () => {
 
       <div className="bg-gray-300 border-b border-gray-200 rounded-lg">
         <div className="flex p-1 overflow-auto gap-3">
-          {['faq', 'country', 'state', 'institution', 'course', 'industry', 'qalification', 'sitetestimonial', 'degreeclass', 'cvguideline'].map((tab) => (
+          {['faq', 'country', 'state', 'institution', 'course', 'industry', 'qualification', 'sitetestimonial', 'degreeclass', 'cvguideline'].map((tab) => (
             <button
               key={tab}
               className={`py-2 px-4 text-sm font-medium ${activeTab === tab ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}

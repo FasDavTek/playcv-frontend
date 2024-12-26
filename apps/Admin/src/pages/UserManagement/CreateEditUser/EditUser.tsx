@@ -244,14 +244,13 @@ const CreateEditUSer: React.FC = () => {
               <Controller
                 name="role"
                 control={control}
-                rules={{ required: 'Role is required' }}
-                render={({ field: { onChange, value } }) => (
-                  <Select
-                    label="Role"
-                    options={roleOptions}
-                    value={watch('role') || ''}
-                    onChange={(value) => setValue('role', value)}
-                  />
+                render={({ field }) => (
+                    <Select
+                      name="Role"
+                      control={control}
+                      options={roleOptions}
+                      handleChange={(newValue) => field.onChange(newValue?.value)}
+                    />
                 )}
               />
             )}

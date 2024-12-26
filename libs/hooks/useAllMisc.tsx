@@ -9,6 +9,7 @@ interface MiscQueryParams {
     download?: boolean;
     resource: string;
     enabled?: boolean;
+    structureType?: 'full' | 'data';
 }
 
 interface MiscItem {
@@ -55,7 +56,11 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
 
                 // console.log(result);
 
-                setData(response.data || []);
+                if (params.structureType === 'data') {
+                    setData(response.data); // Use the data property
+                } else {
+                    setData(response); // Use the full response
+                }
             } catch (err) {
                 setError(err instanceof Error ? err : new Error('An error occurred while fetching data'));
             } finally {

@@ -57,12 +57,12 @@ const JobBoard = () => {
             </p>
           </div>
           <div className="p-3 mx-auto flex flex-col gap-3">
-            <Select
+            {/* <Select
               options={[]}
               label="Date Posted"
               value={''}
               onChange={(value) => console.log(value)}
-            />
+            /> */}
 
             <Radio
               label="Job Status"

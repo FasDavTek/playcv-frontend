@@ -229,11 +229,17 @@ const CreateUser = () => {
                     </Grid>
                     {userType === 'subAdmins' && (
                         <Grid item xs={12}>
-                            <Select
-                                label="Role"
-                                options={roleOptions}
-                                value={watch('role') || ''}
-                                onChange={(value) => setValue('role', value)}
+                            <Controller
+                              name="role"
+                              control={control}
+                              render={({ field }) => (
+                                  <Select
+                                    name="Role"
+                                    control={control}
+                                    options={roleOptions}
+                                    handleChange={(newValue) => field.onChange(newValue?.value)}
+                                  />
+                              )}
                             />
                         </Grid>
                     )}

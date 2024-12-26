@@ -40,8 +40,10 @@ const vacancySchema = z.object({
   companyImage: z.string().optional(),
   companyThumbnail: z.string().optional(),
   companyName: z.string().min(1, "Company name is required"),
-  countryId: z.string().min(1, "Country is required"),
-  stateId: z.string().min(1, "State is required"),
+  countryName: z.string().min(1, "Country is required"),
+  countryId: z.string(),
+  state: z.string().min(1, "State is required"),
+  stateId: z.string(),
   jobDetails: z.string().min(1, "Job details are required"),
   qualifications: z.string().min(1, "Qualifications are required"),
   keyResponsibilities: z.string().min(1, "Key responsibilities are required"),
@@ -267,32 +269,38 @@ const Vacancies = (selectedItem: any) => {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <Controller
-                    name='countryId'
+                <Controller
+                    {...register('countryId')}
                     control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <Select 
-                        label='Country' 
-                        value={watch('countryId')} 
-                        options={model(countryData, "name", "id")}
-                        onChange={(value) => onChange(value)}
+                    render={({ field }) => (
+                      <Select
+                        name="Country"
+                        control={control}
+                        defaultValue={Array.isArray(countryData) ? countryData?.find(i => i.id === watch('countryId')) : null}
+                        options={model(countryData, 'name', 'id')}
+                        handleChange={(newValue) => field.onChange(newValue?.value)}
+                        isDisabled={isCountryLoading}
+                        errors={errors}
                       />
                     )}
-                  />
+                />
                 </Grid>
                 <Grid item xs={12}>
-                  <Controller
-                    name='stateId'
+                <Controller
+                    {...register('stateId')}
                     control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <Select 
-                        label='State' 
-                        value={watch('stateId')} 
-                        options={model(stateData, "name", "id")}
-                        onChange={(value) => onChange(value)}
+                    render={({ field }) => (
+                      <Select
+                        name="State"
+                        control={control}
+                        defaultValue={Array.isArray(stateData) ? stateData?.find(i => i.id === watch('stateId')) : null}
+                        options={model(stateData, 'name', 'id')}
+                        handleChange={(newValue) => field.onChange(newValue?.value)}
+                        isDisabled={isStateLoading}
+                        errors={errors}
                       />
                     )}
-                  />
+                />
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="subtitle2">Job Details</Typography>

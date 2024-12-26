@@ -68,12 +68,20 @@ const CreateAdvertModal = ({
           {...register('adDescription')}
           error={errors.adDescription}
         />
-        <Select
-          label="Advert Type"
-          options={options}
-          value={watch('adType') || ''}
-          onChange={(e: any) => console.log('e', e)}
-        />
+        {/* <Controller
+            name='adType'
+            control={control}
+            render={({ field }) => (
+                <Select
+                    name="adType"
+                    control={control}
+                    defaultValue={adTypes.find(type => type.value === adDetails.adType) || null}
+                    options={adTypes}
+                    handleChange={(newValue) => field.onChange(newValue?.value)}
+                    errors={errors}
+                />
+            )}
+        /> */}
         <div className="">
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
             Advert Upload

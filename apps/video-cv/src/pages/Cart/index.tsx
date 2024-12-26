@@ -184,7 +184,7 @@ const Cart = () => {
           cardDetails: `${details.cardDetails || "Unknown"} ${details.cardType || ""}`,
           last_Four: details.last_Four || "Unknown",
           paymentType: "purchase",
-          userIdentifier: authState.user?.email,
+          userIdentifier: authState.user?.id,
           transactionFee: details.added_fees || 0,
           chargedTaxAmount: 0,
         };
