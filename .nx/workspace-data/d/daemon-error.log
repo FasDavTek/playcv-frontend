@@ -1,0 +1,26 @@
+Daemon process terminated and closed the connection
+
+Messages from the log:
+    at listenInCluster (node:net:1865:12)
+    at Server.listen (node:net:1964:5)
+    at c:\Users\HP\Documents\videocvFrontEnd\node_modules\nx\src\daemon\server\server.js:353:20
+    at new Promise (<anonymous>)
+    at startServer (c:\Users\HP\Documents\videocvFrontEnd\node_modules\nx\src\daemon\server\server.js:351:12)
+    at async c:\Users\HP\Documents\videocvFrontEnd\node_modules\nx\src\daemon\server\start.js:8:9
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1844:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '\\\\.\\pipe\\nx\\C:\\Users\\HP\\AppData\\Local\\Temp\\9b18a3fe77d67a8fa6e5\\d.sock',
+  port: -1
+}
+
+Node.js v18.18.0
+[NX Daemon Server] - 2024-12-26T20:58:46.423Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-12-26T20:58:46.424Z - [WATCHER]: Stopping the watcher for c:\Users\HP\Documents\videocvFrontEnd (sources)
+
+
+
+More information: c:\Users\HP\Documents\videocvFrontEnd\.nx\workspace-data\d\daemon.log
