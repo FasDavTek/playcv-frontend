@@ -172,7 +172,7 @@ const CategoryModal = ({
             <Input label="Abbreviation" {...register('shortName', { required: true })} disabled={isViewMode} />
             {/* <Input label="Country ID" type="number" {...register('countryId', { required: true })} disabled={isViewMode} /> */}
             <Controller
-                {...register('countryId')}
+                name='countryId'
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -180,7 +180,7 @@ const CategoryModal = ({
                     control={control}
                     defaultValue={Array.isArray(countryData) ? countryData?.find(i => i.id === watch('countryId')) : null}
                     options={model(countryData, 'name', 'id')}
-                    handleChange={(newValue) => field.onChange(newValue?.value)}
+                    handleChange={(newValue) => { field.onChange(newValue?.value || newValue?.label); setValue('Country', newValue?.label || ''); }}
                     isDisabled={isCountryLoading}
                     errors={errors}
                   />
@@ -191,9 +191,9 @@ const CategoryModal = ({
       case 'institution':
         return (
           <>
-            <Input label="Institution Name" {...register('name', { required: true })} disabled={isViewMode} />
+            <Input label="Institution Name" {...register('institutionName', { required: true })} disabled={isViewMode} />
             <Controller
-              {...register('countryId')}
+              name='countryId'
               control={control}
               render={({ field }) => (
                 <Select
@@ -201,7 +201,7 @@ const CategoryModal = ({
                   control={control}
                   defaultValue={Array.isArray(countryData) ? countryData?.find(i => i.id === watch('countryId')) : null}
                   options={model(countryData, 'name', 'id')}
-                  handleChange={(newValue) => field.onChange(newValue?.value)}
+                  handleChange={(newValue) => { field.onChange(newValue?.value || newValue?.label); setValue('Country', newValue?.label || ''); }}
                   isDisabled={isCountryLoading}
                   errors={errors}
                 />
@@ -238,7 +238,7 @@ const CategoryModal = ({
             </Grid>
           </>
         );
-      case 'qalification':
+      case 'qualification':
         return (
           <>
             <Input label="Qualification" {...register('name', { required: true })} disabled={isViewMode} />

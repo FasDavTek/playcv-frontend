@@ -11,6 +11,7 @@ import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 type PaymentData = {
   id: number;
@@ -35,14 +36,17 @@ const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState<PaymentData | null>(null);
   const navigate = useNavigate();
 
-
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.FETCH_ALL_PAYMENTS}`);
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.FETCH_ALL_PAYMENTS}?Page=1&Limit=100`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         if (response.code === "201") {
-          const data = await response.json();
+          const data = await response.data;
           setPayments(data);
         } else {
           throw new Error('Failed to fetch payments');
@@ -55,6 +59,7 @@ const Orders = () => {
         setIsLoading(false);
       }
     }
+    fetchPayments();
   })
 
 

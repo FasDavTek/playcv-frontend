@@ -28,7 +28,6 @@ const schema = z.object({
       industryId: z.number().optional(),
       contactName: z.string().min(1, "Contact person name is required"),
       contactPosition: z.string().min(1, "Contact person role is required"),
-      isActive: z.boolean(),
     }).nullable(),
     firstName: z.string().min(1, "First name is required"),
     middleName: z.string().min(1, "Middle name is required"),

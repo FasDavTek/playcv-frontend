@@ -146,7 +146,7 @@ const ContentPage = () => {
       }),
       columnHelper.accessor('description', {
         header: "Description",
-        cell: (info) => truncateText(info.getValue() as string, 10),
+        cell: (info) => truncateText(info.getValue() as string || '', 10),
       }),
     ];
 
@@ -171,7 +171,7 @@ const ContentPage = () => {
           columnHelper.accessor('question', { header: 'Question' }),
           columnHelper.accessor('answer', { 
             header: 'Answer',
-            cell: (info) => truncateText(info.getValue() as string, 10),
+            cell: (info) => truncateText(info.getValue() as string || '', 10),
           }),
           columnHelper.accessor('isActive', {
             header: 'Status',
@@ -203,7 +203,7 @@ const ContentPage = () => {
           columnHelper.accessor('courseName', { header: 'Course Name' }),
           columnHelper.accessor('description', { 
             header: 'Description',
-            cell: (info) => truncateText(info.getValue() as string, 10),
+            cell: (info) => truncateText(info.getValue() as string || '', 10),
           }),
           actionColumn,
         ]
@@ -219,7 +219,7 @@ const ContentPage = () => {
           columnHelper.accessor('shortName', { header: 'Short Name' }),
           columnHelper.accessor('shortDescription', { 
             header: 'Short Description',
-            cell: (info) => truncateText(info.getValue() as string, 10),
+            cell: (info) => truncateText(info.getValue() as string || '', 10),
           }),
           actionColumn,
         ]
@@ -228,7 +228,7 @@ const ContentPage = () => {
           columnHelper.accessor('name', { header: 'Name' }),
           columnHelper.accessor('testimonial', { 
             header: 'Testimonial',
-            cell: (info) => truncateText(info.getValue() as string, 10),
+            cell: (info) => truncateText(info.getValue() as string || '', 10),
           }),
           columnHelper.accessor('profileImage', { 
             header: 'Profile Image',
@@ -247,7 +247,7 @@ const ContentPage = () => {
           columnHelper.accessor('guideline', { header: 'Guideline' }),
           columnHelper.accessor('description', { 
             header: 'Description',
-            cell: (info) => truncateText(info.getValue() as string, 10),
+            cell: (info) => truncateText(info.getValue() as string || '', 10),
           }),
           actionColumn,
         ]

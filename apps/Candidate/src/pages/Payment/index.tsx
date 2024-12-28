@@ -30,12 +30,14 @@ const columnHelper = createColumnHelper<ReportTableColumns>();
 
 const Payment = () => {
   const queryParams = new URLSearchParams(location.search);
+  const [payments, setPayments] = useState<ReportTableColumns[]>([]);
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("");
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
@@ -53,10 +55,15 @@ const Payment = () => {
 
       const data = await response.data;
       
-      if (data) {
+      if (!data || !data.checkoutId) {
         openSetModalFn('confirmationModal');
       } else {
         toast.info('You have an existing payment for video upload that you have not yet completed.');
+        navigate(`/candidate/video-management/upload`, { 
+          state: { 
+            checkoutId: data.checkoutId,
+          } 
+        });
       }
     } 
     catch (error) {
@@ -64,6 +71,32 @@ const Payment = () => {
       toast.warning('There was an error checking your payment status. Please try again later.');
     }
   };
+
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.FETCH_ALL_PAYMENTS}?Page=1&Limit=100`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.code === "201") {
+          const data = await response.data;
+          setPayments(data);
+        } else {
+          throw new Error('Failed to fetch payments');
+        }
+      }
+      catch (err) {
+        toast.error('Error fetching payments');
+      }
+      finally {
+        setIsLoading(false);
+      }
+    }
+    fetchPayments();
+  })
+
 
   // useEffect(() => {
   //   const uploadModalParam = queryParams.get('uploadModal');

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getData } from '../utils/apis/apiMethods';
 import CONFIG from '../utils/helpers/config';
 import { apiEndpoints } from '../utils/apis/apiEndpoints';
@@ -29,10 +29,11 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
     const [data, setData] = useState<MiscItem[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
+    const hasFetched = useRef(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            if (params.enabled === false) {
+            if (params.enabled === false || hasFetched.current) {
                 setData([]);
                 setIsLoading(false);
                 return;
@@ -61,6 +62,7 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
                 } else {
                     setData(response); // Use the full response
                 }
+                hasFetched.current = true;
             } catch (err) {
                 setError(err instanceof Error ? err : new Error('An error occurred while fetching data'));
             } finally {

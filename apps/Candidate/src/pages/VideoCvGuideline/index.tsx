@@ -23,11 +23,13 @@ const index = () => {
     download: false,
   });
 
+  const response = guidelines || [];
+
   if (isLoading) {
     return (
       <div className="min-h-screen px-3 md:px-10 py-10 bg-gray-50">
         <div className="max-w-4xl mx-auto">
-          {[...Array(5)].map((_, index) => (
+          {[...Array(5)]?.map((_, index) => (
             <Skeleton key={index} variant="rectangular" height={200} className="mb-4" />
           ))}
         </div>
@@ -55,7 +57,8 @@ const index = () => {
             Follow these guidelines to make a professional and impactful presentation:
         </Typography>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {guidelines.map((guideline, index) => {
+        {guidelines.length > 0 && (
+          guidelines?.map((guideline, index) => {
             const IconComponent = guideline.title && iconMap[guideline.title] ? iconMap[guideline.title] : LightbulbOutlined;
             return (
               <Card key={index} className="transition-all duration-300 hover:shadow-xl">
@@ -68,7 +71,7 @@ const index = () => {
                   </div>
                   <ul className="list-disc pl-5 space-y-2">
                     {guideline.content ?
-                        guideline.content.split('\n').map((item, itemIndex) => (
+                        guideline.content.split('\n')?.map((item, itemIndex) => (
                         <li key={itemIndex} className="text-gray-600">
                             {item.trim()}
                         </li>
@@ -79,7 +82,8 @@ const index = () => {
                 </CardContent>
               </Card>
             );
-          })}
+          })
+        )}
         </div>
         <Typography variant="body1" className="mt-8 text-gray-600 text-center font-semibold">
           Remember, your Video CV is an opportunity to showcase your personality and communication skills. Be authentic, confident, and enthusiastic. Good luck with your application!

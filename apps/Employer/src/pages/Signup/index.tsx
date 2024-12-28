@@ -31,9 +31,11 @@ const schema = z.object({
     industryId: z.string(),
     contactName: z.string().min(1, "Contact person name is required"),
     contactPosition: z.string().min(1, "Contact person role is required"),
-    isActive: z.boolean(),
   }),
   email: z.string().email("Invalid email format"),
+  firstName: z.string().optional(),
+  surname: z.string().optional(),
+  phoneNumber: z.string().min(10, "Phone number must be at least 11 digits"),
   isTracked: z.boolean(),
   userTypeId: z.number(),
   isBusinessUser: z.boolean(),
@@ -128,7 +130,6 @@ const Index = () => {
         contactName: data.employerInfo.contactName,
         contactPosition: data.employerInfo.contactPosition,
         password: data.password,
-        isActive: true,
       }
 
       let industryId = null;
@@ -160,6 +161,9 @@ const Index = () => {
       const combinedData = {
         email: data.employerInfo.businessEmail,
         password: data.password,
+        firstName: data.firstName,
+        surname: data.surname,
+        phoneNumber: data.phoneNumber,
         employerInfo: {
           ...employerInfo,
           industryId: industryId,
@@ -226,13 +230,16 @@ const Index = () => {
           submitForm(data);
         }}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <Input label="First Name" placeholder="First Name" error={errors.firstName} {...register('firstName')} isValid={!errors.firstName && !!watchedFields.firstName} />
+            <Input label="Surname" placeholder="Surname" error={errors.surname} {...register('surname')} isValid={!errors.surname && !!watchedFields.surname} />
+            <Input label="Phone Number" placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} isValid={!errors.phoneNumber && !!watchedFields.phoneNumber} />
             <Input type='text' label="Business Name" placeholder="Business Name" error={errors?.employerInfo?.businessName} {...register('employerInfo.businessName')} isValid={!errors?.employerInfo?.businessName && !!watchedFields.employerInfo.businessName} />
             <Input type='number' label="Business Phone Number" placeholder="Business Phone Number" error={errors?.employerInfo?.businessPhoneNumber} {...register('employerInfo.businessPhoneNumber')} isValid={!errors?.employerInfo?.businessPhoneNumber && !!watchedFields.employerInfo.businessPhoneNumber} />
             <Input type='email' label="Business Email" placeholder="Business Email" error={errors?.employerInfo?.businessEmail} {...register('employerInfo.businessEmail')} isValid={!errors?.employerInfo?.businessEmail && !!watchedFields.employerInfo.businessEmail} />
             <Input type='text' label="Website" placeholder="Website" error={errors?.employerInfo?.websiteUrl} {...register('employerInfo.websiteUrl')} isValid={!errors?.employerInfo?.websiteUrl && !!watchedFields.employerInfo.websiteUrl} />
             <Input type='text' label="Address" placeholder="Address" error={errors?.employerInfo?.address} {...register('employerInfo.address')} isValid={!errors?.employerInfo?.address && !!watchedFields.employerInfo.address} />
             <Controller
-              {...register('employerInfo.industryId')}
+              name='employerInfo.industryId'
               control={control}
               render={({ field }) => (
                 <Select
@@ -243,6 +250,7 @@ const Index = () => {
                   handleChange={(newValue) => field.onChange(newValue?.value)}
                   isDisabled={isLoadingIndustries}
                   errors={errors}
+                  label='Business Sector'
                 />
               )}
             />
