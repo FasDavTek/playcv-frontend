@@ -56,7 +56,7 @@ type FormData = z.infer<typeof schema>;
 
 const Index = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, reset, watch, control, formState: { errors }, getValues, setError } = useForm<FormData>({
+  const { register, handleSubmit, reset, watch, control, formState: { errors }, getValues, setValue, setError } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       isTracked: true,
@@ -247,7 +247,7 @@ const Index = () => {
                   control={control}
                   defaultValue={Array.isArray(industry) ? industry?.find(i => i.id === watch('employerInfo.industryId')) : null}
                   options={model(industry, 'name', 'id')}
-                  handleChange={(newValue) => field.onChange(newValue?.value)}
+                  handleChange={(newValue) => { field.onChange(newValue?.value || newValue?.label); setValue('employerInfo.industry', newValue?.label || ''); }}
                   isDisabled={isLoadingIndustries}
                   errors={errors}
                   label='Business Sector'
