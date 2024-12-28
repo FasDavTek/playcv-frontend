@@ -170,7 +170,7 @@ const Navbar = () => {
           {showNavbar ? <MenuOpenIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 z-50' /> : <MenuIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 z-50' />}
         </div>
         <div className={`nav-elements ${showNavbar && 'active'} justify-start md:px-3`}>
-          <div className="mt-4 flex xl:hidden" onClick={handleShowNavbar}>
+          <div className="mt-4 flex lg:hidden" onClick={handleShowNavbar}>
             {showNavbar && <MenuOpenIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 lg:w-24 lg:h-24 z-50 ml-auto sm:mr-0 md:mr-3 lg:mr-4' />}
           </div>
           <ul className='items-start'>
@@ -324,14 +324,14 @@ const Navbar = () => {
                 </NavLink>
               </li>
             )}
-            <div className="flex flex-col mlg:flex-row justify-start gap-4 mt-5 mlg:mt-0 mlg:ml-0">
+            <div className="flex flex-col lg:flex-row justify-start gap-4 mt-4 lg:mt-0 md:ml-4 lg:ml-0">
               {authState.isAuthenticated ? (
                 <Button variant='black' className='w-full md:w-auto' label='Logout' onClick={logout} />
               ) : (
-                <>
+                <div className='flex flex-col lg:flex-row justify-start gap-3.5'>
                   <Button variant='black' className='w-full md:w-auto' label='Get Started' onClick={handleGetStartedClick} />
                   <Button variant='black' className='w-full md:w-auto' label='Log in' onClick={() => navigate('/auth/login')} />
-                </>
+                </div>
               )}
             </div>
             <Dialog fullScreen={fullScreen} aria-labelledby="responsive-dialog-title" open={openModal} onClose={handleCloseModal}>
