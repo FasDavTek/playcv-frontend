@@ -126,24 +126,10 @@ const Index = () => {
         instagramUrl: data.employerInfo.instagramUrl,
         address: data.employerInfo.address,
         industryId: data.employerInfo.industryId,
-        industry: data.employerInfo.industryId ? null : data.employerInfo.industry,
+        industry: data.employerInfo.industry,
         contactName: data.employerInfo.contactName,
         contactPosition: data.employerInfo.contactPosition,
         password: data.password,
-      }
-
-      let industryId = null;
-
-      if (data.employerInfo.industry) {
-        const existingIndustry = industry?.find(c => c.name === data.employerInfo.industry);
-        if (existingIndustry) {
-          industryId = existingIndustry.id;
-        } else {
-          const newCourse = await createNewEntry('industry', { name: data.employerInfo.industry });
-          if (newCourse) {
-            industryId = newCourse.id;
-          }
-        }
       }
 
       // const payloadData = {
@@ -166,7 +152,6 @@ const Index = () => {
         phoneNumber: data.phoneNumber,
         employerInfo: {
           ...employerInfo,
-          industryId: industryId,
         },
         ...defaultValues,
       };
@@ -192,15 +177,15 @@ const Index = () => {
       }
     } 
     catch (err: any) {
-      if (err.response.message.includes("User with this email")) {
-        toast.error("This email is already registered. Please use a different email or try logging in.");
-      }
-      else if (err.response.message.includes("User with phone number")) {
-          toast.error("This phone number is already registered. Please use a different number or try logging in.");
-      }
-      else {
+      // if (err.response.message.includes("User with this email")) {
+      //   toast.error("This email is already registered. Please use a different email or try logging in.");
+      // }
+      // else if (err.response.message.includes("User with phone number")) {
+      //     toast.error("This phone number is already registered. Please use a different number or try logging in.");
+      // }
+      // else {
           toast.error(err.message || "An error occurred during signup. Please try again.");
-      };
+      // };
     } 
     finally {
       setLoading(false);
@@ -245,7 +230,7 @@ const Index = () => {
                 <Select
                   name="Business Sector"
                   control={control}
-                  defaultValue={Array.isArray(industry) ? industry?.find(i => i.id === watch('employerInfo.industryId')) : null}
+                  defaultValue={Array.isArray(industry) ? industry?.find(i => i.id === watch('employerInfo.industryId')) :  watch('employerInfo.industry')}
                   options={model(industry, 'name', 'id')}
                   handleChange={(newValue) => { field.onChange(newValue?.value || newValue?.label); setValue('employerInfo.industry', newValue?.label || ''); }}
                   isDisabled={isLoadingIndustries}
