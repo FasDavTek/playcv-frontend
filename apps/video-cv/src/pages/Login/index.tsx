@@ -65,7 +65,6 @@ const Login = () => {
       toast.error('Email verification failed. Please try again or contact support.');
     }
   }, [location]);
-  
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
@@ -166,6 +165,10 @@ const Login = () => {
           <div className="flex flex-col gap-6">
             <Input type='username' {...register('username')} error={errors.username} label="Username" placeholder="user@email.com" />
             <Input type='password' {...register('password')} error={errors.password} label="Password" placeholder="XubYgsanbE" />
+          </div>
+
+          <div className='w-full flex items-end justify-end'>
+            <p className='text-sm mt-3 text-center text-blue-400 hover:underline cursor-pointer'>Forgot Password</p>
           </div>
 
           <Button type='submit' variant='black' disabled={loading} className="w-full my-10" label={loading ? "Submitting..." : "Login"} />

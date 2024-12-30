@@ -90,6 +90,31 @@ const Index = () => {
     }
     setLoading(true);
     try {
+      const requiredFields = [
+        'employerInfo.businessName',
+        'employerInfo.businessEmail',
+        'employerInfo.businessPhoneNumber',
+        'employerInfo.address',
+        'employerInfo.industry',
+        'employerInfo.contactName',
+        'employerInfo.contactPosition',
+        'password',
+        'confirmPassword'
+      ];
+  
+      let hasError = false;
+      requiredFields.forEach(field => {
+        if (!getValues(field as any)) {
+          setError(field as any, { type: 'required', message: 'This field is required' });
+          hasError = true;
+        }
+      });
+  
+      if (hasError) {
+        toast.error("Please fill in all required fields.");
+        return;
+      }
+      
       const defaultValues = {
         isTracked: true,
         userTypeId: 2,
