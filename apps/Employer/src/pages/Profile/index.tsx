@@ -144,25 +144,6 @@ const Profile = () => {
   });
 
 
-
-  const createNewEntry = async (resource: string, data: any) => {
-    try {
-      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.INDUSTRY}`, data);
-      if (response.code === "200") {
-        toast.success(`New ${resource} created successfully`);
-        return response.data;
-      } else {
-        toast.error(`Failed to create new ${resource}`);
-        return null;
-      }
-    } catch (error) {
-      console.error(`Error creating new ${resource}:`, error);
-      toast.error(`Error creating new ${resource}`);
-      return null;
-    }
-  };
-
-
   useEffect(() => {
     const subscription = watch((data) => data);
     return () => subscription.unsubscribe();
@@ -176,19 +157,6 @@ const Profile = () => {
     setLoading(true);
     
     try {
-      let industryId = null;
-
-      if (data.userProfile.businessDetails.industry) {
-        const existingIndustry = industry?.find(c => c.name === data.userProfile.businessDetails.industry);
-        if (existingIndustry) {
-          industryId = existingIndustry.id;
-        } else {
-          const newCourse = await createNewEntry('industry', { name: data.userProfile.businessDetails.industry });
-          if (newCourse) {
-            industryId = newCourse.id;
-          }
-        }
-      }
 
       const combinedData = {
         ...data,
@@ -202,8 +170,8 @@ const Profile = () => {
           },
           businessDetails: {
             ...data.userProfile.businessDetails,
-            industryId: industryId,
-            industry: industryId ? null : data.userProfile.businessDetails.industry,
+            industryId: data.userProfile.businessDetails.industryId,
+            industry: data.userProfile.businessDetails.industry,
           }
         }
       };

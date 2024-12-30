@@ -115,10 +115,10 @@ const AdUploadTypes = () => {
   const [paymentReference, setPaymentReference] = useState<PaymentDetails | null>(null);
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-  if (!token) {
-    toast.error('Your session has expired. Please log in again');
-    navigate('/')
-  }
+  // if (!token) {
+  //   toast.error('Your session has expired. Please log in again');
+  //   navigate('/')
+  // }
 
   const fetchUploadTypes = useCallback(async () => {
     try {
@@ -158,6 +158,7 @@ const AdUploadTypes = () => {
       }
     });
 
+    console.log("", verifyPayment);
     return await verifyPayment.json();
   }
 
@@ -167,7 +168,11 @@ const AdUploadTypes = () => {
     if (!selectedType || !authState.user) return;
 
     try {
+      console.log("", reference);
+      console.log(response)
       const verifyPayment = await verifyTransaction(reference);
+
+      console.log('Verify payment response:', verifyPayment);
 
       if (verifyPayment.data.status === "success") {
         const details: PaymentDetails = {
@@ -250,7 +255,7 @@ const AdUploadTypes = () => {
             uploadRequestId: uploadRequestResponse.data.id,
             adTypeId: selectedType.typeId,
             adTypeName: selectedType.typeName,
-            price: price,
+            price: details.amount,
             paymentReference: paymentReference,
             paymentId: paymentResponse.data.id
           }
@@ -325,7 +330,7 @@ const AdUploadTypes = () => {
               className="w-full h-auto mb-4"
             />
           )}
-          <Button variant='black' onClick={() => handlePayment(adType)} label={isProcessing ? 'Processing...' : `Choose ${adType.typeName}`} disabled={isProcessing} />
+          <Button variant='black' onClick={() => handlePayment(adType)} label={isProcessing ? 'Processing...' : `Choose ${adType.typeName}`} disabled={isProcessing || isLoading} />
         </div>
       ))}
      

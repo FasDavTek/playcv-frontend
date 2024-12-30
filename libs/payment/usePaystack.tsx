@@ -7,7 +7,7 @@ import { useAuth } from './../../libs/context/AuthContext';
 
 
 const usePaystack = (
-  onInitiated: (reference: string, response: any) => void = () => {},
+  onInitiated: (reference: string, response: any) => Promise<void>,
   onClose: () => void = () => {},
   options: Partial<PaystackProps> = {}
 ) => {
@@ -57,9 +57,11 @@ const usePaystack = (
       initializePayment({
         config,
         onSuccess: (response: any) => {
-          setIsProcessing(false);
           console.log('Payment initiated:', response);
-          onInitiated(response.reference, response);
+          onInitiated(response?.reference, response);
+          console.log(response?.reference)
+          console.log(response);
+          setIsProcessing(false);
         },
         onClose: () => {
           setIsProcessing(false);
@@ -76,7 +78,7 @@ const usePaystack = (
       toast.error('An error occurred while initializing the payment.');
       setIsProcessing(false);
     }
-  }, [initializePayment, onInitiated, onClose, options]);
+  }, [initializePayment, onInitiated, onClose, options, key]);
 
   return { payButtonFn, isProcessing };
 };
