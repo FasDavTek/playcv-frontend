@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Images } from '@video-cv/assets';
@@ -69,6 +69,7 @@ const Index = () => {
 
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTermsAccepted(e.target.checked);
@@ -114,7 +115,7 @@ const Index = () => {
         toast.error("Please fill in all required fields.");
         return;
       }
-      
+
       const defaultValues = {
         isTracked: true,
         userTypeId: 2,
@@ -209,6 +210,23 @@ const Index = () => {
 
   const watchedFields = watch();
 
+  useEffect(() => {
+    const requiredFields = [
+      'employerInfo.businessName',
+      'employerInfo.businessEmail',
+      'employerInfo.businessPhoneNumber',
+      'employerInfo.address',
+      'employerInfo.industry',
+      'employerInfo.contactName',
+      'employerInfo.contactPosition',
+      'password',
+      'confirmPassword'
+    ];
+
+    const isValid = requiredFields.every(field => !!getValues(field as any)) && termsAccepted && Object.keys(errors).length === 0;
+    setIsFormValid(isValid);
+  }, [getValues, errors, termsAccepted]);
+
   return (
     <div className="overflow-hidden flex">
       <div className="border w-0 md:flex-1 min-h-screen" style={{ backgroundImage: `url(${Images.AuthBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', height: '100%', }}></div>
@@ -283,7 +301,7 @@ const Index = () => {
             </label>
           </div>
           <div className="flex justify-start gap-5 mt-5">
-            <Button type='submit' variant="black" label={loading ? "Signing up..." : "Sign up"} className='w-[60%]' disabled={loading} />
+            <Button type='submit' variant="black" label={loading ? "Signing up..." : "Sign up"} className='w-[60%]' disabled={loading || !isFormValid} />
           </div>
         </form>
         <p className='text-lg mt-5 text-center text-neutral-300'>Already have an account? <span onClick={handleSignIn} className='text-blue-400 font-medium hover:underline cursor-pointer'>Sign In</span></p>

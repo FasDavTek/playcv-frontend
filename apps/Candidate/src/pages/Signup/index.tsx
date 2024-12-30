@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Images } from '@video-cv/assets';
 import { FormControl, FormHelperText, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -67,7 +67,8 @@ const index = () => {
     });
 
     const [termsAccepted, setTermsAccepted] = useState(false);
-    const [loading, setLoading] = React.useState(false);
+    const [loading, setLoading] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false);
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTermsAccepted(e.target.checked);
@@ -105,7 +106,7 @@ const index = () => {
                 toast.error("Please fill in all required fields.");
                 return;
             }
-            
+
             const defaultValues = {
                 isTracked: true,
                 userTypeId: 3,
@@ -182,6 +183,20 @@ const index = () => {
     };
 
     const watchedFields = watch();
+
+    useEffect(() => {
+        const requiredFields = [
+            'firstName',
+            'surname',
+            'phoneNumber',
+            'email',
+            'password',
+            'confirmPassword'
+        ];
+
+        const isValid = requiredFields.every(field => !!getValues(field as any)) && termsAccepted && Object.keys(errors).length === 0;
+        setIsFormValid(isValid);
+    }, [getValues, errors, termsAccepted])
   
   return (
     <div className="overflow-hidden flex">
@@ -223,7 +238,7 @@ const index = () => {
                         </label>
                     </div>
                     <div className="flex justify-start gap-5 mt-5">
-                        <Button type='submit' variant="black" label={loading ? "Signing up..." : "Sign up"} className='w-[60%]' disabled={loading} />
+                        <Button type='submit' variant="black" label={loading ? "Signing up..." : "Sign up"} className='w-[60%]' disabled={loading || !isFormValid} />
                     </div>
                 </form>
                 <p className='text-lg mt-5 text-center text-neutral-300'>Already have an account? <span onClick={handleSignIn} className='text-blue-400 font-medium hover:underline cursor-pointer'>Sign In</span></p>
