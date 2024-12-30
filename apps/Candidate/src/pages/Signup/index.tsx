@@ -116,7 +116,7 @@ const index = () => {
 
             if (resp.code === "201") {
                 toast.success(`You're in! Your account has been successfully created.`);
-                toast.info(`Let's get to know you better. Complete your profile for a tailored experience.`);
+                toast.info(`Please check your email to verify your account before logging in.`);
 
                 localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...resp, ...defaultValues }));
                 localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");

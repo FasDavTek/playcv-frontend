@@ -83,24 +83,6 @@ const Index = () => {
   });
 
 
-  const createNewEntry = async (resource: string, data: any) => {
-    try {
-      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.INDUSTRY}`, data);
-      if (response.statusCode === "200") {
-        toast.success(`New ${resource} created successfully`);
-        return response.data;
-      } else {
-        toast.error(`Failed to create new ${resource}`);
-        return null;
-      }
-    } catch (error) {
-      console.error(`Error creating new ${resource}:`, error);
-      toast.error(`Error creating new ${resource}`);
-      return null;
-    }
-  };
-
-
   const submitForm = async (data: FormData) => {
     if (!termsAccepted) {
       toast.info("Please accept the Terms of Service to proceed.");
@@ -160,7 +142,7 @@ const Index = () => {
 
       if (resp.code === "201") {
         toast.success(`You're in! Your account has been successfully created.`);
-        toast.info(`Let's get to know you better. Complete your profile for a tailored experience.`);
+        toast.info(`Please check your email to verify your account before logging in.`);
 
         localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify({ ...resp, ...defaultValues }));
         localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");

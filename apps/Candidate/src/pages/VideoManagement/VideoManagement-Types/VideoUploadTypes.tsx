@@ -11,16 +11,20 @@ import { useAuth } from './../../../../../../libs/context/AuthContext';
 import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
 
 interface UploadType {
-  id: string
-  name: string
+  id: string;
+  name: string;
   price: number;
-  description: string
-  uploadPrice: number
-  imageUrl?: string
+  description: string;
+  uploadPrice: number;
+  imageUrl?: string;
   coverUrl?: string;
 }
 
-
+interface UserSignupData {
+  firstName: string;
+  lastName: string;
+  phone?: any;
+}
 interface VerifyPaymentResponse {
   status: string;
   message: string;
@@ -113,10 +117,11 @@ const VideoUploadTypes = () => {
   const [paymentReference, setPaymentReference] = useState<PaymentDetails | null>(null);
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-  if (!token) {
-    toast.error('Your session has expired. Please log in again');
-    navigate('/')
-  }
+  
+  // if (!token) {
+  //   toast.error('Your session has expired. Please log in again');
+  //   navigate('/')
+  // }
 
   
   const fetchUploadTypes = useCallback(async () => {
@@ -156,6 +161,7 @@ const VideoUploadTypes = () => {
       }
     });
 
+    console.log("", verifyPayment);
     return await verifyPayment.json();
   }
 
@@ -165,6 +171,8 @@ const VideoUploadTypes = () => {
   const onPaymentInitiated = useCallback(async (reference: string, response: any) => {
     if (selectedType) {
       try {
+        console.log("", reference);
+        console.log(response)
         const verifyPayment = await verifyTransaction(reference);
         console.log(verifyPayment);
 
@@ -247,14 +255,13 @@ const VideoUploadTypes = () => {
           const uploadRequestResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, uploadRequestPayload, {
             headers: { Authorization: `Bearer ${token}` },
           });
-
           // Navigate to the confirmation page
           navigate(`/candidate/video-management/confirmation`, { 
             state: {
               uploadRequestId: uploadRequestResponse.data.id,
               uploadTypeId: selectedType.id,
               uploadTypeName: selectedType.name,
-              uploadPrice: uploadPrice,
+              uploadPrice: selectedType.uploadPrice,
               paymentReference: paymentReference,
               paymentId: paymentResponse.data.id
             }
@@ -284,9 +291,16 @@ const VideoUploadTypes = () => {
       setSelectedType(type);
       const amount = Math.round(Number(type.uploadPrice));
       const email = authState?.user?.username || '';
-      const firstName = authState?.user?.firstName || '';
-      const lastName = authState?.user?.lastName || '';
-      const phone = authState?.user?.phone;
+      const userSignupDataString = localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
+      let firstName = '';
+      let lastName = '';
+      let phone = '';
+      if (userSignupDataString) {
+        const userSignupData = JSON.parse(userSignupDataString);
+        firstName: userSignupData?.lastName;
+        lastName : userSignupData?.firstName;
+        phone = userSignupData?.phoneNumber;
+      } 
   
       if (amount > 0) {
         payButtonFn(amount, email, firstName, lastName, phone);
@@ -322,7 +336,7 @@ const VideoUploadTypes = () => {
               className="w-full h-auto mb-4"
             />
           )}
-          <Button variant='black' onClick={() => handlePayment(uploadType)} label={isProcessing ? 'Processing...' : `Choose ${uploadType.name}`} disabled={isProcessing} />
+          <Button variant='black' onClick={() => handlePayment(uploadType)} label={isProcessing ? 'Processing...' : `Choose ${uploadType.name}`} disabled={isProcessing || isLoading} />
         </div>
       ))}
      

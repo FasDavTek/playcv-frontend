@@ -14,6 +14,7 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 // import queries from '../../services/queries/dashboard';
 import { useAuth } from './../../../../../libs/context/AuthContext';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 
 interface Account {
@@ -53,21 +54,25 @@ const Dashboard = () => {
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
   const checkPaymentStatus = async () => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=100`);
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=100`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      console.log(data);
+      const data = await response.data;
       
-      if (data) {
+      if (!data || !data.checkoutId) {
         openSetModalFn('confirmationModal');
       } else {
         toast.info('You have an existing payment for video upload that you have not yet completed.');
+        navigate(`/candidate/video-management/upload`, { 
+          state: { 
+            checkoutId: data.checkoutId,
+          } 
+        });
       }
     } 
     catch (error) {

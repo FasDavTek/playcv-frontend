@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -54,6 +54,18 @@ const Login = () => {
   const { register, handleSubmit, watch, control, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const verified = queryParams.get('verified');
+
+    if (verified === 'true') {
+      toast.success('Your email has been successfully verified!');
+    } else if (verified === 'false') {
+      toast.error('Email verification failed. Please try again or contact support.');
+    }
+  }, [location]);
+  
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);

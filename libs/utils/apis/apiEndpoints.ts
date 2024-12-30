@@ -4,6 +4,7 @@ export enum apiEndpoints {
     AUTH_REGISTER = '/api/v1/auth/user/register',
     PROFILE = '/api/v1/auth/user/profile/update',
     GET_PROFILE = '/api/v1/auth/user/profile',
+    VERIFY_MAIL = '/api/v1/auth/user/confirmemail',
 
     // video upload flow
     ALL_VIDEO_LIST = '/api/v1/video/fetch/all',

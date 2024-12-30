@@ -23,7 +23,7 @@ const usePaystack = (
     publicKey: key,
   });
 
-  const payButtonFn = useCallback(async (amount: number, email: string, firstName: string, lastName: string, phone?: number, metadata?: any) => {
+  const payButtonFn = useCallback(async (amount: number, email: string, firstName: string, lastName: string, phone?: any, metadata?: any) => {
     if (!email || !email.includes('@')) {
       toast.error('Invalid email address');
       return;
@@ -38,6 +38,8 @@ const usePaystack = (
 
     const emailString = email.toString().trim();
     console.log('Email:', emailString);
+    console.log('First Name:', firstName);
+    console.log('Last Name:', lastName);
 
     const config: PaystackProps = {
       email: email,
@@ -47,7 +49,7 @@ const usePaystack = (
         firstName,
         lastName,
         phone,
-        ...metadata
+        ...metadata,
       },
       ...options,
     }

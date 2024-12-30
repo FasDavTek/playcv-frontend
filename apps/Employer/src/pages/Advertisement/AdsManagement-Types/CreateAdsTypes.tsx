@@ -255,7 +255,7 @@ const AdUploadTypes = () => {
             uploadRequestId: uploadRequestResponse.data.id,
             adTypeId: selectedType.typeId,
             adTypeName: selectedType.typeName,
-            price: details.amount,
+            price: selectedType.price,
             paymentReference: paymentReference,
             paymentId: paymentResponse.data.id
           }
