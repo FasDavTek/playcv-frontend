@@ -81,6 +81,10 @@ const ContentPage = () => {
   const [openModal, setOpenModal] = useState<'create' | 'edit' | 'view' | null>(null);
   const [selectedItem, setSelectedItem] = useState<Content | null>(null);
   const [page, setPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState(40);
 
   const { data: miscData, isLoading: isMiscLoading, error: miscError } = useAllMisc({
@@ -210,7 +214,10 @@ const ContentPage = () => {
       case 'industry':
         return [
           columnHelper.accessor('name', { header: 'Industry Name' }),
-          columnHelper.accessor('description', { header: 'Description' }),
+          columnHelper.accessor('description', {
+            header: 'Description',
+            cell: (info) => truncateText(info.getValue() as string || '', 10),
+          }),
           actionColumn,
         ]
       case 'qualification':
@@ -293,6 +300,10 @@ const ContentPage = () => {
           data={tableData}
           columns={columns}
           error={error}
+          search={setSearch}
+          filter={filter}
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
           tableHeading={`All ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
         />
       </div>

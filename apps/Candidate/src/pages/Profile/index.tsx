@@ -78,25 +78,26 @@ const schema = z.object({
         message: "Invalid Date of birth",
       }),
       isProfessionalUser: z.boolean(),
+      userId: z.string(),
     }),
     professionalDetails: z.object({
       nyscStateCode: z.string().min(4, 'NYSC State code is required'),
       nyscStartYear: z.number().int().nullable(),
       nyscEndYear: z.number().int().nullable(),
       course: z.string().min(1, "Course of study is required"),
-      courseId: z.string().optional(),
+      courseId: z.number().nullable(),
       degree: z.string().min(1, "Degree awarded is required"),
-      degreeTypeId: z.string().optional(),
+      degreeTypeId: z.number().nullable(),
       institution: z.string().min(1, "Institution attended is required"),
-      institutionId: z.string().optional(),
+      institutionId: z.number().nullable(),
       degreeClass: z.string().min(1, "Class of degree is required"),
-      degreeClassId: z.string().optional(),
+      degreeClassId: z.number().nullable(),
       coverLetter: z.string().min(1, "Cover letter content is required"),
       businessName: z.string().min(3, "Business Name is required"),
       businessProfile: z.string().min(10, "Business Profile content is required"),
       businessPhoneNumber: z.string().min(10, "Business phone number must be at least 10 digits"),
       industry: z.string().min(1, "Business sector is required"),
-      industryId: z.string().optional(),
+      industryId: z.number().nullable(),
     }),
   }),
 });
@@ -122,10 +123,7 @@ const Profile = () => {
   const [open, setOpen] = useState(false);
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-  if (!token) {
-    toast.error('Unable to load user profile. Please log in again.');
-    return;
-  };
+  const userId = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
   
   useEffect(() => {
     const fetchUserData = async () => {
@@ -223,6 +221,7 @@ const Profile = () => {
     page: 1,
     limit: 100,
     download: false,
+    structureType: 'full'
   });
 
   console.log(courses)
@@ -232,6 +231,7 @@ const Profile = () => {
     page: 1,
     limit: 100,
     download: false,
+    structureType: 'full'
   });
 
   // const { data: degreeTypes, isLoading: isLoadingDegreeTypes } = useAllMisc({
@@ -246,6 +246,7 @@ const Profile = () => {
     page: 1,
     limit: 100,
     download: false,
+    structureType: 'full'
   });
 
   console.log(institutions)
@@ -255,6 +256,7 @@ const Profile = () => {
     page: 1,
     limit: 100,
     download: false,
+    structureType: 'full'
   });
 
   // console.log(industry);
@@ -265,12 +267,102 @@ const Profile = () => {
       fetchedCoursesRef.current = true; // Mark as fetched
       console.log('Courses fetched:', courses);
     }
-  }, [courses]);
+  }, [courses, degreeClasses, industry, institutions]);
 
   // useEffect(() => {
   //   const subscription = watch((data) => data);
   //   return () => subscription.unsubscribe();
   // }, [watch]);
+
+
+
+  // const createNewEntry = async (resource: string, data: any) => {
+  //   try {
+  //     const endpoint = resource === 'course' ? apiEndpoints.COURSE 
+  //                    : resource === 'degree-class' ? apiEndpoints.DEGREECLASS 
+  //                    : resource === 'industry' ? apiEndpoints.INDUSTRY 
+  //                   //  : apiEndpoints.INDUSTRY;
+  //                    : apiEndpoints.INSTITUTION;
+  //     const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, data, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     console.log('API Response:', response);
+  //     if (response.statusCode === "200") {
+  //       toast.success(`New ${resource} created successfully`);
+  //       return response.data;
+  //     } else {
+  //       toast.error(`Failed to create new ${resource}`);
+  //       return null;
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error creating new ${resource}:`, error);
+  //     toast.error(`Error creating new ${resource}`);
+  //     return null;
+  //   }
+  // };
+
+
+
+
+  // const handleCourseChange = async (newValue: any) => {
+  //   if (newValue && typeof newValue === "string") {
+  //     // If the user inputs a new course
+  //     const inputCourse = newValue;
+      
+  //     // Check if course exists in the database
+  //     const existingCourse = Array.isArray(courses) ? courses?.find(c => c?.courseName.toLowerCase() === inputCourse) : '';
+      
+  //     if (existingCourse) {
+  //       // If it exists, use the existing data
+  //       console.log('course exists in our database')
+  //       setValue('userProfile.professionalDetails.courseId', existingCourse.id);
+  //       setValue('userProfile.professionalDetails.course', existingCourse.courseName);
+  //     } else {
+  //       // If it doesn't exist, create a new course entry
+  //       const formData = new FormData();
+
+  //       const createCoursePayload = { courseName: inputCourse, description: inputCourse }; // Adjust according to your API's expected payload
+        
+  //       let contentData: any = {
+  //         ...createCoursePayload,
+  //         action: 'create',
+  //       };
+
+  //       for (const key in contentData) {
+  //         console.log(key)
+  //         if (contentData.hasOwnProperty(key)) {
+  //           formData.append(key, contentData[key]);
+  //           console.log(formData)
+  //         }
+  //       }
+
+  //       const createCourseResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.COURSE}`, formData, {
+  //         headers: { 
+  //           Authorization: `Bearer ${token}`,
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       });
+
+  //       console.log(createCourseResponse)
+        
+  //       if (createCourseResponse.statusCode === "200") {
+  //         // Update the form values with the new course ID and name
+  //         setValue('userProfile.professionalDetails.courseId', createCourseResponse.id);
+  //         setValue('userProfile.professionalDetails.course', createCoursePayload.courseName);
+  //         toast.success(`Course "${inputCourse}" has been created and added to your profile.`);
+  //       } else {
+  //         toast.error('Error creating new course. Please try again.');
+  //       }
+  //     }
+  //   } else if (newValue && newValue.value) {
+  //     // If the user selects an existing course from the dropdown
+  //     setValue('userProfile.professionalDetails.courseId', newValue.value);
+  //     setValue('userProfile.professionalDetails.course', newValue.label);
+  //   }
+  // };
+
+  
+
 
 
   // const customFieldsConfig = {
@@ -331,28 +423,65 @@ const Profile = () => {
   // };
 
 
-  // const createNewEntry = async (resource: string, data: any) => {
-  //   try {
-  //     const endpoint = resource === 'course' ? apiEndpoints.COURSE 
-  //                    : resource === 'degree-class' ? apiEndpoints.DEGREECLASS 
-  //                    : resource === 'industry' ? apiEndpoints.INDUSTRY 
-  //                   //  : apiEndpoints.INDUSTRY;
-  //                    : apiEndpoints.INSTITUTION;
-  //     const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, data, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     console.log('API Response:', response);
-  //     if (response.statusCode === "200") {
-  //       toast.success(`New ${resource} created successfully`);
-  //       return response.data;
+
+  // const customFieldsConfig = {
+  //   course: { field: 'course', idField: 'courseId', resource: 'course', dataKey: 'courseName' },
+  //   degreeClass: { field: 'degreeClass', idField: 'degreeClassId', resource: 'degree-class', dataKey: 'name' },
+  //   institution: { field: 'institution', idField: 'institutionId', resource: 'institution', dataKey: 'name' },
+  //   industry: { field: 'industry', idField: 'industryId', resource: 'industry', dataKey: 'name' },
+  // } as const;
+
+  // type CustomFieldKey = keyof typeof customFieldsConfig;
+
+  // const handleCustomField = async (
+  //   field: CustomFieldKey,
+  //   value: string | null,
+  //   formattedData: any
+  // ): Promise<void> => {
+  //   console.log('Entering handleCustomField:', { field, value, formattedData });
+
+  //   const { idField, resource, dataKey } = customFieldsConfig[field];
+  //   console.log('Resource and ID Field:', { resource, idField, dataKey });
+
+  //   if (!value || value.trim() === '') {
+  //     formattedData.userProfile.professionalDetails[field] = '';
+  //     formattedData.userProfile.professionalDetails[idField] = '';
+  //     return;
+  //   }
+  //   console.log('Value to Check:', value);
+
+  //   const existingData = {
+  //     course: courses || [],
+  //     degreeClass: degreeClasses || [],
+  //     institution: institutions || [],
+  //     industry: industry || [],
+  //   }[field];
+  //   console.log('Existing Data:', existingData);
+  //   console.log('Value to Check:', value);
+
+  //   const existingEntry = existingData?.find((entry: any) => {
+  //     console.log(entry);
+  //     const entryValue = entry[dataKey]; // Use the correct key based on your config
+  //     console.log(`Comparing: ${entryValue} (${typeof entryValue}) with ${value} (${typeof value})`);
+  //     return entryValue?.toLowerCase() === value.toLowerCase();
+  //   });
+  //   console.log('Existing Entry:', existingEntry);
+    
+  //   if (existingEntry) {
+  //     formattedData.userProfile.professionalDetails[field] = existingEntry[dataKey];
+  //     formattedData.userProfile.professionalDetails[idField] = existingEntry.id;
+  //     console.log('Entry exists, updated formattedData:', formattedData);
+  //   } else {
+  //     const newEntry = await createNewEntry(resource, { [dataKey]: value });
+  //     console.log('New Entry Response:', newEntry);
+  //     if (newEntry) {
+  //       formattedData.userProfile.professionalDetails[field] = value;
+  //       formattedData.userProfile.professionalDetails[idField] = newEntry.id;
+  //       console.log('New entry created, updated formattedData:', formattedData);
   //     } else {
-  //       toast.error(`Failed to create new ${resource}`);
-  //       return null;
+  //       console.log(`Failed to create new ${field}`);
+  //       toast.error(`Failed to create new ${field}`);
   //     }
-  //   } catch (error) {
-  //     console.error(`Error creating new ${resource}:`, error);
-  //     toast.error(`Error creating new ${resource}`);
-  //     return null;
   //   }
   // };
 
@@ -372,11 +501,14 @@ const Profile = () => {
             ...data.userProfile.userDetails,
             dateOfBirth: data.userProfile.userDetails.dateOfBirth || null,
             isProfessionalUser: true,
+            userId: userId,
           },
           professionalDetails: {
             ...data.userProfile.professionalDetails,
             nyscStartYear: data.userProfile.professionalDetails.nyscStartYear,
             nyscEndYear: data.userProfile.professionalDetails.nyscEndYear,
+            institution: data.userProfile.professionalDetails.institution,
+            institutionId: data.userProfile.professionalDetails.institutionId,
             // nyscStartYear: Number(dayjs(data.userProfile.professionalDetails.nyscStartYear).year()),
             // nyscEndYear: data.userProfile.professionalDetails.nyscEndYear 
             //   ? Number(dayjs(data.userProfile.professionalDetails.nyscEndYear).year())
@@ -399,6 +531,11 @@ const Profile = () => {
       //   }
       // }
 
+      // await handleCustomField('course', data.userProfile.professionalDetails.course, formattedData);
+      // await handleCustomField('institution', data.userProfile.professionalDetails.institution, formattedData);
+      // await handleCustomField('industry', data.userProfile.professionalDetails.industry, formattedData);
+      // await handleCustomField('degreeClass', data.userProfile.professionalDetails.degreeClass, formattedData);
+
       console.log(data)
       console.log('Formatted Data before handling custom fields:', formattedData);
 
@@ -418,6 +555,8 @@ const Profile = () => {
       // await Promise.all(customFieldPromises);
 
       // console.log('Custom Field Promise', customFieldPromises)
+
+      // await handleCourseChange(data.userProfile.professionalDetails.course);
 
       const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, formattedData, {
         headers: { Authorization: `Bearer ${token}` },
@@ -645,16 +784,25 @@ const Profile = () => {
               )}
               {editField === 'userProfile.professionalDetails.course' ? (
                 <Controller
-                    name='userProfile.professionalDetails.courseId'
+                    name='userProfile.professionalDetails.course'
                     control={control}
                     render={({ field }) => (
                       <Select
                         name="Course of Study"
                         control={control}
                         placeholder='Course of sudy'
-                        defaultValue={Array.isArray(courses) ? courses?.find(c => c.id === watch('userProfile.professionalDetails.courseId')) : watch('userProfile.professionalDetails.course')}
+                        defaultValue={Array.isArray(courses) && courses?.find(c => c.courseName === watch('userProfile.professionalDetails.course'))}
                         options={model(courses, "courseName", "id")}
-                        handleChange={(newValue) => { field.onChange(newValue?.value || newValue?.label); setValue('userProfile.professionalDetails.course', newValue?.label || ''); }}
+                        handleChange={(newValue) => { 
+                        if (newValue.__isNew__) {
+                          field.onChange(newValue?.value || newValue?.label);
+                          setValue('userProfile.professionalDetails.course', newValue?.label || '');
+                          setValue('userProfile.professionalDetails.courseId', null);
+                        } else {
+                          field.onChange(newValue?.value || newValue?.label);
+                          setValue('userProfile.professionalDetails.course', newValue?.label);
+                          setValue('userProfile.professionalDetails.courseId', newValue?.value);
+                        } }}
                         isDisabled={isLoadingCourses}
                         errors={errors}
                         allowCreate={true}
@@ -688,16 +836,25 @@ const Profile = () => {
               )}
               {editField === 'userProfile.professionalDetails.institution' ? (
                 <Controller
-                  name='userProfile.professionalDetails.institutionId'
+                  name='userProfile.professionalDetails.institution'
                   control={control}
                   render={({ field }) => (
                     <Select
                       name="Institution Attended"
                       control={control}
                       placeholder="Institution attended"
-                      defaultValue={Array.isArray(institutions) ?  institutions?.find(i => i.id === watch('userProfile.professionalDetails.institutionId')) : watch('userProfile.professionalDetails.institution')}
+                      defaultValue={Array.isArray(institutions) &&  institutions?.find(i => i.name === watch('userProfile.professionalDetails.institution'))}
                       options={model(institutions, "name", "id")}
-                      handleChange={(newValue) => { field.onChange(newValue?.value || newValue?.label); setValue('userProfile.professionalDetails.institution', newValue?.label || ''); }}
+                      handleChange={(newValue) => { 
+                      if (newValue.__isNew__) {
+                        field.onChange(newValue?.value || newValue?.label);
+                        setValue('userProfile.professionalDetails.institution', newValue?.label || '');
+                        setValue('userProfile.professionalDetails.institutionId', null);
+                      } else {
+                        field.onChange(newValue?.value || newValue?.label);
+                        setValue('userProfile.professionalDetails.institution', newValue?.label);
+                        setValue('userProfile.professionalDetails.institutionId', newValue?.value);
+                      } }}
                       isDisabled={isLoadingInstitutions}
                       errors={errors}
                       allowCreate={true}
@@ -715,16 +872,25 @@ const Profile = () => {
               )}
               {editField === 'userProfile.professionalDetails.degreeClass' ? (
                 <Controller
-                  {...register('userProfile.professionalDetails.degreeClassId')}
+                  name='userProfile.professionalDetails.degreeClass'
                   control={control}
                   render={({ field }) => (
                     <Select
                       name="Class of Degree"
                       control={control}
                       placeholder="Class of degree"
-                      defaultValue={Array.isArray(degreeClasses) ?  degreeClasses?.find(dc => dc.id === watch('userProfile.professionalDetails.degreeClassId')) : watch('userProfile.professionalDetails.degreeClass')}
+                      defaultValue={Array.isArray(degreeClasses) &&  degreeClasses?.find(dc => dc.name === watch('userProfile.professionalDetails.degreeClass'))}
                       options={model(degreeClasses, "name", "id")}
-                      handleChange={(newValue) => { field.onChange(newValue?.value || newValue?.label); setValue('userProfile.professionalDetails.degreeClass', newValue?.label || ''); }}
+                      handleChange={(newValue) => { 
+                      if (newValue.__isNew__) {
+                        field.onChange(newValue?.value || newValue?.label);
+                        setValue('userProfile.professionalDetails.degreeClass', newValue?.label || '');
+                        setValue('userProfile.professionalDetails.degreeClassId', null);
+                      } else {
+                        field.onChange(newValue?.value || newValue?.label);
+                        setValue('userProfile.professionalDetails.degreeClass', newValue?.label);
+                        setValue('userProfile.professionalDetails.degreeClassId', newValue?.value);
+                      } }}
                       isDisabled={isLoadingDegreeClasses}
                       errors={errors}
                       allowCreate={true}
@@ -803,15 +969,24 @@ const Profile = () => {
               )}
               {editField === 'userProfile.professionalDetails.industry' ? (
                 <Controller
-                  {...register('userProfile.professionalDetails.industryId')}
+                  name='userProfile.professionalDetails.industry'
                   control={control}
                   render={({ field }) => (
                     <Select
                       name="Business Sector"
                       control={control}
-                      defaultValue={Array.isArray(industry) ? industry?.find(i => i.id === watch('userProfile.professionalDetails.industryId')) :  watch('userProfile.professionalDetails.industry')}
+                      defaultValue={Array.isArray(industry) && industry?.find(i => i.name === watch('userProfile.professionalDetails.industry'))}
                       options={model(industry, 'name', 'id')}
-                      handleChange={(newValue) => { field.onChange(newValue?.value || newValue?.label); setValue('userProfile.professionalDetails.industry', newValue?.label || ''); }}
+                      handleChange={(newValue) => { 
+                      if (newValue.__isNew__) {
+                        field.onChange(newValue?.value || newValue?.label);
+                        setValue('userProfile.professionalDetails.industry', newValue?.label || '');
+                        setValue('userProfile.professionalDetails.industryId', null);
+                      } else {
+                        field.onChange(newValue?.value || newValue?.label);
+                        setValue('userProfile.professionalDetails.industry', newValue?.label);
+                        setValue('userProfile.professionalDetails.industryId', newValue?.value);
+                      } }}
                       isDisabled={isLoadingIndustries}
                       errors={errors}
                       allowCreate={true}

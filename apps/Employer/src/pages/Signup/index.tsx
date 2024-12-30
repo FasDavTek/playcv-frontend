@@ -28,7 +28,7 @@ const schema = z.object({
     instagramUrl: z.string().url().optional().or(z.literal('')),
     address: z.string().min(10, "Business address is required"),
     industry: z.string().min(3, "Business sector is required"),
-    industryId: z.string(),
+    industryId: z.number().nullable(),
     contactName: z.string().min(1, "Contact person name is required"),
     contactPosition: z.string().min(1, "Contact person role is required"),
   }),
@@ -120,10 +120,10 @@ const Index = () => {
         businessName: data.employerInfo.businessName,
         businessEmail: data.employerInfo.businessEmail,
         businessPhoneNumber: data.employerInfo.businessPhoneNumber,
-        websiteUrl: data.employerInfo.websiteUrl,
-        fbLink: data.employerInfo.fbLink,
-        twitter: data.employerInfo.twitter,
-        instagramUrl: data.employerInfo.instagramUrl,
+        websiteUrl: data.employerInfo.websiteUrl || null,
+        fbLink: data.employerInfo.fbLink || null,
+        twitter: data.employerInfo.twitter || null,
+        instagramUrl: data.employerInfo.instagramUrl || null,
         address: data.employerInfo.address,
         industryId: data.employerInfo.industryId,
         industry: data.employerInfo.industry,
@@ -147,8 +147,8 @@ const Index = () => {
       const combinedData = {
         email: data.employerInfo.businessEmail,
         password: data.password,
-        firstName: data.firstName,
-        surname: data.surname,
+        firstName: data.firstName || null,
+        surname: data.surname || null,
         phoneNumber: data.phoneNumber,
         employerInfo: {
           ...employerInfo,
@@ -177,15 +177,15 @@ const Index = () => {
       }
     } 
     catch (err: any) {
-      // if (err.response.message.includes("User with this email")) {
-      //   toast.error("This email is already registered. Please use a different email or try logging in.");
-      // }
-      // else if (err.response.message.includes("User with phone number")) {
-      //     toast.error("This phone number is already registered. Please use a different number or try logging in.");
-      // }
-      // else {
+      if (err.response.message.includes("User with this email")) {
+        toast.error("This email is already registered. Please use a different email or try logging in.");
+      }
+      else if (err.response.message.includes("User with phone number")) {
+          toast.error("This phone number is already registered. Please use a different number or try logging in.");
+      }
+      else {
           toast.error(err.message || "An error occurred during signup. Please try again.");
-      // };
+      };
     } 
     finally {
       setLoading(false);
@@ -218,38 +218,49 @@ const Index = () => {
             <Input label="First Name" placeholder="First Name" error={errors.firstName} {...register('firstName')} isValid={!errors.firstName && !!watchedFields.firstName} />
             <Input label="Surname" placeholder="Surname" error={errors.surname} {...register('surname')} isValid={!errors.surname && !!watchedFields.surname} />
             <Input label="Phone Number" placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} isValid={!errors.phoneNumber && !!watchedFields.phoneNumber} />
-            <Input type='text' label="Business Name" placeholder="Business Name" error={errors?.employerInfo?.businessName} {...register('employerInfo.businessName')} isValid={!errors?.employerInfo?.businessName && !!watchedFields.employerInfo.businessName} />
-            <Input type='number' label="Business Phone Number" placeholder="Business Phone Number" error={errors?.employerInfo?.businessPhoneNumber} {...register('employerInfo.businessPhoneNumber')} isValid={!errors?.employerInfo?.businessPhoneNumber && !!watchedFields.employerInfo.businessPhoneNumber} />
-            <Input type='email' label="Business Email" placeholder="Business Email" error={errors?.employerInfo?.businessEmail} {...register('employerInfo.businessEmail')} isValid={!errors?.employerInfo?.businessEmail && !!watchedFields.employerInfo.businessEmail} />
+            <Input type='text' label={<span>Business Name <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Business Name" error={errors?.employerInfo?.businessName} {...register('employerInfo.businessName')} isValid={!errors?.employerInfo?.businessName && !!watchedFields.employerInfo.businessName} />
+            <Input type='number' label={<span>Business Phone Number <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Business Phone Number" error={errors?.employerInfo?.businessPhoneNumber} {...register('employerInfo.businessPhoneNumber')} isValid={!errors?.employerInfo?.businessPhoneNumber && !!watchedFields.employerInfo.businessPhoneNumber} />
+            <Input type='email' label={<span>Business Email <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Business Email" error={errors?.employerInfo?.businessEmail} {...register('employerInfo.businessEmail')} isValid={!errors?.employerInfo?.businessEmail && !!watchedFields.employerInfo.businessEmail} />
             <Input type='text' label="Website" placeholder="Website" error={errors?.employerInfo?.websiteUrl} {...register('employerInfo.websiteUrl')} isValid={!errors?.employerInfo?.websiteUrl && !!watchedFields.employerInfo.websiteUrl} />
-            <Input type='text' label="Address" placeholder="Address" error={errors?.employerInfo?.address} {...register('employerInfo.address')} isValid={!errors?.employerInfo?.address && !!watchedFields.employerInfo.address} />
+            <Input type='text' label={<span>Address <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Address" error={errors?.employerInfo?.address} {...register('employerInfo.address')} isValid={!errors?.employerInfo?.address && !!watchedFields.employerInfo.address} />
             <Controller
-              name='employerInfo.industryId'
+              name='employerInfo.industry'
               control={control}
               render={({ field }) => (
                 <Select
                   name="Business Sector"
                   control={control}
-                  defaultValue={Array.isArray(industry) ? industry?.find(i => i.id === watch('employerInfo.industryId')) :  watch('employerInfo.industry')}
+                  defaultValue={Array.isArray(industry) && industry?.find(i => i.name === watch('employerInfo.industry'))}
                   options={model(industry, 'name', 'id')}
-                  handleChange={(newValue) => { field.onChange(newValue?.value || newValue?.label); setValue('employerInfo.industry', newValue?.label || ''); }}
+                  handleChange={(newValue) => {
+                    if (newValue.__isNew__) {
+                      field.onChange(newValue?.value || newValue?.label);
+                      setValue('employerInfo.industry', newValue?.label || '');
+                      setValue('employerInfo.industryId', null);
+                    } else {
+                      field.onChange(newValue?.value || newValue?.label);
+                      setValue('employerInfo.industry', newValue?.label);
+                      setValue('employerInfo.industryId', newValue?.value);
+                    }}}
                   isDisabled={isLoadingIndustries}
                   errors={errors}
-                  label='Business Sector'
+                  placeholder='Business Sector'
+                  label={<span>Business Sector <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>}
+                  allowCreate={true}
                 />
               )}
             />
-            <Input type='text' label="Contact Person Name" placeholder="Contact Person Name" error={errors?.employerInfo?.contactName} {...register('employerInfo.contactName')} isValid={!errors?.employerInfo?.contactName && !!watchedFields.employerInfo.contactName} />
-            <Input type='text' label="Contact Person Position" placeholder="Contact Person Position" error={errors?.employerInfo?.contactPosition} {...register('employerInfo.contactPosition')} isValid={!errors?.employerInfo?.contactPosition && !!watchedFields.employerInfo.contactPosition} />
+            <Input type='text' label={<span>Contact Person Name <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Contact Person Name" error={errors?.employerInfo?.contactName} {...register('employerInfo.contactName')} isValid={!errors?.employerInfo?.contactName && !!watchedFields.employerInfo.contactName} />
+            <Input type='text' label={<span>Contact Person Position <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Contact Person Position" error={errors?.employerInfo?.contactPosition} {...register('employerInfo.contactPosition')} isValid={!errors?.employerInfo?.contactPosition && !!watchedFields.employerInfo.contactPosition} />
             <Input type='text' label="Facebook Link" placeholder="Facebook Link" error={errors?.employerInfo?.fbLink} {...register('employerInfo.fbLink')} isValid={!errors?.employerInfo?.fbLink && !!watchedFields.employerInfo.fbLink} />
             <Input type='text' label="Twitter Link" placeholder="Twitter Link" error={errors?.employerInfo?.twitter} {...register('employerInfo.twitter')} isValid={!errors?.employerInfo?.twitter && !!watchedFields.employerInfo.twitter} />
             <Input type='text' label="Instagram Link" placeholder="Instagram Link" error={errors?.employerInfo?.instagramUrl} {...register('employerInfo.instagramUrl')} isValid={!errors?.employerInfo?.instagramUrl && !!watchedFields.employerInfo.instagramUrl} />
             <FormControl>
-              <Input type='password' label="Password" id='password' placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors?.password && !!watchedFields.password} />
+              <Input type='password' label="Password *" id='password' placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors?.password && !!watchedFields.password} />
               <FormHelperText>Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.</FormHelperText>
             </FormControl>
             <FormControl>
-              <Input type='password' label="Confirm Password" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
+              <Input type='password' label="Confirm Password *" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
               <FormHelperText>Passwords must match.</FormHelperText>
             </FormControl>
           </div>

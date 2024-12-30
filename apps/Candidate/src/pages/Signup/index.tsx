@@ -174,18 +174,18 @@ const index = () => {
                     submitForm(data);
                 }}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <Input label="First Name" placeholder="First Name" error={errors.firstName} {...register('firstName')} isValid={!errors.firstName && !!watchedFields.firstName} />
+                        <Input label={<span>First Name <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="First Name" error={errors.firstName} {...register('firstName')} isValid={!errors.firstName && !!watchedFields.firstName} />
                         <Input label="Middle Name" placeholder="Middle Name" error={errors.middleName} {...register('middleName')} isValid={!errors.middleName && !!watchedFields.middleName} />
-                        <Input label="Surname" placeholder="Surname" error={errors.surname} {...register('surname')} isValid={!errors.surname && !!watchedFields.surname} />
+                        <Input label={<span>Surname <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Surname" error={errors.surname} {...register('surname')} isValid={!errors.surname && !!watchedFields.surname} />
                         <Input type='text' label="Business Name" placeholder="Business Name" error={errors.businessName} {...register('businessName')} isValid={!errors.businessName && !!watchedFields.businessName} />
-                        <Input label="Phone Number" placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} isValid={!errors.phoneNumber && !!watchedFields.phoneNumber} />
-                        <Input label="Email Address" placeholder="Email Address" error={errors.email} {...register('email')} isValid={!errors.email && !!watchedFields.email} />
+                        <Input label={<span>Phone Number <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} isValid={!errors.phoneNumber && !!watchedFields.phoneNumber} />
+                        <Input label={<span>Email Address <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Email Address" error={errors.email} {...register('email')} isValid={!errors.email && !!watchedFields.email} />
                         <FormControl>
-                            <Input type='password' label="Password" id='password' placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors?.password && !!watchedFields.password} />
+                            <Input type='password' label="Password *" id='password' placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors?.password && !!watchedFields.password} />
                             <FormHelperText>Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.</FormHelperText>
                         </FormControl>
                         <FormControl>
-                            <Input type='password' label="Confirm Password" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
+                            <Input type='password' label="Confirm Password *" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
                             <FormHelperText>Passwords must match.</FormHelperText>
                         </FormControl>
                     </div>

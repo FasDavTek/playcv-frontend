@@ -106,11 +106,6 @@ const CategoryModal = ({
       console.log(formData);
 
       const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-      if (!token) {
-        toast.error('You are not authenticated. Please log in again.');
-        return;
-      }
-
       
 
       for (const key in contentData) {

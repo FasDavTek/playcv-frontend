@@ -41,7 +41,7 @@ const schema = z.object({
       businessName: z.string().min(1, "Business name is required"),
       businessPhoneNumber: z.string().min(10, "Business phone number must be at least 10 digits"),
       industry: z.string().min(1, "Business sector is required"),
-      industryId: z.string(),
+      industryId: z.number().nullable(),
       businessEmail: z.string().email("Invalid email format"),
       websiteUrl: z.string().url().optional().or(z.literal('')),
       fbLink: z.string().url().optional().or(z.literal('')),
@@ -81,10 +81,7 @@ const Profile = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(true);
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-  if (!token) {
-    toast.error('Unable to load user profile. Please log in again.');
-    return;
-  };
+  const userId = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -201,6 +198,7 @@ const Profile = () => {
             ...data.userProfile.userDetails,
             dateOfBirth: data.userProfile.userDetails.dateOfBirth || null,
             isBusinessUser: true,
+            userId: userId,
           },
           businessDetails: {
             ...data.userProfile.businessDetails,
@@ -426,21 +424,31 @@ const Profile = () => {
                 </IconButton>
               </Box>
             )}
-            {editField === 'userProfile.businessDetails.industryId' ? (
+            {editField === 'userProfile.businessDetails.industry' ? (
               <Controller
-                  {...register('userProfile.businessDetails.industryId')}
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      name="Business Sector"
-                      control={control}
-                      defaultValue={Array.isArray(industry) ? industry?.find(i => i.id === watch('userProfile.businessDetails.industryId')) : null}
-                      options={model(industry, 'name', 'id')}
-                      handleChange={(newValue) => field.onChange(newValue?.value)}
-                      isDisabled={isLoadingIndustries}
-                      errors={errors}
-                    />
-                  )}
+                name='userProfile.businessDetails.industry'
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    name="Business Sector"
+                    control={control}
+                    defaultValue={Array.isArray(industry) && industry?.find(i => i.name === watch('userProfile.businessDetails.industry'))}
+                    options={model(industry, 'name', 'id')}
+                    handleChange={(newValue) => { 
+                    if (newValue.__isNew__) {
+                      field.onChange(newValue?.value || newValue?.label);
+                      setValue('userProfile.businessDetails.industry', newValue?.label || '');
+                      setValue('userProfile.businessDetails.industryId', null);
+                    } else {
+                      field.onChange(newValue?.value || newValue?.label);
+                      setValue('userProfile.businessDetails.industry', newValue?.label);
+                      setValue('userProfile.businessDetails.industryId', newValue?.value);
+                    } }}
+                    isDisabled={isLoadingIndustries}
+                    errors={errors}
+                    allowCreate={true}
+                  />
+                )}
               />
             ) : (
               <Box className="input-box" onClick={() => handleEditClick('userProfile.businessDetails.industry')}>

@@ -9,7 +9,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 interface InputProps<T extends object>
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+  label: any;
   containerClass?: string;
   register?: UseFormRegister<T>;
   error?: FieldError;

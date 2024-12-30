@@ -86,7 +86,7 @@ interface CustomSelectProps {
   isMulti?: boolean;
   extraLabel?: string;
   allowCreate?: boolean;
-  label?: string;
+  label?: any;
 }
 
 const SelectDropdown: FC<CustomSelectProps> = ({

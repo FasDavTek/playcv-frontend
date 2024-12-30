@@ -15,6 +15,7 @@ interface MiscQueryParams {
 interface MiscItem {
     id: string;
     name: string;
+    courseName: string;
     title?: string;
     content?: string;
 }
@@ -33,11 +34,11 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (params.enabled === false || hasFetched.current) {
-                setData([]);
-                setIsLoading(false);
-                return;
-            }
+            // if (params.enabled === false || hasFetched.current) {
+            //     setData([]);
+            //     setIsLoading(false);
+            //     return;
+            // }
 
             try {
                 setIsLoading(true);
