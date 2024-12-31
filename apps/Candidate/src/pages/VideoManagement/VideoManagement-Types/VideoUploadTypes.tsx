@@ -153,25 +153,17 @@ const VideoUploadTypes = () => {
 
 
   const verifyTransaction = useCallback(async (reference: string): Promise<VerifyPaymentResponse> => {
-    try {
-      if (!reference) {
-        
-      }
-      else {
-        const url = `https://api.paystack.co/transaction/verify/${reference}`;
-        const verifyPayment = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${CONFIG.PAYSTACK}`,
-            'Content-Type': 'application/json',
-          }
-        });
+      const url = `https://api.paystack.co/transaction/verify/${reference}`;
+      const verifyPayment = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${CONFIG.PAYSTACK}`,
+          'Content-Type': 'application/json',
+        }
+      });
 
-        console.log("", verifyPayment);
-        return await verifyPayment.json();
-      }
-    }
-    catch (err) {}
+      console.log("", verifyPayment);
+      return await verifyPayment.json();
   }, [])
 
 

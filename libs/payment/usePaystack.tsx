@@ -131,11 +131,6 @@ const usePaystack = (
         onSuccess: (response: any) => {
           console.log('Payment initiated:', response);
           onInitiated(response?.reference, response);
-          const verifyPayment = verifyTransaction(response?.reference);
-          console.log(verifyPayment);
-          // if (verifyPayment.data.status === "success") {
-          //   toast.success('Payment Successful');
-          // }
           console.log(response?.reference)
           console.log(response);
           setIsProcessing(false);
