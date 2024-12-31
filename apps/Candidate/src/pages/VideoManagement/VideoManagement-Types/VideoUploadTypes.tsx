@@ -25,6 +25,7 @@ interface UserSignupData {
   lastName: string;
   phone?: any;
 }
+
 interface VerifyPaymentResponse {
   status: string;
   message: string;
@@ -151,19 +152,27 @@ const VideoUploadTypes = () => {
 
 
 
-  const verifyTransaction = async (reference: string): Promise<VerifyPaymentResponse> => {
-    const url = `https://api.paystack.co/transaction/verify/${reference}`;
-    const verifyPayment = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${CONFIG.PAYSTACK}`,
-        'Content-Type': 'application/json',
+  const verifyTransaction = useCallback(async (reference: string): Promise<VerifyPaymentResponse> => {
+    try {
+      if (!reference) {
+        
       }
-    });
+      else {
+        const url = `https://api.paystack.co/transaction/verify/${reference}`;
+        const verifyPayment = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${CONFIG.PAYSTACK}`,
+            'Content-Type': 'application/json',
+          }
+        });
 
-    console.log("", verifyPayment);
-    return await verifyPayment.json();
-  }
+        console.log("", verifyPayment);
+        return await verifyPayment.json();
+      }
+    }
+    catch (err) {}
+  }, [])
 
 
 
@@ -297,8 +306,8 @@ const VideoUploadTypes = () => {
       let phone = '';
       if (userSignupDataString) {
         const userSignupData = JSON.parse(userSignupDataString);
-        firstName: userSignupData?.lastName;
-        lastName : userSignupData?.firstName;
+        firstName = userSignupData?.surname;
+        lastName = userSignupData?.firstName;
         phone = userSignupData?.phoneNumber;
       } 
   
