@@ -19,6 +19,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useAuth } from './../../../../libs/context/AuthContext';
 import { toast } from 'react-toastify';
+import { LOCAL_STORAGE_KEYS } from './../../../../libs/utils/localStorage';
 
 const Hamburger = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="24" viewBox="0 0 52 24">
@@ -53,6 +54,8 @@ const Navbar = () => {
   const [openModal, setOpenModal] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -226,7 +229,7 @@ const Navbar = () => {
                 Job Board
               </NavLink>
             </li>
-            {authState.isAuthenticated && authState?.user?.userTypeId === 3 && (
+            {token && authState.isAuthenticated && authState?.user?.userTypeId === 3 && (
               <li>
                 <NavLink
                   to="/candidate/dashboard"
@@ -248,7 +251,7 @@ const Navbar = () => {
                 </NavLink>
               </li>
             )}
-            {authState.isAuthenticated && authState?.user?.userTypeId === 2 && (
+            {token && authState.isAuthenticated && authState?.user?.userTypeId === 2 && (
               <li>
                 <NavLink
                   to="/employer/dashboard"
@@ -270,7 +273,7 @@ const Navbar = () => {
                 </NavLink>
               </li>
             )}
-            {authState.isAuthenticated && authState?.user?.userTypeId === 1 && (
+            {token && authState.isAuthenticated && authState?.user?.userTypeId === 1 && (
               <li>
                 <NavLink
                   to='/admin/dashbaord'
@@ -292,7 +295,7 @@ const Navbar = () => {
                 </NavLink>
               </li>
             )}
-            {authState.isAuthenticated && (
+            {token && authState.isAuthenticated && (
               <li className='mt-5 md:mt-0'>
                 {/* TODO: Show logged in if user is logged in */}
                 <IconButton aria-label="cart" onClick={handleCartClick} className='w-5 h-5 lg:w-10 lg:h-10'>
@@ -302,7 +305,7 @@ const Navbar = () => {
                 </IconButton>
               </li>
             )}
-            {authState.isAuthenticated && authState?.user?.userTypeId === 3 && (
+            {token && authState.isAuthenticated && authState?.user?.userTypeId === 3 && (
               <li className='my-3 md:my-0'>
                 <NavLink
                   to="/candidate/video-guideline"
@@ -325,7 +328,7 @@ const Navbar = () => {
               </li>
             )}
             <div className="flex flex-col lg:flex-row justify-start gap-4 mt-4 lg:mt-0 md:ml-4 lg:ml-0">
-              {authState.isAuthenticated ? (
+              {token && authState.isAuthenticated ? (
                 <Button variant='black' className='w-full md:w-auto' label='Logout' onClick={logout} />
               ) : (
                 <div className='flex flex-col lg:flex-row justify-start gap-3.5'>

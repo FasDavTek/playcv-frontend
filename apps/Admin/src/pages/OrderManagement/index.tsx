@@ -45,7 +45,7 @@ const Orders = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (response.code === "201") {
+        if (response.succeeded === true) {
           const data = await response.data;
           setPayments(data);
         } else {

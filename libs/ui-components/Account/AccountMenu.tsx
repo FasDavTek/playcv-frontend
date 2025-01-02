@@ -20,6 +20,8 @@ import { useTheme } from '@mui/material/styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import LogoutModal from '../Layout/LogoutModal';
+import { LOCAL_STORAGE_KEYS } from '../../../libs/utils/localStorage';
+import { useTokenExpiration } from '../../utils/helpers/useTokenExpiration';
 
 interface Account {
   id: string;
@@ -58,6 +60,11 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
   const location = useLocation();
   const { authState, logout } = useAuth();
 
+  useTokenExpiration();
+
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  const isAuthenticated = authState.isAuthenticated && token;
+
   const currentUser = authState.user;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -90,7 +97,7 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
   };
 
 
-  if (!currentUser) {
+  if (!isAuthenticated || !currentUser) {
     return null;
   };
 

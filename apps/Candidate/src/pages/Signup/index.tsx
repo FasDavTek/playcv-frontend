@@ -347,10 +347,10 @@ const Index = () => {
             return;
         }
 
-        if (!isFormValid) {
-            toast.error("Please fill in all required fields correctly.");
-            return;
-        }
+        // if (!isFormValid) {
+        //     toast.error("Please fill in all required fields correctly.");
+        //     return;
+        // }
 
         setLoading(true);
 
@@ -430,6 +430,21 @@ const Index = () => {
 
     const watchedFields = watch();
 
+    // useEffect(() => {
+    //     const requiredFields = [
+    //         'firstName',
+    //         'surname',
+    //         'phoneNumber',
+    //         'email',
+    //         'password',
+    //         'confirmPassword'
+    //     ];
+
+    //     const isValid = requiredFields.every(field => !!getValues(field as any)) && termsAccepted && Object.keys(errors).length === 0;
+    //     setIsFormValid(isValid);
+    // }, [getValues, errors, termsAccepted]);
+
+
     useEffect(() => {
         const requiredFields = [
             'firstName',
@@ -440,9 +455,13 @@ const Index = () => {
             'confirmPassword'
         ];
 
-        const isValid = requiredFields.every(field => !!getValues(field as any)) && termsAccepted && Object.keys(errors).length === 0;
+        const isValid = requiredFields.every(field => {
+            const value = getValues(field as keyof FormData);
+            return value !== undefined && value !== '' && !errors[field as keyof FormData];
+        }) && termsAccepted;
+
         setIsFormValid(isValid);
-    }, [getValues, errors, termsAccepted])
+    }, [getValues, errors, termsAccepted]);
   
   return (
     <div className="overflow-hidden flex">

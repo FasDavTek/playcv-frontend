@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@video-cv/ui-components';
 import { usePaystack } from '@video-cv/payment';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Card, CardContent, CardHeader, CircularProgress, Typography } from '@mui/material';
 import { getData, postData } from '../../../../../../libs/utils/apis/apiMethods';
@@ -23,62 +23,62 @@ interface AdType {
 }
 
 
-interface VerifyPaymentResponse {
-  status: string;
-  message: string;
-  data: {
-    id: number;
-    domain: string;
-    status: string;
-    reference: string;
-    amount: number;
-    message: string;
-    gateway_response: string;
-    paid_at: string;
-    created_at: string;
-    channel: string;
-    currency: string;
-    ip_address: string;
-    metadata: any;
-    log: any;
-    fees: number;
-    fees_split: any;
-    authorization: {
-      authorization_code: string;
-      bin: string;
-      last4: string;
-      exp_month: string;
-      exp_year: string;
-      channel: string;
-      card_type: string;
-      bank: string;
-      country_code: string;
-      brand: string;
-      reusable: boolean;
-      signature: string;
-      account_name: string;
-    };
-    customer: {
-      id: number;
-      first_name: string;
-      last_name: string;
-      email: string;
-      customer_code: string;
-      phone: string;
-      metadata: any;
-      risk_action: string;
-    };
-    plan: any;
-    split: any;
-    order_id: string;
-    paidAt: string;
-    createdAt: string;
-    requested_amount: number;
-    transaction_date: string;
-    plan_object: any;
-    subaccount: any;
-  };
-}
+// interface VerifyPaymentResponse {
+//   status: string;
+//   message: string;
+//   data: {
+//     id: number;
+//     domain: string;
+//     status: string;
+//     reference: string;
+//     amount: number;
+//     message: string;
+//     gateway_response: string;
+//     paid_at: string;
+//     created_at: string;
+//     channel: string;
+//     currency: string;
+//     ip_address: string;
+//     metadata: any;
+//     log: any;
+//     fees: number;
+//     fees_split: any;
+//     authorization: {
+//       authorization_code: string;
+//       bin: string;
+//       last4: string;
+//       exp_month: string;
+//       exp_year: string;
+//       channel: string;
+//       card_type: string;
+//       bank: string;
+//       country_code: string;
+//       brand: string;
+//       reusable: boolean;
+//       signature: string;
+//       account_name: string;
+//     };
+//     customer: {
+//       id: number;
+//       first_name: string;
+//       last_name: string;
+//       email: string;
+//       customer_code: string;
+//       phone: string;
+//       metadata: any;
+//       risk_action: string;
+//     };
+//     plan: any;
+//     split: any;
+//     order_id: string;
+//     paidAt: string;
+//     createdAt: string;
+//     requested_amount: number;
+//     transaction_date: string;
+//     plan_object: any;
+//     subaccount: any;
+//   };
+// }
 
 export interface PaymentDetails {
   id: number;
@@ -109,6 +109,7 @@ const AdUploadTypes = () => {
   const [price, setPrice] = useState<number>(0);
   const { authState } = useAuth();
   const [selectedType, setSelectedType] = useState<AdType | null>(null);
+  const selectedTypeRef = useRef<AdType | null>(null);
   const [adTypes, setAdTypes] = useState<AdType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -138,7 +139,7 @@ const AdUploadTypes = () => {
     finally {
       setIsLoading(false)
     }
-  }, [navigate, token]);
+  }, [token]);
 
 
 
@@ -147,129 +148,91 @@ const AdUploadTypes = () => {
   }, [fetchUploadTypes])
 
 
-
-  const verifyTransaction = async (reference: string): Promise<VerifyPaymentResponse> => {
-    const url = `https://api.paystack.co/transaction/verify/${reference}`;
-    const verifyPayment = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${CONFIG.PAYSTACK}`,
-        'Content-Type': 'application/json',
-      }
-    });
-
-    console.log("", verifyPayment);
-    return await verifyPayment.json();
-  }
-
-
-
-  const onPaymentInitiated = useCallback(async (reference: string, response: any) => {
-    if (!selectedType || !authState.user) return;
+  const onPaymentInitiated = useCallback(async (response: any) => {
+    if (!selectedTypeRef.current) {
+      console.error('No selected upload type found');
+      toast.error('An error occurred. Please try again.');
+      return;
+    }
+    
+    if (!authState.user) {
+      console.error('No user found in auth state');
+      toast.error('User authentication error. Please log in and try again.');
+      return;
+    }
 
     try {
-      console.log("", reference);
       console.log(response)
-      const verifyPayment = await verifyTransaction(reference);
 
-      console.log('Verify payment response:', verifyPayment);
+      const paymentConfirmationData = {
+        userId: authState.user?.id,
+        buyerId: authState.user?.id,
+        currency: "NGN",
+        total: selectedTypeRef.current.price,
+        amount: selectedTypeRef.current.price,
+        countryCode: "NG",
+        reference_Id: response.reference,
+        purchaseDetails: [{
+          adId: selectedTypeRef.current.typeId,
+          quantity: 1,
+          amount: selectedTypeRef.current.price
+        }],
+        status: response.status === 'success' ? 's' : response.status === 'failed' ? 'f' : 'a',
+        // cardType: selectedTypeRef.current.cardType || '',
+        // cardDetails: selectedTypeRef.current.cardDetails || '',
+        // last_Four: selectedTypeRef.current.last_Four || "Unknown",
+        paymentType: "upload",
+        uploadType: selectedTypeRef.current.typeName,
+        uploadTypeId: selectedTypeRef.current.typeId,
+        userIdentifier: authState?.user?.id,
+        adTypeId: selectedTypeRef.current.typeId,
+        // transactionFee: selectedTypeRef.current?.added_fees,
+        // chargedTaxAmount: 0,
+        isUploaded: false,
+        // duration: selectedTypeRef.current?.duration,
+      };
 
-      if (verifyPayment.data.status === "success") {
-        const details: PaymentDetails = {
-          id: verifyPayment.data.id,
-          reference: verifyPayment.data?.reference,
-          // access_code: verifyPayment.data?.access_code,
-          amount: verifyPayment.data?.amount,
-          currency: verifyPayment.data?.currency,
-          email: verifyPayment.data?.customer?.email,
-          status: verifyPayment.data?.status,
-          // transaction: transaction,
-          cardType: verifyPayment.data?.authorization?.card_type,
-          cardDetails: `${verifyPayment.data?.authorization?.brand || ''} || ${verifyPayment.data?.authorization?.card_type || ''}`,
-          last_Four: verifyPayment.data?.authorization?.last4,
-          bank: verifyPayment.data?.authorization?.bank,
-          channelType: verifyPayment.data?.channel,
-          paidAt: verifyPayment.data?.paid_at,
-          createdAt: verifyPayment.data?.created_at,
-          added_fees: verifyPayment.data?.fees,
-          duration: (verifyPayment.data?.log?.time_spent).toString(),
-        };
-
-        setPaymentReference(details);
-
-
-        const paymentConfirmationData = {
-          buyerId: authState.user?.id,
-          currency: details.currency,
-          total: details.amount,
-          amount: selectedType.price,
-          countryCode: "NG",
-          reference_Id: reference,
-          status: details.status === 'success' ? 's' : details.status === 'failed' ? 'f' : 'a',
-          cardType: details.cardType || '',
-          cardDetails: details.cardDetails || '',
-          last_Four: details.last_Four || "Unknown",
-          purchaseDetails: [{
-            adId: selectedType.typeId,
-            quantity: 1,
-            amount: selectedType.price
-          }],
-          paymentType: "upload",
-          uploadType: selectedType.typeName,
-          uploadTypeId: selectedType.typeId,
-          userIdentifier: authState?.user?.id,
-          adTypeId: selectedType.typeId,
-          transactionFee: details?.added_fees,
-          chargedTaxAmount: 0,
-          isUploaded: false,
-          duration: details?.duration,
-        };
-
-        const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
 
-        const uploadRequestPayload = {
-          buyerId: authState.user?.id,
-          adId: null, // This will be filled later when the ad is uploaded
-          name: selectedType?.typeName.charAt(0).toUpperCase(),
-          adTypeId: selectedType.typeId,
-          description: "",
-          coverUrl: "",
-          redirectUrl: "",
-          action: "create",
-          statusId: null,
-          startDate: null,
-          endDate: null,
-          paymentId: details.id
-        };
+      const uploadRequestPayload = {
+        buyerId: authState.user?.id,
+        adId: null, // This will be filled later when the ad is uploaded
+        name: '',
+        adTypeId: selectedTypeRef.current.typeId,
+        description: "",
+        coverUrl: "",
+        redirectUrl: "",
+        action: "create",
+        statusId: null,
+        startDate: null,
+        endDate: null,
+        paymentId: paymentResponse.data.id
+      };
 
-        const uploadRequestResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, uploadRequestPayload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const uploadRequestResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, uploadRequestPayload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
 
-        navigate(`/admin/advertisement-management/confirmation`, { 
-          state: {
-            uploadRequestId: uploadRequestResponse.data.id,
-            adTypeId: selectedType.typeId,
-            adTypeName: selectedType.typeName,
-            price: selectedType.price,
-            paymentReference: paymentReference,
-            paymentId: paymentResponse.data.id
-          }
-        });
-      }
-      else {
-        throw new Error('Payment verification failed');
-      }
+      navigate(`/admin/advertisement-management/confirmation`, { 
+        state: {
+          uploadRequestId: uploadRequestResponse.data.id,
+          adTypeId: selectedTypeRef.current.typeId,
+          adTypeName: selectedTypeRef.current.typeName,
+          price: selectedTypeRef.current.price,
+          paymentReference: response,
+          paymentId: paymentResponse.data.id
+        }
+      });
     }
     catch(err: any) {
       console.error('Error creating upload request:', err);
       toast.error('Failed to process your request. Please try again.');
     }
-  }, [selectedType, authState.user, token, price, navigate]);
+  }, [authState.user, navigate]);
 
 
 
@@ -283,22 +246,23 @@ const AdUploadTypes = () => {
 
   const handlePayment = useCallback((type: AdType) => {
     setSelectedType(type);
+    selectedTypeRef.current = type;
     const amount = Math.round(Number(type.price));
     const email = authState?.user?.username || '';
-    const firstName = authState?.user?.firstName || '';
-    const lastName = authState?.user?.lastName || '';
-    const phone = authState?.user?.phone;
+    const userSignupDataString = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
+    let firstName = '';
+    let lastName = '';
+    let phone = '';
+    if (userSignupDataString) {
+      const userSignupData = JSON.parse(userSignupDataString);
+      firstName = userSignupData?.surname;
+      lastName = userSignupData?.firstName;
+      phone = userSignupData?.phoneNumber;
+    }
 
     if (amount > 0) {
       payButtonFn(amount, email, firstName, lastName, phone);
     }
-    // if (authState?.user?.username && token) {
-      // payButtonFn(amount, email,);
-    // }
-    // else {
-    //   toast.error('User not found. Please log in again.');
-    //   navigate('/auth/login', { replace: true });
-    // }
   }, [authState.user, payButtonFn]);
 
 

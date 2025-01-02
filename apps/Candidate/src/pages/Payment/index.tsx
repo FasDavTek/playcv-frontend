@@ -13,25 +13,27 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
-type ReportTableColumns = {
+type Payment = {
   id: number;
-  videoName: string;
+  customerFullName: string;
+  customerEmailAddress: string;
+  orderId: string;
   quantity: number;
   price: string;
   type: string;
   subTotal: string;
-  action: 'action';
 };
 
 
 type ModalTypes = null | 'uploadModal' | 'confirmationModal' | 'paymentModal';
 
-const columnHelper = createColumnHelper<ReportTableColumns>();
+const columnHelper = createColumnHelper<Payment>();
 
 const Payment = () => {
   const queryParams = new URLSearchParams(location.search);
-  const [payments, setPayments] = useState<ReportTableColumns[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
+  const [selectedItem, setSelectedItem] = useState<Payment | null>(null);
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("");
@@ -45,9 +47,9 @@ const Payment = () => {
   const navigate = useNavigate(); // Initialize useNavigate
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  const userId = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID)
 
   const checkPaymentStatus = async () => {
-    setLoading(true);
     try {
       const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=100`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -76,27 +78,41 @@ const Payment = () => {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.FETCH_ALL_PAYMENTS}?Page=1&Limit=100`, {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.FETCH_ALL_PAYMENTS}?Page=1&Limit=100&userId=${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (response.code === "201") {
+        console.log(response);
+
+        if (response.succeeded === true) {
           const data = await response.data;
+          console.log("", data);
           setPayments(data);
         } else {
           throw new Error('Failed to fetch payments');
         }
       }
       catch (err) {
-        toast.error('Error fetching payments');
+        if(!token) {
+          toast.error('Your session has expired. Please log in again');
+          navigate('/');
+        }
+        else {
+          toast.error('Error fetching payments');
+        }
       }
       finally {
         setIsLoading(false);
       }
     }
-    fetchPayments();
-  })
 
+    fetchPayments();
+  }, [])
+    
+
+
+  
+   
 
   // useEffect(() => {
   //   const uploadModalParam = queryParams.get('uploadModal');
@@ -105,41 +121,43 @@ const Payment = () => {
   //   }
   // }, [queryParams]);
 
-  const handleGenerateInvoice = (id: number) => {
-    navigate(`/candidate/payment/details/${id}`); // Navigate to the invoice details page
+  const handleGenerateInvoice = (item: Payment) => {
+    // navigate(`/candidate/payment/details/${id}`); // Navigate to the invoice details page
+    setSelectedItem(item);
+    console.log(item)
+    console.log(setSelectedItem)
+    navigate(`/candidate/payment/details/${item.id}`, {
+      state: { payments: item }
+    })
   };
 
 
   const columns = [
-    columnHelper.accessor('videoName', {
-      header: 'Video Name',
-      cell: (info) => info.getValue(),
+    columnHelper.accessor('customerFullName', {
+      header: 'Name',
+    }),
+    columnHelper.accessor('customerEmailAddress', {
+      header: 'Email',
+    }),
+    columnHelper.accessor('orderId', {
+      header: 'Order Id',
     }),
     columnHelper.accessor('quantity', {
       header: 'Quantity',
-      cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('price', {
       header: 'Price',
-      cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('subTotal', {
-      header: 'Subtotal',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('type', {
-      header: 'Type',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('action', {
-      cell: ({ row: { original } }) => {
-        // REFACTOR: is this necessary
-        // const cb = (e: React.MouseEvent<HTMLButtonElement>) => {
-        //   // console.log('e', e);
-        // };
-        return <Button variant='custom' label="View Payments" onClick={() => handleGenerateInvoice(original.id)} />;
-      },
+    columnHelper.display({
+      id: 'actions',
       header: 'Action',
+      cell: ({ row }) => (
+        <Button
+          variant='custom'
+          label="View Payment"
+          onClick={() => handleGenerateInvoice(row.original)}
+        />
+      ),
     }),
   ];
 
@@ -158,7 +176,7 @@ const Payment = () => {
       {/* Create Payment */}
       <Table
         loading={false}
-        data={data}
+        data={payments}
         columns={columns}
         search={setSearch}
         filter={filter}

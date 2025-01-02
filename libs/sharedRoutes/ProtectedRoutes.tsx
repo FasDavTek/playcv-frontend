@@ -21,6 +21,9 @@ const Cart = lazy(() => import('../../apps/video-cv/src/pages/Cart'));
 const Login = lazy(() => import('../../apps/video-cv/src/pages/Login'));
 const Signup = lazy(() => import('../../apps/Candidate/src/pages/Signup'));
 const EmployerSignup = lazy(() => import('../../apps/Employer/src/pages/Signup'));
+const ForgotPassword = lazy(() => import('../ui-components/Confirmation/PasswordChange'));
+const VerifyToken = lazy(() => import('../ui-components/Confirmation/TokenVerification'));
+const ResetPassword = lazy(() => import('../ui-components/Confirmation/ResetPassword'));
 const Terms = lazy(() => import("../../apps/video-cv/src/pages/Terms and Conditions/index"));
 const Privacy = lazy(() => import("../../apps/video-cv/src/pages/Privacy Policy/index"));
 const AdsPolicy = lazy(() => import("../../apps/video-cv/src/pages/Advert Policy/index"));
@@ -396,6 +399,18 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.EMPLOYER_SIGNUP,
                 element: <EmployerSignup />,
+            },
+            {
+                path: ROUTES.FORGOT_PASSWORD,
+                element: <ForgotPassword />,
+            },
+            {
+                path: ROUTES.VERIFY_TOKEN,
+                element: <VerifyToken />,
+            },
+            {
+                path: ROUTES.RESET_PASSWORD,
+                element: <ResetPassword />,
             }
         ]
     }

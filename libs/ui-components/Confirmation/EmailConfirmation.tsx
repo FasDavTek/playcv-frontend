@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify';
-import { getData } from './../../../libs/utils/apis/apiMethods';
-import { apiEndpoints } from './../../../libs/utils/apis/apiEndpoints';
-import CONFIG from './../../../libs/utils/helpers/config';
+import { getData } from '../../utils/apis/apiMethods';
+import { apiEndpoints } from '../../utils/apis/apiEndpoints';
+import CONFIG from '../../utils/helpers/config';
 
 const ConfirmEmail = () => {
   const location = useLocation();

@@ -66,6 +66,10 @@ const Login = () => {
     }
   }, [location]);
 
+  const handleForgotPassword = () => {
+    navigate('/auth/forgot-password');
+  };
+
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     const { username, password } = data;
@@ -168,7 +172,7 @@ const Login = () => {
           </div>
 
           <div className='w-full flex items-end justify-end'>
-            <p className='text-sm mt-3 text-center text-blue-400 hover:underline cursor-pointer'>Forgot Password</p>
+            <p className='text-sm mt-3 text-center text-blue-400 hover:underline cursor-pointer' onClick={handleForgotPassword}>Forgot Password</p>
           </div>
 
           <Button type='submit' variant='black' disabled={loading} className="w-full my-10" label={loading ? "Submitting..." : "Login"} />
