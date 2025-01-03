@@ -88,8 +88,6 @@ const Payment = () => {
           const data = await response.data;
           console.log("", data);
           setPayments(data);
-        } else {
-          throw new Error('Failed to fetch payments');
         }
       }
       catch (err) {
@@ -146,7 +144,7 @@ const Payment = () => {
       header: 'Quantity',
     }),
     columnHelper.accessor('price', {
-      header: 'Price',
+      header: 'Amount',
     }),
     columnHelper.display({
       id: 'actions',

@@ -11,6 +11,7 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import { CreateAdsModal } from './modals';
+import { handleDate } from '@video-cv/utils'
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 type Advert = {
@@ -186,18 +187,18 @@ const Payment = () => {
     }),
     columnHelper.accessor('dateCreated', {
       header: 'Date Created',
-      cell: (info) => formatDate(info.getValue()),
+      cell: (info) => handleDate(info.getValue()),
     }),
     columnHelper.accessor('adDescription', {
       header: 'Description',
     }),
     columnHelper.accessor('startDate', {
       header: 'Start Date',
-      cell: (info) => formatDate(info.getValue()),
+      cell: (info) => handleDate(info.getValue()),
     }),
     columnHelper.accessor('endDate', {
       header: 'End Date',
-      cell: (info) => formatDate(info.getValue()),
+      cell: (info) => handleDate(info.getValue()),
     }),
     columnHelper.accessor('status', {
       header: 'Status',

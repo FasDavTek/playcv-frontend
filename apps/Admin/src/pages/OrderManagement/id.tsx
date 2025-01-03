@@ -3,52 +3,54 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@video-cv/ui-components';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import React, { useEffect, useState } from 'react';
+import { handleDate } from '@video-cv/utils'
 import { getData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 interface PaymentDetails {
   id: string;
-  userName: string;
-  userEmail: string;
-  amount: number;
-  datePaid: Date;
-  phone: string;
-  paymentType: string;
+  customerFullName: string;
+  customerEmailAddress: string;
+  price: number;
+  orderId: string;
+  quantity: number;
+  dateCreated: string;
+  customerMobileNumber: string;
+  paymentMethod: string;
   paymentDescription: string;
 }
 
 const Id: React.FC = () => {
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | undefined>(location.state?.payments);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const { id } = useParams<{ id: string }>();
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
   useEffect(() => {
     const fetchPaymentDetails = async () => {
       if (!id) {
-        setError('Payment ID is missing');
+        setError('Invalid Payment ID');
         setIsLoading(false);
         return;
       }
 
-      try {
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT_DETAILS}/${id}`);
-        if (response.code === "201") {
-          const data = await response.json();
-          setPaymentDetails(data);
-        } else {
-          throw new Error('Failed to fetch payment details');
-        }
-      } catch (error) {
-        console.error('Error fetching payment details:', error);
-        setError('Failed to load payment details. Please try again.');
-      } finally {
+      if (paymentDetails && id) {
         setIsLoading(false);
+        id: paymentDetails.id;
+        customerFullName: paymentDetails.customerFullName;
+        customerEmailAddress: paymentDetails.customerEmailAddress;
+        price: paymentDetails.price;
+        orderId: paymentDetails.orderId;
+        quantity: paymentDetails.quantity;
+        dateCreated: paymentDetails.dateCreated;
+        customerPhoneNumber: paymentDetails.customerMobileNumber;
+        paymentMethod: paymentDetails.paymentMethod;
       }
     };
 
@@ -57,7 +59,9 @@ const Id: React.FC = () => {
 
 
   if (isLoading) {
-    return <div className="px-3 md:px-10 pt-4 pb-10">Loading...</div>;
+    return (
+      <div className="px-3 md:px-10 pt-4 pb-10">Loading...</div>
+    );
   };
 
 
@@ -69,15 +73,15 @@ const Id: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="flex flex-col">
             <h5 className="font-semibold text-lg text-gray-700">Name</h5>
-            <p className="">{paymentDetails?.userName}</p>
+            <p className="">{paymentDetails?.customerFullName}</p>
           </div>
           <div className="flex flex-col">
             <h5 className="font-semibold text-lg text-gray-700">Email</h5>
-            <p className="text-gray-900">{paymentDetails?.userEmail}</p>
+            <p className="text-gray-900">{paymentDetails?.customerEmailAddress}</p>
           </div>
           <div className="flex flex-col">
             <h5 className="font-semibold text-lg text-gray-700">Payment Type</h5>
-            <p className="text-gray-900">{paymentDetails?.paymentType}</p>
+            <p className="text-gray-900">{paymentDetails?.paymentMethod}</p>
           </div>
           <div className="flex flex-col">
             <h5 className="font-semibold text-lg text-gray-700">Payment Description</h5>
@@ -85,15 +89,15 @@ const Id: React.FC = () => {
           </div>
           <div className="flex flex-col">
             <h5 className="font-semibold text-lg text-gray-700">Date Paid</h5>
-            <p className="text-gray-900">{(paymentDetails?.datePaid)?.toDateString()}</p>
+            <p className="text-gray-900">{handleDate(paymentDetails?.dateCreated)}</p>
           </div>
           <div className="flex flex-col">
             <h5 className="font-semibold text-lg text-gray-700">Amount Paid</h5>
-            <p className="text-gray-900">₦{paymentDetails?.amount.toFixed(2)}</p>
+            <p className="text-gray-900">₦{paymentDetails?.price.toFixed(2)}</p>
           </div>
           <div className="flex flex-col">
             <h5 className="font-semibold text-lg text-gray-700">Phone</h5>
-            <p className="text-gray-900">{paymentDetails?.phone}</p>
+            <p className="text-gray-900">{paymentDetails?.customerMobileNumber}</p>
           </div>
         </div>
       </div>

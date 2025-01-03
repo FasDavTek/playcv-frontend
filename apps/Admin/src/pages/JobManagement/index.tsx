@@ -9,6 +9,7 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 import { useAllCountry } from './../../../../../libs/hooks/useAllCountries';
+import { handleDate } from '@video-cv/utils';
 import { useAllState } from './../../../../../libs/hooks/useAllState';
 
 const truncateText = (text: string, wordLimit: number) => {
@@ -151,7 +152,7 @@ const JobManagement = () => {
     }),
     columnHelper.accessor('dateCreated', {
       header: 'Start Date',
-      cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+      cell: (info) => handleDate(info.getValue()),
     }),
     columnHelper.accessor('status', {
       header: 'Status',

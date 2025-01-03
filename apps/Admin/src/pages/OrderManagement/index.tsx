@@ -11,18 +11,20 @@ import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
+import { handleDate } from '@video-cv/utils';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 type PaymentData = {
   id: number;
-  userName: string;
-  userEmail: string;
-  role: string;
-  amount: number;
-  datePaid: Date;
-  phone: string;
-  paymentType: string;
-  paymentDescription: string;
+  customerFullName: string;
+  customerEmailAddress: string;
+  price: number;
+  orderId: string;
+  quantity: number;
+  dateCreated: Date;
+  customerMobileNumber: string;
+  paymentMethod: string;
+  transactionStatus: string;
 };
 
 type ModalTypes = null | 'viewPurchase';
@@ -33,6 +35,11 @@ const Orders = () => {
   const [payments, setPayments] = useState<PaymentData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
+  const [selectedItem, setSelectedItem] = useState<PaymentData | null>(null);
+  const [data, setData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState<string>('');
   const [selectedOrder, setSelectedOrder] = useState<PaymentData | null>(null);
   const navigate = useNavigate();
 
@@ -47,61 +54,72 @@ const Orders = () => {
 
         if (response.succeeded === true) {
           const data = await response.data;
+          console.log("", data);
           setPayments(data);
-        } else {
-          throw new Error('Failed to fetch payments');
         }
       }
       catch (err) {
-        toast.error('Error fetching payments');
+        if(!token) {
+          toast.error('Your session has expired. Please log in again');
+          navigate('/');
+        }
+        else {
+          toast.error('Error fetching payments');
+        }
       }
       finally {
         setIsLoading(false);
       }
     }
+
     fetchPayments();
-  })
+  }, []);
+
+  const handleView = (item: PaymentData) => {
+    setSelectedItem(item);
+    navigate(`/admin/order-management/${item.id}`, {
+      state: { payments: item }
+    })
+  }
 
 
 
   const columns = [
-    columnHelper.accessor('userName', {
+    columnHelper.accessor('customerFullName', {
       header: 'Name',
-      cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('userEmail', {
+    columnHelper.accessor('customerEmailAddress', {
       header: 'Email',
-      cell: (info) => info.getValue(),
     }),
-    // columnHelper.accessor('role', {
-    //   header: 'Role',
-    //   cell: (info) => info.getValue(),
-    // }),
-    columnHelper.accessor('amount', {
+    columnHelper.accessor('customerMobileNumber', {
+      header: 'Phone Number',
+    }),
+    columnHelper.accessor('orderId', {
+      header: 'Order Id',
+    }),
+    columnHelper.accessor('paymentMethod', {
+      header: 'Payment Method',
+    }),
+    columnHelper.accessor('quantity', {
+      header: 'Quantity',
+    }),
+    columnHelper.accessor('price', {
       header: 'Amount',
-      cell: (info) => `₦${info.getValue().toFixed(2)}`,
+      cell: (info) => `₦${info.getValue()}`,
     }),
-    columnHelper.accessor('datePaid', {
-      header: 'Date Paid',
-      cell: (info) => info.getValue(),
+    columnHelper.accessor('dateCreated', {
+      header: 'Date Created',
+      cell: (info) => handleDate(info.getValue()),
     }),
-    columnHelper.accessor('phone', {
-      header: 'Phone',
-      cell: (info) => info.getValue(),
+    columnHelper.accessor('transactionStatus', {
+      header: 'Payment Status',
     }),
-    columnHelper.accessor('paymentType', {
-      header: 'Payment Type',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('paymentDescription', {
-      header: 'Payment Description',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('id', {
+    columnHelper.display({
+      id: 'actions',
       header: 'Action',
-      cell: (info) => (
+      cell: ({ row }) => (
         <Button
-          onClick={() => navigate(`/admin/order-management/${info.getValue()}`, { state: { paymentId: info.getValue() } })}
+          onClick={() => handleView(row.original)}
           label="View"
           variant='custom'
         />
@@ -118,6 +136,10 @@ const Orders = () => {
         loading={false}
         data={payments}
         columns={columns}
+        search={setSearch}
+        filter={filter}
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
         tableHeading="All Orders"
       />
       <Modal open={openModal === 'viewPurchase'} onClose={closeModal}>
