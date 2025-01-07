@@ -140,7 +140,7 @@ const Index = () => {
         reset();
         setTermsAccepted(false);
 
-        navigate('/auth/login');
+        navigate('/auth/verify-mail');
       } else {
         toast.error(`We couldn't complete your registration. Please verify your details and give it another go.`);
       }
