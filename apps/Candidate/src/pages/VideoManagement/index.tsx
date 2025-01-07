@@ -69,8 +69,14 @@ const Dashboard = () => {
       }
     } 
     catch (error) {
-      console.error('Error checking payment status:', error);
-      toast.warning('There was an error checking your payment status. Please try again later.');
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        console.error('Error checking payment status:', error);
+        toast.warning('There was an error checking your payment status. Please try again later.');
+      }
     }
   };
 
@@ -108,9 +114,15 @@ const Dashboard = () => {
       }
     }
     catch (err) {
-      console.error('Error fetching videos: ', err);
-      setError('Failed to load videos. Please try again later.');
-      toast.warning('Failed to load videos. Please try again later.');
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        console.error('Error fetching videos: ', err);
+        setError('Failed to load videos. Please try again later.');
+        toast.warning('Failed to load videos. Please try again later.');
+      }
     }
     finally {
       setIsLoading(false);

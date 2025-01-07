@@ -87,7 +87,7 @@ const Advertisement = () => {
   const fetchAds = async () => {
     try {
 
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?UserId=${userId}&Page=1&Limit=100`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?Page=1&Limit=100`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -105,9 +105,14 @@ const Advertisement = () => {
       setLastFetchTime(currentTime);
     }
     catch (err) {
-      console.error('Error fetching ads:', err)
-      setLoading(false)
-      toast.error('Failed to fetch ads')
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        console.error('Error fetching ads:', err)
+        toast.error('Failed to fetch ads')
+      }
     }
     finally {
       setLoading(false)

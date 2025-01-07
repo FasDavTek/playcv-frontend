@@ -149,41 +149,43 @@ const Login = () => {
           height: '100%',
         }}
       ></div>
-      <div className="border flex-1">
+      <div className="border flex-1 items-center justify-start">
         <ChevronLeftIcon className="cursor-pointer text-base ml-2 top-4 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.95rem' }} onClick={handleBackClick} />
-        <form onSubmit={handleSubmit(onSubmit)} className="w-[90%] md:w-7/12 mx-auto mt-14">
-          <h5 className="font-bold text-3xl">Login</h5>
-          <p className="">Enter your login details to Sign in</p>
-          <div className="flex flex-col gap-5 my-5 mt-10">
-            <Button
-              className="w-full"
-              variant="neutral"
-              label="Sign in with NYSC Jobs"
-            />
-          </div>
-          <div className="flex gap-3 items-center my-4">
-            <hr className="flex-1" />
-            or Sign in with email
-            <hr className="flex-1" />
-          </div>
-          <div className="flex flex-col gap-6">
-            <Input type='username' {...register('username')} error={errors.username} label="Username" placeholder="user@email.com" />
-            <Input type='password' {...register('password')} error={errors.password} label="Password" placeholder="XubYgsanbE" />
-          </div>
+        <div className="w-[90%] h-full mx-auto flex items-center justify-center">
+          <form onSubmit={handleSubmit(onSubmit)} className="my-auto">
+            <h5 className="font-bold text-3xl">Login</h5>
+            <p className="">Enter your login details to Sign in</p>
+            <div className="flex flex-col gap-5 my-5 mt-10">
+              <Button
+                className="w-full"
+                variant="neutral"
+                label="Sign in with NYSC Jobs"
+              />
+            </div>
+            <div className="flex gap-3 items-center my-4">
+              <hr className="flex-1" />
+              or Sign in with email
+              <hr className="flex-1" />
+            </div>
+            <div className="flex flex-col gap-6">
+              <Input type='username' {...register('username')} error={errors.username} label="Username" placeholder="user@email.com" />
+              <Input type='password' {...register('password')} error={errors.password} label="Password" placeholder="XubYgsanbE" />
+            </div>
 
-          <div className='w-full flex items-end justify-end'>
-            <p className='text-sm mt-3 text-center text-blue-400 hover:underline cursor-pointer' onClick={handleForgotPassword}>Forgot Password</p>
-          </div>
+            <div className='w-full flex items-end justify-end'>
+              <p className='text-sm mt-3 text-center text-blue-400 hover:underline cursor-pointer' onClick={handleForgotPassword}>Forgot Password</p>
+            </div>
 
-          <Button type='submit' variant='black' disabled={loading} className="w-full my-10" label={loading ? "Submitting..." : "Login"} />
-          <Stack mt={1} gap={1}>
-            <p className="text-center md:text-left">Don't have an account? Choose your path to get started: </p>
-            <Stack direction={{ xs: 'column', md: 'row' }} mt={1} gap={3} >
-              <Button type='submit' variant='custom' className="w-full" label="Sign up as Employer" onClick={() => navigate('/auth/employer-signup')} />
-              <Button type='submit' variant='black' className="w-full" label="Sign up as Professional" onClick={() => navigate('/auth/professional-signup')} />
+            <Button type='submit' variant='black' disabled={loading} className="w-full my-10" label={loading ? "Submitting..." : "Login"} />
+            <Stack mt={1} gap={1}>
+              <p className="text-center md:text-left">Don't have an account? Choose your path to get started: </p>
+              <Stack direction={{ xs: 'column', md: 'row' }} mt={1} gap={3} >
+                <Button type='submit' variant='custom' className="w-full" label="Sign up as Employer" onClick={() => navigate('/auth/employer-signup')} />
+                <Button type='submit' variant='black' className="w-full" label="Sign up as Professional" onClick={() => navigate('/auth/professional-signup')} />
+              </Stack>
             </Stack>
-          </Stack>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

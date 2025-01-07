@@ -9,6 +9,7 @@ import ErrorBoundary from '../../apps/video-cv/src/routes/ErrorBoundary';
 import { Layout } from '../ui-components';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import { LOCAL_STORAGE_KEYS } from './../../libs/utils/localStorage';
 // import { routes } from "../constants";
 
 const Home = lazy(() => import('../../apps/video-cv/src/pages/Home'));
@@ -24,6 +25,7 @@ const EmployerSignup = lazy(() => import('../../apps/Employer/src/pages/Signup')
 const ForgotPassword = lazy(() => import('../ui-components/Confirmation/PasswordChange'));
 const VerifyToken = lazy(() => import('../ui-components/Confirmation/TokenVerification'));
 const ResetPassword = lazy(() => import('../ui-components/Confirmation/ResetPassword'));
+const VerifyMail = lazy(() => import('../ui-components/Confirmation/EmailConfirmation'));
 const Terms = lazy(() => import("../../apps/video-cv/src/pages/Terms and Conditions/index"));
 const Privacy = lazy(() => import("../../apps/video-cv/src/pages/Privacy Policy/index"));
 const AdsPolicy = lazy(() => import("../../apps/video-cv/src/pages/Advert Policy/index"));
@@ -84,9 +86,11 @@ const CandidateLogin = lazy(() => import('../../apps/Candidate/src/pages/Login')
 const ProtectedRoute = ({ allowedUserTypes, children }: any) => {
     const { authState } = useAuth();
     const location = useLocation();
+    
+    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-    if (!authState.isAuthenticated) {
-        // toast.warning(`Sorry, your sesson has expired. Please log in to continue.`);
+    if (!authState.isAuthenticated && token) {
+        toast.warning(`Sorry, your sesson has expired. Please log in to continue.`);
         return <Navigate to="/" state={{ from: location }} replace />;
     }
 
@@ -411,6 +415,10 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.RESET_PASSWORD,
                 element: <ResetPassword />,
+            },
+            {
+                path: ROUTES.VERIFY_EMAIL,
+                element: <VerifyMail />,
             }
         ]
     }

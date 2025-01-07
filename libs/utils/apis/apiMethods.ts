@@ -69,7 +69,7 @@ axiosInstance.interceptors.response.use(undefined, async function (error) {
   if (error?.response?.status === 401 && getToken()) {
     const navigate = useNavigate();
     toast.error('Your session has expired. Please log in again');
-    navigate('/auth/login', { replace: true });
+    navigate('/', { replace: true });
     // localStorage.clear();
     // window.location.replace(ROUTES.SIGNIN);
   }

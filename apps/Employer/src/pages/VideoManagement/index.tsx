@@ -69,9 +69,15 @@ const VideoManagement = () => {
       }
     }
     catch (err) {
-      console.error('Error fetching videos:', err)
-      setLoading(false)
-      toast.error('Failed to fetch videos')
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        console.error('Error fetching videos:', err)
+        setLoading(false)
+        toast.error('Failed to fetch videos')
+      }
     }
   }, [token, lastFetchTime]);
 

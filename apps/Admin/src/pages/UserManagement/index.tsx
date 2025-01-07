@@ -111,8 +111,14 @@ const UserManagement = () => {
       }
     }
     catch (err) {
-      console.error('Error fetching users:', err);
-      toast.error('Unable to load users');
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        console.error('Error fetching users:', err);
+        toast.error('Unable to load users');
+      }
     }
     finally {
       setLoading(false);

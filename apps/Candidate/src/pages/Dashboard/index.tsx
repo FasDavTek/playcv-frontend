@@ -76,8 +76,14 @@ const Dashboard = () => {
       }
     } 
     catch (error) {
-      console.error('Error checking payment status:', error);
-      toast.warning('There was an error checking your payment status. Please try again later.');
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        console.error('Error checking payment status:', error);
+        toast.warning('There was an error checking your payment status. Please try again later.');
+      }
     }
   };
 

@@ -128,7 +128,13 @@ const Profile = () => {
         }
       }
       catch (err) {
-        toast.error('Unable to load user profile');
+        if(!token) {
+          toast.error('Your session has expired. Please log in again');
+          navigate('/');
+        }
+        else {
+          toast.error('Unable to load user profile');
+        }
       }
     };
     fetchUserData();
@@ -176,8 +182,6 @@ const Profile = () => {
         }
       };
 
-      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-
       // const endpoint = isSignup ? apiEndpoints.AUTH_REGISTER : apiEndpoints.PROFILE;
       const res = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PROFILE}`, combinedData, {
         headers: { Authorization: `Bearer ${token}` },
@@ -196,8 +200,14 @@ const Profile = () => {
       }
     }
     catch (err: any) {
-      toast.error(err);
-      toast.error(`We encountered an issue updating your profile. Please try again.`);
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        toast.error(err.response?.data?.errors);
+        toast.error(`We encountered an issue updating your profile. Please try again.`);
+      }
     }
     finally {
       setLoading(false);

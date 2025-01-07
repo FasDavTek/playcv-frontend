@@ -76,8 +76,13 @@ const JobManagement = () => {
       setLastFetchTime(currentTime);
     }
     catch (err) {
-      setLoading(false)
-      toast.error('Failed to fetch jobs');
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        toast.error('Failed to fetch jobs');
+      }
     }
     finally {
       setLoading(false);

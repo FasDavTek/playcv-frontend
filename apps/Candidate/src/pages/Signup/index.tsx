@@ -430,20 +430,6 @@ const Index = () => {
 
     const watchedFields = watch();
 
-    // useEffect(() => {
-    //     const requiredFields = [
-    //         'firstName',
-    //         'surname',
-    //         'phoneNumber',
-    //         'email',
-    //         'password',
-    //         'confirmPassword'
-    //     ];
-
-    //     const isValid = requiredFields.every(field => !!getValues(field as any)) && termsAccepted && Object.keys(errors).length === 0;
-    //     setIsFormValid(isValid);
-    // }, [getValues, errors, termsAccepted]);
-
 
     useEffect(() => {
         const requiredFields = [
@@ -468,71 +454,52 @@ const Index = () => {
         <div className="border w-0 md:flex-1 min-h-screen" style={{ backgroundImage: `url(${Images.AuthBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', }}></div>
         <div className="flex-1 flex flex-col my-auto p-2 md:px-8 overflow-y-auto">
             <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
-            <h2 className='font-semibold text-center md:text-left text-xl md:text-lg mb-1'>Create Account</h2>
             <p className='text-lg mb-7 text-center md:text-left text-neutral-300'>Create Your Professional Profile</p>
-                <form onSubmit={handleSubmit(submitForm)}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div>
-                            <Input label={<span>First Name <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="First Name" error={errors.firstName} {...register('firstName')} isValid={!errors.firstName && !!watchedFields.firstName} />
-                            {/* {errors?.firstName && (
-                                <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>
-                            )} */}
-                        </div>
-                        <Input label="Middle Name" placeholder="Middle Name" error={errors.middleName} {...register('middleName')} isValid={!errors.middleName && !!watchedFields.middleName} />
-                        <div>
-                            <Input label={<span>Surname <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Surname" error={errors.surname} {...register('surname')} isValid={!errors.surname && !!watchedFields.surname} />
-                            {/* {errors?.surname && (
-                                <p className="text-red-500 text-sm mt-1">{errors.surname.message}</p>
-                            )} */}
-                        </div>
-                        <Input type='text' label="Business Name" placeholder="Business Name" error={errors.businessName} {...register('businessName')} isValid={!errors.businessName && !!watchedFields.businessName} />
-                        <div>
-                            <Input label={<span>Phone Number <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} isValid={!errors.phoneNumber && !!watchedFields.phoneNumber} />
-                            {/* {errors?.phoneNumber && (
-                                <p className="text-red-500 text-sm mt-1">{errors.phoneNumber.message}</p>
-                            )} */}
-                        </div>
-                        <div>
-                            <Input label={<span>Email Address <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Email Address" error={errors.email} {...register('email')} isValid={!errors.email && !!watchedFields.email} />
-                            {/* {errors?.email && (
-                                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-                            )} */}
-                        </div>
-                        <FormControl>
-                            <div>
-                                <Input type='password' label="Password *" id='password' placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors?.password && !!watchedFields.password} />
-                                {/* {errors?.password && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-                                )} */}
-                            </div>
-                            <FormHelperText>Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.</FormHelperText>
-                        </FormControl>
-                        <FormControl>
-                            <div>
-                                <Input type='password' label="Confirm Password *" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
-                                {/* {errors?.confirmPassword && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
-                                )} */}
-                            </div>
-                            <FormHelperText>Passwords must match.</FormHelperText>
-                        </FormControl>
+            <form onSubmit={handleSubmit(submitForm)}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <Input label={<span>First Name <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="First Name" error={errors.firstName} {...register('firstName')} isValid={!errors.firstName && !!watchedFields.firstName} />
                     </div>
-                    <div className="mt-5">
-                        <label className="inline-flex items-center">
-                            <input 
-                                type="checkbox" 
-                                className="form-checkbox" 
-                                checked={termsAccepted} 
-                                onChange={handleCheckboxChange} 
-                            />
-                            <span className="ml-2 text-sm text-neutral-300">I agree to the <a href="/terms-and-conditions" className="text-green-500 underline">Terms of Service</a></span>
-                        </label>
+                    <Input label="Middle Name" placeholder="Middle Name" error={errors.middleName} {...register('middleName')} isValid={!errors.middleName && !!watchedFields.middleName} />
+                    <div>
+                        <Input label={<span>Surname <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Surname" error={errors.surname} {...register('surname')} isValid={!errors.surname && !!watchedFields.surname} />
                     </div>
-                    <div className="flex justify-start gap-5 mt-5">
-                        <Button type='submit' variant="black" label={loading ? "Signing up..." : "Sign up"} className='w-[60%]' disabled={loading} />
+                    <Input type='text' label="Business Name" placeholder="Business Name" error={errors.businessName} {...register('businessName')} isValid={!errors.businessName && !!watchedFields.businessName} />
+                    <div>
+                        <Input label={<span>Phone Number <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} isValid={!errors.phoneNumber && !!watchedFields.phoneNumber} />
                     </div>
-                </form>
-                <p className='text-lg mt-5 text-center text-neutral-300'>Already have an account? <span onClick={handleSignIn} className='text-blue-400 font-medium hover:underline cursor-pointer'>Sign In</span></p>
+                    <div>
+                        <Input label={<span>Email Address <span className="text-red-500">*</span> <span className="text-xs text-gray-500">(required)</span></span>} placeholder="Email Address" error={errors.email} {...register('email')} isValid={!errors.email && !!watchedFields.email} />
+                    </div>
+                    <FormControl>
+                        <div>
+                            <Input type='password' label="Password *" id='password' placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors?.password && !!watchedFields.password} />
+                        </div>
+                        <FormHelperText>Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.</FormHelperText>
+                    </FormControl>
+                    <FormControl>
+                        <div>
+                            <Input type='password' label="Confirm Password *" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
+                        </div>
+                        <FormHelperText>Passwords must match.</FormHelperText>
+                    </FormControl>
+                </div>
+                <div className="mt-5">
+                    <label className="inline-flex items-center">
+                        <input 
+                            type="checkbox" 
+                            className="form-checkbox" 
+                            checked={termsAccepted} 
+                            onChange={handleCheckboxChange} 
+                        />
+                        <span className="ml-2 text-sm text-neutral-300">I agree to the <a href="/terms-and-conditions" className="text-green-500 underline">Terms of Service</a></span>
+                    </label>
+                </div>
+                <div className="flex justify-start gap-5 mt-5">
+                    <Button type='submit' variant="black" label={loading ? "Signing up..." : "Sign up"} className='w-[60%]' disabled={loading} />
+                </div>
+            </form>
+            <p className='text-lg mt-5 text-center text-neutral-300'>Already have an account? <span onClick={handleSignIn} className='text-blue-400 font-medium hover:underline cursor-pointer'>Sign In</span></p>
         </div>
     </div>
   )

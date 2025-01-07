@@ -209,7 +209,13 @@ const Profile = () => {
         }
       }
       catch (err) {
-        toast.error('Unable to load user profile');
+        if(!token) {
+          toast.error('Your session has expired. Please log in again');
+          navigate('/');
+        }
+        else {
+          toast.error('Unable to load user profile');
+        }
       }
     };
     fetchUserData();
@@ -318,8 +324,14 @@ const Profile = () => {
       }
     }
     catch (err: any) {
-      toast.error(err);
-      toast.error(`We encountered an issue updating your profile. Please try again.`);
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        toast.error(err);
+        toast.error(`We encountered an issue updating your profile. Please try again.`);
+      }
     }
     finally {
       setLoading(false);

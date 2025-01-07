@@ -95,8 +95,14 @@ const index = () => {
       }
     }
     catch (err) {
-      console.info(`No ${activeTab} found:`, err)
-      toast.info(activeTab === 'videoUploadTypes' ? `No Video Upload Type found` : activeTab === 'adsTypes' ? `No Ads Type Found` : `No Buy Video Type Found`)
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        console.info(`No ${activeTab} found:`, err);
+        toast.info(activeTab === 'videoUploadTypes' ? `No Video Upload Type found` : activeTab === 'adsTypes' ? `No Ads Type Found` : `No Buy Video Type Found`);
+      }
     }
     finally {
       setLoading(false);
@@ -128,8 +134,14 @@ const index = () => {
       }
     }
     catch (err) {
-      console.error(`Error updating ${activeTab} status:`, err)
-      toast.error(`Failed to update ${activeTab} status`)
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        console.error(`Error updating ${activeTab} status:`, err)
+        toast.error(`Failed to update ${activeTab} status`)
+      }
     }
   };
 

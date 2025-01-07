@@ -57,10 +57,6 @@ const Payment = () => {
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-  if (!token) {
-    toast.error('Your session has expired. Please log in again');
-    navigate('/')
-  }
 
 
   const fetchAds = async () => {
@@ -85,8 +81,14 @@ const Payment = () => {
       setLastFetchTime(currentTime);
     }
     catch (err) {
-      console.error('Error fetching ads:', err)
-      toast.error('Failed to fetch ads')
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        console.error('Error fetching ads:', err)
+        toast.error('Failed to fetch ads')
+      }
     }
     finally {
       setLoading(false)

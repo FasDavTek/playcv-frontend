@@ -63,5 +63,6 @@ export const ROUTES = {
   FORGOT_PASSWORD: "forgot-password",
   VERIFY_TOKEN: "verify-token",
   RESET_PASSWORD: "reset-password",
+  VERIFY_EMAIL: "verify-mail",
   NOT_FOUND: "/Home",
 };

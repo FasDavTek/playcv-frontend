@@ -110,50 +110,6 @@ const Vacancies = (selectedItem: any) => {
     }
   };
 
-  
-  // useEffect(() => {
-  //   if (job) {
-  //     Object.entries(job).forEach(([key, value]) => {
-  //       if (key in vacancySchema.shape) {
-  //         const fieldKey = key as keyof VacancyFormData;
-          
-  //         switch (fieldKey) {
-  //           case 'specialisations':
-  //             if (Array.isArray(value)) {
-  //               setValue(fieldKey, value);
-  //             }
-  //             break;
-  //           case 'status':
-  //             if (typeof value === 'string') {
-  //               const statusValue = value as VacancyFormData['status'];
-  //               if (['Active', 'Expired', 'Pending', 'Rejected'].includes(statusValue)) {---
-  //                 setValue(fieldKey, statusValue);
-  //               }
-  //             }
-  //             break;
-  //           case 'id':
-  //           case 'title':
-  //           case 'companyImage':
-  //           case 'companyThumbnail':
-  //           case 'companyName':
-  //           case 'location':
-  //           case 'jobDetails':
-  //           case 'qualifications':
-  //           case 'keyResponsibilities':
-  //           case 'companyEmail':
-  //           case 'linkToApply':
-  //             if (typeof value === 'string') {
-  //               setValue(fieldKey, value);
-  //             }
-  //             break;
-  //           default:
-  //             console.warn(`Unexpected field: ${key}`);
-  //         }
-  //       }
-  //     });
-  //   }
-  // }, [job, setValue]);
-
 
   const handleImageUpload = async (file: File) => {
     if (!file) throw new Error('File is not defined.');

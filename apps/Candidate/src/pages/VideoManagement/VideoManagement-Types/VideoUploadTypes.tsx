@@ -513,21 +513,30 @@ const VideoUploadTypes = () => {
       console.log(data)
     } 
     catch (err: any) {
-      setError(err.message)
-      toast.error('Failed to load video upload types')
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        setError(err.message);
+        toast.error('Failed to load video upload types');
+      }
     } 
     finally {
       setIsLoading(false)
     }
   }, [token]);
 
-  useEffect(() => {
-    fetchUploadTypes()
-  }, [fetchUploadTypes]);
 
   useEffect(() => {
     fetchUploadTypes()
   }, [fetchUploadTypes]);
+
+
+  useEffect(() => {
+    fetchUploadTypes()
+  }, [fetchUploadTypes]);
+
 
   const onPaymentSuccess = useCallback(async (response: any) => {
     toast.info('Payment success callback received:', response);
@@ -629,8 +638,10 @@ const VideoUploadTypes = () => {
     selectedTypeRef.current = null;
   }, []);
 
+
   const { payButtonFn, isProcessing } = usePaystack(onPaymentSuccess, onPaymentFailure);
 
+  
   const handlePayment = useCallback((type: UploadType) => {
     console.log('Initiating payment for:', type);
     setSelectedType(type);
