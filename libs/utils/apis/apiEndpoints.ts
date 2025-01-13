@@ -5,7 +5,7 @@ export enum apiEndpoints {
     PROFILE = '/api/v1/auth/user/profile/update',
     GET_PROFILE = '/api/v1/auth/user/profile',
     VERIFY_MAIL = '/api/v1/auth/user/confirmemail',
-    RESEND_MAIL_CONFIRMATION = '/api/',
+    RESEND_MAIL_CONFIRMATION = '/api/v1/auth/ResendConfrimationEmail',
     FORGOT_PASSWORD_GENERATE_TOKEN = '/api/v1/auth/forgot_password/generate_token',
     FORGOT_PASSWORD_CONFIRM_TOKEN = '/api/v1/auth/forgot_password/confirm_token',
     FORGOT_PASSWORD_RESET_PASSWORD = '/api/v1/auth/forgot_password/reset_password',

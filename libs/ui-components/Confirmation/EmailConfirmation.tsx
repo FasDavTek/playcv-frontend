@@ -82,33 +82,36 @@ import { toast } from 'react-toastify';
 
 interface EmailConfirmationProps {
   isVerifying?: boolean;
+  email?: string;
 }
 
-const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = false }) => {
+const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = false, email }) => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const [resending, setResending] = useState(false);
 
   const handleProceedToLogin = () => {
     navigate('/auth/login');
   };
 
   const handleResendVerificationEmail = async () => {
-    const searchParams = new URLSearchParams(location.search);
-    const email = searchParams.get('email');
-
     if (!email) {
-      toast.error('Email not found in the URL. Please try the process again.');
+      toast.error('Email not found. Please try the process again.');
       return;
     }
 
+    setResending(true);
     try {
       await postData(
         `${CONFIG.BASE_URL}${apiEndpoints.RESEND_MAIL_CONFIRMATION}`,
-        { email }
+        { email: 'tubiobaloluwa@gmail.com' }
       );
       toast.success('A new verification email has been sent to your email.');
-    } catch (error) {
+    }
+    catch (error) {
       toast.error('Failed to resend verification email. Please try again.');
+    }
+    finally {
+      setResending(false);
     }
   };
 
