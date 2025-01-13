@@ -414,6 +414,13 @@ const Index = () => {
                     toast.error(err.response?.data?.error?.message);
                 }
             }
+            else {
+                if (err.response?.data?.message) {
+                    toast.error(err.response.data.message);
+                } else {
+                    toast.error('An error occurred. Please try again.');
+                }
+            }
         } 
         finally {
             setLoading(false);
