@@ -38,7 +38,7 @@ const TokenVerification: React.FC = () => {
             throw new Error('User ID is required for email verification.');
           }
           response = await getData(
-            `${CONFIG.BASE_URL}${apiEndpoints.VERIFY_MAIL}?userId=${userId}&token=${token}`
+            `${CONFIG.BASE_URL}${apiEndpoints.VERIFY_MAIL}?userId=${userId}&token=${token}&skip=${skip}`
           );
           if (response.status === 'success') {
             setVerificationStatus('success');
@@ -77,7 +77,7 @@ const TokenVerification: React.FC = () => {
     const email = searchParams.get('email');
 
     if (!email) {
-      toast.error('Email not found in the URL. Please try the process again.');
+      toast.error('Email not found. Please try the process again.');
       return;
     }
 
