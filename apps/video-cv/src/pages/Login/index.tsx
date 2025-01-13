@@ -126,7 +126,11 @@ const Login = () => {
       }   
     }
     catch (err: any) {
-      toast.error(err.response?.data?.error?.message);
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else {
+        toast.error('An error occurred. Please try again.');
+      }
     } 
     finally {
       setLoading(false);
