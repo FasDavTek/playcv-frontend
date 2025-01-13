@@ -126,7 +126,7 @@ const Login = () => {
       }   
     }
     catch (err: any) {
-      toast.error(`Oops! Error 404: Correct credentials not found.`);
+      toast.error(err.response?.data?.error?.message);
     } 
     finally {
       setLoading(false);

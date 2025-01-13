@@ -144,19 +144,23 @@ const Index = () => {
       } else {
         toast.error(`We couldn't complete your registration. Please verify your details and give it another go.`);
       }
-    } catch (err: any) {
-      if (err.response?.data?.error?.message?.includes("User with this email")) {
-        const email = err.response.data.error.message.match(/[\w.-]+@[\w.-]+\.\w+/)[0];
-        toast.error(`This email ${email} is already registered. Please use a different email or try logging in.`);
+    }
+    catch (err: any) {
+      if (err.response?.data?.error?.code === "400") {
+        if (err.response?.data?.error?.message?.includes("User with this email")) {
+          const email = err.response.data.error.message.match(/[\w.-]+@[\w.-]+\.\w+/)[0];
+          toast.error(`This email ${email} is already registered. Please use a different email or try logging in.`);
+        }
+        else if (err.response?.data?.error?.message?.includes("User with this phone number")) {
+          const phoneNumber = err.response.data.error.message.match(/(\+234|0)[789][01]\d{8}/)[0];
+          toast.error(`This phone number ${phoneNumber} is already registered. Please use a different number or try logging in.`);
+        }
+        else {
+          toast.error(err.response?.data?.error?.message);
+        }
       }
-      else if (err.response?.data?.error?.message?.includes("User with this phone number")) {
-        const phoneNumber = err.response.data.error.message.match(/(\+234|0)[789][01]\d{8}/)[0];
-        toast.error(`This phone number ${phoneNumber} is already registered. Please use a different number or try logging in.`);
-      }
-      else {
-        toast.error(err.message || "An error occurred during signup. Please try again.");
-      }
-    } finally {
+    }
+    finally {
       setLoading(false);
     }
   };
