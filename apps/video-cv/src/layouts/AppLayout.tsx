@@ -28,7 +28,7 @@ export default function AppLayout(): React.ReactElement {
           <Suspense fallback={<h1>Loading...</h1>}>
             <Outlet />
           </Suspense>
-          <footer className="bg-[#F6F9F8] py-4 md:py-8 px-4 md:px-10 text-sm md:text-base mt-auto z-10 bottom-0 left-0 right-0 sticky">
+          <footer className="bg-[#F6F9F8] py-4 md:py-8 px-4 md:px-10 text-sm md:text-base mt-auto z-10 bottom-0 left-0 right-0">
             <div className="container mx-auto">
               <div className="flex flex-col md:flex-row md:items-stretch md:justify-between gap-6 md:gap-10 w-full">
                 {/* Contact Section */}
