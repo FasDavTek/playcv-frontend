@@ -90,9 +90,6 @@ const TokenVerification: React.FC = () => {
   };
 
   const handleResendVerificationEmail = async () => {
-    const searchParams = new URLSearchParams(location.search);
-    const email = searchParams.get('email');
-
     if (!email) {
       toast.error('Email not found. Please try the process again.');
       return;
