@@ -26,7 +26,6 @@ const TokenVerification: React.FC = () => {
       const searchParams = new URLSearchParams(location.search);
       const userId = searchParams.get('userId');
       const token = searchParams.get('token');
-      const skip = searchParams.get('skip');
 
       if (!token) {
         setVerificationStatus('error');
@@ -55,7 +54,7 @@ const TokenVerification: React.FC = () => {
             throw new Error('User ID is required for email verification.');
           }
           response = await getData(
-            `${CONFIG.BASE_URL}${apiEndpoints.VERIFY_MAIL}?userId=${userId}&token=${token}&skip=${skip}`
+            `${CONFIG.BASE_URL}${apiEndpoints.VERIFY_MAIL}?userId=${userId}&token=${token}`
           );
           if (response.code === 200) {
             setVerificationStatus('success');
