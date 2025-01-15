@@ -9,12 +9,17 @@ import { apiEndpoints } from './../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../libs/utils/helpers/config';
 import { toast } from 'react-toastify';
 
+interface SignupData {
+  email: string;
+}
+
 const TokenVerification: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [verificationStatus, setVerificationStatus] = useState<'pending' | 'success' | 'error'>('pending');
   const [verificationMessage, setVerificationMessage] = useState<string>('');
   const [isEmailVerification, setIsEmailVerification] = useState<boolean>(true);
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -30,6 +35,18 @@ const TokenVerification: React.FC = () => {
       }
 
       setIsEmailVerification(!!userId);
+
+
+      try {
+        const signupDataString = localStorage.getItem('signupData');
+        if (signupDataString) {
+          const signupData: SignupData = JSON.parse(signupDataString);
+          setEmail(signupData.email);
+        }
+      } catch (error) {
+        console.error('Error retrieving email from localStorage:', error);
+      }
+
 
       try {
         let response;
