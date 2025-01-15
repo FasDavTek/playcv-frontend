@@ -1,74 +1,3 @@
-// // ConfirmEmail.js
-// import React, { useEffect, useState } from 'react';
-// import { useLocation, useNavigate } from 'react-router-dom'
-// import { toast } from 'react-toastify';
-// import { getData } from '../../utils/apis/apiMethods';
-// import { apiEndpoints } from '../../utils/apis/apiEndpoints';
-// import CONFIG from '../../utils/helpers/config';
-
-// const ConfirmEmail = () => {
-//   const location = useLocation();
-//   const navigate = useNavigate();
-//   const [isVerifying, setIsVerifying] = useState(true);
-
-//   // Extract query parameters from the URL
-
-//   useEffect(() => {
-//     const verifyEmail = async () => {
-//       const queryParams = new URLSearchParams(location.search);
-//       const userId = queryParams.get('userId');
-//       const token = queryParams.get('token');
-//       const skip = queryParams.get('skip');
-
-//       if (!userId || !token) {
-//         toast.error('Invalid verification link.');
-//         navigate('/login');
-//         return;
-//       }
-
-//       try {
-//         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VERIFY_MAIL}?userId=${userId}&token=${token}&skip=${skip}`);
-        
-//         if (response.status === 'success') {
-//           navigate('/login?verified=true');
-//           // toast.success('Your email has been successfully verified!')
-//         } else {
-//           navigate('/login?verified=false');
-//           // toast.error('Email verification failed. Please try again.')
-//         }
-//       } catch (error) {
-//         console.error('Error verifying email:', error);
-//         toast.error('An error occurred while verifying your email.');
-//         navigate('/login?verified=false');
-//       }
-//     };
-
-//     verifyEmail();
-//   }, [location, navigate]);
-
-//   if (isVerifying) {
-//     return (
-//       <div className="flex items-center justify-center min-h-screen">
-//         <h1 className="text-2xl font-bold">Verifying your email...</h1>
-//       </div>
-//     );
-//   }
-//   return null;
-// };
-
-// export default ConfirmEmail;
-
-
-
-
-
-
-
-
-
-
-
-
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
@@ -82,16 +11,32 @@ import { toast } from 'react-toastify';
 
 interface EmailConfirmationProps {
   isVerifying?: boolean;
-  email?: string;
 }
 
-const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = false, email }) => {
+interface SignupData {
+  email: string;
+}
+
+const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = false }) => {
   const navigate = useNavigate();
   const [resending, setResending] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
 
   const handleProceedToLogin = () => {
     navigate('/auth/login');
   };
+
+
+  try {
+    const signupDataString = localStorage.getItem('signupData');
+    if (signupDataString) {
+      const signupData: SignupData = JSON.parse(signupDataString);
+      setEmail(signupData.email);
+    }
+  } catch (error) {
+    console.error('Error retrieving email from localStorage:', error);
+  }
+
 
   const handleResendVerificationEmail = async () => {
     if (!email) {
@@ -103,12 +48,17 @@ const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = fal
     try {
       await postData(
         `${CONFIG.BASE_URL}${apiEndpoints.RESEND_MAIL_CONFIRMATION}`,
-        { email: 'tubiobaloluwa@gmail.com' }
+        { email }
       );
       toast.success('A new verification email has been sent to your email.');
     }
-    catch (error) {
-      toast.error('Failed to resend verification email. Please try again.');
+    catch (error: any) {
+      // toast.error('Failed to resend verification email. Please try again.');
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('An error occurred. Please try again.');
+      }
     }
     finally {
       setResending(false);

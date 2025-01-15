@@ -57,11 +57,9 @@ const TokenVerification: React.FC = () => {
           response = await getData(
             `${CONFIG.BASE_URL}${apiEndpoints.VERIFY_MAIL}?userId=${userId}&token=${token}&skip=${skip}`
           );
-          if (response.status === 'success') {
+          if (response.code === 200) {
             setVerificationStatus('success');
             setVerificationMessage('Email verified successfully.');
-          } else {
-            throw new Error(response.message || 'Email verification failed.');
           }
         }
         else {
@@ -78,7 +76,12 @@ const TokenVerification: React.FC = () => {
         }
       } catch (error: any) {
         setVerificationStatus('error');
-        setVerificationMessage(error.message || 'Email verification failed.');
+        // setVerificationMessage(error.message || 'Email verification failed.');
+        if (error.response?.data?.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('An error occurred. Please try again.');
+        }
       }
     };
 
@@ -101,8 +104,13 @@ const TokenVerification: React.FC = () => {
         { email }
       );
       toast.success('A new verification email has been sent to your email.');
-    } catch (error) {
-      toast.error('Failed to resend verification email. Please try again.');
+    } catch (error: any) {
+      // toast.error('Failed to resend verification email. Please try again.');
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('An error occurred. Please try again.');
+      }
     }
   };
 
