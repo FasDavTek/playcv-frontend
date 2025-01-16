@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
@@ -27,15 +27,18 @@ const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = fal
   };
 
 
-  try {
-    const signupDataString = localStorage.getItem('signupData');
-    if (signupDataString) {
-      const signupData: SignupData = JSON.parse(signupDataString);
-      setEmail(signupData.email);
+  useEffect(() => {
+    try {
+      const signupDataString = localStorage.getItem('signupData');
+      if (signupDataString) {
+        const signupData: SignupData = JSON.parse(signupDataString);
+        setEmail(signupData.email);
+      }
     }
-  } catch (error) {
-    console.error('Error retrieving email from localStorage:', error);
-  }
+    catch (error) {
+      console.error('Error retrieving email from localStorage:', error);
+    }
+  }, []);
 
 
   const handleResendVerificationEmail = async () => {
@@ -46,11 +49,13 @@ const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = fal
 
     setResending(true);
     try {
-      await postData(
+      const resp = await postData(
         `${CONFIG.BASE_URL}${apiEndpoints.RESEND_MAIL_CONFIRMATION}`,
         { email }
       );
-      toast.success('A new verification email has been sent to your email.');
+      if (resp.code === 200) {
+        toast.success('A new verification email has been sent to your email.');
+      }
     }
     catch (error: any) {
       // toast.error('Failed to resend verification email. Please try again.');
@@ -98,8 +103,8 @@ const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = fal
           <div className="text-center text-sm text-gray-500 mb-6">
             <p>
               Didn't receive it?{' '}
-              <button className="text-blue-600 hover:underline" onClick={handleResendVerificationEmail}>
-                Resend verification email
+              <button className="text-blue-600 hover:underline" onClick={handleResendVerificationEmail} disabled={resending}>
+                {resending ? 'Resending...' : 'Resend verification email'}
               </button>
             </p>
           </div>

@@ -98,11 +98,13 @@ const TokenVerification: React.FC = () => {
     }
 
     try {
-      await postData(
+      const resp = await postData(
         `${CONFIG.BASE_URL}${apiEndpoints.RESEND_MAIL_CONFIRMATION}`,
         { email }
       );
-      toast.success('A new verification email has been sent to your email.');
+      if (resp.code === 200) {
+        toast.success('A new verification email has been sent to your email.');
+      }
     } catch (error: any) {
       // toast.error('Failed to resend verification email. Please try again.');
       if (error.response?.data?.message) {
