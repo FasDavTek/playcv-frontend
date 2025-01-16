@@ -159,6 +159,22 @@ const Login = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="my-auto">
             <h5 className="font-bold text-3xl">Login</h5>
             <p className="">Enter your login details to Sign in</p>
+
+            {location.search.includes('verified=true') && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-green-700 text-sm">
+                  ✓ Your email has been successfully verified. You can now log in to your account.
+                </p>
+              </div>
+            )}
+            {location.search.includes('verified=false') && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-700 text-sm">
+                  ✕ Email verification failed. Please try again or contact support for assistance.
+                </p>
+              </div>
+            )}
+
             <div className="flex flex-col gap-5 my-5 mt-10">
               <Button
                 className="w-full"

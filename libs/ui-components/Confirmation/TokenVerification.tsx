@@ -56,9 +56,15 @@ const TokenVerification: React.FC = () => {
           response = await getData(
             `${CONFIG.BASE_URL}${apiEndpoints.VERIFY_MAIL}?userId=${userId}&token=${token}`
           );
-          if (response.code === 200) {
+          if (response.statusCode === '00' && response.message === "Email verification completed") {
             setVerificationStatus('success');
             setVerificationMessage('Email verified successfully.');
+            navigate('/auth/login?verified=true');
+          }
+          else {
+            setVerificationStatus("error");
+            setVerificationMessage(response.message);
+            navigate('/auth/login?verified=false');
           }
         }
         else {
@@ -69,7 +75,8 @@ const TokenVerification: React.FC = () => {
           if (response.token) {
             setVerificationStatus('success');
             setVerificationMessage('Password reset token verified successfully.');
-          } else {
+          }
+          else {
             throw new Error(response.message || 'Password reset token verification failed.');
           }
         }
