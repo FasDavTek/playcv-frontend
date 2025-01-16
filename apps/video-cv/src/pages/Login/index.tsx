@@ -161,14 +161,14 @@ const Login = () => {
             <p className="">Enter your login details to Sign in</p>
 
             {location.search.includes('verified=true') && (
-              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="my-3 mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <p className="text-green-700 text-sm">
                   ✓ Your email has been successfully verified. You can now log in to your account.
                 </p>
               </div>
             )}
             {location.search.includes('verified=false') && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="my-3 mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <p className="text-red-700 text-sm">
                   ✕ Email verification failed. Please try again or contact support for assistance.
                 </p>
