@@ -4,7 +4,7 @@ import { CircularProgress } from '@mui/material';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import AttachEmailIcon from '@mui/icons-material/AttachEmail';
 import { Button } from '../index';
-import { postData } from './../../../libs/utils/apis/apiMethods';
+import { getData, postData } from './../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../libs/utils/helpers/config';
 import { toast } from 'react-toastify';
@@ -21,6 +21,7 @@ const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = fal
   const navigate = useNavigate();
   const [resending, setResending] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
+  const [verificationMessage, setVerificationMessage] = useState<string>('');
 
   const handleProceedToLogin = () => {
     navigate('/auth/login');
@@ -49,12 +50,12 @@ const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = fal
 
     setResending(true);
     try {
-      const resp = await postData(
-        `${CONFIG.BASE_URL}${apiEndpoints.RESEND_MAIL_CONFIRMATION}`,
-        { email }
+      const resp = await getData(
+        `${CONFIG.BASE_URL}${apiEndpoints.RESEND_MAIL_CONFIRMATION}/${email}`,
       );
       if (resp.code === 200) {
         toast.success('A new verification email has been sent to your email.');
+        setVerificationMessage(resp.message);
       }
     }
     catch (error: any) {
@@ -96,7 +97,7 @@ const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = fal
           <div className="text-center mb-8">
             <h2 className="text-2xl font-semibold mb-2">Registration Successful!</h2>
             <p className="text-gray-600">
-              Kindly check your email inbox for a verification mail
+              {resending === false ? `Kindly check your email inbox for a verification mail` : verificationMessage}
             </p>
           </div>
 
