@@ -80,6 +80,7 @@ const ContentPage = () => {
   const [activeTab, setActiveTab] = useState<'faq' | 'country' | 'state' | 'institution' | 'course' | 'industry' | 'qualification' | 'sitetestimonial' | 'degreeclass' | 'cvguideline'>('faq');
   const [openModal, setOpenModal] = useState<'create' | 'edit' | 'view' | null>(null);
   const [selectedItem, setSelectedItem] = useState<Content | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [search, setSearch] = useState("");
@@ -114,6 +115,22 @@ const ContentPage = () => {
       default:
         return miscData || [];
     }
+  };
+
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      if (activeTab === 'country') {
+        countryData?.data || [];
+      } else if (activeTab === 'state') {
+        stateData?.data || [];
+      } else {
+        miscData || [];
+      }
+    }
+  }, [ refreshTrigger, activeTab ]);
+
+  const handleContentUpdate = () => {
+    setRefreshTrigger(prev => prev + 1);
   };
 
   const isLoading = isMiscLoading || isCountryLoading || isStateLoading;
@@ -162,8 +179,8 @@ const ContentPage = () => {
         <div className='flex gap-2'>
           <Button variant='custom' label='View' onClick={() => handleView(row.original)} />
           <Button variant='custom' label='Edit' onClick={() => handleEdit(row.original)} />
-          {row.original.status && (
-            <Button variant={row.original.status === 'Active' ? 'red' : 'success'} label={row.original.status === 'Active' ? 'Deactivate' : 'Activate'} />
+          {row.original.status !== undefined && (
+            <Button variant={row.original.status ? 'red' : 'success'} label={row.original.status ? 'Deactivate' : 'Activate'} />
           )}
         </div>
       )
@@ -198,7 +215,7 @@ const ContentPage = () => {
         ]
       case 'institution':
         return [
-          columnHelper.accessor('name', { header: 'Institution Name' }),
+          columnHelper.accessor('institutionName', { header: 'Institution Name' }),
           columnHelper.accessor('location', { header: 'Location' }),
           actionColumn,
         ]
@@ -310,7 +327,7 @@ const ContentPage = () => {
       
       <Modal open={openModal === 'create' || openModal === 'edit' || openModal === 'view'} onClose={closeModal} sx={{ maxWidth: 'lg' }}>
         <>
-          <CategoryModal open={true} selectedItem={selectedItem} onClose={closeModal} action={openModal} currentTab={activeTab}></CategoryModal>
+          <CategoryModal open={true} selectedItem={selectedItem} onClose={closeModal} action={openModal} currentTab={activeTab} onContentUpdate={handleContentUpdate}></CategoryModal>
         </>
       </Modal>
     </div>

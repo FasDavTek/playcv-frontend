@@ -34,6 +34,7 @@ interface CategoryModalProps {
   onClose: () => void;
   selectedItem?: Partial<ContentItem> | null;
   currentTab: string;
+  onContentUpdate: () => void;
 }
 
 const CategoryModal = ({
@@ -42,9 +43,11 @@ const CategoryModal = ({
   onClose,
   selectedItem,
   currentTab,
+  onContentUpdate,
 }: CategoryModalProps) => {
   const { register, handleSubmit, watch, setValue, reset, formState: { errors }, control } = useForm<ContentItem>();
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const { data: itemData, isLoading, error } = useAllMisc({
     resource: 
@@ -117,6 +120,8 @@ const CategoryModal = ({
         }
       }
 
+      setLoading(true);
+
       const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, formData, {
         headers: { 
           Authorization: `Bearer ${token}`,
@@ -125,6 +130,7 @@ const CategoryModal = ({
       });
       if (response.statusCode === "200") {
         toast.success(`${action === 'create' ? 'Created' : 'Updated'} successfully`);
+        onContentUpdate();
         onClose();
       } else {
         throw new Error('Failed to submit data');
@@ -178,6 +184,7 @@ const CategoryModal = ({
                     handleChange={(newValue) => { field.onChange(newValue?.value || newValue?.label); setValue('Country', newValue?.label || ''); }}
                     isDisabled={isCountryLoading}
                     errors={errors}
+                    label={`Country`}
                   />
                 )}
             />
@@ -199,6 +206,7 @@ const CategoryModal = ({
                   handleChange={(newValue) => { field.onChange(newValue?.value || newValue?.label); setValue('Country', newValue?.label || ''); }}
                   isDisabled={isCountryLoading}
                   errors={errors}
+                  label={`Country`}
                 />
               )}
             />
@@ -364,7 +372,13 @@ const CategoryModal = ({
           variant='black'
           type="submit"
           className="w-full"
-          label={selectedItem ? `Update ${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}` : `Create ${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}`}
+          label={
+            loading
+              ? `${action === 'create' ? 'Creating' : 'Updating'} ${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}...`
+              : selectedItem
+              ? `Update ${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}`
+              : `Create ${currentTab.charAt(0).toUpperCase() + currentTab.slice(1)}`
+          }
         />
       </div>
     </form>
