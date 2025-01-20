@@ -7,11 +7,40 @@ import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
 
 interface LocationState {
   videoType: string;
   price: number;
   paymentReference: string;
+}
+
+interface UploadRequest {
+  id: number;
+  userId: string;
+  paymentDate: string;
+  checkoutId: number;
+  uploadTypeId: number;
+  uploadType: string;
+  dateCreated: string;
+  duration: string;
+  dateUpdated: string;
+  isProcessed: boolean;
+  isExpired: boolean;
+  paymentStatus: number;
+  videoId: number | null;
+}
+
+interface ApiResponse {
+  hasValidUpploadRequest: boolean;
+  requestAge: number;
+  uploadRequest: UploadRequest;
+  code: string;
+  status: string;
+  totalRecords: number | null;
+  statusCode: string | null;
+  message: string;
+  data: any;
 }
 
 const VideoUploadConfirmation = () => {
@@ -20,19 +49,42 @@ const VideoUploadConfirmation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState<LocationState | null>(null);
 
-  const { uploadRequestId, uploadTypeId, uploadTypeName, price, paymentReference, paymentId } = location.state || {};
+  const { uploadTypeId, uploadTypeName, uploadPrice, paymentReference, paymentId } = location.state || {};
 
-  const handleUploadNow = () => {
-    navigate('/candidate/video-management/upload', {
-      state: {
-        uploadRequestId,
-        uploadTypeId,
-        uploadTypeName,
-        price,
-        paymentReference,
-        paymentId
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
+  const handleUploadNow = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=100`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (response.status === 'success' && response.hasValidUpploadRequest === true) {
+        navigate('/candidate/video-management/upload', {
+          state: {
+            uploadTypeId: response.uploadRequest.uploadTypeId,
+            uploadTypeName: response.uploadRequest.uploadType,
+            uploadPrice: uploadPrice,
+            paymentReference: paymentReference,
+            paymentId: paymentId,
+            uploadRequestId: response.uploadRequest.id,
+            paymentDate: response.uploadRequest.paymentDate,
+            duration: response.uploadRequest.duration
+          }
+        });
       }
-    });
+      else {
+        toast.error(response?.message || 'Unable to proceed with upload')
+      }
+    }
+    catch (err: any) {
+      console.error('Error fetching video status:', err);
+      toast.error(err?.response?.message || 'An error occurred while checking upload status');
+    }
+    finally {
+      setIsLoading(false);
+    }
   };
 
   const handleUploadLater = () => {

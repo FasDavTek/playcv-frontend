@@ -62,17 +62,20 @@ const Dashboard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const data = await response.data;
-      
-      if (!data || !data.checkoutId) {
-        openSetModalFn('confirmationModal');
-      } else {
+      if (response.status === 'success' && response.hasValidUpploadRequest === true) {
         toast.info('You have an existing payment for video upload that you have not yet completed.');
-        navigate(`/candidate/video-management/upload`, { 
-          state: { 
-            checkoutId: data.checkoutId,
-          } 
+        navigate('/candidate/video-management/upload', {
+          state: {
+            uploadTypeId: response.uploadRequest.uploadTypeId,
+            uploadTypeName: response.uploadRequest.uploadType,
+            uploadRequestId: response.uploadRequest.id,
+            paymentDate: response.uploadRequest.paymentDate,
+            duration: response.uploadRequest.duration
+          }
         });
+      }
+      else {
+        openSetModalFn('confirmationModal');
       }
     } 
     catch (error) {

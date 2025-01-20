@@ -55,9 +55,6 @@ const CreateAdvertModal = () => {
     },
   });
 
-
-  console.log(adTypeName, adTypeId);
-
 //   useEffect(() => {
 //     const fetchAdTypes = async () => {
 //       try {
@@ -87,9 +84,6 @@ const handleFileUpload = useCallback(async (file: File) => {
     const fileName = `${Date.now()}-${file.name}`;
     const bucketName = import.meta.env.VITE_CLOUDFLARE_R2_BUCKET;
 
-    console.log('Uploading file:', fileName);
-    console.log('Bucket:', bucketName);
-
     const command = new PutObjectCommand({
       Bucket: bucketName,
       Key: fileName,
@@ -98,9 +92,7 @@ const handleFileUpload = useCallback(async (file: File) => {
     });
 
     const result = await s3Client.send(command);
-    console.log('Upload result:', result);
     const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`;
-    console.log('Uploaded URL:', uploadedUrl);
     return uploadedUrl;
   } 
   catch (err) {

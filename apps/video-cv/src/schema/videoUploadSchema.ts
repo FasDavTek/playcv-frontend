@@ -16,7 +16,7 @@ export const videoUploadSchema = z.object({
   videoTranscript: z
     .string({ required_error: ErrorMessages.required('Video Transcript') })
     .min(1, 'Video Transcript is required'),
-  Category: z
+  category: z
     .string({ required_error: ErrorMessages.required('Category') })
     .min(1, 'Category is required'),
   videoType: z.string({
@@ -29,21 +29,18 @@ export const videoUploadSchema = z.object({
     required_error: ErrorMessages.required('Payment Reference'),
   }).optional(),
   media: z.union([
-    z.instanceof(File).refine(
-      (file) => file instanceof File,
-      'Please add a video file'
-    ).refine(
-      (file) =>{ return !file || file.size <= MAX_FILE_SIZE; },
-      `Max video file size is ${MAX_FILE_SIZE}MB.`
-    ).refine(
-      (file) => ACCEPTED_VIDEO_TYPES.includes(file.type),
-      "Only .mp4, .webm, and .ogg video files are accepted."
+    z.instanceof(File)
+      .refine((file) =>{ return !file || file.size <= MAX_FILE_SIZE; }, `Max video file size is ${MAX_FILE_SIZE}MB.`)
+      .refine(
+        (file) => ACCEPTED_VIDEO_TYPES.includes(file.type),
+        "Only .mp4, .webm, and .ogg video files are accepted."
+      ),
+    z.array(z.instanceof(File))
+      .nonempty('Please add a video file')
+      .min(1, ErrorMessages.required("Please add a video file"))
+      .refine((files) => files.every((file) => ACCEPTED_VIDEO_TYPES.includes(file.type)),
+      'Only .mp4, .webm, and .ogg video files are accepted.'
     ),
-    z.array(z.instanceof(File)).refine(
-      (files) => files.every((file) => file instanceof File),
-      'Please add a video file'
-    ),
-    z.string().url("Invalid URL for media")
   ]).refine((value) => value !== undefined && value !== null, {
     message: ErrorMessages.required('Media'),
   }),
