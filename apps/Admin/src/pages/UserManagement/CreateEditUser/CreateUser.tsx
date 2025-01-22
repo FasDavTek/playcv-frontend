@@ -92,8 +92,8 @@ const CreateUser = () => {
 
     console.log(userType);
 
-    const handleImageUpload = async (file: File | null) => {
-        if (!file) throw new Error('File is not defined.');
+    const handleImageUpload = async (file: File) => {
+        // if (!file) throw new Error('File is not defined.');
 
         try {
             const fileName = `${Date.now()}-${file.name}`;
@@ -120,7 +120,7 @@ const CreateUser = () => {
     const onSubmit = async (data: IForm) => {
         setLoading(true);
         try {
-            const userTypeId = userType === 'subAdmins' ? 1 : userType === 'professional' ? 3 : 2;
+            const userTypeId = userType === 'subAdmins' ? 1 : userType === 'professionals' ? 3 : 2;
             
             let ImageUrl = data.coverURL ? await handleImageUpload(new File([data.coverURL], 'profile.jpg')) : undefined;
 
@@ -136,6 +136,7 @@ const CreateUser = () => {
                 isBusinessUser: userType === 'employers',
                 isAdmin: userType === 'subAdmins',
                 userTypeId,
+                employerInfo: null,
             }
 
             console.log(userData);
