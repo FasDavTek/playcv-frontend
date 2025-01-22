@@ -62,7 +62,7 @@ export enum apiEndpoints {
     INDUSTRY = '/api/v1/helper/industry/create-edit',
     INSTITUTION = '/api/v1/helper/institution/create-edit',
     DEGREECLASS = '/api/v1/helper/degree-class/create-edit',
-    QHALIFICATION = '/api/v1/helper/qualification/create-edit',
+    QUALIFICATION = '/api/v1/helper/qualification/create-edit',
     TESTIMONIAL = '/api/v1/helper/site-testimonial/create-edit',
     CVGUIDELINE = '/api/v1/helper/cv-guideline/create-edit',
 }
