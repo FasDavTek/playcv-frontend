@@ -130,17 +130,17 @@ const UserManagement = () => {
 
   const handleStatusToggle = async (user: User) => {
     try {
-      const newStatus = user.userBioDetails.status === 'Active' ? 'Suspended' : 'Active';
+      const newStatus = user.userBioDetails.status === 'Active' ? 'Inactive' : 'Active';
 
       console.log(user.userBioDetails.status);
       console.log(newStatus);
 
       const payload = {
+        ...user.userBioDetails,
         userEmail: user.userBioDetails.email,
         status: newStatus,
-        userId: user.id,
+        userId: userId,
         action: 'edit',
-        ...user.userBioDetails,
       }
 
       console.log(payload)
