@@ -76,6 +76,7 @@ const UserManagement = () => {
   const navigate = useNavigate();
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  const userId = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
 
 
   useEffect(() => {
@@ -115,10 +116,6 @@ const UserManagement = () => {
         toast.error('Your session has expired. Please log in again');
         navigate('/');
       }
-      else {
-        console.error('Error fetching users:', err);
-        toast.error('Unable to load users');
-      }
     }
     finally {
       setLoading(false);
@@ -131,19 +128,31 @@ const UserManagement = () => {
   }, [activeTab, searchQuery]);
 
 
-  const handleStatusToggle = async (email: string, currentStatus: string) => {
+  const handleStatusToggle = async (user: User) => {
     try {
-      const newStatus = currentStatus === 'Active' ? 'Suspended' : 'Active';
-      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_PROF_EMP_USER}`, {
-        userEmail: email,
-        status: newStatus
-      }, {
+      const newStatus = user.userBioDetails.status === 'Active' ? 'Suspended' : 'Active';
+
+      console.log(user.userBioDetails.status);
+      console.log(newStatus);
+
+      const payload = {
+        userEmail: user.userBioDetails.email,
+        status: newStatus,
+        userId: user.id,
+        action: 'edit',
+        ...user.userBioDetails,
+      }
+
+      console.log(payload)
+      
+      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_PROF_EMP_USER}`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (response.code === "201") {
-        setUsers(users.map(user => 
-          user.email === email ? { ...user, status: newStatus } : user
+      if (response.code === "00") {
+        setUsers(users.map((u) => 
+          u.id === user.id ? { ...u, userBioDetails: { ...u.userBioDetails, status: newStatus } } : u
         ));
+        fetchUsers();
         toast.success(`User ${newStatus.toLowerCase()} successfully`);
       } else {
         throw new Error('Failed to update user status');
@@ -213,9 +222,9 @@ const UserManagement = () => {
             onClick={() => navigate(`/admin/user-management/edit/${activeTab}/${row.original.userBioDetails.email}`, { state: { user: row.original } })}
           />
           <Button 
-            variant={row.original.userBioDetails.status === 'Active' ? 'red' : 'success'} 
-            label={row.original.userBioDetails.status === 'Active' ? 'Suspend' : 'Activate'}
-            onClick={() => handleStatusToggle(row.original.userBioDetails.email, row.original.userBioDetails.status)}
+            variant={row.original.userBioDetails.status === "Active" ? "red" : "success"}
+            label={row.original.userBioDetails.status === "Active" ? "Suspend" : "Activate"}
+            onClick={() => { handleStatusToggle(row.original); console.log(row.original) }}
           />
         </div>
       ),

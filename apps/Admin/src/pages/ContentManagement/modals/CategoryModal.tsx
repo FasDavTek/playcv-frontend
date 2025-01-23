@@ -88,7 +88,10 @@ const CategoryModal = ({
       let contentData: any = {
         ...data,
         action: action === 'create' ? 'create' : 'edit',
+        ...(action === "edit" && selectedItem?.id && { id: selectedItem.id }),
       }
+
+      console.log(contentData);
 
       if (currentTab === 'siteTestimonials' && profileImageFile) {
         const profileImageUrl = await handleImageUpload(profileImageFile);
@@ -100,7 +103,8 @@ const CategoryModal = ({
         contentData = {
           Name: data.name,
           ShortName: data.shortName,
-          Action: action === 'create' ? 'create' : 'edit'
+          Action: action === 'create' ? 'create' : 'edit',
+          Id: selectedItem?.id || "",
         };
       }
 

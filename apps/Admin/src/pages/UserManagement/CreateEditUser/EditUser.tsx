@@ -84,9 +84,6 @@ const CreateEditUSer: React.FC = () => {
   const { register, handleSubmit, watch, control, setValue, reset } = useForm<IForm>();
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-  if (!token) {
-    toast.error('Unable to load user profile. Please log in again.');
-  };
 
   useEffect(() => {
     if (location.state?.user) {
@@ -117,8 +114,14 @@ const CreateEditUSer: React.FC = () => {
       }
     } 
     catch (error) {
-      console.error('Error fetching user details:', error);
-      toast.error('Failed to load user details');
+      if (!token) {
+        toast.error('Unable to load user profile. Please log in again.');
+        navigate('/');
+      }
+      else {
+        console.error('Error fetching user details:', error);
+        toast.error('Failed to load user details');
+      }
     } 
     finally {
       setLoading(false);
@@ -157,6 +160,8 @@ const CreateEditUSer: React.FC = () => {
 
       // let imageUrl = data.profilePicture ? await handleImageUpload(data.profilePicture) : undefined
 
+      const userTypeId = userType === 'professionals' ? 3 : 2;
+
       const imageUrl = data.coverURL ? await handleImageUpload(new File([data.coverURL], 'profile.jpg')) : undefined;
       
       const userData = {
@@ -170,6 +175,8 @@ const CreateEditUSer: React.FC = () => {
         emailConfirmed: data.emailConfirmed,
         phoneNumberConfirmed: data.phoneNumberConfirmed,
         isBlackListed: data.isBlackListed,
+        userTypeId,
+        employerInfo: null,
       }
 
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_PROF_EMP_USER}`, userData);
@@ -189,7 +196,7 @@ const CreateEditUSer: React.FC = () => {
 
   return (
     <div className="p-6 bg-gray-50 mb-8">
-      <ChevronLeftIcon className="cursor-pointer text-base mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" onClick={() => navigate('/admin/user-management')}/>
+      <ChevronLeftIcon className="cursor-pointer text-7xl mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" onClick={() => navigate('/admin/user-management')}/>
 
       <Container className="py-3">
         <form onSubmit={handleSubmit(onSubmit)}>

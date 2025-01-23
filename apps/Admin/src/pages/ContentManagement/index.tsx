@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Modal } from '@mui/material';
 import { Button, Table } from '@video-cv/ui-components';
@@ -88,7 +88,7 @@ const ContentPage = () => {
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState(40);
 
-  const { data: miscData, isLoading: isMiscLoading, error: miscError } = useAllMisc({
+  const { data: miscData, isLoading: isMiscLoading, error: miscError, refetch: refetchMiscData, } = useAllMisc({
     resource: 
       activeTab === 'industry' ? 'industries' :
       activeTab === 'cvguideline' ? 'cv-guideline' :
@@ -103,8 +103,8 @@ const ContentPage = () => {
 
   console.log(miscData)
 
-  const { data: countryData, isLoading: isCountryLoading, error: countryError } = useAllCountry();
-  const { data: stateData, isLoading: isStateLoading, error: stateError } = useAllState();
+  const { data: countryData, isLoading: isCountryLoading, error: countryError, refetch: refetchCountryData, } = useAllCountry();
+  const { data: stateData, isLoading: isStateLoading, error: stateError, refetch: refetchStateData } = useAllState();
 
   const getDataForActiveTab = () => {
     switch (activeTab) {
@@ -120,18 +120,25 @@ const ContentPage = () => {
   useEffect(() => {
     if (refreshTrigger > 0) {
       if (activeTab === 'country') {
-        countryData?.data || [];
+        refetchCountryData()
       } else if (activeTab === 'state') {
-        stateData?.data || [];
+        refetchStateData()
       } else {
-        miscData || [];
+        refetchMiscData()
       }
     }
   }, [ refreshTrigger, activeTab ]);
 
-  const handleContentUpdate = () => {
-    setRefreshTrigger(prev => prev + 1);
-  };
+  const handleContentUpdate = useCallback(() => {
+    setRefreshTrigger((prev) => prev + 1)
+    if (activeTab === "country") {
+      refetchCountryData()
+    } else if (activeTab === "state") {
+      refetchStateData()
+    } else {
+      refetchMiscData()
+    }
+  }, [activeTab, refetchCountryData, refetchStateData, refetchMiscData])
 
   const isLoading = isMiscLoading || isCountryLoading || isStateLoading;
   const error = miscError || countryError || stateError;
@@ -155,6 +162,8 @@ const ContentPage = () => {
   const handleView = (item: Content) => {
     setSelectedItem(item);
     setOpenModal('view');
+
+    console.log(selectedItem)
   };
 
   console.log(selectedItem)

@@ -48,7 +48,7 @@ const userDetails = () => {
 
   return (
     <div className='p-6 bg-gray-50 mb-8'>
-      <ChevronLeftIcon className="cursor-pointer text-base mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/user-management')} />
+      <ChevronLeftIcon className="cursor-pointer text-7xl mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/user-management')} />
 
       <div className="bg-white p-10 shadow-lg rounded-2xl transform transition-all duration-300">
             <p className="mb-10 text-xl font-semibold text-gray-700 leading-relaxed">Employer Details</p>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Container, Tab, Tabs, Typography, Box, TextField, Stack, Modal } from '@mui/material';
 import { Button, Input, Table } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
@@ -18,9 +18,10 @@ import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 type PriceItem = {
   id: string;
   price: string;
-  typeName?: string
-  uploadPrice?: number
-  buyPrice?: number
+  typeName?: string;
+  name?: string;
+  uploadPrice?: number;
+  buyPrice?: number;
   status: string;
   [key: string]: any;
 }
@@ -110,22 +111,28 @@ const index = () => {
   };
 
 
-  const handleStatusToggle = async (id: string, currentStatus: string) => {
+  const handleStatusToggle = async (price: PriceItem) => {
     try {
       
-      const newStatus = !currentStatus;
+      const newStatus = price.active === 'true' ? 'false' : 'true';
       const endpoint = activeTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE;
+
       const resp = await postData(`${CONFIG.BASE_URL}${endpoint}`, {
-        id,
+        ...price,
+        ...(activeTab === 'videoUploadTypes' ? { typeId: price.id } : { id: price.id }),
         status: newStatus,
+        action: "edit",
+        name: price.name,
+        
       },
       {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (resp.code === "00") {
-        setPriceItems(priceItems.map(item =>
-          (item.id === id || item.typeId === id) ? { ...item, active: newStatus } : item
+        await fetchPriceItems();
+        setPriceItems(priceItems.map((item) =>
+          (item.id === price.id || item.typeId === price.id) ? { ...item, active: newStatus } : item
         ))
         toast.success(`${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} ${newStatus ? 'activated' : 'suspended'} successfully`)
       }
@@ -150,6 +157,10 @@ const index = () => {
     setSelectedItem(item);
     setOpenModal('edit');
   };
+
+  const handleSubmitSuccess = useCallback(() => {
+    fetchPriceItems()
+  }, [fetchPriceItems])
 
 
   const getColumns = () => {
@@ -177,7 +188,7 @@ const index = () => {
       cell: ({ row }) => (
         <div className='flex gap-2'>
           <Button variant='custom' label='Edit' onClick={() => handleEdit(row.original)} />
-          <Button variant={row.original.active ? 'red' : 'success'} label={row.original.active ? 'Suspend' : 'Activate'} onClick={() => handleStatusToggle(row.original.id || row.original.typeId || '', row.original.active)} />
+          <Button variant={row.original.active ? 'red' : 'success'} label={row.original.active ? 'Suspend' : 'Activate'} onClick={() => handleStatusToggle(row.original)} />
         </div>
       )
     });
@@ -318,7 +329,7 @@ const index = () => {
         <Modal open={openModal === 'add' || openModal === 'edit'} onClose={closeModal}>
           <>
             {authState.isAuthenticated && authState.user?.name && (
-              <Price onClose={closeModal} currentTab={activeTab} item={selectedItem} open={true} modalType={openModal === 'add' ? 'add' : 'edit'} currentUser={authState?.user?.name} />
+              <Price onClose={closeModal} currentTab={activeTab} item={selectedItem} open={true} modalType={openModal === 'add' ? 'add' : 'edit'} currentUser={authState?.user?.name} onSubmitSuccess={handleSubmitSuccess} />
             )}
           </>
         </Modal>

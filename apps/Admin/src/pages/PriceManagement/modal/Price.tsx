@@ -30,9 +30,10 @@ interface AdTypeItem {
     createdBy?: string;
     status?: string;
     action: 'create' | 'edit';
-  }
+}
   
-  interface VideoUploadTypeItem {
+interface VideoUploadTypeItem {
+    id?: string;
     typeId?: string;
     name: string;
     shortName: string;
@@ -48,9 +49,9 @@ interface AdTypeItem {
     active: boolean;
     status?: string;
     action: 'create' | 'edit';
-  }
+}
 
-  type PriceItem = AdTypeItem | VideoUploadTypeItem;
+type PriceItem = AdTypeItem | VideoUploadTypeItem;
 
 const statusOptions = [
     { value: 'true', label: 'Activate' },
@@ -64,9 +65,10 @@ interface PriceProps {
     modalType: 'add' | 'edit';
     item?: Partial<PriceItem> | null;
     currentUser: string;
+    onSubmitSuccess: () => void
 }
 
-const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, currentTab, currentUser, }) => {
+const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, currentTab, currentUser, onSubmitSuccess, }) => {
     const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
     const [isLoading, setIsLoading] = useState(false)
     const [action, setAction] = useState<'create' | 'edit'>('create');
@@ -149,13 +151,13 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
               thumbnailUrl: thumbnailUrl,
               action: modalType === 'add' ? 'create' : 'edit',
               createdBy: modalType === 'add' ? currentUser : data.createdBy,
-              active: data.status === 'Active',
-              ...(currentTab === 'adsTypes' && { typeName: data.name }),
+              ...(currentTab === 'videoUploadTypes' ? { typeId: data?.id } : { id: data?.id, typeName: data.name }),
           }
           const endpoint = currentTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE
           const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, priceData)
           if (response.code === "00") {
               toast.success(`${modalType === 'add' ? 'Added' : 'Updated'} successfully`)
+              onSubmitSuccess();
               onClose()
           } else {
               throw new Error('Failed to save')
@@ -282,20 +284,21 @@ const Price: React.FC<PriceProps> = ({ open, onClose, modalType, item = null, cu
                     />
                 </>
             )}
-            <Controller
+            {/* <Controller
                 name="status"
                 control={control}
                 render={({ field }) => (
                     <Select
-                        name={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Status`}
+                        name='status'
                         options={statusOptions}
                         control={control}
                         placeholder="Select Status"
                         defaultValue={field.value}
                         handleChange={(newValue) => field.onChange(newValue)}
+                        label={`${currentTab === 'videoUploadTypes' ? 'Video Upload' : currentTab === 'adsTypes' ? 'Ad' : 'Buy Video'} Status`}
                     />
                 )}
-            />
+            /> */}
             <label>{currentTab === 'videoUploadTypes' ? 'Video Upload Description' : 'Ad Description'}</label>
             <Controller
                 name={currentTab === 'videoUploadTypes' ? 'description' : 'typeDescription'}

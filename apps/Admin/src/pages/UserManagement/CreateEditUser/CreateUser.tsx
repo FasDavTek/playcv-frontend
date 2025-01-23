@@ -162,7 +162,7 @@ const CreateUser = () => {
     }
   return (
     <div className='p-6 bg-gray-50 mb-8'>
-        <ChevronLeftIcon className="cursor-pointer text-base mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" onClick={() => navigate('/admin/user-management')}/>
+        <ChevronLeftIcon className="cursor-pointer text-7xl mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" onClick={() => navigate('/admin/user-management')}/>
             
         <Container className='py-3'>
             <form onSubmit={handleSubmit(onSubmit)}>
