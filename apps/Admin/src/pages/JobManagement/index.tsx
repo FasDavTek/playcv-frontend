@@ -71,6 +71,7 @@ const JobManagement = () => {
       const currentTime = Date.now();
       const newJobs = data.filter((job: Vacancy) => new Date(job.createdAt).getTime() > lastFetchTime);
       if (newJobs.length > 0) {
+        await fetchJobs();
         toast.info(`${newJobs.length} new job(s) uploaded`);
       }
       setLastFetchTime(currentTime);

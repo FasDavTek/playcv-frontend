@@ -37,8 +37,7 @@ const statusOptions = [
 const vacancySchema = z.object({
   id: z.string().optional(),
   jobTitle: z.string().min(1, "Job title is required"),
-  companyImage: z.string().optional(),
-  companyThumbnail: z.string().optional(),
+  companyLogoUrl: z.string().optional(),
   companyName: z.string().min(1, "Company name is required"),
   countryName: z.string().min(1, "Country is required"),
   countryId: z.string(),
@@ -64,6 +63,9 @@ const Vacancies = (selectedItem: any) => {
   const [selectedCountryId, setSelectedCountryId] = useState<string>('');
   const [action, setAction] = useState<'create' | 'edit'>('create');
 
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
   const location = useLocation();
   const job = location.state?.job;
@@ -80,10 +82,10 @@ const Vacancies = (selectedItem: any) => {
   useEffect(() => {
     if (selectedItem && vacancyId) {
       fetchJobDetails(vacancyId)
-    } else if (location.state?.job) {
-      reset(location.state.job)
+    } else if (job) {
+      reset(job)
     }
-  }, [selectedItem, vacancyId, location.state, reset]);
+  }, [selectedItem, vacancyId, job, reset]);
 
   const fetchJobDetails = async (vacancyId: any) => {
     setIsLoading(true);
@@ -107,6 +109,33 @@ const Vacancies = (selectedItem: any) => {
     } 
     finally {
       setIsLoading(false);
+    }
+  };
+
+
+  const fetchJobs = async () => {
+    try {
+
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await resp.data;
+      setJobs(data);
+      console.log(jobs)
+      setLoading(false);
+    }
+    catch (err) {
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        toast.error('Failed to fetch jobs');
+      }
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -140,15 +169,15 @@ const Vacancies = (selectedItem: any) => {
     try {
       setIsLoading(true);
 
-      let companyImageUrl = data.companyImage;
+      let companyLogoUrl = data.companyLogoUrl;
 
       if (companyImageFile) {
-        companyImageUrl = await handleImageUpload(companyImageFile);
+        companyLogoUrl = await handleImageUpload(companyImageFile);
       }
 
       const jobData = {
         ...data,
-        companyLogoUrl: companyImageUrl,
+        companyLogoUrl,
         action: action,
       };
 
@@ -158,6 +187,7 @@ const Vacancies = (selectedItem: any) => {
 
       if (resp.code === "00") {
         toast.success(action === 'edit' ? 'Job updated successfully' : 'Job posted successfully!');
+        await fetchJobs();
         navigate('/admin/job-management');
       }
       else {
@@ -196,26 +226,26 @@ const Vacancies = (selectedItem: any) => {
                       Upload Company Image
                     </label>
                     <Controller
-                      name='companyImage'
+                      name='companyLogoUrl'
                       control={control}
-                      render={({ field: { onChange } }) => (
+                      render={({ field: { onChange, value } }) => (
                         <FileUpload
                           uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
                           containerClass=""
                           uploadLabel="Drag and Drop or Browse"
                           setFile={(files) => {
-                            console.log('Files received by FileUpload:', files);
-                            const fileArray = Array.isArray(files) ? files : files ? [files] : [];
-                            console.log('Selected files:', fileArray);
-                            onChange(fileArray);
+                            const file = Array.isArray(files) ? files[0] : files;
+                            setCompanyImageFile(file);
+                            console.log('Selected files:', file);
+                            onChange(file ? URL.createObjectURL(file) : '');
                           }}
                         />
                       )}
                     />
                   </div>
-                  {watch('companyImage') && (
-                    <Typography variant="body2">Current image: {watch('companyImage')}</Typography>
-                  )}
+                  {/* {watch('companyLogoUrl') && (
+                    <Typography variant="body2">Current logo: {watch('companyLogoUrl')}</Typography>
+                  )} */}
                 </Grid>
                 <Grid item xs={12}>
                   <Input
@@ -237,6 +267,7 @@ const Vacancies = (selectedItem: any) => {
                         handleChange={(newValue) => field.onChange(newValue?.value)}
                         isDisabled={isCountryLoading}
                         errors={errors}
+                        label={'Select Country'}
                       />
                     )}
                 />
@@ -254,6 +285,7 @@ const Vacancies = (selectedItem: any) => {
                         handleChange={(newValue) => field.onChange(newValue?.value)}
                         isDisabled={isStateLoading}
                         errors={errors}
+                        label={'Select State'}
                       />
                     )}
                 />
