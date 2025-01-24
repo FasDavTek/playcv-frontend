@@ -13,6 +13,8 @@ import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 import { Controller, useForm } from 'react-hook-form';
 import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
+import model from './../../../../../../libs/utils/helpers/model';
+import { useAllMisc } from './../../../../../../libs/hooks/useAllMisc';
 
 const s3Client = new S3Client({
     region: 'auto',
@@ -24,35 +26,35 @@ const s3Client = new S3Client({
 });
 
 interface IForm {
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    email: string;
-    role?: string;
-    phoneNumber: string;
-    address?: string;
-    password?: string;
-    profilePicture?: any;
-    institution?: string;
-    dateOfBirth?: string;
-    gender?: string;
-    cvUrl?: string;
-    redirectUrl?: string;
-    companyUrl?: string;
-    businessAddress?: string;
-    contactPersonName?: string;
-    contactPersonPosition?: string;
-    contactPersonPhoneNumber?: string;
-    socialMediaLink?: string;
-    industry?: string;
-    userTypeId: number;
-    isBusinessUser: boolean;
-    isProfessional: boolean;
-    businessName?: string;
-    isTracked?: boolean;
-    businessId?: number;
-    coverURL?: string;
-    status: string | "";
+    firstName: string
+    middleName: string
+    lastName: string
+    userTypeId: number
+    phoneNumber: string
+    email: string
+    password: string
+    businessName: string
+    isTracked: boolean
+    isBusinessUser: boolean
+    isProfessional: boolean
+    businessId: number
+    coverURL?: string
+    employerInfo?: {
+        userId: string
+        businessName: string
+        industry: string
+        address: string
+        websiteUrl: string
+        contactPhone: string
+        businessEmail: string
+        contactName: string
+        contactPosition: string
+        fbLink: string
+        twitter: string
+        instagramUrl: string
+        industryId: number
+        isActive: boolean
+    }
 };
 
 const userTypeOptions = [
@@ -80,7 +82,7 @@ const CreateUser = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { register, handleSubmit, control, setValue, reset, watch } = useForm<IForm>({
+    const { register, handleSubmit, control, setValue, reset, watch, formState: { errors } } = useForm<IForm>({
         defaultValues: {
             isBusinessUser: userType === 'employers',
             isProfessional: userType === 'professionals',
@@ -90,7 +92,12 @@ const CreateUser = () => {
 
     const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-    console.log(userType);
+    const { data: industry, isLoading: isLoadingIndustries } = useAllMisc({
+        resource: 'industries',
+        page: 1,
+        limit: 100,
+        download: false,
+    });
 
     const handleImageUpload = async (file: File) => {
         // if (!file) throw new Error('File is not defined.');
@@ -128,18 +135,23 @@ const CreateUser = () => {
                 ImageUrl = await handleImageUpload(ImageFile);
             }
 
-            const userData = {
+            const userData = Object.entries({
                 ...data,
                 // coverURL: ImageUrl || data.coverURL,
                 action: 'create',
+                industryId: data.employerInfo?.industryId,
+                industry: data.employerInfo?.industry,
                 isProfessional: userType === 'professionals',
                 isBusinessUser: userType === 'employers',
                 isAdmin: userType === 'subAdmins',
                 userTypeId,
                 employerInfo: null,
-            }
-
-            console.log(userData);
+            }).reduce((acc: { [key: string]: any }, [Key, value]) => {
+                if (value) {
+                  acc[Key] = value;
+                }
+                return acc;
+              }, {});
 
             const endpoint = userType === 'subAdmins' ? apiEndpoints.CREATE_SUB_ADMIN : apiEndpoints.CREATE_PROF_EMP_USER;
             const resp = await postData(`${CONFIG.BASE_URL}${endpoint}`, userData, {
@@ -198,12 +210,72 @@ const CreateUser = () => {
                             {...register('phoneNumber')}
                         />
                     </Grid>
-                    <Grid item xs={12}>
-                        <Input
-                            label="Address"
-                            {...register('address')}
-                        />
-                    </Grid>
+                    {watch("userTypeId") === 2 && (
+                        <>
+                            <Grid item xs={12}>
+                            <Controller
+                                name='employerInfo.industry'
+                                control={control}
+                                rules={{ required: 'Business Sector is required' }}
+                                render={({ field }) => (
+                                    <div>
+                                    <Select
+                                        name="Business Sector"
+                                        control={control}
+                                        defaultValue={Array.isArray(industry) && industry?.find(i => i.name === watch('employerInfo.industry'))}
+                                        options={model(industry, 'name', 'id')}
+                                        handleChange={(newValue) => {
+                                        if (newValue.__isNew__) {
+                                            field.onChange(newValue?.value || newValue?.label);
+                                            setValue('employerInfo.industry', newValue?.label || '');
+                                            setValue('employerInfo.industryId', newValue?.value);
+                                        } else {
+                                            field.onChange(newValue?.value || newValue?.label);
+                                            setValue('employerInfo.industry', newValue?.label);
+                                            setValue('employerInfo.industryId', newValue?.value);
+                                        }}}
+                                        isDisabled={isLoadingIndustries}
+                                        errors={errors}
+                                        placeholder='Business Sector'
+                                        label={<span>Business Sector <span className="text-red-500">*</span></span>}
+                                        allowCreate={true}
+                                    />
+                                    {errors?.employerInfo?.industry && (
+                                        <p className="text-red-500 text-sm mt-1">{errors.employerInfo.industry.message}</p>
+                                    )}
+                                    </div>
+                                )}
+                            />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Input label="Address" {...register("employerInfo.address")} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Input label="Website URL" {...register("employerInfo.websiteUrl")} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Input label="Contact Phone" {...register("employerInfo.contactPhone")} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Input label="Business Email" {...register("employerInfo.businessEmail")} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Input label="Contact Name" {...register("employerInfo.contactName")} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Input label="Contact Position" {...register("employerInfo.contactPosition")} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Input label="Facebook Link" {...register("employerInfo.fbLink")} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Input label="Twitter" {...register("employerInfo.twitter")} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Input label="Instagram URL" {...register("employerInfo.instagramUrl")} />
+                            </Grid>
+                        </>
+                    )}
                     <Grid item xs={12}>
                         <Input
                             label="Business Name"
@@ -228,22 +300,6 @@ const CreateUser = () => {
                             )}
                         />
                     </Grid>
-                    {userType === 'subAdmins' && (
-                        <Grid item xs={12}>
-                            <Controller
-                              name="role"
-                              control={control}
-                              render={({ field }) => (
-                                  <Select
-                                    name="Role"
-                                    control={control}
-                                    options={roleOptions}
-                                    handleChange={(newValue) => field.onChange(newValue?.value)}
-                                  />
-                              )}
-                            />
-                        </Grid>
-                    )}
                     <Grid item xs={12}>
                         <Input
                             label="Password"

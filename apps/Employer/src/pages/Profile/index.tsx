@@ -32,9 +32,6 @@ const schema = z.object({
       lastName: z.string().min(1, "Surname is required"),
       email: z.string().email("Invalid email format"),
       phoneNo: z.string().min(10, "Phone number must be at least 10 digits").max(11, 'Phone number must not be more than 11 digits'),
-      dateOfBirth: z.date().refine(date => dayjs(date).isValid(), {
-        message: "Invalid Date of birth",
-      }),
       isBusinessUser: z.boolean(),
     }),
     businessDetails: z.object({
@@ -101,9 +98,6 @@ const Profile = () => {
               if (fieldSchema instanceof z.ZodString && typeof value === 'string') {
                 setValue(`userProfile.userDetails.${fieldKey}`, value);
               }
-              else if (fieldSchema instanceof z.ZodDate && value instanceof Date) {
-                setValue(`userProfile.userDetails.${fieldKey}`, value);
-              }
             }
           });
           Object.entries(businessDetails).forEach(([key, value]) => {
@@ -120,7 +114,6 @@ const Profile = () => {
             }
           });
 
-          setValue('userProfile.userDetails.dateOfBirth', userDetails.dateOfBirth || '')
           setValue('userProfile.businessDetails.websiteUrl', businessDetails.websiteUrl || '')
           setValue('userProfile.businessDetails.fbLink', businessDetails.fbLink || '')
           setValue('userProfile.businessDetails.twitter', businessDetails.twitter || '')
@@ -170,7 +163,6 @@ const Profile = () => {
           ...data.userProfile,
           userDetails: {
             ...data.userProfile.userDetails,
-            dateOfBirth: data.userProfile.userDetails.dateOfBirth || null,
             isBusinessUser: true,
             userId: userId,
           },
@@ -326,28 +318,6 @@ const Profile = () => {
                 <label>Phone Number</label>
                 <Typography className="input-like">{watch('userProfile.userDetails.phoneNo')}</Typography>
                 <IconButton onClick={() => handleEditClick('userProfile.userDetails.phoneNo')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
-                  <SaveAsOutlinedIcon />
-                </IconButton>
-              </Box>
-            )}
-            {editField === 'userProfile.userDetails.dateOfBirth' ? (
-               <Controller
-                control={control}
-                name="userProfile.userDetails.dateOfBirth"
-                render={({ field }) => (
-                  <DatePicker
-                    {...field}
-                    label="Date of birth"
-                    value={field.value ? dayjs(field.value) : null}
-                    onChange={(date) => {field.onChange(date ? date.toDate() : null);}}
-                  />
-                )}
-              />
-            ) : (
-              <Box className="input-box" onClick={() => handleEditClick('userProfile.userDetails.dateOfBirth')}>
-                <label>Date Of Birth</label>
-                <Typography className="input-like">{watch('userProfile.userDetails.dateOfBirth') ? dayjs(watch('userProfile.userDetails.dateOfBirth')).format('MMMM D, YYYY') : null}</Typography>
-                <IconButton onClick={() => handleEditClick('userProfile.userDetails.dateOfBirth')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                   <SaveAsOutlinedIcon />
                 </IconButton>
               </Box>

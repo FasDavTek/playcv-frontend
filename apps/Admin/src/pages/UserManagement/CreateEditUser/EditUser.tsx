@@ -164,7 +164,7 @@ const CreateEditUSer: React.FC = () => {
 
       const imageUrl = data.coverURL ? await handleImageUpload(new File([data.coverURL], 'profile.jpg')) : undefined;
       
-      const userData = {
+      const userData = Object.entries({
         ...data,
         coverURL: imageUrl || data.coverURL,
         action: 'edit',
@@ -177,7 +177,12 @@ const CreateEditUSer: React.FC = () => {
         isBlackListed: data.isBlackListed,
         userTypeId,
         employerInfo: null,
-      }
+      }).reduce((acc: { [key: string]: any }, [Key, value]) => {
+        if (value) {
+          acc[Key] = value;
+        }
+        return acc;
+      }, {});
 
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_PROF_EMP_USER}`, userData);
       if (response.code === "201") {

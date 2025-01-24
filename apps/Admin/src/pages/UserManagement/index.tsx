@@ -108,6 +108,30 @@ const UserManagement = () => {
           }
         });
 
+        if (activeTab === "professionals") {
+          filteredUsers.forEach((user: Professional) => {
+            user.userBioDetails.institution = user.userBioDetails.institution || "N/A"
+            user.userBioDetails.qualification = user.userBioDetails.qualification || "N/A"
+            user.userBioDetails.courseOfStudy = user.userBioDetails.courseOfStudy || "N/A"
+            user.userBioDetails.nyscStateCode = user.userBioDetails.nyscStateCode || "N/A"
+            user.userBioDetails.nyscStartDate = user.userBioDetails.nyscStartDate || "N/A"
+            user.userBioDetails.nyscEndDate = user.userBioDetails.nyscEndDate || "N/A"
+          })
+        }
+
+        if (activeTab === "employers") {
+          filteredUsers.forEach((user: Employer) => {
+            user.userBioDetails.companyUrl = user.userBioDetails.companyUrl || "N/A"
+            user.userBioDetails.location = user.userBioDetails.location || "N/A"
+            user.userBioDetails.businessAddress = user.userBioDetails.businessAddress || "N/A"
+            user.userBioDetails.contactPersonName = user.userBioDetails.contactPersonName || "N/A"
+            user.userBioDetails.contactPersonPosition = user.userBioDetails.contactPersonPosition || "N/A"
+            user.userBioDetails.contactPersonPhoneNumber = user.userBioDetails.contactPersonPhoneNumber || "N/A"
+            user.userBioDetails.socialMediaLink = user.userBioDetails.socialMediaLink || "N/A"
+            user.userBioDetails.industry = user.userBioDetails.industry || "N/A"
+          })
+        }
+
         setUsers(filteredUsers);
       }
     }
@@ -210,6 +234,70 @@ const UserManagement = () => {
       header: 'Date of birth',
       cell: (info) => info.getValue(),
     }),
+    ...(activeTab === "professionals"
+      ? [
+          columnHelper.accessor("userBioDetails.institution", {
+            header: "Institution",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.qualification", {
+            header: "Qualification",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.courseOfStudy", {
+            header: "Course of Study",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.nyscStateCode", {
+            header: "NYSC State Code",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.nyscStartDate", {
+            header: "NYSC Start Date",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.nyscEndDate", {
+            header: "NYSC End Date",
+            cell: (info) => info.getValue(),
+          }),
+        ]
+    : []),
+    ...(activeTab === "employers"
+      ? [
+          columnHelper.accessor("userBioDetails.companyUrl", {
+            header: "Company URL",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.location", {
+            header: "Location",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.businessAddress", {
+            header: "Business Address",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.contactPersonName", {
+            header: "Contact Person",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.contactPersonPosition", {
+            header: "Contact Position",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.contactPersonPhoneNumber", {
+            header: "Contact Phone",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.socialMediaLink", {
+            header: "Social Media",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.industry", {
+            header: "Industry",
+            cell: (info) => info.getValue(),
+          }),
+        ]
+    : []),
     columnHelper.accessor('userBioDetails.status', {
       header: 'Status',
       cell: (info) => (
