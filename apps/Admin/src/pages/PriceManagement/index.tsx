@@ -46,6 +46,7 @@ const index = () => {
   const { authState } = useAuth();
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+  const userId = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
   
   useEffect(() => {
     fetchPriceItems()
@@ -120,10 +121,10 @@ const index = () => {
       const resp = await postData(`${CONFIG.BASE_URL}${endpoint}`, {
         ...price,
         ...(activeTab === 'videoUploadTypes' ? { typeId: price.id } : { id: price.id }),
-        status: newStatus,
-        action: "edit",
+        active: newStatus,
         name: price.name,
-        
+        userId: userId,
+        action: "edit",
       },
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -131,10 +132,11 @@ const index = () => {
 
       if (resp.code === "00") {
         await fetchPriceItems();
-        setPriceItems(priceItems.map((item) =>
-          (item.id === price.id || item.typeId === price.id) ? { ...item, active: newStatus } : item
-        ))
-        toast.success(`${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} ${newStatus ? 'activated' : 'suspended'} successfully`)
+        const toastMessage = newStatus === 'true' 
+          ? `${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} activated successfully`
+            : `${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} suspended successfully`;
+
+        toast.success(toastMessage);
       }
       else {
         throw new Error(`Failed to update ${activeTab === 'videoUploadTypes' ? 'video type' : 'ad type'} status`)

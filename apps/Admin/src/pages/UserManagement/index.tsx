@@ -15,7 +15,7 @@ import { useQuery } from 'react-query';
 type ModalTypes = null | 'userManagement';
 
 type User = {
-  id: string;
+  userId: string;
   name: string;
   email: string;
   firstName: string;
@@ -130,30 +130,44 @@ const UserManagement = () => {
 
   const handleStatusToggle = async (user: User) => {
     try {
-      const newStatus = user.userBioDetails.status === 'Active' ? 'Inactive' : 'Active';
+      const isActive = user.userBioDetails.status === 'Active';
+      const newStatus = isActive ? 'In review' : 'Active';
+      const statusId = isActive ? 2 : 1;
+
+      const isAdmin = activeTab === 'subAdmins';
+      const isProfessionalUser  = activeTab === 'professionals';
+      const isBusinessUser  = activeTab === 'employers';
 
       console.log(user.userBioDetails.status);
       console.log(newStatus);
 
-      const payload = {
-        ...user.userBioDetails,
-        userEmail: user.userBioDetails.email,
+      console.log(user);
+      console.log(user.userBioDetails.userId);
+
+      const payload = Object.entries({
         status: newStatus,
-        userId: userId,
+        statusId: statusId,
+        isAdmin: isAdmin,
+        isProfessionalUser:  isProfessionalUser,
+        isBusinessUser:  isBusinessUser,
+        userId: user.userBioDetails.userId,
         action: 'edit',
-      }
+      }).reduce((acc: { [key: string]: any }, [Key, value]) => {
+        if (value) {
+          acc[Key] = value;
+        }
+        return acc;
+      }, {});
 
       console.log(payload)
       
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_PROF_EMP_USER}`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (response.code === "00") {
-        setUsers(users.map((u) => 
-          u.id === user.id ? { ...u, userBioDetails: { ...u.userBioDetails, status: newStatus } } : u
-        ));
-        fetchUsers();
-        toast.success(`User ${newStatus.toLowerCase()} successfully`);
+      if (response.code === "01") {
+        await fetchUsers();
+        const toastMessage = isActive ? 'User  suspended' : 'User  activated';
+        toast.success(toastMessage);
       } else {
         throw new Error('Failed to update user status');
       }
