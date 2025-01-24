@@ -51,6 +51,11 @@ type course = Content & {
   description: string;
 }
 
+type category = Content & {
+  categoryName: string;
+  description: string;
+}
+
 type industry = Content & {}
 
 type qualification = Content & {
@@ -77,7 +82,7 @@ type guideline = Content & {
 const columnHelper = createColumnHelper<Content>();
 
 const ContentPage = () => {
-  const [activeTab, setActiveTab] = useState<'faq' | 'country' | 'state' | 'institution' | 'course' | 'industry' | 'qualification' | 'sitetestimonial' | 'degreeclass' | 'cvguideline'>('faq');
+  const [activeTab, setActiveTab] = useState<'faq' | 'country' | 'state' | 'institution' | 'course' | 'category' | 'industry' | 'qualification' | 'sitetestimonial' | 'degreeclass' | 'cvguideline'>('faq');
   const [openModal, setOpenModal] = useState<'create' | 'edit' | 'view' | null>(null);
   const [selectedItem, setSelectedItem] = useState<Content | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -94,6 +99,7 @@ const ContentPage = () => {
       activeTab === 'cvguideline' ? 'cv-guideline' :
       activeTab === 'degreeclass' ? 'degree-class' :
       activeTab === 'sitetestimonial' ? 'site-testimonials' :
+      activeTab === 'category' ? 'video-category' :
       activeTab,
     page: 1,
     limit: 100,
@@ -188,8 +194,18 @@ const ContentPage = () => {
         <div className='flex gap-2'>
           <Button variant='custom' label='View' onClick={() => handleView(row.original)} />
           <Button variant='custom' label='Edit' onClick={() => handleEdit(row.original)} />
-          {row.original.status !== undefined && (
-            <Button variant={row.original.status ? 'red' : 'success'} label={row.original.status ? 'Deactivate' : 'Activate'} />
+          {activeTab === 'category' ? (
+            <Button 
+                variant={row.original.active ? 'red' : 'success'} 
+                label={row.original.active ? 'Deactivate' : 'Activate'} 
+            />
+          ) : (
+              row.original.status !== undefined && (
+                  <Button 
+                      variant={row.original.status ? 'red' : 'success'} 
+                      label={row.original.status ? 'Deactivate' : 'Activate'} 
+                  />
+              )
           )}
         </div>
       )
@@ -220,6 +236,19 @@ const ContentPage = () => {
           columnHelper.accessor('name', { header: 'State Name' }),
           columnHelper.accessor('shortName', { header: 'Short Name' }),
           // columnHelper.accessor('countryId', { header: 'Country ID' }),
+          actionColumn,
+        ]
+      case 'category':
+        return [
+          columnHelper.accessor('name', { header: 'Category Name' }),
+          columnHelper.accessor('description', { 
+            header: 'Description',
+            cell: (info) => truncateText(info.getValue() as string || '', 10),
+          }),
+          columnHelper.accessor('active', {
+            header: 'Status',
+            cell: (info) => info.getValue() ? 'true' : 'false'
+          }),
           actionColumn,
         ]
       case 'institution':
@@ -306,7 +335,7 @@ const ContentPage = () => {
 
       <div className="bg-gray-300 border-b border-gray-200 rounded-lg">
         <div className="flex p-1 overflow-auto gap-3">
-          {['faq', 'country', 'state', 'institution', 'course', 'industry', 'qualification', 'sitetestimonial', 'degreeclass', 'cvguideline'].map((tab) => (
+          {['faq', 'country', 'state', 'category', 'institution', 'course', 'industry', 'qualification', 'sitetestimonial', 'degreeclass', 'cvguideline'].map((tab) => (
             <button
               key={tab}
               className={`py-2 px-4 text-sm font-medium ${activeTab === tab ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg' : 'text-blue-600 hover:text-blue-600'}`}

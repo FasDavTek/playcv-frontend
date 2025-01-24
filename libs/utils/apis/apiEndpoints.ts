@@ -59,6 +59,7 @@ export enum apiEndpoints {
     FAQ = '/api/v1/helper/faq/create-edit',
     GET_MISC = '/api/v1/helper/resource/get',
     COURSE = '/api/v1/helper/course/create-edit',
+    CATEGORY = '/api/v1/helper/video-category/create-edit',
     INDUSTRY = '/api/v1/helper/industry/create-edit',
     INSTITUTION = '/api/v1/helper/institution/create-edit',
     DEGREECLASS = '/api/v1/helper/degree-class/create-edit',

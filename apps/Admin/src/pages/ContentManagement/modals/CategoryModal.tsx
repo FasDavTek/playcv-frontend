@@ -55,6 +55,7 @@ const CategoryModal = ({
       currentTab === 'cvguideline' ? 'cv-guideline' :
       currentTab === 'degreeclass' ? 'degree-class' :
       currentTab === 'sitetestimonial' ? 'site-testimonials' :
+      currentTab === 'category' ? 'video-category' :
       currentTab,
     page: 1,
     limit: 100,
@@ -192,6 +193,20 @@ const CategoryModal = ({
                   />
                 )}
             />
+          </>
+        );
+      case 'category':
+        return (
+          <>
+            <Input label="Video Category Name" {...register('name', { required: true })} disabled={isViewMode} />
+            <Grid item xs={12}>
+              <Typography variant="subtitle2">Description</Typography>
+              <RichTextEditor
+                value={watch("description")}
+                onChange={(value) => setValue('description', value)}
+                placeholder='Enter description'
+              />
+            </Grid>
           </>
         );
       case 'institution':
