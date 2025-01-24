@@ -33,8 +33,6 @@ const TokenVerification: React.FC = () => {
         return;
       }
 
-      setIsEmailVerification(!!userId);
-
 
       try {
         const signupDataString = localStorage.getItem('signupData');
@@ -48,6 +46,8 @@ const TokenVerification: React.FC = () => {
 
 
       try {
+        setIsEmailVerification(!!userId);
+
         let response;
         if (isEmailVerification) {
           if (!userId) {
@@ -68,6 +68,8 @@ const TokenVerification: React.FC = () => {
           }
         }
         else {
+          setIsEmailVerification(!userId);
+
           response = await postData(
             `${CONFIG.BASE_URL}${apiEndpoints.FORGOT_PASSWORD_CONFIRM_TOKEN}`,
             { token }

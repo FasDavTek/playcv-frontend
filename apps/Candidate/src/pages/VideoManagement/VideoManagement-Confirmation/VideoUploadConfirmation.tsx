@@ -97,8 +97,8 @@ const VideoUploadConfirmation = () => {
       <p>Your payment was successful. What would you like to do next?</p>
       <p className='text-red-500 my-4'><span className='font-semibold'>NOTE: </span>By uploading your videoCV on this platfom, you have read the videoCV guideline thoroughly and you agree to this platform's Terms and Conditions</p>
       <Stack direction='row' gap={4}>
-        <Button variant='custom' label={isLoading ? 'Saving...' : 'Upload Later'} onClick={handleUploadLater} disabled={isLoading} />
-        <Button variant='black' label="Upload Now" onClick={handleUploadNow} />
+        <Button variant='custom' label='Upload Later' onClick={handleUploadLater} />
+        <Button variant='black' label="Upload Now" onClick={handleUploadNow} disabled={isLoading} />
       </Stack>
       
     </div>
