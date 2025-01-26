@@ -248,47 +248,47 @@ const Vacancies = (selectedItem: any) => {
                   )} */}
                 </Grid>
                 <Grid item xs={12}>
+                  <Controller
+                      {...register('countryId')}
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          name="Country"
+                          control={control}
+                          defaultValue={Array.isArray(countryData) ? countryData?.find(i => i.id === watch('countryId')) : null}
+                          options={model(countryData, 'name', 'id')}
+                          handleChange={(newValue) => field.onChange(newValue?.value)}
+                          isDisabled={isCountryLoading}
+                          errors={errors}
+                          label={'Select Country'}
+                        />
+                      )}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Controller
+                      {...register('stateId')}
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          name="State"
+                          control={control}
+                          defaultValue={Array.isArray(stateData) ? stateData?.find(i => i.id === watch('stateId')) : null}
+                          options={model(stateData, 'name', 'id')}
+                          handleChange={(newValue) => field.onChange(newValue?.value)}
+                          isDisabled={isStateLoading}
+                          errors={errors}
+                          label={'Select State'}
+                        />
+                      )}
+                  />
+                </Grid>
+                <Grid item xs={12}>
                   <Input
                       className='rounded-xl'
                       label="Company Name"
                       {...register('companyName')}
                   />
-                </Grid>
-                <Grid item xs={12}>
-                <Controller
-                    {...register('countryId')}
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        name="Country"
-                        control={control}
-                        defaultValue={Array.isArray(countryData) ? countryData?.find(i => i.id === watch('countryId')) : null}
-                        options={model(countryData, 'name', 'id')}
-                        handleChange={(newValue) => field.onChange(newValue?.value)}
-                        isDisabled={isCountryLoading}
-                        errors={errors}
-                        label={'Select Country'}
-                      />
-                    )}
-                />
-                </Grid>
-                <Grid item xs={12}>
-                <Controller
-                    {...register('stateId')}
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        name="State"
-                        control={control}
-                        defaultValue={Array.isArray(stateData) ? stateData?.find(i => i.id === watch('stateId')) : null}
-                        options={model(stateData, 'name', 'id')}
-                        handleChange={(newValue) => field.onChange(newValue?.value)}
-                        isDisabled={isStateLoading}
-                        errors={errors}
-                        label={'Select State'}
-                      />
-                    )}
-                />
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="subtitle2">Job Details</Typography>
