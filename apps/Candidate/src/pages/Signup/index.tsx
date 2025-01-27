@@ -244,9 +244,9 @@ const Index = () => {
   useEffect(() => {
     const requiredFields = ["firstName", "surname", "phoneNumber", "email", "password", "confirmPassword"]
 
-    // if (watchHasBusiness) {
-    //   requiredFields.push("businessName", "businessPhoneNumber", "businessEmail", "businessAddress", "industry", "professionalInfo.nyscStateCode", "professionalInfo.nyscStartYear", "professionalInfo.nyscEndYear", "professionalInfo.course", "professionalInfo.degree", "professionalInfo.institution", "professionalInfo.classOfDegree", "professionalInfo.coverLetter")
-    // }
+    if (watchHasBusiness) {
+      requiredFields.push("professionalInfo.nyscStateCode", "professionalInfo.nyscStartYear", "professionalInfo.nyscEndYear", "professionalInfo.course", "professionalInfo.degree", "professionalInfo.institution", "professionalInfo.classOfDegree", "professionalInfo.coverLetter")
+    }
 
     const isValid =
       requiredFields.every((field) => {
@@ -355,19 +355,6 @@ const Index = () => {
                 }
                 label="I have a business"
               /> */}
-              <label>
-                <input
-                  name="hasBusiness"
-                  type="checkbox"
-                  className="form-checkbox"
-                  checked={watchHasBusiness}
-                  onChange={(e) => setValue("hasBusiness", e.target.checked)}
-                />
-                <span className="ml-2 text-sm text-neutral-300">
-                  I have a business
-                </span>
-              </label>
-
             </div>
             {watchHasBusiness && (
               <div>
@@ -606,19 +593,18 @@ const Index = () => {
             </FormControl>
           </div>
 
-          {/* <div className="mt-5">
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={watchHasBusiness}
-                  onChange={(e) => setValue("hasBusiness", e.target.checked)}
-                  name="hasBusiness"
-                  color="primary"
-                />
-              }
-              label="I have a business"
+          <label>
+            <input
+              name="hasBusiness"
+              type="checkbox"
+              className="form-checkbox"
+              checked={watchHasBusiness}
+              onChange={(e) => setValue("hasBusiness", e.target.checked)}
             />
-          </div> */}
+            <span className="ml-2 text-sm text-neutral-300">
+              I have a business
+            </span>
+          </label>
 
           <div className="mt-5">
             <label className="inline-flex items-center">
