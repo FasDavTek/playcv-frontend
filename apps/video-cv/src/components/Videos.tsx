@@ -101,7 +101,7 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100 }) => {
   };
 
   const startIndex = currentPage * videosPerPage;
-  const currentVideos = videos.slice(startIndex, startIndex + videosPerPage);
+  const currentVideos = videos?.slice(startIndex, startIndex + videosPerPage);
 
   return (
     <div>

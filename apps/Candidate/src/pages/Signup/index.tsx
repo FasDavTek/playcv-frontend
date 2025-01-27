@@ -336,7 +336,7 @@ const Index = () => {
                 isValid={!errors.email && !!watchedFields.email}
               />
             </div>
-            {/* <div className="text-sm font-thin mt-2"> */}
+            <div className="text-sm font-thin mt-2">
               {/* <FormControlLabel
                 control={
                   // <Switch
@@ -355,7 +355,7 @@ const Index = () => {
                 }
                 label="I have a business"
               /> */}
-            {/* </div> */}
+            </div>
             {watchHasBusiness && (
               <div>
                 <Input
@@ -593,7 +593,21 @@ const Index = () => {
             </FormControl>
           </div>
 
-          <label>
+          <div className="mt-5">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={watchHasBusiness}
+                  onChange={(e) => setValue("hasBusiness", e.target.checked)}
+                  name="hasBusiness"
+                  color="primary"
+                />
+              }
+              label="I have a business"
+            />
+          </div>
+
+          {/* <label>
             <input
               name="hasBusiness"
               type="checkbox"
@@ -604,7 +618,7 @@ const Index = () => {
             <span className="ml-2 text-sm text-neutral-300">
               I have a business
             </span>
-          </label>
+          </label> */}
 
           <div className="mt-5">
             <label className="inline-flex items-center">

@@ -115,7 +115,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
       <CardContent sx={{ backgroundColor: 'transparent', height: 'auto' }}>
         
           <Typography variant="subtitle1" fontWeight="bold" color="#000">
-            {role.slice(0, 30)}{' '}
+            {role?.slice(0, 30)}{' '}
             {/* <CheckCircleIcon
               sx={{ fontSize: '12px', color: 'gray', ml: '5px' }}
             /> */}
