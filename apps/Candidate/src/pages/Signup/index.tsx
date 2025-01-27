@@ -244,9 +244,9 @@ const Index = () => {
   useEffect(() => {
     const requiredFields = ["firstName", "surname", "phoneNumber", "email", "password", "confirmPassword"]
 
-    if (watchHasBusiness) {
-      requiredFields.push("businessName", "businessPhoneNumber", "businessEmail", "businessAddress", "industry", "professionalInfo.nyscStateCode", "professionalInfo.nyscStartYear", "professionalInfo.nyscEndYear", "professionalInfo.course", "professionalInfo.degree", "professionalInfo.institution", "professionalInfo.classOfDegree", "professionalInfo.coverLetter")
-    }
+    // if (watchHasBusiness) {
+    //   requiredFields.push("businessName", "businessPhoneNumber", "businessEmail", "businessAddress", "industry", "professionalInfo.nyscStateCode", "professionalInfo.nyscStartYear", "professionalInfo.nyscEndYear", "professionalInfo.course", "professionalInfo.degree", "professionalInfo.institution", "professionalInfo.classOfDegree", "professionalInfo.coverLetter")
+    // }
 
     const isValid =
       requiredFields.every((field) => {
@@ -642,7 +642,7 @@ const Index = () => {
               variant="black"
               label={loading ? "Signing up..." : "Sign up"}
               className="w-[60%]"
-              disabled={loading || !isFormValid}
+              disabled={loading || !isFormValid }
             />
           </div>
         </form>
