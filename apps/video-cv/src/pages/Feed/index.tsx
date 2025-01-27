@@ -11,11 +11,55 @@ import 'swiper/css/autoplay';
 import { EffectCreative, Autoplay } from 'swiper/modules';
 import { Images } from '@video-cv/assets';
 import { Button } from '@video-cv/ui-components';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+import CONFIG from './../../../../../libs/utils/helpers/config';
+import { getData } from './../../../../../libs/utils/apis/apiMethods';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 
 const heroImages = [Images.HeroImage, Images.HeroImage1, Images.HeroImage2, Images.HeroImage3, Images.HeroImage4, Images.HeroImage5, Images.HeroImage6, Images.HeroImage7, Images.HeroImage8, Images.HeroImage9];
 
+interface Video {
+  id: string
+  uploaderName: string
+  role: string
+  videoUrl: string
+  uploadDate: string
+  views: number
+  isActive: boolean
+  imageSrc?: string
+  price: number
+  description: string
+  pinned?: boolean
+  category?: string
+}
+
 const Feed = () => {
   const navigate = useNavigate();
+  const [allVideos, setAllVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=100`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        let data;
+        if (response.succeeded === true) {
+          data = await response.data;
+          setAllVideos(data || []);
+        }
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
 
   return (
     <Stack className="flex flex-col">
@@ -79,7 +123,7 @@ const Feed = () => {
             LATEST VIDEOS
           </Typography>
 
-          <Videos />
+          <Videos videos={allVideos} loading={loading} category="latest" />
         </Box>
 
           {/* LAtest jobs section */}
@@ -105,7 +149,7 @@ const Feed = () => {
             VIDEOS
           </Typography>
 
-          <Videos />
+          <Videos videos={allVideos} loading={loading} />
         </Box>
 
         <Box className="mt-20">
@@ -119,7 +163,7 @@ const Feed = () => {
             EXPERIENCED PROFESSIONAL
           </Typography>
 
-          <Videos />
+          <Videos videos={allVideos} loading={loading} category="experienced" />
         </Box>
 
       </Box>

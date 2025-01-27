@@ -28,6 +28,8 @@ interface Video {
 }
 
 interface VideosProps {
+  videos: Video[]
+  loading: boolean
   category?: string
   limit?: number
 }
@@ -51,29 +53,6 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100 }) => {
   };
 
   useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=${limit}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        let data;
-        if (response.succeeded === true) {
-          data = await response.data;
-          setVideos(data || []);
-        }
-      } catch (error) {
-        console.error('Error fetching videos:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVideos();
-  }, []);
-
-  useEffect(() => {
     const handleResize = () => {
       const cols = calculateColumns();
       setColumns(cols);
@@ -84,7 +63,7 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100 }) => {
     window.addEventListener('resize', handleResize);
     
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [calculateColumns]);
   
   if (loading) return <Loader />;
   if (!videos.length) return <p>No videos available</p>;
