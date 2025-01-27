@@ -30,6 +30,26 @@ const schema = z.object({
     contactName: z.string().min(1, "Contact person name is required"),
     contactPosition: z.string().min(1, "Contact person role is required"),
   }),
+  professionalInfo: z.object({
+    nyscStateCode: z.string().min(4, 'NYSC State code is required'),
+    nyscStartYear: z.number().int().nullable(),
+    nyscEndYear: z.number().int().nullable(),
+    course: z.string().min(1, "Course of study is required"),
+    degree: z.string().min(1, "Degree awarded is required"),
+    institution: z.string().min(1, "Institution attended is required"),
+    classOfDegree: z.string().min(1, "Class of degree is required"),
+    coverLetter: z.string().min(1, "Cover letter content is required"),
+    degreeTypeId: z.number().nullable(),
+    degreeClassId: z.number().nullable(),
+    institutionId: z.number().nullable(),
+    courseId: z.number().nullable(),
+    businessName: z.string().min(3, "Business Name is required"),
+    industry: z.string().min(1, "Business sector is required"),
+    address: z.string().min(10, "Business address is required"),
+    businessPhone: z.string().min(10, "Business phone number must be at least 10 digits"),
+    industryId: z.number().nullable(),
+    businessProfile: z.string().min(10, "Business Profile content is required"),
+  }).nullable(),
   firstName: z.string().min(1, "First name is required"),
   surname: z.string().min(1, "Surname is required"),
   phoneNumber: z.string().regex(/^(\+234|0)[789][01]\d{8}$/, "Invalid phone number"),
@@ -60,6 +80,7 @@ const Index = () => {
       userTypeId: 2,
       isBusinessUser: true,
       isProfessional: false,
+      professionalInfo: null,
       employerInfo: {}
     },
   });
@@ -112,6 +133,7 @@ const Index = () => {
         industry: data.employerInfo.industry,
         contactName: data.employerInfo.contactName,
         contactPosition: data.employerInfo.contactPosition,
+        professionalInfo: null,
       };
 
       const combinedData = {

@@ -201,6 +201,35 @@ const UserManagement = () => {
     }
   };
 
+
+  const statusOptions = [
+    { value: "Active", label: "Active" },
+    { value: "Suspended", label: "Suspended" },
+    { value: "In Review", label: "In Review" },
+    { value: "Rejected", label: "Rejected" },
+    { value: "Closed", label: "Closed" },
+  ]
+
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Active":
+        return "bg-green-200 text-green-700"
+      case "InReview":
+        return "bg-yellow-200 text-yellow-700"
+      case "Rejected":
+        return "bg-red-200 text-red-700"
+      case "Closed":
+        return "bg-gray-200 text-gray-700"
+      default:
+        return "bg-gray-200 text-gray-700"
+    }
+  }
+
+
+  type userStatus = "Active" | "Suspended" | "In Review" | "Rejected" | "Closed"
+
+
   const columns = [
     columnHelper.accessor('userBioDetails.firstName', {
       header: 'First Name',
@@ -300,13 +329,16 @@ const UserManagement = () => {
     : []),
     columnHelper.accessor('userBioDetails.status', {
       header: 'Status',
-      cell: (info) => (
-        <span className={`px-2 py-1.5 text-center items-center rounded-full ${
-          info.getValue() === 'Active' ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
-        }`}>
-          {info.getValue()}
-        </span>
-      ),
+      cell: (info) => {
+        const status = info.getValue() as unknown as userStatus
+        return (
+          <span
+            className={`px-2 py-1.5 text-center items-center rounded-full ${getStatusColor(statusOptions.find((option) => option.value === status)?.label || "")}`}
+          >
+            {statusOptions.find((option) => option.value === status)?.label}
+          </span>
+        )
+      },
     }),
     columnHelper.display({
       id: 'actions',

@@ -16,3 +16,4 @@ export { default as Layout } from './Layout';
 export { default as VacancyCard } from './shared/vacancyCard';
 export { default as VideoUploadWidget } from './VideoUploadWidget';
 export { default as RichTextEditor } from './Editor';
+export { default as SelectMenu } from './Menu'
