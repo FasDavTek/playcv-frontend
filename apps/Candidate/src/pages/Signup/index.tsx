@@ -336,7 +336,7 @@ const Index = () => {
                 isValid={!errors.email && !!watchedFields.email}
               />
             </div>
-            <div className="text-sm font-thin mt-2">
+            {/* <div className="text-sm font-thin mt-2"> */}
               {/* <FormControlLabel
                 control={
                   // <Switch
@@ -355,7 +355,7 @@ const Index = () => {
                 }
                 label="I have a business"
               /> */}
-            </div>
+            {/* </div> */}
             {watchHasBusiness && (
               <div>
                 <Input
