@@ -116,12 +116,12 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
         <CardMedia
           ref={ref}
           component='img'
-          image={inView ? videoUrl || demoThumbnailUrl : demoThumbnailUrl}
+          image={inView ? videoUrl || demoThumbnailUrl : videoUrl}
           title={title}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.onerror = null;
-            target.src = demoThumbnailUrl;
+            target.src = videoUrl;
           }}
           onClick={() => handleViewDetails(video)}
           sx={{ width: { xs: '100%', sm: '358px' }, height: 180 }}

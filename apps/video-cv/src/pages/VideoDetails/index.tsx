@@ -197,13 +197,14 @@ const VideoDetails = () => {
 
 
   const handleReadMoreClick = () => {
+
     const isBusinessAccount = user?.userType === 'business' || user?.userType === 'employer';
     const hasPaidForVideo = false;
 
     if (!isAuthenticated) {
       navigate('/auth/login');
     } else if (!isBusinessAccount) {
-      toast('You cannot make a payment for this video. Please sign up with a business/employer account.');
+      toast.warning('You cannot make a payment for this video. Please sign up with a business/employer account.');
     } else if (!hasPaidForVideo) {
       navigate('/cart');
     } else {
@@ -260,7 +261,7 @@ const VideoDetails = () => {
             </Box>
             <Box className="flex flex-col gap-1">
               <Stack direction="row" alignItems="center" justifyContent="space-between" p={1}>
-                <Typography variant="subtitle2">{video.views}</Typography>
+                <Typography variant="subtitle2">{video.views} views</Typography>
                 <Button onClick={handleAddToCart} variant="custom" className="text-[#5c6bc0] hover:text-[#2e3a86] animate-bounce" icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />} />
               </Stack>
               <Stack direction="row" alignItems="center" justifyContent="space-between" p={1} spacing={8}>

@@ -29,7 +29,7 @@ const SearchFeed = () => {
       </Typography>
       <Box display="flex">
         <Box sx={{ mr: { sm: '100px' } }} />
-        {<Videos />}
+        {/* {<Videos />} */}
       </Box>
     </Box>
   );

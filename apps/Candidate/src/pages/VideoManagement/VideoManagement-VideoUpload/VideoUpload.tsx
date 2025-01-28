@@ -220,7 +220,7 @@ const VideoUpload: React.FC = () => {
         description: data.description,
         transcript: data.videoTranscript,
         categoryId: data.category,
-        videoUrl: thumbnailUrl,
+        videoUrl: uploadedUrl,
         media: uploadedUrls.map((url: any, index: any) => ({
           videoType: data.videoType,
           url: url,
