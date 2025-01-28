@@ -13,23 +13,28 @@ import { LOCAL_STORAGE_KEYS } from './../../../../libs/utils/localStorage';
 import { toast } from 'react-toastify';
 
 interface Video {
-  id: string;
-  uploaderName: string;
-  role: string;
-  videoUrl: string;
-  uploadDate: string;
-  views: number;
-  isActive: boolean;
-  imageSrc?: string;
-  price: number;
-  description: string;
-  pinned?: boolean;
-  category?: string;
+  id: number
+  title: string
+  typeId: number
+  type: string
+  transcript: string
+  categoryId: number
+  category: string | null
+  userId: string
+  dateCreated: string
+  views: number
+  videoUrl: string
+  status: string
+  totalRecords: number
+  authorProfile: {
+    userDetails: {
+      fullName: string
+      profileImage: string | null
+    }
+  }
 }
 
 interface VideosProps {
-  videos: Video[]
-  loading: boolean
   category?: string
   limit?: number
 }
@@ -51,6 +56,29 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100 }) => {
     if (width >= 450) return 2; // sm
     return 1;
   };
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=${limit}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        let data;
+        if (response.succeeded === true) {
+          data = await response.data;
+          setVideos(data || []);
+        }
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -89,11 +117,9 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100 }) => {
             <Box key={idx}>{item.url && <VideoCard video={item} />}</Box>
           ))} */}
           {currentVideos.map((video: Video) => (
-            // <Link key={video.id} to={`/video/${video.id}`} state={video}>
               <Box key={video.id}>
                 <VideoCard video={video} />
               </Box>
-            // </Link>
           ))}
         </div>
 

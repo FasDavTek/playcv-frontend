@@ -17,17 +17,25 @@ import { useCart } from '../context/CartProvider';
 import { useAuth } from './../../../../libs/context/AuthContext';
 
 interface Video {
-  id: string;
-  uploaderName: string;
-  role: string;
-  videoUrl: string;
-  uploadDate: string;
-  views: number;
-  isActive: boolean;
-  imageSrc?: string;
-  price: number;
-  description: string;
-  pinned?: boolean;
+  id: number
+  title: string
+  typeId: number
+  type: string
+  transcript: string
+  categoryId: number
+  category: string | null
+  userId: string
+  dateCreated: string
+  views: number
+  videoUrl: string
+  status: string
+  totalRecords: number
+  authorProfile: {
+    userDetails: {
+      fullName: string
+      profileImage: string | null
+    }
+  }
 }
 
 interface VideoCardProps {
@@ -36,11 +44,12 @@ interface VideoCardProps {
 
 
 const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
-  const { id, uploaderName, role, views, imageSrc, price, pinned } = video;
+  const { id, title, views, videoUrl, authorProfile, type, dateCreated, status, price } = video;
   const { cartState, dispatch } = useCart();
   const { authState } = useAuth();
   const navigate = useNavigate();
   const [isInWishlist, setIsInWishlist] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Video | null>(null);
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -50,6 +59,11 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
     const itemInCart = cartState.cart.some((item: any) => item.id === id);
     setIsInWishlist(itemInCart);
   }, [cartState, id]);
+
+  const handleViewDetails = async (item: Video) => {
+    setSelectedItem(item);
+    navigate(`/video/${item.id}`, { state: { video: item } });
+  };
 
   const handleAddToCart = () => {
     if (!authState.isAuthenticated) {
@@ -71,9 +85,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
     }
     else {
       const value = {
-        name: uploaderName,
+        name: title,
         id: id,
-        imageSrc: imageSrc,
+        imageSrc: videoUrl,
         price: price,
       };
       dispatch({
@@ -98,24 +112,25 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
       }}
       elevation={4}
     >
-      <Link to={`/video/${id}`} style={{ textDecoration: 'none' }} >
+      {/* <Link to={`/video/${id}`} style={{ textDecoration: 'none' }} > */}
         <CardMedia
           ref={ref}
           component='img'
-          image={inView ? imageSrc || demoThumbnailUrl : demoThumbnailUrl}
-          title={role}
+          image={inView ? videoUrl || demoThumbnailUrl : demoThumbnailUrl}
+          title={title}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.onerror = null;
             target.src = demoThumbnailUrl;
           }}
+          onClick={() => handleViewDetails(video)}
           sx={{ width: { xs: '100%', sm: '358px' }, height: 180 }}
         />
-      </Link>
-      <CardContent sx={{ backgroundColor: 'transparent', height: 'auto' }}>
+      {/* </Link> */}
+      <CardContent sx={{ backgroundColor: 'transparent', height: 'auto' }} onClick={() => handleViewDetails(video)}>
         
           <Typography variant="subtitle1" fontWeight="bold" color="#000">
-            {role?.slice(0, 30)}{' '}
+            {title?.slice(0, 30)}{' '}
             {/* <CheckCircleIcon
               sx={{ fontSize: '12px', color: 'gray', ml: '5px' }}
             /> */}
@@ -125,9 +140,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
         <Stack direction='row' alignItems='center' justifyContent='space-between' my='.3125rem'>
           <Stack direction='row' alignItems='center'>
             <Typography variant="subtitle2" color="gray">
-              {uploaderName}
+              {authorProfile.userDetails.fullName}
             </Typography>
-            {pinned && <PushPinIcon sx={{ fontSize: '1rem', color: 'red', ml: '.5rem' }} />}
+            {type === 'Pinned' && <PushPinIcon sx={{ fontSize: '1rem', color: 'red', ml: '.5rem' }} />}
           </Stack>
           {(authState?.isAuthenticated && authState?.user?.userType === 'Employer') || !authState?.isAuthenticated ? (
             <Tooltip title='Add to wishlist' placeholder='right-start'>

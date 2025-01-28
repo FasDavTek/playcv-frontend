@@ -23,18 +23,29 @@ import SwiperCore from 'swiper';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+import { getData } from './../../../../../libs/utils/apis/apiMethods';
 
-interface VideoDetails {
-  id: string
+interface Video {
+  id: number
   title: string
-  description: string
-  videoUrl: string
-  imageSrc: string
-  uploaderName: string
-  uploadDate: string
+  typeId: number
+  type: string
+  transcript: string
+  categoryId: number
+  category: string | null
+  userId: string
+  dateCreated: string
   views: number
-  price: number;
-  role: string;
+  videoUrl: string
+  status: string
+  totalRecords: number
+  authorProfile: {
+    userDetails: {
+      fullName: string
+      profileImage: string | null
+    }
+  }
 }
 
 const ClampedText = styled(Typography)({
@@ -69,11 +80,12 @@ const TabPanel = ({ children, value, index }: any) => {
 };
 
 const VideoDetails = () => {
-  const { videoId } = useParams<{ videoId: string }>()
+  const { id } = useParams<{ id: any }>()
   const navigate = useNavigate();
   const location = useLocation();
-  const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [video, setVideo] = useState<Video | undefined>(location.state?.video);
+  // const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { cartState, dispatch } = useCart();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -87,52 +99,26 @@ const VideoDetails = () => {
   const itemsPerPage = 4;
 
   useEffect(() => {
-    const fetchVideoDetails = async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const response = await fetch(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}${videoId}`)
-        if (!response.ok) {
-          throw new Error('Failed to fetch video details')
-        }
-        const data = await response.json()
-        setVideoDetails(data)
-      } 
-      catch (err) {
-        console.error('Error fetching video details:', err)
-        setError('Failed to load video details. Please try again later.')
-        toast.error('Failed to load video details. Please try again later.')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    if (videoId) {
-      fetchVideoDetails()
-    }
-  }, [videoId]);
-
-  useEffect(() => {
     // Check if the item is in the cart on component mount
-    const itemInCart = cartState.cart.some((item: any) => item.id === videoId);
+    const itemInCart = cartState.cart.some((item: any) => item.id === id);
     setIsInWishlist(itemInCart);
-  }, [cartState, videoId]);
+  }, [cartState, id]);
 
   const handleAddToCart = () => {
-    const itemInCart = cartState.cart.some((item: any) => item.id === videoId);
+    const itemInCart = cartState.cart.some((item: any) => item.id === id);
     setIsInWishlist(!isInWishlist);
     if (itemInCart) {
       dispatch({
         type: 'REMOVE_FROM_CART',
-        payload: { videoId },
+        payload: { id },
       });
     }
     else {
       const value = {
-        name: videoDetails?.uploaderName,
-        id: videoId,
-        imageSrc: videoDetails?.imageSrc,
-        price: videoDetails?.price,
+        name: video?.authorProfile.userDetails.fullName,
+        id: id,
+        imageSrc: video?.videoUrl,
+        // price: video?.price,
       };
       dispatch({
         type: 'ADD_TO_CART',
@@ -142,13 +128,41 @@ const VideoDetails = () => {
   };
 
 
-  const getVideoDetails = async (id: any) => {
+  const getVideoDetails = async () => {
     // Replace with actual API call or data fetching logic
-    const response = await fetch(`/api/videos/${id}`);
-    if (!response.ok) throw new Error('Failed to fetch video details');
-    return response.json();
+    if (!video && id) {
+      setLoading(false);
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (resp && resp.videoDetails) {
+          setVideo(resp.videoDetails);
+          setLoading(false);
+        }
+        else {
+          setError('Failed to fetch related videos')
+        }
+      }
+      catch (err) {
+        console.error('Error fetching video detail:', err);
+        setError('Error fetching video detail');
+        toast.error('Error fetching video detail');
+      }
+    }
+    else if (!id) {
+      setError('No video Id provided');
+      setLoading(false);
+      return;
+    }
   };
 
+
+  useEffect(() => {
+    getVideoDetails();
+  }, [video, id]);
 
   const getRelatedVideos = async (searchParams: any) => {
     // Replace with actual API call or data fetching logic
@@ -197,22 +211,6 @@ const VideoDetails = () => {
     }
   };
 
-
-  useEffect(() => {
-    // Fetch video details based on videoId
-    const fetchVideoDetails = async () => {
-      try {
-        const details = await getVideoDetails(videoId);
-        setVideoDetails(details);
-        setLoading(false);
-      } catch (err: any) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-    fetchVideoDetails();
-  }, [videoId]);
-
   useEffect(() => {
     if (isFromTalentGallery && searchParams) {
       // Fetch related videos based on searchParams
@@ -240,7 +238,7 @@ const VideoDetails = () => {
     )
   }
 
-  if (error || !videoDetails) {
+  if (error || !video) {
     return (
       <Box className="items-center justify-center min-h-screen">
         <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-0 p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
@@ -258,53 +256,53 @@ const VideoDetails = () => {
         <Box className="rounded-lg">
           <Stack mx='auto' direction="column" spacing={4}>
             <Box className="w-full top-24 rounded-3xl">
-              <ReactPlayer url={videoDetails.videoUrl} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} />
+              <ReactPlayer url={video.videoUrl} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} />
             </Box>
             <Box className="flex flex-col gap-1">
               <Stack direction="row" alignItems="center" justifyContent="space-between" p={1}>
-                <Typography variant="subtitle2">{videoDetails.views}</Typography>
+                <Typography variant="subtitle2">{video.views}</Typography>
                 <Button onClick={handleAddToCart} variant="custom" className="text-[#5c6bc0] hover:text-[#2e3a86] animate-bounce" icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />} />
               </Stack>
               <Stack direction="row" alignItems="center" justifyContent="space-between" p={1} spacing={8}>
                 <Stack direction='row' spacing={1}>
-                  <Button variant="custom" className='text-green-600 hover:text-green-500' icon={<WhatsAppIcon />} onClick={() => shareOnWhatsApp(`https://www.youtube.com/watch?v=${videoId}`)} />
-                  <Button variant='custom' className='text-blue-600 hover:text-blue-500' icon={<EmailIcon />} onClick={() => shareViaEmail(`https://www.youtube.com/watch?v=${videoId}`)} />
+                  <Button variant="custom" className='text-green-600 hover:text-green-500' icon={<WhatsAppIcon />} onClick={() => shareOnWhatsApp(`https://www.youtube.com/watch?v=${id}`)} />
+                  <Button variant='custom' className='text-blue-600 hover:text-blue-500' icon={<EmailIcon />} onClick={() => shareViaEmail(`https://www.youtube.com/watch?v=${id}`)} />
                 </Stack>
               </Stack>
               <Box flex={1} className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex lg:hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-44'}`}>
                 {isExpanded ? (
                   <Stack direction="column" alignItems="center" justifyContent="space-between">
                     <Typography variant="h5" gutterBottom>
-                      {videoDetails.title}
+                      {video.title}
                     </Typography>
-                    <Typography variant="h6" gutterBottom>
-                      {videoDetails.role}
-                    </Typography>
+                    {/* <Typography variant="h6" gutterBottom>
+                      {video.role}
+                    </Typography> */}
                     <Typography variant="body1" gutterBottom>
-                      Uploaded by {videoDetails.uploaderName}
+                      Uploaded by {video.authorProfile.userDetails.fullName}
                     </Typography>
-                    <Typography variant="body2">
-                      {videoDetails.description}
-                    </Typography>
+                    {/* <Typography variant="body2">
+                      {video.description}
+                    </Typography> */}
                     <Typography variant='caption'>
-                      Uploaded on {new Date(videoDetails.uploadDate).toLocaleDateString()}
+                      Uploaded on {new Date(video.dateCreated).toLocaleDateString()}
                     </Typography>
                   </Stack>
                 ) : (
                   <Stack direction={'column'} alignItems="center" justifyContent="space-between">
                     <Typography variant="h5" gutterBottom>
-                      {videoDetails.title}
+                      {video.title}
                     </Typography>
-                    <Typography variant="h6" gutterBottom>
-                      {videoDetails.role}
-                    </Typography>
+                    {/* <Typography variant="h6" gutterBottom>
+                      {video.role}
+                    </Typography> */}
                     <Typography variant="body1" gutterBottom>
-                      Uploaded by {videoDetails.uploaderName}
+                      Uploaded by {video.authorProfile.userDetails.fullName}
                     </Typography>
                     <label></label>
-                    <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
-                      {videoDetails.description}
-                    </ClampedText>
+                    {/* <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
+                      {video.description}
+                    </ClampedText> */}
                     <Button onClick={handleReadMoreClick} label='Read More' variant="custom" className='video-description' ></Button>
                   </Stack>
                 )}
@@ -336,32 +334,32 @@ const VideoDetails = () => {
         {isExpanded ? (
           <Stack direction="column" alignItems="start" justifyContent="space-between" className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex-col lg:flex hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-aut0'}`}>
             <Typography variant="h5" gutterBottom>
-              {videoDetails.title}
+              {video.title}
             </Typography>
-            <Typography variant="h6" gutterBottom>
-              {videoDetails.role}
-            </Typography>
+            {/* <Typography variant="h6" gutterBottom>
+              {video.role}
+            </Typography> */}
             <Typography variant="body1" gutterBottom>
-              Uploaded by {videoDetails.uploaderName}
+              Uploaded by {video.authorProfile.userDetails.fullName}
             </Typography>
-            <Typography variant="body2">
-              {videoDetails.description}
-            </Typography>
+            {/* <Typography variant="body2">
+              {video.description}
+            </Typography> */}
           </Stack>
         ) : (
           <Stack direction={'column'} alignItems="start" justifyContent="space-between" className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex-col lg:flex hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-auto'}`}>
             <Typography variant="h5" gutterBottom>
-              {videoDetails.title}
+              {video.title}
             </Typography>
-            <Typography variant="h6" gutterBottom>
-              {videoDetails.role}
-            </Typography>
+            {/* <Typography variant="h6" gutterBottom>
+              {video.role}
+            </Typography> */}
             <Typography variant="body1" gutterBottom>
-              Uploaded by {videoDetails.uploaderName}
+              Uploaded by {video.authorProfile.userDetails.fullName}
             </Typography>
-            <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
-              {videoDetails.description}
-            </ClampedText>
+            {/* <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
+              {video.description}
+            </ClampedText> */}
             <Button onClick={handleReadMoreClick} label='Read More' variant="custom" className='video-description' ></Button>
           </Stack>
         )}
@@ -372,7 +370,7 @@ const VideoDetails = () => {
             <Typography variant='h6'>Related Videos</Typography>
             <div className="grid grid-cols-1 gap-4">
               {relatedVideos.map(video => (
-                <VideoCard key={videoId} video={video} />
+                <VideoCard key={id} video={video} />
               ))}
             </div>
           </Box>
