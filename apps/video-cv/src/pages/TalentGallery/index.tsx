@@ -17,17 +17,25 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { Controller, useForm } from 'react-hook-form';
 
 interface Video {
-    id: string;
-    uploaderName: string;
-    role: string;
-    videoUrl: string;
-    uploadDate: string;
-    views: number;
-    isActive: boolean;
-    imageSrc?: string;
-    price: number;
-    description: string;
-    pinned?: boolean;
+    id: number
+  title: string
+  typeId: number
+  type: string
+  transcript: string
+  categoryId: number
+  category: string | null
+  userId: string
+  dateCreated: string
+  views: number
+  videoUrl: string
+  status: string
+  totalRecords: number
+  authorProfile: {
+    userDetails: {
+      fullName: string
+      profileImage: string | null
+    }
+  }
 }
 
 const heroImages = [Images.HeroImage10, Images.HeroImage11, Images.HeroImage13, Images.HeroImage14, Images.HeroImage15];
@@ -88,7 +96,7 @@ const index = () => {
 
     const filterVideoCVs = () => {
         return videos.filter((video) => {
-            const matchesText = video.role.toLowerCase().includes(searchText.toLowerCase());
+            const matchesText = video.title.toLowerCase().includes(searchText.toLowerCase());
             // const matchesCategory = setSelectedCategories.length === 0 || selectedCategories.includes(video.category);
             // return matchesText && matchesCategory;
             return matchesText;
