@@ -229,7 +229,7 @@ const Index = () => {
           `This phone number ${phoneNumber} is already registered. Please use a different number or try logging in.`,
         )
       } else {
-        toast.error(err.message || "An error occurred during signup. Please try again.")
+        toast.error(err.response?.data?.error?.message)
       }
     } finally {
       setLoading(false)

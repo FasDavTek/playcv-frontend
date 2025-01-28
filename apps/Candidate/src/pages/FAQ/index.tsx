@@ -401,11 +401,11 @@ const FAQ = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              {/* {expandedPanel === faq.id && ( */}
+              {expandedPanel === faq.id && (
                 <div className={`${expandedPanel === faq.id ? 'p-4 text-gray-700 bg-red-800' : expandedPanel !== faq.id ? 'bg-transparent h-0' : ''}`}>
                   {faq.answer}
                 </div>
-              {/* )} */}
+              )}
             </div>
           ))}
         </div>
