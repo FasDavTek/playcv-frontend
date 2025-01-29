@@ -11,11 +11,49 @@ import 'swiper/css/autoplay';
 import { EffectCreative, Autoplay } from 'swiper/modules';
 import { Images } from '@video-cv/assets';
 import { Button } from '@video-cv/ui-components';
+import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+import { getData } from './../../../../../libs/utils/apis/apiMethods';
+import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
+import { toast } from 'react-toastify';
+import CONFIG from './../../../../../libs/utils/helpers/config';
 
 const heroImages = [Images.HeroImage, Images.HeroImage1, Images.HeroImage2, Images.HeroImage3, Images.HeroImage4, Images.HeroImage5, Images.HeroImage6, Images.HeroImage7, Images.HeroImage8, Images.HeroImage9];
 
 const Feed = () => {
   const navigate = useNavigate();
+
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
+  const checkPaymentStatus = async () => {
+    try {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=100`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.status === 'success' && response.hasValidUpploadRequest === true) {
+        toast.info('You have an existing payment for video upload that you have not yet completed.');
+        navigate('/candidate/video-management/upload', {
+          state: {
+            uploadTypeId: response.uploadRequest.uploadTypeId,
+            uploadTypeName: response.uploadRequest.uploadType,
+            uploadRequestId: response.uploadRequest.id,
+            paymentDate: response.uploadRequest.paymentDate,
+            duration: response.uploadRequest.duration
+          }
+        });
+      }
+    } 
+    catch (error) {
+        console.error('Error checking payment status:', error);
+        toast.warning('There was an error checking your payment status. Please try again later.');
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      checkPaymentStatus()
+    }
+  }, [token])
 
   return (
     <Stack className="flex flex-col">

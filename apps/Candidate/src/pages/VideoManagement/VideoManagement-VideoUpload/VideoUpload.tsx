@@ -58,14 +58,6 @@ const VideoUpload: React.FC = () => {
   //   setValue('price', price);
   // }, [setValue, videoType, price]);
 
-  console.log('HERE');
-
-  useEffect(() => {
-    console.log('VideoUpload component mounted');
-    return () => {
-      console.log('VideoUpload component unmounted');
-    };
-  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -88,11 +80,8 @@ const VideoUpload: React.FC = () => {
   }, []);
 
 
-  console.log('GETTING FILE FOR UPLOAD');
   const handleFileUpload = useCallback(async (file: File) => {
     // if (!file) throw new Error('File is not defined.');
-
-    console.log('REACHING');
     
     try {
       const fileName = `${Date.now()}-${file.name}`;
@@ -116,7 +105,6 @@ const VideoUpload: React.FC = () => {
   }, []);
 
 
-  console.log('GETTING VIDEO FOR GENERATING THUMBAIL')
   const generateThumbnail = async (file: File) => {
     return new Promise<string>((resolve, reject) => {
 
@@ -164,10 +152,8 @@ const VideoUpload: React.FC = () => {
     }
   };
 
-
-  console.log("GETTING VIDEO DETAILS FOR UPLOAD");
+  
   const onSubmitHandler = async (data: FormData) => {
-    console.log('Form submitted with data:', data);
 
     try {
       setIsUploading(true);
@@ -226,6 +212,7 @@ const VideoUpload: React.FC = () => {
           url: url,
           thumbnail: thumbnails[index],
         })),
+        thumbnailUrl: thumbnailUrl,
         action: 'upload',
         paymentReference: paymentReference,
         userId: userId,
