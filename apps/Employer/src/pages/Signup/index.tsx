@@ -184,7 +184,8 @@ const Index = () => {
       else {
         if (err.response?.data?.message) {
             toast.error(err.response.data.message);
-        } else {
+        } 
+        else {
             toast.error('An error occurred. Please try again.');
         }
       }

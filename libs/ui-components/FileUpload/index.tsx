@@ -55,8 +55,8 @@ const thumb = {
   border: '1px solid #eaeaea',
   marginBottom: 8,
   marginRight: 8,
-  width: 100,
-  height: 100,
+  width: '50%',
+  height: 'auto',
   padding: 4,
   // boxSizing: 'border-box',
 };
@@ -108,9 +108,6 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
   const [files, setFiles] = useState<PreviewFile[]>([]);
 
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
-    console.log('onDrop called');
-    console.log('Accepted files:', acceptedFiles);
-    console.log('Rejected files:', rejectedFiles);
     if (rejectedFiles.length) {
       console.log('rejectedFiles', rejectedFiles);
       return;
@@ -119,15 +116,12 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
     const newFiles = acceptedFiles.map((file: File) => {
       return Object.assign(file, { preview: (URL as any).createObjectURL(file) }) as PreviewFile;
     });
-    console.log('New files with preview:', newFiles);
     setFiles((prevFiles) => {
-      console.log('Previous files:', prevFiles);
       const updatedFiles = [...prevFiles, ...newFiles];
-      console.log('Updated files:', updatedFiles);
       onFilesChange(updatedFiles);
       return updatedFiles;
     });
-  }, [onFilesChange, setFiles]);
+  }, [onFilesChange]);
 
   const {
     getRootProps,
@@ -142,13 +136,12 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
     onDrop,
     accept: { 'image/*': [], 'video/*': [] },
     maxFiles: 10,
-    maxSize: 8388608,
+    maxSize: 15388608,
   });
 
   const handleDelete = useCallback((fileToDelete: PreviewFile) => {
     setFiles(prevFiles => {
       const updatedFiles = prevFiles.filter(file => file !== fileToDelete);
-      console.log('Files after deletion:', updatedFiles);
       onFilesChange(updatedFiles);
       return updatedFiles;
     });
@@ -159,7 +152,6 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
   }, [files]);
 
   useEffect(() => {
-    console.log('Files state changed:', files);
     setFile(files);
   }, [files]);
 
@@ -197,7 +189,7 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
   );
 
   const thumbs = files.map((file: PreviewFile) => (
-    <div key={file.name} className="relative">
+    <div key={file.name} className="relative" style={thumb}>
       <div className="">
         <button
           className="absolute text-sm text-red-600 top-0 right-0 z-10 border bg-white p-0.5 rounded"
@@ -206,7 +198,13 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
         >
           X
         </button>
-        <img src={file.preview} style={{ display: 'block', width: 'auto', height: '100%' }} />
+        <div style={thumbInner}>
+          {file.type.startsWith('image/') ? (
+            <img src={file.preview} style={{ display: 'block', width: 'auto', height: '100%' }} alt='preview' />
+          ) : file.type.startsWith('video/') ? (
+            <video controls style={{ display: 'block', width: 'auto', height: '100%' }}><source src={file.preview} type={file.type} /></video>
+          ): null}
+        </div>
       </div>
     </div>
   ));
@@ -216,7 +214,7 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
         {files.length > 0 ? (
-          <div style={{ display: 'flex', marginTop: 16 }}>
+          <div style={thumbsContainer}>
             {thumbs}
           </div>
         ) : (

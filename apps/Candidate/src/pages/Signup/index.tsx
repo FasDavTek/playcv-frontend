@@ -143,10 +143,8 @@ const Index = () => {
     setTermsAccepted(e.target.checked)
   }
 
-  console.log("form called")
 
   const submitForm = async (data: FormData) => {
-    console.log("submitForm function called", data)
     if (!termsAccepted) {
       toast.info("Please accept the Terms of Service to proceed.")
       return
@@ -199,7 +197,6 @@ const Index = () => {
         ...defaultValues,
       }
 
-      console.log(combinedData)
 
       const resp = await postData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_REGISTER}`, combinedData)
 
@@ -267,17 +264,13 @@ const Index = () => {
     const fieldsValid = requiredFields.every((field) => {
       const value = getValues(field as any)
       const isValid = value !== undefined && value !== "" && !errors[field as keyof FormData]
-      console.log(`Field: ${field}, Value: ${value}, Is Valid: ${isValid}`)
       return isValid
     })
 
     const newIsFormValid = fieldsValid && termsAccepted
-    console.log(`All Fields Valid: ${fieldsValid}, Terms Accepted: ${termsAccepted}, Is Form Valid: ${newIsFormValid}`)
     setIsFormValid(newIsFormValid)
   }, [getValues, errors, termsAccepted, watchHasBusiness])
 
-  console.log(isFormValid)
-  console.log(!isFormValid)
 
   return (
     <div className="overflow-hidden flex">

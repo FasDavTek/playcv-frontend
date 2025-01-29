@@ -58,10 +58,10 @@
 
 //   console.log(faqs);
 
-//   const [expandedPanel, setExpandedPanel] = useState<string | false>(false)
+//   const [expanded, setExpanded] = useState<string | false>(false)
 
 //   const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-//     setExpandedPanel(isExpanded ? panel : false)
+//     setExpanded(isExpanded ? panel : false)
 //   }
 
 //   const onSubmit = (values: faqType) => {
@@ -80,7 +80,7 @@
 //           {faqs?.map((faq: any) => (
 //             <Accordion
 //               key={faq.id}
-//               expanded={expandedPanel === `panel${faq.id}`}
+//               expanded={expanded === `panel${faq.id}`}
 //               onChange={handleChange(`panel${faq.id}`)}
 //               sx={{
 //                 borderRadius: "8px",
@@ -230,13 +230,13 @@
 
 //   console.log(faqs)
 
-//   const [expandedPanel, setExpandedPanel] = useState<string | false>(false);
+//   const [expanded, setExpanded] = React.useState<string | false>(false);
 
 //   const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
 //     if (isExpanded) {
 //       console.log(`Opened accordion ID: ${panel}`);
 //     }
-//     setExpandedPanel(isExpanded ? panel : false);
+//     setExpanded(isExpanded ? panel : false);
 //   };
 
 //   const onSubmit = (values: faqType) => {
@@ -255,38 +255,42 @@
 //           {faqs?.map((faq: any) => (
 //             <Accordion
 //               key={faq.id}
-//               expanded={expandedPanel === `panel${faq.id}`}
+//               expanded={expanded === `panel${faq.id}`}
 //               onChange={handleChange(`panel${faq.id}`)}
-//               sx={{
-//                 borderRadius: "8px",
-//                 boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-//                 "&:before": {
-//                   display: "none",
-//                 },
-//               }}
+//               // sx={{
+//               //   borderRadius: "8px",
+//               //   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+//               //   "&:before": {
+//               //     display: "none",
+//               //   },
+//               // }}
 //             >
 //               <AccordionSummary
 //                 expandIcon={<ExpandMoreIcon />}
-//                 aria-controls={`panel${faq.id}-content`}
-//                 id={`panel${faq.id}-header`}
-//                 sx={{
-//                   backgroundColor: "rgba(0, 0, 0, 0.03)",
-//                   borderRadius: "8px 8px 0 0",
-//                   "&.Mui-expanded": {
-//                     borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
-//                   },
-//                 }}
+//                 aria-controls={`panel${faq.id}bh-content`}
+//                 id={`panel${faq.id}bh-header`}
+//                 // className={`${expanded && expanded === `panel${faq.id}` ? 'bg-[rgba(0, 0, 0, 0.03)] rounded-lg' : 'bg-none hidden opacity-0'}`}
+//                 // sx={{
+//                 //   backgroundColor: "",
+//                 //   borderRadius: "8px 8px 0 0",
+//                 //   "&.Mui-expanded": {
+//                 //     borderBottom: "1px solid rgba(0, 0, 0, 0.12)",
+//                 //   },
+//                 // }}
 //               >
 //                 <Typography className="font-semibold text-primary-700">{faq.question}</Typography>
 //               </AccordionSummary>
-//               <AccordionDetails sx={{
-//                   display: expandedPanel === `panel${faq.id}` ? "block" : "none",
-//                   backgroundColor: "white",
-//                   padding: "16px",
-//                 }}
-//               >
-//                 <Typography className="text-gray-700">{faq.answer}</Typography>
-//               </AccordionDetails>
+//               {expanded === `panel${faq.id}` && (
+//                 <AccordionDetails
+//                   sx={{
+//                     display: expanded && expanded === `panel${faq.id}` ? "block" : "none",
+//                     padding: "16px",
+//                   }}
+//                   className={`${expanded && expanded === `panel${faq.id}` ? 'bg-[rgba(0, 0, 0, 0.03)] rounded-lg' : 'bg-none hidden opacity-0'}`}
+//                 >
+//                   {/* <Typography className="text-gray-700 font-thin">{faq.answer}</Typography> */}
+//                 </AccordionDetails>
+//               )}
 //             </Accordion>
 //           ))}
 //         </Box>
@@ -363,10 +367,10 @@ const FAQ = () => {
     structureType: "data",
   });
 
-  const [expandedPanel, setExpandedPanel] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   const togglePanel = (panelId: string) => {
-    setExpandedPanel((prev) => (prev === panelId ? null : panelId));
+    setExpanded((prev) => (prev === panelId ? null : panelId));
   };
 
   const onSubmit = (values: faqType) => {
@@ -383,7 +387,7 @@ const FAQ = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           {faqs?.map((faq: any) => (
-            <div key={faq.id} className="border rounded-lg shadow-sm">
+            <div key={faq.id} className={`${expanded && expanded === faq.id ? 'border rounded-lg shadow-sm bg-white' : ''}`}>
               <button
                 className="w-full p-4 text-left flex justify-between items-center bg-gray-50 hover:bg-gray-100 rounded-t-lg"
                 onClick={() => togglePanel(faq.id)}
@@ -391,7 +395,7 @@ const FAQ = () => {
                 <span className="font-semibold text-primary-700">{faq.question}</span>
                 <svg
                   className={`w-5 h-5 transition-transform transform ${
-                    expandedPanel === faq.id ? 'rotate-180' : ''
+                    expanded === faq.id ? 'rotate-180' : ''
                   }`}
                   fill="none"
                   stroke="currentColor"
@@ -401,8 +405,8 @@ const FAQ = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              {expandedPanel === faq.id && (
-                <div className={`${expandedPanel === faq.id ? 'p-4 text-gray-700 bg-red-800' : expandedPanel !== faq.id ? 'bg-transparent h-0' : ''}`}>
+              {expanded && expanded === faq.id && (
+                <div className={`${expanded && expanded === faq.id ? 'p-4 text-gray-700 bg-[rgba(0, 0, 0, 0.03)] rounded-lg' : 'bg-none hidden opacity-0'}`}>
                   {faq.answer}
                 </div>
               )}
