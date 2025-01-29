@@ -41,586 +41,6 @@
   ],
   "fileMap": {
     "projectFileMap": {
-      "video-cv": [
-        {
-          "file": "apps/video-cv/.eslintrc.json",
-          "hash": "11012487992710232822"
-        },
-        {
-          "file": "apps/video-cv/index.html",
-          "hash": "14948851329393056670"
-        },
-        {
-          "file": "apps/video-cv/project.json",
-          "hash": "11542160982273613661"
-        },
-        {
-          "file": "apps/video-cv/public/_redirects",
-          "hash": "8738055346875944353"
-        },
-        {
-          "file": "apps/video-cv/public/favicon.ico",
-          "hash": "9303420814833116677"
-        },
-        {
-          "file": "apps/video-cv/src/app/app.spec.tsx",
-          "hash": "12892688802277322258",
-          "deps": [
-            "npm:@testing-library/react"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/app/app.tsx",
-          "hash": "16237545773474800576"
-        },
-        {
-          "file": "apps/video-cv/src/assets/.gitkeep",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/video-cv/src/components/ChannelCard.tsx",
-          "hash": "3741964862563969173",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "npm:@mui/icons-material",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/ChannelDetail.tsx",
-          "hash": "7852051426068101534",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/JobCard.tsx",
-          "hash": "3921337088279461401",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "npm:react-router-dom",
-            "npm:@mui/icons-material",
-            "npm:clsx"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/Jobs.tsx",
-          "hash": "13917826845241037670",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "npm:@mui/icons-material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/Loader.tsx",
-          "hash": "16458609142395316147",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/Navbar.tsx",
-          "hash": "12804679367580288606",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "npm:@mui/icons-material",
-            "npm:react-router-dom",
-            "npm:react-toastify"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/SearchBar.tsx",
-          "hash": "3241487136925909602",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@mui/material",
-            "npm:@mui/icons-material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/SearchFeed.tsx",
-          "hash": "13218963193057293930",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/Sidebar.tsx",
-          "hash": "12507424358632393398",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/SimilarJobs.tsx",
-          "hash": "13022679769720201679",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/VideoCard.tsx",
-          "hash": "9532892676335745903",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@mui/material",
-            "npm:@mui/icons-material",
-            "npm:react-intersection-observer"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/VideoDetail.tsx",
-          "hash": "16747350750937638704",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:react-player",
-            "npm:@mui/material",
-            "npm:@mui/icons-material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/Videos.tsx",
-          "hash": "13462458291007152178",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "npm:@mui/icons-material",
-            "npm:react-router-dom",
-            "npm:react-toastify"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/dashboard/DashboardCalendar.tsx",
-          "hash": "17745056297390598977",
-          "deps": [
-            "npm:@mui/x-date-pickers"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/dashboard/MonthlyRevenueChart.tsx",
-          "hash": "10862245655604323795",
-          "deps": [
-            "npm:react",
-            "npm:chart.js",
-            "npm:react-chartjs-2"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/dashboard/PatientActivityChart.tsx",
-          "hash": "12815872945344488089",
-          "deps": [
-            "npm:react",
-            "npm:chart.js",
-            "npm:react-chartjs-2"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/fetchJobs.tsx",
-          "hash": "3299239003201346290",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "npm:@mui/icons-material",
-            "npm:react-router-dom",
-            "npm:react-toastify",
-            "npm:dayjs"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/components/index.ts",
-          "hash": "4361367570927585500"
-        },
-        {
-          "file": "apps/video-cv/src/context/AuthProvider.tsx",
-          "hash": "3805260959752213801",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/context/CartProvider.tsx",
-          "hash": "12433536322100675346",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/global.d.ts",
-          "hash": "6680716263200826348"
-        },
-        {
-          "file": "apps/video-cv/src/layouts/AppLayout.tsx",
-          "hash": "7905288784039650141",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/layouts/AuthLayout.tsx",
-          "hash": "8870182202783645603",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/main.tsx",
-          "hash": "15765586834598529061",
-          "deps": [
-            "npm:react",
-            "npm:react-dom",
-            "npm:react-router-dom",
-            "npm:@mui/x-date-pickers",
-            "npm:react-query",
-            "npm:react-toastify"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Advert Policy/index.tsx",
-          "hash": "10973901357668869202",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Advertisement/index.tsx",
-          "hash": "11731232637256861090",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@mui/material",
-            "npm:zod"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Advertisement/manage.tsx",
-          "hash": "1365331402081988664",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Advertisement/modals/CreateAdvert.tsx",
-          "hash": "2836960435705019589",
-          "deps": [
-            "npm:react",
-            "npm:react-hook-form",
-            "npm:@mui/icons-material",
-            "npm:zod",
-            "npm:@hookform/resolvers"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Cart/index.tsx",
-          "hash": "8558712438121284497",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@mui/material",
-            "npm:@mui/icons-material",
-            "npm:react-toastify"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Dashboard/index.tsx",
-          "hash": "2349214735431289815",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Feed/index.tsx",
-          "hash": "3945796803061423073",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "npm:react-router-dom",
-            "npm:swiper"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Home/index.tsx",
-          "hash": "11198742781430417075",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/JobBoard/index.tsx",
-          "hash": "17392426505995125835",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom",
-            "npm:@mui/material",
-            "npm:@mui/icons-material",
-            "npm:swiper",
-            "npm:react-hook-form",
-            "npm:dayjs"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/JobDetail/index.tsx",
-          "hash": "8081893182928022490",
-          "deps": [
-            "npm:react",
-            "npm:@mui/icons-material",
-            "npm:react-router-dom",
-            "npm:react-toastify"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Login/index.tsx",
-          "hash": "7469551738629221839",
-          "deps": [
-            "npm:react",
-            "npm:zod",
-            "npm:@hookform/resolvers",
-            "npm:react-router-dom",
-            "npm:@mui/material",
-            "npm:@mui/icons-material",
-            "npm:react-hook-form",
-            "npm:react-toastify"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Payment/index.tsx",
-          "hash": "10953717607383158060",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Privacy Policy/index.tsx",
-          "hash": "4878714392850656239",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Profile/index.tsx",
-          "hash": "10231903234372851345",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "npm:react-dropzone"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/TalentGallery/index.tsx",
-          "hash": "12865849024391832177",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "npm:swiper",
-            "npm:@mui/icons-material",
-            "npm:react-router-dom",
-            "npm:react-hook-form"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Terms and Conditions/index.tsx",
-          "hash": "13046981656129396167",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/Terms, Conditions , Advert and Privacy Policies/index.tsx",
-          "hash": "17875795296471655085"
-        },
-        {
-          "file": "apps/video-cv/src/pages/VideoDetails/index.tsx",
-          "hash": "17109969414876576299",
-          "deps": [
-            "npm:react",
-            "npm:react-player",
-            "npm:@mui/material",
-            "npm:react-router-dom",
-            "npm:@mui/icons-material",
-            "npm:@emotion/styled",
-            "npm:react-toastify",
-            "npm:swiper"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/pages/VideoManagement/index.tsx",
-          "hash": "225525277898597404",
-          "deps": [
-            "npm:react",
-            "npm:@mui/material",
-            "npm:@tanstack/react-table"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/routes/AuthRoutes.tsx",
-          "hash": "16566014383846015456",
-          "deps": [
-            "npm:react",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/routes/ErrorBoundary.tsx",
-          "hash": "10669288494954738548",
-          "deps": [
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/routes/ProtectedRoutes.tsx",
-          "hash": "6835247845791945367"
-        },
-        {
-          "file": "apps/video-cv/src/routes/index.tsx",
-          "hash": "4771387473448903190",
-          "deps": [
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/schema/formValidations/Advert.schema.ts",
-          "hash": "17357057082854551199",
-          "deps": [
-            "npm:zod",
-            "npm:dayjs"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/schema/videoUploadSchema.ts",
-          "hash": "9433281539679615466",
-          "deps": [
-            "npm:zod"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/styles.scss",
-          "hash": "13694964323813242707"
-        },
-        {
-          "file": "apps/video-cv/src/utils/Videos.ts",
-          "hash": "10095242475143590482",
-          "deps": [
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/utils/constants.tsx",
-          "hash": "17424768522134678805",
-          "deps": [
-            "npm:@mui/icons-material"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/utils/fetchFromAPI.ts",
-          "hash": "12534130440358835400",
-          "deps": [
-            "npm:axios"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/utils/jobs.ts",
-          "hash": "15860444766588111990",
-          "deps": [
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/video-cv/src/utils/videoCVs.tsx",
-          "hash": "15838958547580611642",
-          "deps": [
-            "npm:uuid"
-          ]
-        },
-        {
-          "file": "apps/video-cv/tsconfig.app.json",
-          "hash": "15537277801600690409"
-        },
-        {
-          "file": "apps/video-cv/tsconfig.json",
-          "hash": "6987356734474611113"
-        },
-        {
-          "file": "apps/video-cv/tsconfig.spec.json",
-          "hash": "9472099605191632308"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734279565028-23c95985f827.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734279571586-dfe82075e270e.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734279578197-c9771e2388064.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734279591463-db1517d4487ed.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734279598020-42f46fcc6864a.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734279604610-4af8a03cacd3.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734279611169-97391170b7c06.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734499068495-eff6c41d344bb.mjs",
-          "hash": "15608899666542857395"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734659498150-7299c58ab45bf.mjs",
-          "hash": "15358830969623386155"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734659498150-d481cdcc2dc91.mjs",
-          "hash": "15358830969623386155"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734773362656-0c8f4b12d286e.mjs",
-          "hash": "13437398520145597717"
-        },
-        {
-          "file": "apps/video-cv/vite.config.mts.timestamp-1734850819985-7dab6151e9bf8.mjs",
-          "hash": "15608899666542857395"
-        },
-        {
-          "file": "apps/video-cv/vite.config.ts",
-          "hash": "1216625510594812892",
-          "deps": [
-            "npm:vitest",
-            "npm:vite",
-            "npm:@vitejs/plugin-react",
-            "npm:@nx/vite"
-          ]
-        }
-      ],
       "Employer": [
         {
           "file": "apps/Employer/.eslintrc.json",
@@ -1579,6 +999,671 @@
           "hash": "3244421341483603138"
         }
       ],
+      "<TBD>": [
+        {
+          "file": "bold-limit-3469/.editorconfig",
+          "hash": "13150993771692379513"
+        },
+        {
+          "file": "bold-limit-3469/.gitignore",
+          "hash": "10657848430346760040"
+        },
+        {
+          "file": "bold-limit-3469/.prettierrc",
+          "hash": "13101785885185865301"
+        },
+        {
+          "file": "bold-limit-3469/package.json",
+          "hash": "377340751654847863",
+          "deps": [
+            "npm:@cloudflare/vitest-pool-workers",
+            "npm:typescript",
+            "npm:vitest",
+            "npm:wrangler"
+          ]
+        },
+        {
+          "file": "bold-limit-3469/src/index.ts",
+          "hash": "9425978536724220104"
+        },
+        {
+          "file": "bold-limit-3469/test/index.spec.ts",
+          "hash": "92259654209585123",
+          "deps": [
+            "npm:vitest"
+          ]
+        },
+        {
+          "file": "bold-limit-3469/test/tsconfig.json",
+          "hash": "15673312704250424360"
+        },
+        {
+          "file": "bold-limit-3469/tsconfig.json",
+          "hash": "3370489923022845801"
+        },
+        {
+          "file": "bold-limit-3469/vitest.config.mts",
+          "hash": "4548192885265492178",
+          "deps": [
+            "npm:@cloudflare/vitest-pool-workers"
+          ]
+        },
+        {
+          "file": "bold-limit-3469/vitest.config.mts.timestamp-1734850819963-d8c3f4a46196f.mjs",
+          "hash": "5006604063539304861",
+          "deps": [
+            "npm:@cloudflare/vitest-pool-workers"
+          ]
+        },
+        {
+          "file": "bold-limit-3469/vitest.config.mts.timestamp-1735402456609-ca825a80bcdd7.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "bold-limit-3469/vitest.config.mts.timestamp-1735753964611-e40c851b471ac.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "bold-limit-3469/vitest.config.mts.timestamp-1735753965167-95d8f577d4466.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "bold-limit-3469/vitest.config.mts.timestamp-1735753965715-13a8034abb19f.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "bold-limit-3469/vitest.config.mts.timestamp-1735754099206-39403c29e613f.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "bold-limit-3469/worker-configuration.d.ts",
+          "hash": "14027198842220560327"
+        },
+        {
+          "file": "bold-limit-3469/wrangler.toml",
+          "hash": "5229844214615198423"
+        }
+      ],
+      "video-cv": [
+        {
+          "file": "apps/video-cv/.eslintrc.json",
+          "hash": "11012487992710232822"
+        },
+        {
+          "file": "apps/video-cv/index.html",
+          "hash": "14948851329393056670"
+        },
+        {
+          "file": "apps/video-cv/project.json",
+          "hash": "11542160982273613661"
+        },
+        {
+          "file": "apps/video-cv/public/_redirects",
+          "hash": "8738055346875944353"
+        },
+        {
+          "file": "apps/video-cv/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "apps/video-cv/src/app/app.spec.tsx",
+          "hash": "12892688802277322258",
+          "deps": [
+            "npm:@testing-library/react"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/app/app.tsx",
+          "hash": "16237545773474800576"
+        },
+        {
+          "file": "apps/video-cv/src/assets/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/video-cv/src/components/ChannelCard.tsx",
+          "hash": "3741964862563969173",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/ChannelDetail.tsx",
+          "hash": "7852051426068101534",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/JobCard.tsx",
+          "hash": "3921337088279461401",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:@mui/icons-material",
+            "npm:clsx"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/Jobs.tsx",
+          "hash": "13917826845241037670",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/Loader.tsx",
+          "hash": "16458609142395316147",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/Navbar.tsx",
+          "hash": "12804679367580288606",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-router-dom",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/SearchBar.tsx",
+          "hash": "3241487136925909602",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/SearchFeed.tsx",
+          "hash": "13218963193057293930",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/Sidebar.tsx",
+          "hash": "12507424358632393398",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/SimilarJobs.tsx",
+          "hash": "13022679769720201679",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/VideoCard.tsx",
+          "hash": "9532892676335745903",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-intersection-observer"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/VideoDetail.tsx",
+          "hash": "16747350750937638704",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:react-player",
+            "npm:@mui/material",
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/Videos.tsx",
+          "hash": "13462458291007152178",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-router-dom",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/dashboard/DashboardCalendar.tsx",
+          "hash": "17745056297390598977",
+          "deps": [
+            "npm:@mui/x-date-pickers"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/dashboard/MonthlyRevenueChart.tsx",
+          "hash": "10862245655604323795",
+          "deps": [
+            "npm:react",
+            "npm:chart.js",
+            "npm:react-chartjs-2"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/dashboard/PatientActivityChart.tsx",
+          "hash": "12815872945344488089",
+          "deps": [
+            "npm:react",
+            "npm:chart.js",
+            "npm:react-chartjs-2"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/fetchJobs.tsx",
+          "hash": "3299239003201346290",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-router-dom",
+            "npm:react-toastify",
+            "npm:dayjs"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/components/index.ts",
+          "hash": "4361367570927585500"
+        },
+        {
+          "file": "apps/video-cv/src/context/AuthProvider.tsx",
+          "hash": "3805260959752213801",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/context/CartProvider.tsx",
+          "hash": "12433536322100675346",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/global.d.ts",
+          "hash": "6680716263200826348"
+        },
+        {
+          "file": "apps/video-cv/src/layouts/AppLayout.tsx",
+          "hash": "7905288784039650141",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/layouts/AuthLayout.tsx",
+          "hash": "8870182202783645603",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/main.tsx",
+          "hash": "15765586834598529061",
+          "deps": [
+            "npm:react",
+            "npm:react-dom",
+            "npm:react-router-dom",
+            "npm:@mui/x-date-pickers",
+            "npm:react-query",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Advert Policy/index.tsx",
+          "hash": "10973901357668869202",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Advertisement/index.tsx",
+          "hash": "11731232637256861090",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Advertisement/manage.tsx",
+          "hash": "1365331402081988664",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Advertisement/modals/CreateAdvert.tsx",
+          "hash": "2836960435705019589",
+          "deps": [
+            "npm:react",
+            "npm:react-hook-form",
+            "npm:@mui/icons-material",
+            "npm:zod",
+            "npm:@hookform/resolvers"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Cart/index.tsx",
+          "hash": "8558712438121284497",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Dashboard/index.tsx",
+          "hash": "2349214735431289815",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Feed/index.tsx",
+          "hash": "3945796803061423073",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:swiper"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Home/index.tsx",
+          "hash": "11198742781430417075",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/JobBoard/index.tsx",
+          "hash": "17392426505995125835",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:swiper",
+            "npm:react-hook-form",
+            "npm:dayjs"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/JobDetail/index.tsx",
+          "hash": "8081893182928022490",
+          "deps": [
+            "npm:react",
+            "npm:@mui/icons-material",
+            "npm:react-router-dom",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Login/index.tsx",
+          "hash": "7469551738629221839",
+          "deps": [
+            "npm:react",
+            "npm:zod",
+            "npm:@hookform/resolvers",
+            "npm:react-router-dom",
+            "npm:@mui/material",
+            "npm:@mui/icons-material",
+            "npm:react-hook-form",
+            "npm:react-toastify"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Payment/index.tsx",
+          "hash": "10953717607383158060",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Privacy Policy/index.tsx",
+          "hash": "4878714392850656239",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Profile/index.tsx",
+          "hash": "10231903234372851345",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:react-dropzone"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/TalentGallery/index.tsx",
+          "hash": "12865849024391832177",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:swiper",
+            "npm:@mui/icons-material",
+            "npm:react-router-dom",
+            "npm:react-hook-form"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Terms and Conditions/index.tsx",
+          "hash": "13046981656129396167",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/Terms, Conditions , Advert and Privacy Policies/index.tsx",
+          "hash": "17875795296471655085"
+        },
+        {
+          "file": "apps/video-cv/src/pages/VideoDetails/index.tsx",
+          "hash": "17109969414876576299",
+          "deps": [
+            "npm:react",
+            "npm:react-player",
+            "npm:@mui/material",
+            "npm:react-router-dom",
+            "npm:@mui/icons-material",
+            "npm:@emotion/styled",
+            "npm:react-toastify",
+            "npm:swiper"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/pages/VideoManagement/index.tsx",
+          "hash": "225525277898597404",
+          "deps": [
+            "npm:react",
+            "npm:@mui/material",
+            "npm:@tanstack/react-table"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/routes/AuthRoutes.tsx",
+          "hash": "16566014383846015456",
+          "deps": [
+            "npm:react",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/routes/ErrorBoundary.tsx",
+          "hash": "10669288494954738548",
+          "deps": [
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/routes/ProtectedRoutes.tsx",
+          "hash": "6835247845791945367"
+        },
+        {
+          "file": "apps/video-cv/src/routes/index.tsx",
+          "hash": "4771387473448903190",
+          "deps": [
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/schema/formValidations/Advert.schema.ts",
+          "hash": "17357057082854551199",
+          "deps": [
+            "npm:zod",
+            "npm:dayjs"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/schema/videoUploadSchema.ts",
+          "hash": "9433281539679615466",
+          "deps": [
+            "npm:zod"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/styles.scss",
+          "hash": "13694964323813242707"
+        },
+        {
+          "file": "apps/video-cv/src/utils/Videos.ts",
+          "hash": "10095242475143590482",
+          "deps": [
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/utils/constants.tsx",
+          "hash": "17424768522134678805",
+          "deps": [
+            "npm:@mui/icons-material"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/utils/fetchFromAPI.ts",
+          "hash": "12534130440358835400",
+          "deps": [
+            "npm:axios"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/utils/jobs.ts",
+          "hash": "15860444766588111990",
+          "deps": [
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/video-cv/src/utils/videoCVs.tsx",
+          "hash": "15838958547580611642",
+          "deps": [
+            "npm:uuid"
+          ]
+        },
+        {
+          "file": "apps/video-cv/tsconfig.app.json",
+          "hash": "15537277801600690409"
+        },
+        {
+          "file": "apps/video-cv/tsconfig.json",
+          "hash": "6987356734474611113"
+        },
+        {
+          "file": "apps/video-cv/tsconfig.spec.json",
+          "hash": "9472099605191632308"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734279565028-23c95985f827.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734279571586-dfe82075e270e.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734279578197-c9771e2388064.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734279591463-db1517d4487ed.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734279598020-42f46fcc6864a.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734279604610-4af8a03cacd3.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734279611169-97391170b7c06.mjs",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734499068495-eff6c41d344bb.mjs",
+          "hash": "15608899666542857395"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734659498150-7299c58ab45bf.mjs",
+          "hash": "15358830969623386155"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734659498150-d481cdcc2dc91.mjs",
+          "hash": "15358830969623386155"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734773362656-0c8f4b12d286e.mjs",
+          "hash": "13437398520145597717"
+        },
+        {
+          "file": "apps/video-cv/vite.config.mts.timestamp-1734850819985-7dab6151e9bf8.mjs",
+          "hash": "15608899666542857395"
+        },
+        {
+          "file": "apps/video-cv/vite.config.ts",
+          "hash": "1216625510594812892",
+          "deps": [
+            "npm:vitest",
+            "npm:vite",
+            "npm:@vitejs/plugin-react",
+            "npm:@nx/vite"
+          ]
+        }
+      ],
       "Candidate": [
         {
           "file": "apps/Candidate/.eslintrc.json",
@@ -2067,91 +2152,6 @@
         {
           "file": "apps/Candidate/vite.config.mts.timestamp-1735754099243-1228dd69e42a5.mjs",
           "hash": "3244421341483603138"
-        }
-      ],
-      "<TBD>": [
-        {
-          "file": "bold-limit-3469/.editorconfig",
-          "hash": "13150993771692379513"
-        },
-        {
-          "file": "bold-limit-3469/.gitignore",
-          "hash": "10657848430346760040"
-        },
-        {
-          "file": "bold-limit-3469/.prettierrc",
-          "hash": "13101785885185865301"
-        },
-        {
-          "file": "bold-limit-3469/package.json",
-          "hash": "377340751654847863",
-          "deps": [
-            "npm:@cloudflare/vitest-pool-workers",
-            "npm:typescript",
-            "npm:vitest",
-            "npm:wrangler"
-          ]
-        },
-        {
-          "file": "bold-limit-3469/src/index.ts",
-          "hash": "9425978536724220104"
-        },
-        {
-          "file": "bold-limit-3469/test/index.spec.ts",
-          "hash": "92259654209585123",
-          "deps": [
-            "npm:vitest"
-          ]
-        },
-        {
-          "file": "bold-limit-3469/test/tsconfig.json",
-          "hash": "15673312704250424360"
-        },
-        {
-          "file": "bold-limit-3469/tsconfig.json",
-          "hash": "3370489923022845801"
-        },
-        {
-          "file": "bold-limit-3469/vitest.config.mts",
-          "hash": "4548192885265492178",
-          "deps": [
-            "npm:@cloudflare/vitest-pool-workers"
-          ]
-        },
-        {
-          "file": "bold-limit-3469/vitest.config.mts.timestamp-1734850819963-d8c3f4a46196f.mjs",
-          "hash": "5006604063539304861",
-          "deps": [
-            "npm:@cloudflare/vitest-pool-workers"
-          ]
-        },
-        {
-          "file": "bold-limit-3469/vitest.config.mts.timestamp-1735402456609-ca825a80bcdd7.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "bold-limit-3469/vitest.config.mts.timestamp-1735753964611-e40c851b471ac.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "bold-limit-3469/vitest.config.mts.timestamp-1735753965167-95d8f577d4466.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "bold-limit-3469/vitest.config.mts.timestamp-1735753965715-13a8034abb19f.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "bold-limit-3469/vitest.config.mts.timestamp-1735754099206-39403c29e613f.mjs",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "bold-limit-3469/worker-configuration.d.ts",
-          "hash": "14027198842220560327"
-        },
-        {
-          "file": "bold-limit-3469/wrangler.toml",
-          "hash": "5229844214615198423"
         }
       ]
     },

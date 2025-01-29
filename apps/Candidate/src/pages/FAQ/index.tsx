@@ -49,7 +49,7 @@ const FAQ = () => {
           {faqs?.map((faq: any) => (
             <div key={faq.id} className={`${expanded && expanded === faq.id ? ' rounded-lg shadow-sm bg-white' : ''}`}>
               <button
-                className="w-full p-4 text-left flex justify-between items-center bg-gray-50 hover:bg-gray-100 rounded-t-lg"
+                className="w-full p-4 text-left flex justify-between items-center bg-black/90 text-white hover:bg-black rounded-t-lg"
                 onClick={() => togglePanel(faq.id)}
               >
                 <span className="font-medium text-primary-700">{faq.question}</span>
