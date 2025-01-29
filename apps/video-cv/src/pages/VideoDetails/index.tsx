@@ -38,6 +38,7 @@ interface Video {
   dateCreated: string
   views: number
   videoUrl: string
+  thumbnailUrl: string
   status: string
   totalRecords: number
   authorProfile: {
@@ -231,24 +232,24 @@ const VideoDetails = () => {
     navigate(-1);
   };
 
-  if (loading) {
-    return (
-      <Box className="flex items-center justify-center min-h-screen">
-        <CircularProgress />
-      </Box>
-    )
-  }
+  // if (loading) {
+  //   return (
+  //     <Box className="flex items-center justify-center min-h-screen">
+  //       <CircularProgress />
+  //     </Box>
+  //   )
+  // }
 
-  if (error || !video) {
-    return (
-      <Box className="items-center justify-center min-h-screen">
-        <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-0 p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
-        <Typography variant="h6" color="error" gutterBottom>
-          {error || 'Video not found'}
-        </Typography>
-      </Box>
-    )
-  };
+  // if (error || !video) {
+  //   return (
+  //     <Box className="items-center justify-center min-h-screen">
+  //       <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-0 p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
+  //       <Typography variant="h6" color="error" gutterBottom>
+  //         {error || 'Video not found'}
+  //       </Typography>
+  //     </Box>
+  //   )
+  // };
 
 
   return (
@@ -257,11 +258,11 @@ const VideoDetails = () => {
         <Box className="rounded-lg">
           <Stack mx='auto' direction="column" spacing={4}>
             <Box className="w-full top-24 rounded-3xl">
-              <ReactPlayer url={video.videoUrl} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} />
+              <ReactPlayer url={video?.videoUrl} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} />
             </Box>
-            <Box className="flex flex-col gap-1">
+            <Box className="flex flex-col gap-1 ">
               <Stack direction="row" alignItems="center" justifyContent="space-between" p={1}>
-                <Typography variant="subtitle2">{video.views} views</Typography>
+                <Typography variant="subtitle2">{video?.views} views</Typography>
                 <Button onClick={handleAddToCart} variant="custom" className="text-[#5c6bc0] hover:text-[#2e3a86] animate-bounce" icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />} />
               </Stack>
               <Stack direction="row" alignItems="center" justifyContent="space-between" p={1} spacing={8}>
@@ -274,35 +275,35 @@ const VideoDetails = () => {
                 {isExpanded ? (
                   <Stack direction="column" alignItems="center" justifyContent="space-between">
                     <Typography variant="h5" gutterBottom>
-                      {video.title}
+                      {video?.title}
                     </Typography>
                     {/* <Typography variant="h6" gutterBottom>
-                      {video.role}
+                      {video?.role}
                     </Typography> */}
                     <Typography variant="body1" gutterBottom>
-                      Uploaded by {video.authorProfile.userDetails.fullName}
+                      Uploaded by {video?.authorProfile.userDetails.fullName}
                     </Typography>
                     {/* <Typography variant="body2">
-                      {video.description}
+                      {video?.description}
                     </Typography> */}
-                    <Typography variant='caption'>
-                      Uploaded on {new Date(video.dateCreated).toLocaleDateString()}
-                    </Typography>
+                    {/* <Typography variant='caption'>
+                      Uploaded on {new Date(video?.dateCreated).toLocaleDateString()}
+                    </Typography> */}
                   </Stack>
                 ) : (
                   <Stack direction={'column'} alignItems="center" justifyContent="space-between">
                     <Typography variant="h5" gutterBottom>
-                      {video.title}
+                      {video?.title}
                     </Typography>
                     {/* <Typography variant="h6" gutterBottom>
-                      {video.role}
+                      {video?.role}
                     </Typography> */}
                     <Typography variant="body1" gutterBottom>
-                      Uploaded by {video.authorProfile.userDetails.fullName}
+                      Uploaded by {video?.authorProfile.userDetails.fullName}
                     </Typography>
                     <label></label>
                     {/* <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
-                      {video.description}
+                      {video?.description}
                     </ClampedText> */}
                     <Button onClick={handleReadMoreClick} label='Read More' variant="custom" className='video-description' ></Button>
                   </Stack>
@@ -335,28 +336,28 @@ const VideoDetails = () => {
         {isExpanded ? (
           <Stack direction="column" alignItems="start" justifyContent="space-between" className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex-col lg:flex hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-aut0'}`}>
             <Typography variant="h5" gutterBottom>
-              {video.title}
+              {video?.title}
             </Typography>
             {/* <Typography variant="h6" gutterBottom>
-              {video.role}
+              {video?.role}
             </Typography> */}
             <Typography variant="body1" gutterBottom>
-              Uploaded by {video.authorProfile.userDetails.fullName}
+              Uploaded by {video?.authorProfile.userDetails.fullName}
             </Typography>
             {/* <Typography variant="body2">
-              {video.description}
+              {video?.description}
             </Typography> */}
           </Stack>
         ) : (
           <Stack direction={'column'} alignItems="start" justifyContent="space-between" className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex-col lg:flex hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-auto'}`}>
             <Typography variant="h5" gutterBottom>
-              {video.title}
+              {video?.title}
             </Typography>
             {/* <Typography variant="h6" gutterBottom>
-              {video.role}
+              {video?.role}
             </Typography> */}
             <Typography variant="body1" gutterBottom>
-              Uploaded by {video.authorProfile.userDetails.fullName}
+              Uploaded by {video?.authorProfile.userDetails.fullName}
             </Typography>
             {/* <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
               {video.description}
@@ -367,7 +368,7 @@ const VideoDetails = () => {
 
         {/* ITEM SHOULD BE HERE */}
         {isFromTalentGallery && relatedVideos.length > 0 && (
-          <Box className="related-videos">
+          <Box className="related-videos bg-black">
             <Typography variant='h6'>Related Videos</Typography>
             <div className="grid grid-cols-1 gap-4">
               {relatedVideos.map(video => (

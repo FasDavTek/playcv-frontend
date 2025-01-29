@@ -159,7 +159,7 @@ const Navbar = () => {
         isScrolled ? 'scrolled' : ''
       } bg-white`}
     >
-      <div className="w-full mx-auto flex items-center justify-between h-dvh">
+      <div className="w-full mx-auto flex items-center justify-between h-dvh lg:h-auto">
         <Link
           className=""
           to="/"

@@ -28,6 +28,7 @@ interface Video {
   dateCreated: string
   views: number
   videoUrl: string
+  thumbnailUrl: string
   status: string
   totalRecords: number
   authorProfile: {
@@ -44,7 +45,7 @@ interface VideoCardProps {
 
 
 const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
-  const { id, title, views, videoUrl, authorProfile, type, dateCreated, status, price } = video;
+  const { id, title, views, videoUrl, thumbnailUrl, authorProfile, type, dateCreated, status, price } = video;
   const { cartState, dispatch } = useCart();
   const { authState } = useAuth();
   const navigate = useNavigate();
@@ -116,12 +117,12 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
         <CardMedia
           ref={ref}
           component='img'
-          image={inView ? videoUrl || demoThumbnailUrl : videoUrl}
+          image={inView ? thumbnailUrl : videoUrl}
           title={title}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.onerror = null;
-            target.src = videoUrl;
+            target.src = thumbnailUrl;
           }}
           onClick={() => handleViewDetails(video)}
           sx={{ width: { xs: '100%', sm: '358px' }, height: 180 }}

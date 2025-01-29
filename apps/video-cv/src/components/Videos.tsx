@@ -24,6 +24,7 @@ interface Video {
   dateCreated: string
   views: number
   videoUrl: string
+  thumbnailUrl: string
   status: string
   totalRecords: number
   authorProfile: {
