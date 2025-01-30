@@ -17,7 +17,7 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { Controller, useForm } from 'react-hook-form';
 
 interface Video {
-    id: number
+  id: number
   title: string
   typeId: number
   type: string
@@ -28,6 +28,7 @@ interface Video {
   dateCreated: string
   views: number
   videoUrl: string
+  thumbnailUrl: string
   status: string
   totalRecords: number
   authorProfile: {
