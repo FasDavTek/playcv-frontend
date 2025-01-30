@@ -162,22 +162,22 @@ const Index = () => {
 
       const professionalInfor = data.hasBusiness ? {
         businessName: data.professionalInfo?.businessName,
-        businessProfile: data.professionalInfo?.businessProfile,
+        // businessProfile: data.professionalInfo?.businessProfile,
         businessPhone: data.professionalInfo?.businessPhone,
-        address: data.professionalInfo?.address,
+        // address: data.professionalInfo?.address,
         industryId: data.professionalInfo?.industryId,
         industry: data.professionalInfo?.industry,
-        degreeClassId: data.professionalInfo?.degreeClassId,
-        classOfDegree: data.professionalInfo?.classOfDegree,
-        courseId: data.professionalInfo?.courseId,
-        course: data.professionalInfo?.course,
-        institutionId: data.professionalInfo?.institutionId,
-        institution: data.professionalInfo?.institution,
-        degreeTypeId: data.professionalInfo?.degreeTypeId,
-        degree: data.professionalInfo?.degree,
-        nyscStateCode: data.professionalInfo?.nyscStateCode,
-        nyscStartYear: data.professionalInfo?.nyscStartYear,
-        nyscEndYear: data.professionalInfo?.nyscEndYear,
+        // degreeClassId: data.professionalInfo?.degreeClassId,
+        // classOfDegree: data.professionalInfo?.classOfDegree,
+        // courseId: data.professionalInfo?.courseId,
+        // course: data.professionalInfo?.course,
+        // institutionId: data.professionalInfo?.institutionId,
+        // institution: data.professionalInfo?.institution,
+        // degreeTypeId: data.professionalInfo?.degreeTypeId,
+        // degree: data.professionalInfo?.degree,
+        // nyscStateCode: data.professionalInfo?.nyscStateCode,
+        // nyscStartYear: data.professionalInfo?.nyscStartYear,
+        // nyscEndYear: data.professionalInfo?.nyscEndYear,
       } : null
 
       const payloadData = {
@@ -251,12 +251,12 @@ const Index = () => {
       requiredFields.push(
         "professionalInfo.businessName",
         "professionalInfo.businessPhone",
-        "professionalInfo.course",
-        "professionalInfo.institution",
-        "professionalInfo.classOfDegree",
-        "professionalInfo.nyscStateCode",
-        "professionalInfo.nyscStartYear",
-        "professionalInfo.nyscEndYear",
+        // "professionalInfo.course",
+        // "professionalInfo.institution",
+        // "professionalInfo.classOfDegree",
+        // "professionalInfo.nyscStateCode",
+        // "professionalInfo.nyscStartYear",
+        // "professionalInfo.nyscEndYear",
         "professionalInfo.industry",
       )
     }
@@ -275,7 +275,7 @@ const Index = () => {
   return (
     <div className="overflow-hidden flex">
       <div
-        className="border w-0 flex-1 min-h-screen"
+        className="border w-0 md:flex-1 min-h-screen"
         style={{
           backgroundImage: `url(${Images.AuthBG})`,
           backgroundSize: "cover",
@@ -381,7 +381,7 @@ const Index = () => {
                       }
                     />
                   </div>
-                  <div>
+                  {/* <div>
                     <Controller
                       name="professionalInfo.course"
                       control={control}
@@ -525,7 +525,7 @@ const Index = () => {
                         />
                       )}
                     />
-                  </div>
+                  </div> */}
                   <div>
                     <Controller
                       name="professionalInfo.industry"
