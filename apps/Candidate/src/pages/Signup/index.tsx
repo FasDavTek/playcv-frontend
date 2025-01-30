@@ -269,7 +269,7 @@ const Index = () => {
 
     const newIsFormValid = fieldsValid && termsAccepted
     setIsFormValid(newIsFormValid)
-  }, [getValues, errors, termsAccepted, watchHasBusiness])
+  }, [getValues, errors, termsAccepted])
 
 
   return (
@@ -353,35 +353,7 @@ const Index = () => {
                 isValid={!errors.email && !!watchedFields.email}
               />
             </div>
-            {watchHasBusiness && (
-              <div className="col-span-2 mt-4">
-                <h3 className="text-lg font-semibold mb-3">Business Profile</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <Input
-                      label={
-                        <span>
-                          Business Name
-                        </span>
-                      }
-                      placeholder="Business Name"
-                      error={errors?.professionalInfo?.businessName}
-                      {...register("professionalInfo.businessName")}
-                      isValid={!errors?.professionalInfo?.businessName && !!watchedFields.professionalInfo?.businessName}
-                    />
-                  </div>
-                  <div>
-                    <Input
-                      label={<span>Business Phone Number</span>}
-                      placeholder="Business Phone Number"
-                      error={errors?.professionalInfo?.businessPhone}
-                      {...register("professionalInfo.businessPhone")}
-                      isValid={
-                        !errors?.professionalInfo?.businessPhone && !!watchedFields.professionalInfo?.businessPhone
-                      }
-                    />
-                  </div>
-                  {/* <div>
+            {/* <div>
                     <Controller
                       name="professionalInfo.course"
                       control={control}
@@ -526,6 +498,34 @@ const Index = () => {
                       )}
                     />
                   </div> */}
+            {watchHasBusiness && (
+              <div className="col-span-2 mt-4">
+                <h3 className="text-lg font-semibold mb-3">Business Profile</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <Input
+                      label={
+                        <span>
+                          Business Name
+                        </span>
+                      }
+                      placeholder="Business Name"
+                      error={errors?.professionalInfo?.businessName}
+                      {...register("professionalInfo.businessName")}
+                      isValid={!errors?.professionalInfo?.businessName && !!watchedFields.professionalInfo?.businessName}
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      label={<span>Business Phone Number</span>}
+                      placeholder="Business Phone Number"
+                      error={errors?.professionalInfo?.businessPhone}
+                      {...register("professionalInfo.businessPhone")}
+                      isValid={
+                        !errors?.professionalInfo?.businessPhone && !!watchedFields.professionalInfo?.businessPhone
+                      }
+                    />
+                  </div>
                   <div>
                     <Controller
                       name="professionalInfo.industry"
@@ -642,7 +642,7 @@ const Index = () => {
               variant="black"
               label={loading ? "Signing up..." : "Sign up"}
               className="w-[60%]"
-              disabled={!isFormValid}
+              disabled={loading}
             />
           </div>
         </form>
