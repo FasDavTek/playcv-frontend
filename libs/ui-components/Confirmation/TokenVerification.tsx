@@ -8,6 +8,7 @@ import { getData, postData } from './../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../libs/utils/helpers/config';
 import { toast } from 'react-toastify';
+import { LOCAL_STORAGE_KEYS } from './../../../libs/utils/localStorage';
 
 interface SignupData {
   email: string;
@@ -33,15 +34,23 @@ const TokenVerification: React.FC = () => {
         return;
       }
 
+      // if (token && userId) {
+      //   fetch(`/verify-token?token=${token}&userId=${userId}`)
+      //     .then(res => res.json())
+      //     .then(data => setEmail(data.email))
+      //     .catch(err => console.error("Error fetching email:", err));
+      // }
 
       try {
-        const signupDataString = localStorage.getItem('signupData');
+        const signupDataString = localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
+        let signUpEmail = '';
         if (signupDataString) {
-          const signupData: SignupData = JSON.parse(signupDataString);
-          setEmail(signupData.email);
+          const signupData = JSON.parse(signupDataString);
+          signUpEmail = signupData?.email;
+          setEmail(signUpEmail);
         }
       } catch (error) {
-        console.error('Error retrieving email from localStorage:', error);
+        console.error('Error retrieving email', error);
       }
 
 
