@@ -275,7 +275,7 @@ const Index = () => {
   return (
     <div className="overflow-hidden flex">
       <div
-        className="border w-0 md:flex-1 min-h-screen"
+        className="border w-0 lg:flex-1 min-h-screen"
         style={{
           backgroundImage: `url(${Images.AuthBG})`,
           backgroundSize: "cover",
@@ -284,14 +284,10 @@ const Index = () => {
         }}
       ></div>
       <div className="flex-1 flex flex-col my-auto p-2 md:px-8 overflow-y-auto">
-        <ChevronLeftIcon
-          className="cursor-pointer text-base mr-1 top-2 fixed p-1 hover:text-white hover:bg-black rounded-full"
-          sx={{ fontSize: "1.75rem" }}
-          onClick={handleBackClick}
-        />
-        <p className="text-lg mb-7 text-center md:text-left text-neutral-300">Create Your Professional Profile</p>
+        <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: "1.75rem" }} onClick={handleBackClick} />
         <form onSubmit={handleSubmit(submitForm)} >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <p className="text-lg mb-7 text-center md:text-left text-neutral-300">Create Your Professional Profile</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 px-2">
             <div>
               <Input
                 label={
@@ -601,6 +597,7 @@ const Index = () => {
                   onChange={(e) => setValue("hasBusiness", e.target.checked)}
                   name="hasBusiness"
                   color="primary"
+                  className="ml-4"
                 />
               }
               label="I have a business"
@@ -620,7 +617,7 @@ const Index = () => {
             </span>
           </label> */}
 
-          <div className="mt-5">
+          <div className="mt-5 px-2">
             <label className="inline-flex items-center">
               <input
                 type="checkbox"
@@ -628,15 +625,11 @@ const Index = () => {
                 checked={termsAccepted}
                 onChange={handleCheckboxChange}
               />
-              <span className="ml-2 text-sm text-neutral-300">
-                I agree to the{" "}
-                <a href="/terms-and-conditions" className="text-green-500 underline">
-                  Terms of Service
-                </a>
+              <span className="ml-2 text-sm text-neutral-300"> I agree to the{" "} <a href="/terms-and-conditions" className="text-green-500 underline"> Terms of Service </a>
               </span>
             </label>
           </div>
-          <div className="flex justify-start gap-5 mt-5">
+          <div className="flex justify-start gap-5 mt-5 px-2">
             <Button
               type="submit"
               variant="black"

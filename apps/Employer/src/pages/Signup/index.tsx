@@ -234,13 +234,12 @@ const Index = () => {
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
-          height: '100%',
         }}
       ></div>
-      <div className="flex-1 items-center justify-start min-h-screen overflow-y-auto">
-        <ChevronLeftIcon className="cursor-pointer text-base ml-3 top-2 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
-        <div className="w-[90%] h-full mx-auto flex items-center justify-center">
-          <form onSubmit={handleSubmit(submitForm)} className='my-auto'>
+      <div className="flex-1 flex flex-col my-auto p-2 md:px-8 overflow-y-auto">
+        <ChevronLeftIcon className="cursor-pointer text-base top-2 ticky p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
+        {/* <div className="w-[90%] h-full mx-auto flex items-center justify-center"> */}
+          <form onSubmit={handleSubmit(submitForm)}>
             <p className='text-xl mb-7 font-semibold text-center text-neutral-300'>Create Your Business Profile</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 px-2">
               <div>
@@ -335,7 +334,7 @@ const Index = () => {
               <Button type='submit' variant="black" label={loading ? "Signing up..." : "Sign up"} className='w-[60%]' disabled={loading} />
             </div>
           </form>
-        </div>
+        {/* </div> */}
         
         <p className='text-lg text-center text-neutral-300'>Already have an account? <span onClick={handleSignIn} className='text-blue-400 font-medium hover:underline cursor-pointer'>Sign In</span></p>
       </div>
