@@ -212,7 +212,7 @@ const Index = () => {
         reset()
         setTermsAccepted(false)
 
-        navigate("/auth/verify-mail")
+        navigate("/auth/verify-mail", { state: { email: data.email } })
       } else {
         toast.error(`We couldn't complete your registration. Please verify your details and try again.`)
       }

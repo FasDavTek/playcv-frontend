@@ -162,7 +162,7 @@ const Index = () => {
         reset();
         setTermsAccepted(false);
 
-        navigate('/auth/verify-mail');
+        navigate('/auth/verify-mail', { state: { email: data.employerInfo.businessEmail } });
       } else {
         toast.error(`We couldn't complete your registration. Please verify your details and give it another go.`);
       }
@@ -227,105 +227,117 @@ const Index = () => {
 
   return (
     <div className="overflow-hidden flex">
-      <div className="border w-0 md:flex-1 min-h-screen" style={{ backgroundImage: `url(${Images.AuthBG})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', height: '100%', }}></div>
-      <div className="flex-1 flex flex-col my-auto py-8 md:py-0 px-4 md:px-8 overflow-y-auto">
-        <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
-        <p className='text-xl mb-7 font-semibold text-center md:text-left text-neutral-300'>Create Your Business Profile</p>
-        <form onSubmit={handleSubmit(submitForm)}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-              <Input label={<span>First Name <span className="text-red-500">*</span></span>} placeholder="First Name" error={errors.firstName} {...register('firstName')} isValid={!errors.firstName && !!watchedFields.firstName} />
-            </div>
-            <div>
-              <Input label={<span>Surname <span className="text-red-500">*</span></span>} placeholder="Surname" error={errors.surname} {...register('surname')} isValid={!errors.surname && !!watchedFields.surname} />
-            </div>
-            <div>
-              <Input label={<span>Phone Number <span className="text-red-500">*</span></span>} placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} isValid={!errors.phoneNumber && !!watchedFields.phoneNumber} />
-            </div>
-            <div>
-              <Input type='text' label={<span>Business Name <span className="text-red-500">*</span></span>} placeholder="Business Name" error={errors?.employerInfo?.businessName} {...register('employerInfo.businessName')} isValid={!errors?.employerInfo?.businessName && !!watchedFields.employerInfo?.businessName} />
-            </div>
-            <div>
-              <Input type='tel' label={<span>Business Phone Number <span className="text-red-500">*</span></span>} placeholder="Business Phone Number" error={errors?.employerInfo?.businessPhoneNumber} {...register('employerInfo.businessPhoneNumber')} isValid={!errors?.employerInfo?.businessPhoneNumber && !!watchedFields.employerInfo?.businessPhoneNumber} />
-            </div>
-            <div>
-              <Input type='email' label={<span>Business Email <span className="text-red-500">*</span></span>} placeholder="Business Email" error={errors?.employerInfo?.businessEmail} {...register('employerInfo.businessEmail')} isValid={!errors?.employerInfo?.businessEmail && !!watchedFields.employerInfo?.businessEmail} />
-            </div>
-            <Input type='url' label="Website" placeholder="Website" error={errors?.employerInfo?.websiteUrl} {...register('employerInfo.websiteUrl')} isValid={!errors?.employerInfo?.websiteUrl && !!watchedFields.employerInfo?.websiteUrl} />
-            <div>
-              <Input type='text' label={<span>Address <span className="text-red-500">*</span></span>} placeholder="Address" error={errors?.employerInfo?.address} {...register('employerInfo.address')} isValid={!errors?.employerInfo?.address && !!watchedFields.employerInfo?.address} />
-            </div>
-            <Controller
-              name='employerInfo.industry'
-              control={control}
-              rules={{ required: 'Business Sector is required' }}
-              render={({ field }) => (
-                <div>
-                  <Select
-                    name="Business Sector"
-                    control={control}
-                    defaultValue={Array.isArray(industry) && industry?.find(i => i.name === watch('employerInfo.industry'))}
-                    options={model(industry, 'name', 'id')}
-                    handleChange={(newValue) => {
-                      if (newValue.__isNew__) {
-                        field.onChange(newValue?.value || newValue?.label);
-                        setValue('employerInfo.industry', newValue?.label || '');
-                        setValue('employerInfo.industryId', null);
-                      } else {
-                        field.onChange(newValue?.value || newValue?.label);
-                        setValue('employerInfo.industry', newValue?.label);
-                        setValue('employerInfo.industryId', newValue?.value);
-                      }}}
-                    isDisabled={isLoadingIndustries}
-                    errors={errors}
-                    placeholder='Business Sector'
-                    label={<span>Business Sector <span className="text-red-500">*</span></span>}
-                    allowCreate={true}
-                  />
-                  {errors?.employerInfo?.industry && (
-                    <p className="text-red-500 text-sm mt-1">{errors.employerInfo.industry.message}</p>
-                  )}
-                </div>
-              )}
-            />
-            <div>
-              <Input type='text' label={<span>Contact Person Name <span className="text-red-500">*</span></span>} placeholder="Contact Person Name" error={errors?.employerInfo?.contactName} {...register('employerInfo.contactName')} isValid={!errors?.employerInfo?.contactName && !!watchedFields.employerInfo?.contactName} />
-            </div>
-            <div>
-              <Input type='text' label={<span>Contact Person Position <span className="text-red-500">*</span></span>} placeholder="Contact Person Position" error={errors?.employerInfo?.contactPosition} {...register('employerInfo.contactPosition')} isValid={!errors?.employerInfo?.contactPosition && !!watchedFields.employerInfo?.contactPosition} />
-            </div>
-            <Input type='url' label="Facebook Link" placeholder="Facebook Link" error={errors?.employerInfo?.fbLink} {...register('employerInfo.fbLink')} isValid={!errors?.employerInfo?.fbLink && !!watchedFields.employerInfo?.fbLink} />
-            <Input type='url' label="Twitter Link" placeholder="Twitter Link" error={errors?.employerInfo?.twitter} {...register('employerInfo.twitter')} isValid={!errors?.employerInfo?.twitter && !!watchedFields.employerInfo?.twitter} />
-            <Input type='url' label="Instagram Link" placeholder="Instagram Link" error={errors?.employerInfo?.instagramUrl} {...register('employerInfo.instagramUrl')} isValid={!errors?.employerInfo?.instagramUrl && !!watchedFields.employerInfo?.instagramUrl} />
-            <FormControl>
+      <div
+        className="border w-0 lg:flex-1 min-h-screen" 
+        style={{
+          backgroundImage: `url(${Images.AuthBG})`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          height: '100%',
+        }}
+      ></div>
+      <div className="flex-1 items-center justify-start min-h-screen overflow-y-auto">
+        <ChevronLeftIcon className="cursor-pointer text-base ml-3 top-2 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
+        <div className="w-[90%] h-full mx-auto flex items-center justify-center">
+          <form onSubmit={handleSubmit(submitForm)} className='my-auto'>
+            <p className='text-xl mb-7 font-semibold text-center text-neutral-300'>Create Your Business Profile</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 px-2">
               <div>
-                <Input type='password' label="Password *" id='password' placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors?.password && !!watchedFields.password} />
+                <Input label={<span>First Name <span className="text-red-500">*</span></span>} placeholder="First Name" error={errors.firstName} {...register('firstName')} isValid={!errors.firstName && !!watchedFields.firstName} />
               </div>
-              <FormHelperText>Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.</FormHelperText>
-            </FormControl>
-            <FormControl>
               <div>
-                <Input type='password' label="Confirm Password *" placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
+                <Input label={<span>Surname <span className="text-red-500">*</span></span>} placeholder="Surname" error={errors.surname} {...register('surname')} isValid={!errors.surname && !!watchedFields.surname} />
               </div>
-              <FormHelperText>Passwords must match.</FormHelperText>
-            </FormControl>
-          </div>
-          <div className="mt-5">
-            <label className="inline-flex items-center">
-              <input 
-                type="checkbox" 
-                className="form-checkbox" 
-                checked={termsAccepted} 
-                onChange={handleCheckboxChange} 
+              <div>
+                <Input label={<span>Phone Number <span className="text-red-500">*</span></span>} placeholder="+234123456789" error={errors.phoneNumber} {...register('phoneNumber')} isValid={!errors.phoneNumber && !!watchedFields.phoneNumber} />
+              </div>
+              <div>
+                <Input type='text' label={<span>Business Name <span className="text-red-500">*</span></span>} placeholder="Business Name" error={errors?.employerInfo?.businessName} {...register('employerInfo.businessName')} isValid={!errors?.employerInfo?.businessName && !!watchedFields.employerInfo?.businessName} />
+              </div>
+              <div>
+                <Input type='tel' label={<span>Business Phone Number <span className="text-red-500">*</span></span>} placeholder="Business Phone Number" error={errors?.employerInfo?.businessPhoneNumber} {...register('employerInfo.businessPhoneNumber')} isValid={!errors?.employerInfo?.businessPhoneNumber && !!watchedFields.employerInfo?.businessPhoneNumber} />
+              </div>
+              <div>
+                <Input type='email' label={<span>Business Email <span className="text-red-500">*</span></span>} placeholder="Business Email" error={errors?.employerInfo?.businessEmail} {...register('employerInfo.businessEmail')} isValid={!errors?.employerInfo?.businessEmail && !!watchedFields.employerInfo?.businessEmail} />
+              </div>
+              <Input type='url' label="Website" placeholder="Website" error={errors?.employerInfo?.websiteUrl} {...register('employerInfo.websiteUrl')} isValid={!errors?.employerInfo?.websiteUrl && !!watchedFields.employerInfo?.websiteUrl} />
+              <div>
+                <Input type='text' label={<span>Address <span className="text-red-500">*</span></span>} placeholder="Address" error={errors?.employerInfo?.address} {...register('employerInfo.address')} isValid={!errors?.employerInfo?.address && !!watchedFields.employerInfo?.address} />
+              </div>
+              <Controller
+                name='employerInfo.industry'
+                control={control}
+                rules={{ required: 'Business Sector is required' }}
+                render={({ field }) => (
+                  <div>
+                    <Select
+                      name="Business Sector"
+                      control={control}
+                      defaultValue={Array.isArray(industry) && industry?.find(i => i.name === watch('employerInfo.industry'))}
+                      options={model(industry, 'name', 'id')}
+                      handleChange={(newValue) => {
+                        if (newValue.__isNew__) {
+                          field.onChange(newValue?.value || newValue?.label);
+                          setValue('employerInfo.industry', newValue?.label || '');
+                          setValue('employerInfo.industryId', null);
+                        } else {
+                          field.onChange(newValue?.value || newValue?.label);
+                          setValue('employerInfo.industry', newValue?.label);
+                          setValue('employerInfo.industryId', newValue?.value);
+                        }}}
+                      isDisabled={isLoadingIndustries}
+                      errors={errors}
+                      placeholder='Business Sector'
+                      label={<span>Business Sector <span className="text-red-500">*</span></span>}
+                      allowCreate={true}
+                    />
+                    {errors?.employerInfo?.industry && (
+                      <p className="text-red-500 text-sm mt-1">{errors.employerInfo.industry.message}</p>
+                    )}
+                  </div>
+                )}
               />
-              <span className="ml-2 text-sm text-neutral-300">I agree to the <a href="/terms-and-conditions" className="text-green-500 underline">Terms of Service</a></span>
-            </label>
-          </div>
-          <div className="flex justify-start gap-5 mt-5">
-            <Button type='submit' variant="black" label={loading ? "Signing up..." : "Sign up"} className='w-[60%]' disabled={loading} />
-          </div>
-        </form>
-        <p className='text-lg mt-5 text-center text-neutral-300'>Already have an account? <span onClick={handleSignIn} className='text-blue-400 font-medium hover:underline cursor-pointer'>Sign In</span></p>
+              <div>
+                <Input type='text' label={<span>Contact Person Name <span className="text-red-500">*</span></span>} placeholder="Contact Person Name" error={errors?.employerInfo?.contactName} {...register('employerInfo.contactName')} isValid={!errors?.employerInfo?.contactName && !!watchedFields.employerInfo?.contactName} />
+              </div>
+              <div>
+                <Input type='text' label={<span>Contact Person Position <span className="text-red-500">*</span></span>} placeholder="Contact Person Position" error={errors?.employerInfo?.contactPosition} {...register('employerInfo.contactPosition')} isValid={!errors?.employerInfo?.contactPosition && !!watchedFields.employerInfo?.contactPosition} />
+              </div>
+              <Input type='url' label="Facebook Link" placeholder="Facebook Link" error={errors?.employerInfo?.fbLink} {...register('employerInfo.fbLink')} isValid={!errors?.employerInfo?.fbLink && !!watchedFields.employerInfo?.fbLink} />
+              <Input type='url' label="Twitter Link" placeholder="Twitter Link" error={errors?.employerInfo?.twitter} {...register('employerInfo.twitter')} isValid={!errors?.employerInfo?.twitter && !!watchedFields.employerInfo?.twitter} />
+              <Input type='url' label="Instagram Link" placeholder="Instagram Link" error={errors?.employerInfo?.instagramUrl} {...register('employerInfo.instagramUrl')} isValid={!errors?.employerInfo?.instagramUrl && !!watchedFields.employerInfo?.instagramUrl} />
+              <FormControl>
+                <div>
+                  <Input type='password' label={<span>Password <span className="text-red-500">*</span></span>} id='password' placeholder="Enter Password" error={errors.password} {...register('password')} isValid={!errors?.password && !!watchedFields.password} />
+                </div>
+                <FormHelperText>Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.</FormHelperText>
+              </FormControl>
+              <FormControl>
+                <div>
+                  <Input type='password' label={<span>Confirm Password <span className="text-red-500">*</span></span>} placeholder="Confirm Password" error={errors.confirmPassword} {...register('confirmPassword')} isValid={!errors.confirmPassword && !!watchedFields.confirmPassword} />
+                </div>
+                <FormHelperText>Passwords must match.</FormHelperText>
+              </FormControl>
+            </div>
+            <div className="mt-5 px-2">
+              <label className="inline-flex items-center">
+                <input 
+                  type="checkbox" 
+                  className="form-checkbox" 
+                  checked={termsAccepted} 
+                  onChange={handleCheckboxChange} 
+                />
+                <span className="ml-2 text-sm text-neutral-300">I agree to the <a href="/terms-and-conditions" className="text-green-500 underline">Terms of Service</a></span>
+              </label>
+            </div>
+            <div className="flex justify-start gap-5 mt-3 px-2">
+              <Button type='submit' variant="black" label={loading ? "Signing up..." : "Sign up"} className='w-[60%]' disabled={loading} />
+            </div>
+          </form>
+        </div>
+        
+        <p className='text-lg text-center text-neutral-300'>Already have an account? <span onClick={handleSignIn} className='text-blue-400 font-medium hover:underline cursor-pointer'>Sign In</span></p>
       </div>
     </div>
   );
