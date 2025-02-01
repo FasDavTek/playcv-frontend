@@ -8,6 +8,7 @@ import { getData, postData } from './../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../libs/utils/helpers/config';
 import { toast } from 'react-toastify';
+import { LOCAL_STORAGE_KEYS } from './../../../libs/utils/localStorage';
 
 interface EmailConfirmationProps {
   isVerifying?: boolean;
@@ -19,9 +20,11 @@ interface SignupData {
 
 const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = false }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [resending, setResending] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
   const [verificationMessage, setVerificationMessage] = useState<string>('');
+  const emailFromState = location.state?.email
 
   const handleProceedToLogin = () => {
     navigate('/auth/login');
@@ -30,16 +33,24 @@ const EmailConfirmation: React.FC<EmailConfirmationProps> = ({ isVerifying = fal
 
   useEffect(() => {
     try {
-      const signupDataString = localStorage.getItem('signupData');
-      if (signupDataString) {
-        const signupData: SignupData = JSON.parse(signupDataString);
-        setEmail(signupData.email);
+      const emailToUse = emailFromState;
+      if (emailToUse) {
+        setEmail(emailToUse);
+      }
+      else {
+        const signupDataString = localStorage.getItem(LOCAL_STORAGE_KEYS.SIGNUP_DATA);
+        let signUpEmail = '';
+        if (signupDataString) {
+          const signupData = JSON.parse(signupDataString);
+          signUpEmail = signupData?.email;
+          setEmail(signUpEmail);
+        }
       }
     }
     catch (error) {
-      console.error('Error retrieving email from localStorage:', error);
+      console.error('Error retrieving email', error);
     }
-  }, []);
+  }, [emailFromState]);
 
 
   const handleResendVerificationEmail = async () => {
