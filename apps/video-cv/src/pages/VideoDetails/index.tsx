@@ -253,7 +253,7 @@ const VideoDetails = () => {
 
 
   return (
-    <Stack direction={{ sm: 'column', md: 'row' }} gap={3} className="min-h-screen flex-col md:flex-row mx-auto py-9 px-3 md:px-7 max-w-8xl">
+    <Stack direction={{ sm: 'column', md: 'row' }} gap={3} className="min-h-screen flex-col md:flex-row bg-red-900 mx-auto py-9 px-3 md:px-7 w-[98%]">
       <Stack direction="column" flex={4} spacing={3}>
         <Box className="rounded-lg">
           <Stack mx='auto' direction="column" spacing={4}>

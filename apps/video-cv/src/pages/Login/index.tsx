@@ -128,7 +128,11 @@ const Login = () => {
     catch (err: any) {
       if (err.response?.data?.message) {
         toast.error(err.response.data.message);
-      } else {
+      }
+      else if (err.response?.data?.error) {
+        toast.error(err.response.data.error)
+      }
+      else {
         toast.error('An error occurred. Please try again.');
       }
     } 
@@ -153,7 +157,7 @@ const Login = () => {
           height: '100%',
         }}
       ></div>
-      <div className="border flex-1 items-center justify-start">
+      <div className="flex-1 items-center justify-start">
         <ChevronLeftIcon className="cursor-pointer text-base ml-2 top-4 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.95rem' }} onClick={handleBackClick} />
         <div className="w-[90%] h-full mx-auto flex items-center justify-center">
           <form onSubmit={handleSubmit(onSubmit)} className="my-auto">
@@ -200,8 +204,8 @@ const Login = () => {
             <Stack mt={1} gap={1}>
               <p className="text-center md:text-left">Don't have an account? Choose your path to get started: </p>
               <Stack direction={{ xs: 'column', md: 'row' }} mt={1} gap={3} >
-                <Button type='submit' variant='custom' className="w-full" label="Sign up as Employer" onClick={() => navigate('/auth/employer-signup')} />
-                <Button type='submit' variant='black' className="w-full" label="Sign up as Professional" onClick={() => navigate('/auth/professional-signup')} />
+                <Button type='button' variant='custom' className="w-full" label="Sign up as Employer" onClick={() => navigate('/auth/employer-signup')} />
+                <Button type='button' variant='black' className="w-full" label="Sign up as Professional" onClick={() => navigate('/auth/professional-signup')} />
               </Stack>
             </Stack>
           </form>
