@@ -37,7 +37,7 @@ const Advertisement = lazy(() => import('../../apps/Employer/src/pages/Advertise
 const EmployerCreateAdsTypes = lazy(() => import("../../apps/Employer/src/pages/Advertisement/AdsManagement-Types/CreateAdsTypes"));
 const EmployerCreateAdsConfirmation = lazy(() => import("../../apps/Employer/src/pages/Advertisement/AdsManagement-Confirmation/CreateAdsConfirmation"));
 const CreateAdverts = lazy(() => import('../../apps/Employer/src/pages/Advertisement/CreateAdverts/CreateAds'));
-const ManageAdvertisement = lazy(() => import('../../apps/Employer/src/pages/Advertisement/manage'));
+const ManageAdvertisement = lazy(() => import('../../apps/Employer/src/pages/Advertisement/ManageAds/ViewAds'));
 const VideoManagement = lazy(() => import('../../apps/Employer/src/pages/VideoManagement'));
 const EmployerManagementById = lazy(() => import('../../apps/Employer/src/pages/VideoDetails'));
 
@@ -59,6 +59,7 @@ const ViewAdvertisement = lazy(() => import('../../apps/Admin/src/pages/Advertis
 const OrderManagement = lazy(() => import('../../apps/Admin/src/pages/OrderManagement'));
 const OrderManagementById = lazy(() => import('../../apps/Admin/src/pages/OrderManagement/id'));
 const Management = lazy(() => import('../../apps/Admin/src/pages/VideoManagement'));
+const Warehouse = lazy(() => import('../../apps/Admin/src/pages/VideoWarehouse'));
 const ManagementById = lazy(() => import('../../apps/Admin/src/pages/VideoDetails'));
 const PriceManagement = lazy(() => import('../../apps/Admin/src/pages/PriceManagement'));
 const JobManagement = lazy(() => import('../../apps/Admin/src/pages/JobManagement/index'));
@@ -171,7 +172,7 @@ const router = createBrowserRouter([
         path: ROUTES.CANDIDATE,
         element: (
             <Suspense fallback={<h1>Loading...</h1>}>
-                <ProtectedRoute allowedUserTypes={[3]}>
+                <ProtectedRoute allowedUserTypes={[3, 1]}>
                     {<Layout type="Candidate" />}
                 </ProtectedRoute>
             </Suspense>
@@ -276,6 +277,10 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.ADMIN_VIDEO_MANAGEMENT_BY_ID,
                 element: <ManagementById />,
+            },
+            {
+                path: ROUTES.ADMIN_VIDEo_WAREHOUSE,
+                element: <Warehouse />,
             },
             {
                 path: ROUTES.ADMIN_PRICE_MANAGEMENT,

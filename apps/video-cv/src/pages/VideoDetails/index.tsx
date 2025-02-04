@@ -24,7 +24,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
-import { getData } from './../../../../../libs/utils/apis/apiMethods';
+import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 
 interface Video {
   id: number
@@ -96,6 +96,7 @@ const VideoDetails = () => {
   const [relatedVideos, setRelatedVideos] = useState([]);
   const isFromTalentGallery = location.state?.fromTalentGallery;
   const searchParams = location.state?.searchParams;
+  const [viewCounted, setViewCounted] = useState(false)
 
   const itemsPerPage = 4;
 
@@ -132,7 +133,7 @@ const VideoDetails = () => {
   const getVideoDetails = async () => {
     // Replace with actual API call or data fetching logic
     if (!video && id) {
-      setLoading(false);
+      setLoading(true);
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${id}`, {
@@ -141,7 +142,9 @@ const VideoDetails = () => {
 
         if (resp && resp.videoDetails) {
           setVideo(resp.videoDetails);
-          setLoading(false);
+          if (location.state?.fromVideosList) {
+            incrementViewCount()
+          }
         }
         else {
           setError('Failed to fetch related videos')
@@ -151,6 +154,9 @@ const VideoDetails = () => {
         console.error('Error fetching video detail:', err);
         setError('Error fetching video detail');
         toast.error('Error fetching video detail');
+      }
+      finally {
+        setLoading(false);
       }
     }
     else if (!id) {
@@ -198,14 +204,13 @@ const VideoDetails = () => {
 
 
   const handleReadMoreClick = () => {
-
-    const isBusinessAccount = user?.userType === 'business' || user?.userType === 'employer';
+    const isBusinessAccount = user?.userType === 'Employer';
     const hasPaidForVideo = false;
 
     if (!isAuthenticated) {
       navigate('/auth/login');
     } else if (!isBusinessAccount) {
-      toast.warning('You cannot make a payment for this video. Please sign up with a business/employer account.');
+      toast.warning('You cannot make a payment for this video. Please sign into an employer account.');
     } else if (!hasPaidForVideo) {
       navigate('/cart');
     } else {
@@ -231,6 +236,23 @@ const VideoDetails = () => {
   const handleBackClick = () => {
     navigate(-1);
   };
+
+
+  const incrementViewCount = async () => {
+    if (!viewCounted && video) {
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_VIEWS}`, {id}, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setViewCounted(true);
+        setVideo((prevVideo) => (prevVideo ? { ...prevVideo, views: prevVideo.views + 1 } : prevVideo));
+      }
+      catch (err) {
+        console.error('Error incrementing view count:', err)
+      }
+    }
+  }
 
   // if (loading) {
   //   return (
@@ -258,7 +280,7 @@ const VideoDetails = () => {
         <Box className="rounded-lg">
           <Stack mx='auto' direction="column" spacing={4}>
             <Box className="w-full top-24 rounded-3xl">
-              <ReactPlayer url={video?.videoUrl} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} />
+              <ReactPlayer url={video?.videoUrl} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} onStart={incrementViewCount} />
             </Box>
             <Box className="flex flex-col gap-1 ">
               <Stack direction="row" alignItems="center" justifyContent="space-between" p={1}>

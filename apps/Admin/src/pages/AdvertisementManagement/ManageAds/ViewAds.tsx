@@ -43,7 +43,7 @@ interface Advert {
     endDate: string;
     userType: string;
     userId: string;
-    coverUrl: string;
+    coverURL: string;
 }
 
 type AdFormData = z.infer<typeof advertSchema>;
@@ -106,7 +106,6 @@ const ViewAds = () => {
             return uploadedUrl
         } catch (err) {
             toast.error(`Upload Failed: ${err}`)
-            console.error('Upload failed:', err)
             throw err
         }
     }, []);
@@ -130,7 +129,7 @@ const ViewAds = () => {
                         endDate: new Date(data.endDate),
                         adType: data.adType,
                         adTypeId: data.adTypeId,
-                        files: data.coverUrl,
+                        files: data.coverURL,
                         action: 'edit',
                         adId: data.id,
                     });
@@ -204,7 +203,7 @@ const ViewAds = () => {
        try {
           if (!ads || !id) throw new Error('Ad details are not available');
 
-          let updatedMedia = ads.coverUrl
+          let updatedMedia = ads.coverURL
         
 
           if (newMedia.length > 0) {
@@ -221,7 +220,7 @@ const ViewAds = () => {
             adTypeId: adTypeId,
             userId: userBiodata,
             statusId: ads.statusId,
-            coverUrl: updatedMedia,
+            coverURL: updatedMedia,
             startDate: data.startDate,
             endDate: data.endDate,
             action: 'edit',
@@ -244,7 +243,6 @@ const ViewAds = () => {
 
        }
        catch (err) {
-            console.error('Error updating ad:', err)
             toast.error('Failed to update ad')
        }
     };
@@ -418,17 +416,17 @@ const ViewAds = () => {
                     </div>
                     <h2 className="text-xl font-semibold mt-10 mb-6 text-gray-800">Media</h2>
                     <Grid container spacing={4}>
-                        {ads.coverUrl &&  (
+                        {ads.coverURL &&  (
                             <Grid item xs={12} md={6}>
-                                {ads.coverUrl.toLowerCase().endsWith('.mp4') ? (
+                                {ads.coverURL.toLowerCase().endsWith('.mp4') ? (
                                     <video
-                                        src={ads.coverUrl}
+                                        src={ads.coverURL}
                                         controls
                                         className="rounded-lg shadow-md w-full"
                                     />
                                 ) : (
                                     <img
-                                        src={ads.coverUrl}
+                                        src={ads.coverURL}
                                         alt="Ad Media"
                                         className="rounded-lg shadow-md w-full"
                                     />

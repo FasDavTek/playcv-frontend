@@ -7,6 +7,8 @@ import CONFIG from '../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from '../../../../../../libs/utils/apis/apiEndpoints';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 interface LocationState {
   AdType: string;
@@ -20,107 +22,62 @@ const CreateAdsConfirmation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState<LocationState | null>(null);
 
-  // useEffect(() => {
-  //   if (location.state) {
-  //     const { AdType, price, paymentReference } = location.state as LocationState;
-  //     if (AdType && price && paymentReference) {
-  //       setState({ AdType, price, paymentReference });
-  //     } else {
-  //       toast.error('Invalid creation data. Redirecting....');
-  //       navigate('/employer/advertisement/');
-  //     }
-  //   } else {
-  //     toast.error('Error occured. Redirecting....');
-  //     navigate('/employer/advertisement/');
-  //   }
-  // }, [location.state, navigate]);
-
-  // const handleCreateNow = () => {
-  //   if (state) {
-  //     navigate('/employer/advertisement/upload', {
-  //       state: {
-  //         AdType: state.AdType,
-  //         videoPrice: state.price,
-  //         paymentReference: state.paymentReference
-  //       }
-  //     });
-  //   } else {
-  //     toast.error('Missing Ad information. Please try again.');
-  //     navigate('/employer/advertisement/');
-  //   }
-  // };
-
-  // const handleCreateLater = async () => {
-  //   if (!state) {
-  //     toast.error('Missing Ad information. Please try again.');
-  //     navigate('/employer/advertisement/');
-  //     return;
-  //   }
-
-  //   setIsLoading(true)
-  //   try {
-  //     const userId = localStorage.getItem('userId')
-
-  //     if (!userId) {
-  //       throw new Error('User ID not found')
-  //     }
-
-  //     const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, {
-  //       AdType: state.AdType,
-  //       AdPrice: state.price,
-  //       paymentReference: state.paymentReference,
-  //       userId
-  //     });
-  //     // const userId = 'user-id';
-  //     // const AdId = 'Ad-id';
-
-  //     // await axios.post('/api/Ad-drafts', { userId, AdId });
-
-  //     if (response.status === 200) {
-  //       toast.success('Your payment has been saved. You can create your Ad later.')
-  //       navigate('/employer/advertisement');
-  //     } else {
-  //       throw new Error('Failed to save payment information')
-  //     }
-  //   } 
-  //   catch (error) {
-  //     console.error('Failed to create Ad draft:', error);
-  //     toast.error('Failed to save payment information. Please try again.');
-  //   }
-  //   finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
 
+  const { adRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
 
-  const { uploadRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
+  const handleCreateNow = async () => {
+    setIsLoading(true);
 
-  const handleCreateNow = () => {
-    navigate('/candidate/video-management/upload', {
-      state: {
-        uploadRequestId,
-        adTypeId,
-        adTypeName,
-        price,
-        paymentReference,
-        paymentId
+    try {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Download=true`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (response.status === 'success' && response.hasValidAdRequest === true) {
+        navigate('/employer/advertisement/create', {
+          state: {
+            adRequestId: response.adRequest.id,
+            adTypeId: response.adRequest.adTypeId,
+            adTypeName: response.adRequest.adType,
+            price: price,
+            paymentReference: paymentReference,
+            paymentId: paymentId,
+            duration: response.adRequest.duration,
+            paymentDate: response.adRequest.paymentDate,
+          }
+        });
       }
-    });
+      else {
+        toast.error(response?.message || 'Unable to proceed with upload')
+      }
+    }
+    catch (err: any) {
+      toast.error(err?.response?.message || 'An error occurred while checking upload status');
+    }
+    finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCreateLater = () => {
-    navigate('/candidate/video-management');
+    navigate('/employer/advertisement');
+  };
+
+  const handleBackClick = () => {
+    navigate(-1);
   };
 
   return (
     <div className="h-screen flex flex-col items-center gap-4 w-full md:w-[50%] p-2 md:p-0 mx-auto text-center justify-center">
+      <ChevronLeftIcon className="cursor-pointer text-base ml-1 top-4 fixed p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.95rem' }} onClick={handleBackClick} />
       <h2 className='text-lg font-semibold'>Creation Confirmation</h2>
       <p>Your payment was successful. What would you like to do next?</p>
       <p className='text-red-500 my-4'><span className='font-semibold'>NOTE: </span>By uploading your AdCV on this platfom, you have read the AdCV guideline thoroughly and you agree to this platform's Terms and Conditions</p>
       <Stack direction='row' gap={4}>
-      <Button variant='custom' label={isLoading ? 'Saving...' : 'Upload Later'} onClick={handleCreateLater} disabled={isLoading} />
-        <Button variant='black' label="Upload Now" onClick={handleCreateNow} />
+        <Button variant='custom' label='Upload Later' onClick={handleCreateLater} />
+        <Button variant='black' label="Upload Now" onClick={handleCreateNow} disabled={isLoading} />
       </Stack>
       
     </div>

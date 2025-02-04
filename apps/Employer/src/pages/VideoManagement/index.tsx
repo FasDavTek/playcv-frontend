@@ -37,6 +37,7 @@ const columnHelper = createColumnHelper<Video>();
 const VideoManagement = () => {
   const [value, setValue] = React.useState(0);
   const [videos, setVideos] = useState<Video[]>([]);
+  const [activeTab, setActiveTab] = useState<'viewed' | 'vidoes'>('viewed');
   const [viewedVideos, setViewedVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -146,69 +147,33 @@ const VideoManagement = () => {
     columnHelper.accessor('status', {
       header: 'Status',
     }),
-    columnHelper.accessor('action', {
-      cell: ({ row }: { row: { original: Video } }) => {
-        return <Button variant='custom' onClick={() => handleView(row.original.id)} label="View CV" />;
-      },
-      header: 'Action',
-    }),
   ];
 
   return (
     <div className="min-h-screen px-3 md:px-10 py-10">
-        {/* Table comes here */}
-        <div className='flex flex-col justify-between gap-8 w-full'>
-          <div>
-            <Typography variant="subtitle1" className="my-4">
-              Recently Viewed Videos
-            </Typography>
-            {/* {viewedVideos.length > 0 ? (
-              
-            ) : (
-              <p>No viewed videos yet</p>
-            )} */}
 
-            <Table
-              loading={false}
-              data={viewedVideos}
-              columns={columns}
-              search={setSearch}
-              filter={filter}
-              globalFilter={globalFilter}
-              setGlobalFilter={setGlobalFilter}
-              tableHeading="Recently Viewed Videos"
-            />
-          </div>
-
-          <div>
-            <Typography variant="subtitle1" marginTop='8' className="mt-20 mb-1">
-                My Videos
-            </Typography>
-            <Table
-              loading={false}
-              data={videos}
-              columns={columns}
-              search={setSearch}
-              filter={filter}
-              globalFilter={globalFilter}
-              setGlobalFilter={setGlobalFilter}
-              tableHeading="All Video CV"
-            />
+        <div className="bg-gray-300 border-b border-gray-200 rounded-lg">
+          <div className="flex p-1">
+            {['viewed', 'videos'].map((tab) => (
+              <button
+                key={tab}
+                className={`py-2 px-4 text-sm font-medium ${
+                  activeTab === tab
+                    ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg'
+                    : 'text-blue-600 hover:text-blue-600'
+                }`}
+                onClick={() => setActiveTab(tab as typeof activeTab)}
+              >
+                {tab === "viewed" ? "Viewed Video CVs" : 'All Video CV'}
+              </button>
+            ))}
           </div>
         </div>
-        {/* filter logic comes here */}
-        {/* {loading ? (
-          <div className="flex items-center justify-center min-h-screen">
-            <CircularProgress className="w-8 h-8 animate-spin" />
-          </div>
-        ) : (
-          videos.length > 0 ? (
-            
-          ) : (
-            <p>No videos available</p>
-          )
-        )} */}
-        
+
+        <div className='mt-4'>
+          <Table loading={false} data={`${activeTab === 'viewed' ? viewedVideos : videos}`} columns={columns} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} tableHeading={`All My ${activeTab === "viewed" ? "Viewed Video CVs" : 'New Video CVs'}`} />
+        </div>
+
     </div>
   );
 };

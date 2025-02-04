@@ -8,6 +8,7 @@ interface MenuOption {
   onClick: () => void
   color?: string
   value?: any
+  icon?: React.ReactNode
 }
 
 interface ReusableMenuProps {
@@ -56,9 +57,10 @@ const SelectMenu: React.FC<ReusableMenuProps> = ({
       >
         {buttonText || icon}
       </Button>
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose} sx={{ paddingTop: "0.015rem", paddingBottom: "0.015rem", paddingLeft: "1.25rem", paddingRight: "1.25rem", }}>
         {options.map((option, index) => (
-          <MenuItem key={index} onClick={() => handleOptionClick(option)} style={{ color: option.color }}>
+          <MenuItem key={index} onClick={() => handleOptionClick(option)} style={{ color: option.color,  }}>
+            {option.icon && <span style={{ marginRight: "8px" }}>{option.icon}</span>}
             {option.label}
           </MenuItem>
         ))}

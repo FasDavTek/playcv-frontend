@@ -56,7 +56,7 @@ const VideoUploadConfirmation = () => {
   const handleUploadNow = async () => {
     setIsLoading(true);
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=100`, {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -79,7 +79,6 @@ const VideoUploadConfirmation = () => {
       }
     }
     catch (err: any) {
-      console.error('Error fetching video status:', err);
       toast.error(err?.response?.message || 'An error occurred while checking upload status');
     }
     finally {

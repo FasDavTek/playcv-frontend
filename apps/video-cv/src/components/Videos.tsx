@@ -63,12 +63,12 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100 }) => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=${limit}`, {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Download=true`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         let data;
-        if (response.succeeded === true) {
-          data = await response.data;
+        if (response.code === '00') {
+          data = await response.videos;
           setVideos(data || []);
         }
       } catch (error) {

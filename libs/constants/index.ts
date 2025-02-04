@@ -17,7 +17,7 @@ const CandidateRoutes = [
   },
   {
     name: 'My CV Warehouse',
-    img: Icons.VideoManagement,
+    img: Icons.VideoWareHouse,
     route: ROUTES.CANDIDATE_VIDEO_MANAGEMENT,
     pageName: 'My Videos',
   },
@@ -65,7 +65,7 @@ const EmployerRoutes: any = [
   },
   {
     name: 'My CV Warehouse',
-    img: Icons.Guideline,
+    img: Icons.VideoWareHouse,
     route: ROUTES.EMPLOYER_VIDEO_MANAGEMENT,
     pageName: 'Video Management',
   },
@@ -98,6 +98,12 @@ const AdminRoutes: any = [
   },
   {
     name: 'CV Warehouse',
+    img: Icons.VideoWareHouse,
+    route: ROUTES.ADMIN_VIDEo_WAREHOUSE,
+    pageName: 'Video warehouse',
+  },
+  {
+    name: 'Video Management',
     img: Icons.Guideline,
     route: ROUTES.ADMIN_VIDEO_MANAGEMENT,
     pageName: 'Video management',

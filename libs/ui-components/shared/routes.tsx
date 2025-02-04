@@ -31,6 +31,7 @@ export const ROUTES = {
   ADMIN_PRICE_MANAGEMENT: "price-management",
   ADMIN_VIDEO_MANAGEMENT: "video-management",
   ADMIN_VIDEO_MANAGEMENT_BY_ID: "video-management/:id",
+  ADMIN_VIDEo_WAREHOUSE: "video-warehouse",
   ADMIN_ADVERTISEMENT_MANAGEMENT: "advertisement-management",
   ADMIN_CREATE_ADVERTISEMENT_TYPES: "advertisement-management/types",
   ADMIN_CREATE_ADVERTISEMENT_CONFIRMATION: "advertisement-management/confirmation",

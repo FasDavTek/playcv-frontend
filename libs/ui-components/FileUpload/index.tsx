@@ -1,5 +1,6 @@
 import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { toast } from "react-toastify"
 import { FileRejection, useDropzone } from 'react-dropzone';
 
 const baseStyle = (
@@ -109,7 +110,13 @@ const FileUpload = forwardRef<HTMLDivElement, FileUploadProps>(({
 
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
     if (rejectedFiles.length) {
-      console.log('rejectedFiles', rejectedFiles);
+      rejectedFiles.forEach((rejectedFile) => {
+        if (rejectedFile.errors[0]?.code === "file-too-large") {
+          toast.error(`File ${rejectedFile.file.name} is too large. Maximum size is 15MB.`)
+        } else {
+          toast.error(`File ${rejectedFile.file.name} was rejected. Please try again.`)
+        }
+      })
       return;
     }
 

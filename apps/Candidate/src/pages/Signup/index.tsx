@@ -328,7 +328,7 @@ const Index = () => {
                     Phone Number <span className="text-red-500">*</span>
                   </span>
                 }
-                placeholder="+234123456789"
+                placeholder="09123456789"
                 error={errors.phoneNumber}
                 {...register("phoneNumber")}
                 type="number"

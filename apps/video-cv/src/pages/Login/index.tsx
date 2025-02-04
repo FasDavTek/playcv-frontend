@@ -119,6 +119,10 @@ const Login = () => {
 
         const from = location.state?.from || '/';
         navigate(from, { replace: true });
+
+        if (res.user.userTypeId === 1) {
+          navigate('/admin/dashboard')
+        }
       }
       else {
         localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "false");

@@ -1,5 +1,5 @@
 import { CircularProgress, Stack } from '@mui/material';
-import { Button, Table, TextArea } from '@video-cv/ui-components'
+import { Button, SelectMenu, Table, TextArea } from '@video-cv/ui-components'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,10 @@ import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+import { handleDate } from '@video-cv/utils';
+import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
+import { Edit } from '@mui/icons-material';
+import { createColumnHelper } from '@tanstack/react-table';
 
 interface Uploader {
   id: number;
@@ -15,33 +19,57 @@ interface Uploader {
   email: string;
 }
 interface Video {
-  id: string;
-  title: string;
-  status: string;
-  startDate: Date;
-  endDate: Date;
-  uploadDate: Date
-  authorName: string;
-  search: string;
-  category: string;
-  userType: string;
-  userId: string;
-  email: string;
-  courseOfStudy: string;
-  gender: string;
-  phone: string;
-  stateOfOrigin: string;
-  grade: string;
-  action: string;
+  id: number
+  title: string
+  typeId: number
+  type: string
+  transcript: string
+  categoryId: number
+  category: string | null
+  userId: string
+  dateCreated: string
+  views: number
+  videoUrl: string
+  thumbnailUrl: string
+  status: string
+  totalRecords: number
+  authorProfile: {
+    userDetails: {
+      fullName: string
+      email: string
+      profileImage: string | null
+      userId: string;
+      firstName: string;
+      middleName: string;
+      lastName: string;
+      phoneNo: string;
+      dateOfBirth: string;
+      gender: string;
+      type: string;
+      isActive: boolean;
+      phoneVerification: boolean;
+      isBusinessUser: boolean;
+      isProfessionalUser: boolean;
+      isAdmin: boolean;
+      isEmailVerified: boolean;
+      isDeleted: boolean;
+      createdAt: string;
+      updatedAt: string;
+      lastLoginDate: string;
+      genderId: number;
+    }
+  }
 }
 
+const columnHelper = createColumnHelper<Video>();
 
 const index = () => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<Video[]>([]);
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState('');
-  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Video | null>(null);
+  const [selectedVideoId, setSelectedVideoId] = useState<number | null>(null);
   const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -56,18 +84,18 @@ const index = () => {
     setLoading(true);
     try {  
 
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=100`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Download=true`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       let data;
-      if (resp.succeeded === true) {
-        data = await resp.data;
+      if (resp.code === '00') {
+        data = await resp.videos;
         setVideos(data || []);
       }
 
       const currentTime = Date.now();
-      const newVideos = data.filter((video: Video) => new Date(video.uploadDate).getTime() > lastFetchTime);
+      const newVideos = data.filter((video: Video) => new Date(video.dateCreated).getTime() > lastFetchTime);
       if (newVideos.length > 0) {
         toast.info(`${newVideos.length} new video(s) uploaded`);
       }
@@ -99,41 +127,66 @@ const index = () => {
   //   fetchData();
   // }, []);
 
-  // const handleApprove = async (videoId: any) => {
-  //   await approveVideo(videoId);
-  //   setVideos(prevVideos => prevVideos.map(video => video.id === videoId ? { ...video, status: 'approved' } : video));
+  // const handleApprove = async (id: any) => {
+  //   await approveVideo(id);
+  //   setVideos(prevVideos => prevVideos.map(video => video.id === id ? { ...video, status: 'approved' } : video));
   // };
 
-  // const handleReject = async (videoId: any, reason: string) => {
-  //   await rejectVideo(videoId, reason);
-  //   setVideos(prevVideos => prevVideos.map(video => video.id === videoId ? { ...video, status: 'rejected', rejectionReason: reason } : video));
+  // const handleReject = async (id: any, reason: string) => {
+  //   await rejectVideo(id, reason);
+  //   setVideos(prevVideos => prevVideos.map(video => video.id === id ? { ...video, status: 'rejected', rejectionReason: reason } : video));
   // };
 
-  const handleView = async (videoId: string) => {
+  const handleStatusChange = async (id: number, newStatus: number, reason?: string) => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${videoId}`, {
+
+      let status: "a" | "r" | "p";
+      switch (newStatus) {
+        case 1:
+        case 7:
+          status = "a"
+          break
+        case 5:
+        case 9:
+          status = "r"
+          break
+        case 4:
+        case 8:
+          status = "p"
+          break
+        default:
+          throw new Error("Invalid status")
+      }
+
+      const payload = {
+        videoId: id,
+        action: status,
+        reasonForRejection: reason,
+      }
+
+      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_VIDEO}`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // if (!response.ok) {
-      //   throw new Error('Error fetching video details');
-      // }
-
-      const videoDetails = await response.json();
-      navigate(`/admin/video-management/:${videoId}`, {
-        state: { videoDetails },
-      });
+      await fetchVideos();
+      toast.success(`Video status updated successfully`);
     }
     catch (err) {
-      console.error('Error fetching video details:', err)
-      toast.error('Failed to fetch video details')
+      toast.error(`Failed to update video status`)
     }
+  }
+
+  const handleView = async (item: Video) => {
+    setSelectedItem(item);
+    navigate(`/admin/video-management/${item.id}`, {
+      state: { video: item },
+    });
   };
 
-  const handleVideoAction = async (videoId: string, action: string, reason?: string) => {
+  const handleVideoAction = async (id: number, action: string, reason?: string) => {
     try {
       const apiData = {
-        videoId,
+        id,
         action,
         reason,
       };
@@ -154,14 +207,14 @@ const index = () => {
     }
   }
 
-  const handleApprove = (videoId: string) => handleVideoAction(videoId, 'a')
-  const handleReject = (videoId: string, reason: string) => handleVideoAction(videoId, 'd', reason)
+  const handleApprove = (id: number, action: string) => handleVideoAction(id, 'a')
+  const handleReject = (id: number, reason: string) => handleVideoAction(id, 'd', reason)
 
-  const notifyCandidate = async (videoId: string, title: string, status: string, /* uploaderId: any, */ reason?: string) => {
+  const notifyCandidate = async (id: string, title: string, status: string, /* uploaderId: any, */ reason?: string) => {
     // Simulate an API call
     return new Promise(resolve => {
       setTimeout(() => {
-        resolve(`Notification sent to candidate: ${videoId} is ${status}`);
+        resolve(`Notification sent to candidate: ${id} is ${status}`);
         toast.info(`Notification sent to candidate: ${title} is ${status}`);
       }, 1000);
     });
@@ -169,8 +222,8 @@ const index = () => {
 
 
 
-  const handleOpenRejectDialog = (videoId: string, title: string) => {
-    setSelectedVideoId(videoId);
+  const handleOpenRejectDialog = (id: number, title: string) => {
+    setSelectedVideoId(id);
     setSelectedVideoTitle(title);
     setOpen(true);
   };
@@ -188,26 +241,87 @@ const index = () => {
   };
 
 
+  const statusOptions = [
+    { value: "Active", label: "Active" },
+    { value: "Pending", label: "Pending" },
+    { value: "InReview", label: "In Review" },
+    { value: "Rejected", label: "Rejected" },
+    { value: "Closed", label: "Closed" },
+  ]
+
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Active":
+        return "bg-green-200 text-green-700"
+      case "InReview":
+        return "bg-yellow-200 text-yellow-700"
+      case "Rejected":
+        return "bg-red-200 text-red-700"
+      case "Closed":
+        return "bg-gray-200 text-gray-700"
+      default:
+        return "bg-gray-200 text-gray-700"
+    }
+  }
+
 
   const columns = [
-    { header: 'Video Name', accessorKey: 'title', },
-    { header: 'Uploader', accessorKey: 'authorName', },
-    { header: 'Email', accessorKey: 'email', },
-    { header: 'Course of Study', accessorKey: 'courseOfStudy', },
-    { header: 'Grade', accessorKey: 'grade', },
-    { header: 'Gender', accessorKey: 'gender', },
-    { header: 'Phone', accessorKey: 'phone', },
-    { header: 'Upload Date', accessorKey: 'startDate', },
-    { header: 'Status', accessorKey: 'status', },
-    { header: 'View Video', accessorKey: 'viewVideo', cell: ({ row }: { row: { original: Video } }) => (
-        <Button variant='custom' label='View' onClick={() => handleView(row.original.id)}></Button>
-    ) },
-    { header: 'Actions', accessorKey: 'actions', cell: ({ row }: { row: { original: Video } }) => (
-      <Stack direction='row' spacing={2}>
-        <Button variant='success' label='Approve' type='submit' className='text-white' onClick={() => handleApprove(row.original.id)} disabled={row.original.status !== 'Pending'}></Button>
-        <Button variant='red' label='Reject' type='submit' onClick={() => handleOpenRejectDialog(row.original.id, row.original.title)} disabled={row.original.status !== 'Pending'}></Button>
-      </Stack>
-    ) },
+    columnHelper.accessor('title', {
+      header: 'Video Name',
+    }),
+    columnHelper.accessor('authorProfile.userDetails.fullName', {
+      header: 'Uploader',
+    }),
+    columnHelper.accessor('type', {
+      header: 'Video Type',
+    }),
+    columnHelper.accessor('authorProfile.userDetails.email', {
+      header: 'Email',
+    }),
+    columnHelper.accessor('authorProfile.userDetails.gender', {
+      header: 'Gender',
+    }),
+    columnHelper.accessor('authorProfile.userDetails.phoneNo', {
+      header: 'Phone',
+    }),
+    columnHelper.accessor('dateCreated', {
+      header: 'Upload Date',
+      cell: (info: any) => handleDate(info.getValue())
+    }),
+    columnHelper.accessor('status', {
+      header: 'Status',
+      cell: (info) => {
+        const status = info.getValue()
+        return (
+          <span
+            className={`px-2 py-1.5 text-center items-center rounded-full ${getStatusColor(statusOptions.find((option) => option.value === status)?.label || "")}`}
+          >
+            {status}
+          </span>
+        )
+      },
+    }),
+    columnHelper.display({
+      id: 'actions', header: 'Actions', cell: ({ row }) => (
+        <Stack direction='row' spacing={2}>
+          {/* <Button variant='success' label='Approve' type='submit' className='text-white' onClick={() => handleApprove(row.original.id)} disabled={row.original.status !== 'Pending'}></Button>
+          <Button variant='red' label='Reject' type='submit' onClick={() => handleOpenRejectDialog(row.original.id, row.original.title)} disabled={row.original.status !== 'Pending'}></Button> */}
+          <SelectMenu
+            options={[
+              { label: "Approve", onClick: () => handleStatusChange(row.original.id, 1), value: 1 },
+              {
+                label: "Reject",
+                onClick: () => handleOpenRejectDialog(row.original.id, row.original.title),
+                value: 5,
+              },
+              { label: "View", onClick: () => handleView(row.original), icon: <PreviewOutlinedIcon />, },
+            ]}
+            buttonVariant="text"
+          />
+        </Stack>
+      )
+    })
   ];
   
   return (

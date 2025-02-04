@@ -112,7 +112,7 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
     }, [fetchData, params.enabled])
 
     const refetch = useCallback(() => {
-    return fetchData()
+      return fetchData()
     }, [fetchData])
 
     return { data, isLoading, error, refetch }

@@ -75,12 +75,12 @@ const CreateAds = () => {
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [newMedia, setNewMedia] = useState<File[]>([])
   const userId = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
-  const { register, handleSubmit, watch, setValue, reset, control, formState: { errors },} = useForm<AdFormData>({
+  const { register, handleSubmit, watch, setValue, reset, control, formState: { errors }, getValues} = useForm<AdFormData>({
     resolver: zodResolver(advertSchema),
   });
 
   
-  const { uploadRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
+  const { adRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
   if (!token) {
@@ -105,11 +105,9 @@ const CreateAds = () => {
           await s3Client.send(command)
 
           const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`
-          toast.success('Upload successful')
           return uploadedUrl
       } catch (err) {
           toast.error(`Upload Failed: ${err}`)
-          console.error('Upload failed:', err)
           throw err
       }
   }, []);
@@ -118,11 +116,12 @@ const CreateAds = () => {
 
   const generateThumbnail = async (file: File) => {
     return new Promise<string>((resolve, reject) => {
+
       if (file.type.startsWith('video/')) {
         const video = document.createElement('video');
         video.preload = 'metadata';
         video.onloadedmetadata = () => {
-          video.currentTime = 1; // Capture frame at 1 second
+          video.currentTime = 1;
         };
         video.onseeked = () => {
           const canvas = document.createElement('canvas');
@@ -142,9 +141,11 @@ const CreateAds = () => {
         };
         video.onerror = () => reject(new Error('Error generating video thumbnail'));
         video.src = URL.createObjectURL(file);
-      } else if (file.type.startsWith('image/')) {
+      }
+      else if (file.type.startsWith('image/')) {
         resolve(URL.createObjectURL(file));
-      } else {
+      }
+      else {
         reject(new Error('Unsupported file type'));
       }
     });
@@ -154,7 +155,6 @@ const CreateAds = () => {
 
   const onSubmit = async (data: AdFormData) => {
     try {
-      if (!ads) throw new Error('Ad details are not available');
 
       setIsUploading(true);
 
@@ -176,7 +176,7 @@ const CreateAds = () => {
               thumbnails.push(thumbnailUrl);
             } 
             else if (file.type.startsWith('image/')) {
-              thumbnails.push(uploadedUrl); // Use the image itself as thumbnail
+              thumbnails.push(uploadedUrl);
             }
           }
         } else if (files) {
@@ -186,9 +186,9 @@ const CreateAds = () => {
           if (files.type.startsWith('video/')) {
             const thumbnailUrl = await generateThumbnail(files);
             thumbnails.push(thumbnailUrl);
-          } 
+          }
           else if (files.type.startsWith('image/')) {
-            thumbnails.push(uploadedUrl); // Use the image itself as thumbnail
+            thumbnails.push(uploadedUrl);
           }
         }
 
@@ -199,16 +199,14 @@ const CreateAds = () => {
       const adData = {
         // ...data,
         name: data.adName,
-        adType: adTypeName,
         adTypeId: adTypeId,
         userId: userId,
-        statusId: ads.statusId,
         description: data.adDescription,
         redirectUrl: data.adUrl,
         startDate: data.startDate,
         endDate: data.endDate,
         action: 'create',
-        coverURL: thumbnailUrl,
+        coverURL: mediaUrl,
       };
 
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData, {
@@ -216,9 +214,10 @@ const CreateAds = () => {
       });
 
       if (response.code === "00") {
+          toast.success('File(s) uploaded successfully!');
           toast.success('Ad uploaded successfully');
           reset();
-          navigate('/admin/advertisement-management');
+          navigate('/employer/advertisement');
       }
       else {
         throw new Error('Failed to upload ad');
@@ -234,20 +233,15 @@ const CreateAds = () => {
   };
 
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-
   console.log(ads);
 
 
   return (
     <div className='p-10 overflow-hidden bg-white'>
       <ChevronLeftIcon className="cursor-pointer text-base mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/employer/advertisement')} />
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white px-10">
+      <form onSubmit={(e) => { e.preventDefault(); const data = getValues(); onSubmit(data); } } className="bg-white px-10">
         <div className="my-5 flex flex-col gap-5">
-          <Input label="Ad Title" {...register('adName', { required: true })} error={errors.adName} />
+          <Input label="Ad Title" {...register('adName', { required: true })} />
           <label className="block font-manrope text-[1rem] capitalize font-normal leading-[1.25rem] text-secondary-500">
               Ad Description
           </label>
@@ -281,7 +275,7 @@ const CreateAds = () => {
                         uploadIcon={<UploadFile sx={{ fontSize: '40px' }} />}
                         containerClass="mt-3"
                         uploadLabel="Drag and Drop or Browse"
-                        uploadRestrictionText="Accepted formats: images, videos (max size: 8MB)"
+                        uploadRestrictionText="Accepted formats: images, videos (max size: 15MB)"
                         setFile={(files) => {
                             console.log('Files received by FileUpload:', files);
                             const fileArray = Array.isArray(files) ? files : files ? [files] : [];

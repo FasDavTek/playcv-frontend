@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, TextArea } from '@video-cv/ui-components';
+import { Button, SelectMenu, Table, TextArea } from '@video-cv/ui-components';
 import { createColumnHelper } from '@tanstack/react-table';
 import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Input, Modal } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { formatDate } from '@video-cv/utils';
+import { formatDate, handleDate } from '@video-cv/utils';
 import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
@@ -11,16 +11,25 @@ import { toast } from 'react-toastify';
 import { CreateAdsConfirmModal } from './modals';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
+
+const truncateText = (text: string, wordLimit: number) => {
+  const words = text.split(' ');
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+  return text;
+};
+
 // Define your ad data type
 type ads = {
   id: string;
   status: string;
-  title: string;
-  adUrl: string;
+  adName: string;
+  redirectUrl: string;
   adType: string;
-  createdAt: string;
+  dateCreated: string;
   authorName: string;
-  description: string;
+  adDescription: string;
   startDate: string;
   endDate: string;
   userType: string;
@@ -36,8 +45,8 @@ const columnHelper = createColumnHelper<ads>();
 const Advertisement = () => {
   const [ads, setAds] = useState<ads[]>([]);
   const [open, setOpen] = useState(false);
-  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState<ads | null>(null);
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
   const navigate = useNavigate();
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
@@ -59,46 +68,51 @@ const Advertisement = () => {
   const checkPaymentStatus = async () => {
     try {
 
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}`, {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_STATUS}?Download=true`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.data;
       
-      if (!data || !data.checkoutId) {
-        openSetModalFn('confirmationModal');
-      } else {
+      if (response.status === 'success' && response.hasValidAdRequest === true) {
         toast.info('You have an existing payment for video upload that you have not yet completed.');
-        navigate(`/employer/advertisement/upload`, { 
+        navigate(`/employer/advertisement/create`, { 
           state: { 
-            checkoutId: data.checkoutId,
+            adTypeId: response.adRequest.adTypeId,
           } 
         });
+      } else {
+        openSetModalFn('confirmationModal');
       }
     } 
     catch (error) {
-      console.error('Error checking payment status:', error);
-      toast.warning('There was an error checking your payment status. Please try again later.');
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        toast.warning('There was an error checking your payment status. Please try again later.');
+      }
     }
   };
 
 
   
   const fetchAds = async () => {
+    setLoading(true);
     try {
-
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?Page=1&Limit=100`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_AUTH_ADS}?Download=true`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       let data;
-      if (resp.succeeded === true) {
-        data = await resp.data;
+      if (resp.code === '00') {
+        data = await resp.adverts;
         setAds(data);
       }
 
       const currentTime = Date.now();
-      const newAds = data.filter((ad: ads) => new Date(ad.createdAt).getTime() > lastFetchTime);
+      const newAds = data.filter((ad: ads) => new Date(ad.dateCreated).getTime() > lastFetchTime);
       if (newAds.length > 0) {
         toast.info(`${newAds.length} new ad(s) uploaded`);
       }
@@ -110,7 +124,6 @@ const Advertisement = () => {
         navigate('/');
       }
       else {
-        console.error('Error fetching ads:', err)
         toast.error('Failed to fetch ads')
       }
     }
@@ -126,21 +139,11 @@ const Advertisement = () => {
   }, [search, filter, token]);
 
 
-  const handleView = async (adId: string) => {
-    try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${adId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const adDetails = await response.json();
-      navigate(`/employer/advertisement/view/:${adId}`, {
-        state: { adDetails },
-      });
-    }
-    catch (err) {
-      console.error('Error fetching ad details:', err)
-      toast.error('Failed to fetch ad details')
-    }
+  const handleView = async (item: ads) => {
+    setSelectedItem(item)
+    navigate(`/employer/advertisement/view/:${item.id}`, {
+      state: { ads: item },
+    });
   };
 
 
@@ -164,42 +167,40 @@ const Advertisement = () => {
 
 
   const columns = [
-    columnHelper.accessor('title', {
+    columnHelper.accessor('adName', {
       header: 'Ad Name',
     }),
-    columnHelper.accessor('authorName', {
-      header: 'User Fullname',
-    }),
-    columnHelper.accessor('adUrl', {
+    columnHelper.accessor('redirectUrl', {
       header: 'Ad Link',
     }),
     columnHelper.accessor('adType', {
       header: 'Ad Type',
     }),
-    columnHelper.accessor('createdAt', {
+    columnHelper.accessor('dateCreated', {
       header: 'Date Created',
-      cell: (info) => formatDate(info.getValue()),
+      cell: (info) => handleDate(info.getValue()),
     }),
-    columnHelper.accessor('description', {
+    columnHelper.accessor('adDescription', {
       header: 'Description',
+      cell: (info) => truncateText(info.getValue() as string || '', 10),
     }),
     columnHelper.accessor('startDate', {
       header: 'Start Date',
-      cell: (info) => formatDate(info.getValue()),
+      cell: (info) => handleDate(info.getValue()),
     }),
     columnHelper.accessor('endDate', {
       header: 'End Date',
-      cell: (info) => formatDate(info.getValue()),
+      cell: (info) => handleDate(info.getValue()),
     }),
     columnHelper.accessor('status', {
       header: 'Status',
       cell: (info) => (
         <span
-          className={`px-2 py-1.5 text-center rounded-full text-white ${
-            info.getValue() === 'active' ? 'bg-green-500' : 'bg-red-500'
+          className={`px-2 py-1.5 text-center rounded-full ${
+            info.getValue() === 'Active' ? 'bg-green-200 text-green-600' : 'bg-red-200 text-red-600'
           }`}
         >
-          {info.getValue() === 'active' ? 'Active' : 'Suspended'}
+          {info.getValue() === 'Active' ? 'Active' : 'Inactive'}
         </span>
       ),
     }),
@@ -207,11 +208,17 @@ const Advertisement = () => {
       header: 'Action',
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Button variant="custom"
+          {/* <Button variant="custom"
             onClick={() => handleView(row.original.id)}
             label={'View'}  
           >
-          </Button>
+          </Button> */}
+          <SelectMenu
+            options={[
+              { label: "View", onClick: () => handleView(row.original)},
+            ]}
+            buttonVariant="text"
+          />
         </div>
       ),
     }),

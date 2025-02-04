@@ -26,21 +26,21 @@ const Feed = () => {
 
   const checkPaymentStatus = async () => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Page=1&Limit=100`, {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_STATUS}?Download=true`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.status === 'success' && response.hasValidUpploadRequest === true) {
         toast.info('You have an existing payment for video upload that you have not yet completed.');
-        navigate('/candidate/video-management/upload', {
-          state: {
-            uploadTypeId: response.uploadRequest.uploadTypeId,
-            uploadTypeName: response.uploadRequest.uploadType,
-            uploadRequestId: response.uploadRequest.id,
-            paymentDate: response.uploadRequest.paymentDate,
-            duration: response.uploadRequest.duration
-          }
-        });
+        // navigate('/candidate/video-management/upload', {
+        //   state: {
+        //     uploadTypeId: response.uploadRequest.uploadTypeId,
+        //     uploadTypeName: response.uploadRequest.uploadType,
+        //     uploadRequestId: response.uploadRequest.id,
+        //     paymentDate: response.uploadRequest.paymentDate,
+        //     duration: response.uploadRequest.duration
+        //   }
+        // });
       }
     } 
     catch (error) {

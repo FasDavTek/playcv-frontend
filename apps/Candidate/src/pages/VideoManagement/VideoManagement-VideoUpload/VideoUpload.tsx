@@ -218,8 +218,6 @@ const VideoUpload: React.FC = () => {
         userId: userId,
       };
 
-      console.log('Sending API data:', apiData);
-
       const uploadResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD}`, apiData);
       
       if (uploadResponse.code === "00") {

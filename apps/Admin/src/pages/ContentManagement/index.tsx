@@ -52,7 +52,7 @@ type course = Content & {
 }
 
 type category = Content & {
-  categoryName: string;
+  name: string;
   description: string;
 }
 
@@ -94,20 +94,31 @@ const ContentPage = () => {
   const [pageSize, setPageSize] = useState(40);
 
   const { data: miscData, isLoading: isMiscLoading, error: miscError, refetch: refetchMiscData, } = useAllMisc({
-    resource: 
-      activeTab === 'industry' ? 'industries' :
-      activeTab === 'cvguideline' ? 'cv-guideline' :
-      activeTab === 'degreeclass' ? 'degree-class' :
-      activeTab === 'sitetestimonial' ? 'site-testimonials' :
-      activeTab === 'category' ? 'video-category' :
-      activeTab,
-    page: 1,
-    limit: 100,
+    resource: React.useMemo(() => {
+      switch (activeTab) {
+        case "industry":
+          return "industries"
+        case "cvguideline":
+          return "cv-guideline"
+        case "degreeclass":
+          return "degree-class"
+        case "sitetestimonial":
+          return "site-testimonials"
+        case "category":
+          return "video-category"
+        default:
+          return activeTab
+      }
+    }, [activeTab]),
+    // page: 1,
+    // limit: 100,
+    download: true,
     enabled: activeTab !== 'country' && activeTab !== 'state',
     structureType: 'data',
   });
 
-  console.log(miscData)
+  console.log(miscData);
+  console.log(activeTab)
 
   const { data: countryData, isLoading: isCountryLoading, error: countryError, refetch: refetchCountryData, } = useAllCountry();
   const { data: stateData, isLoading: isStateLoading, error: stateError, refetch: refetchStateData } = useAllState();

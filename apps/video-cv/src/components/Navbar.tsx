@@ -229,6 +229,28 @@ const Navbar = () => {
                 Job Board
               </NavLink>
             </li>
+            {token && authState.isAuthenticated && authState?.user?.userTypeId === 3 || authState?.user?.userTypeId === 1 && (
+              <li className='my-3 md:my-0'>
+                <NavLink
+                  to="/candidate/video-guideline"
+                  className={({ isActive, isPending }) =>
+                    `text-black text-lg  ${
+                      isPending
+                        ? 'pending'
+                        : isActive
+                        ? 'active-nav-link'
+                        : 'nav-link'
+                    }`
+                  }
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleAuthenticatedNavigation('/candidate/video-guideline')
+                  }}
+                >
+                  Cv Guidelines
+                </NavLink>
+              </li>
+            )}
             {token && authState.isAuthenticated && authState?.user?.userTypeId === 3 && (
               <li>
                 <NavLink
@@ -303,28 +325,6 @@ const Navbar = () => {
                     <ShoppingCartIcon />
                   </StyledBadge>
                 </IconButton>
-              </li>
-            )}
-            {token && authState.isAuthenticated && authState?.user?.userTypeId === 3 && (
-              <li className='my-3 md:my-0'>
-                <NavLink
-                  to="/candidate/video-guideline"
-                  className={({ isActive, isPending }) =>
-                    `text-black text-lg  ${
-                      isPending
-                        ? 'pending'
-                        : isActive
-                        ? 'active-nav-link'
-                        : 'nav-link'
-                    }`
-                  }
-                  onClick={(e) => {
-                    e.preventDefault()
-                    handleAuthenticatedNavigation('/candidate/video-guideline')
-                  }}
-                >
-                  Cv Guidelines
-                </NavLink>
               </li>
             )}
             <div className="flex flex-col lg:flex-row justify-start gap-4 mt-4 lg:mt-0 md:ml-4 lg:ml-0">

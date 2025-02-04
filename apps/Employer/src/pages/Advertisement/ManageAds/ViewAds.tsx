@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { CircularProgress, Grid } from '@mui/material';
-import { formatDate } from '@video-cv/utils';
+import { formatDate, handleDate } from '@video-cv/utils';
 // import { fetchAdById } from './api';
 import { Button, DatePicker, FileUpload, Input, RichTextEditor, Select } from '@video-cv/ui-components';
 import { ArrowBack, UploadFile } from '@mui/icons-material';
@@ -16,6 +16,7 @@ import { advertSchema } from './../../../../../video-cv/src/schema/formValidatio
 import { Controller, useForm } from 'react-hook-form';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import dayjs from 'dayjs';
+import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
 
 const s3Client = new S3Client({
     region: 'auto',
@@ -26,11 +27,31 @@ const s3Client = new S3Client({
     },
 });
 
+
+interface Advert {
+    id: number;
+    status: string;
+    statusId: number;
+    adName: string;
+    redirectUrl: string;
+    adType: string;
+    adTypeId: number;
+    dateCreated: string;
+    authorName: string;
+    adDescription: string;
+    startDate: string;
+    endDate: string;
+    userType: string;
+    userId: string;
+    coverURL: string;
+}
+
+
 type AdFormData = z.infer<typeof advertSchema>;
 
 interface AdType {
-    value: string
-    label: string
+    typeId: number;
+    typeName: string;
   }
 
 interface AdDetails extends Omit<AdFormData, 'files'> {
@@ -40,23 +61,31 @@ interface AdDetails extends Omit<AdFormData, 'files'> {
 }
 
 const ViewAds = () => {
-    const { id } = useParams<{ id: string }>();
+    const { id } = useParams<{ id: any }>();
     const [adDetails, setAdDetails] = useState<AdDetails | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const [adTypes, setAdTypes] = useState<AdType[]>([])
+    const location = useLocation();
+    const [ads, setAds] = useState<Advert | undefined>(location.state?.ads);
+    const [adTypes, setAdTypes] = useState<AdType[]>([]);
+    const [adTypeId, setAdTypeId] = useState(0);
     const [isEditing, setIsEditing] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [newMedia, setNewMedia] = useState<File[]>([]);
 
-    const { register, handleSubmit, reset, watch, setValue, control, formState: { errors }, } = useForm<AdFormData>({
+    const { register, handleSubmit, reset, watch, setValue, getValues, control, formState: { errors }, } = useForm<AdFormData>({
         resolver: zodResolver(advertSchema),
     });
+
+    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+    if (!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/')
+    }
     
 
     const handleFileUpload = useCallback(async (file: File) => {
-        if (!file) throw new Error('File is not defined.')
         
         try {
             const fileName = `${Date.now()}-${file.name}`
@@ -76,94 +105,146 @@ const ViewAds = () => {
             await s3Client.send(command)
 
             const uploadedUrl = `https://${import.meta.env.VITE_CLOUDFLARE_R2_PUBLIC_DOMAIN}/${fileName}`
-            toast.success('Upload successful')
-            console.log('Upload successful:', uploadedUrl)
             return uploadedUrl
         } catch (err) {
             toast.error(`Upload Failed: ${err}`)
-            console.error('Upload failed:', err)
             throw err
         }
     }, []);
 
 
-    useEffect(() => {
-        const fetchAdDetails = async () => {
+    const fetchAdDetails = async () => {
+        if (!ads && id) {
+            setLoading(true);
             try {
-              if (!id) throw new Error('Ad ID is not defined')
-              const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${id}`)
-              if (!response.ok) throw new Error('Failed to fetch ad details')
-              const data: AdDetails = await response.json()
-              setAdDetails(data)
-              reset({
-                ...data,
+                const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_BY_ID}/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                if (response.succeeded) {
+                    const data = await response.data;
+                    setAds(data)
+                    reset({
+                        adName: data.adName,
+                        adDescription: data.adDescription,
+                        adUrl: data.redirectUrl,
+                        startDate: new Date(data.startDate),
+                        endDate: new Date(data.endDate),
+                        adType: data.adType,
+                        adTypeId: data.adTypeId,
+                        files: data.coverURL,
+                        action: 'edit',
+                        adId: data.id,
+                    });
+                }
+            } 
+            catch (err) {
+                setError('Failed to load ad details')
+                toast.error('Failed to load ad details')
+            }
+        }
+        else if (ads) {
+            // If ads data is already available (from location state), populate form fields
+            reset({
+                adName: ads.adName,
+                adDescription: ads.adDescription,
+                adUrl: ads.redirectUrl,
+                startDate: new Date(ads.startDate),
+                endDate: new Date(ads.endDate),
+                adType: ads.adType,
+                adTypeId: ads.adTypeId,
                 action: 'edit',
-                adId: data.adId,
-              });
-            } 
-            catch (err) {
-              console.error('Error fetching ad details:', err)
-              setError('Failed to load ad details')
-              toast.error('Failed to load ad details')
+                adId: ads.id,
+            });
+            // setValue('files', '')
+        }
+    }
+
+    const fetchAdTypes = async () => {
+      try {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+        const data: AdType[] = await response;
+        if (data.length === 0) {
+            // Fallback: Create an AdType object based on the current ad's type
+            if (ads) {
+                setAdTypes([{
+                    typeId: ads.adTypeId,
+                    typeName: ads.adType,
+                }]);
+                const matchingAdType = data.find(adType => adType.typeName === ads?.adType);
+                if (matchingAdType) {
+                    setAdTypeId(matchingAdType.typeId);
+                }
             }
-          }
-      
-          const fetchAdTypes = async () => {
-            try {
-              const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}`)
-              if (!response.ok) throw new Error('Failed to fetch ad types')
-              const data: string[] = await response.json()
-              setAdTypes(data.map(type => ({ value: type as 'video' | 'image', label: type })))
-            } 
-            catch (err) {
-              console.error('Error fetching ad types:', err)
-              toast.error('Failed to load ad types')
+        } else {
+            setAdTypes(data);
+            const matchingAdType = data.find(adType => adType.typeName === ads?.adType);
+            if (matchingAdType) {
+                setAdTypeId(matchingAdType.typeId);
             }
-          }
-      
-          Promise.all([fetchAdDetails(), fetchAdTypes()]).finally(() => setIsLoading(false))
-    }, [id, reset]);
+        }
+      } 
+      catch (err) {
+        toast.error('Failed to load ad types')
+      }
+    }
+
+
+    useEffect(() => {
+        Promise.all([fetchAdDetails(), fetchAdTypes()]).finally(() => setIsLoading(false))
+    }, [id, ads, reset, token]);
 
 
     const onSubmit = async (data: AdFormData) => {
         try {
-            if (!adDetails || !id) throw new Error('Ad details are not available')
+            if (!ads || !id) throw new Error('Ad details are not available')
 
-            let updatedMedia: { type: string; url: string }[] = [...adDetails.media]
+            let updatedMedia = ads.coverURL
     
-          if (newMedia.length > 0) {
-              const uploadPromises = newMedia.map(async (file) => {
-                const uploadedUrl = await handleFileUpload(file)
-                return { type: file.type.startsWith('image/') ? 'image' : 'video' as const, url: uploadedUrl }
-            })
+
+            if (newMedia.length > 0) {
+                const uploadedUrl = await handleFileUpload(newMedia[0]);
+                updatedMedia = uploadedUrl;
+            }
     
-            const uploadedMedia = await Promise.all(uploadPromises)
-            updatedMedia = [...updatedMedia, ...uploadedMedia] as { type: string; url: string }[]
+            const userBiodata = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID);
+
+            const updatedData = {
+                name: data.adName,
+                description: data.adDescription,
+                redirectUrl: data.adUrl,
+                adTypeId: adTypeId,
+                userId: userBiodata,
+                statusId: ads.statusId,
+                coverURL: updatedMedia,
+                startDate: data.startDate,
+                endDate: data.endDate,
+                action: 'edit',
+                adId: id
+            }
+    
+          const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+
+          if (response.code === '00') {
+            toast.success('Ad updated successfully')
+            setIsEditing(false)
+            //   setAdDetails(response)
+            //   reset(updatedData)
+            // setNewMedia([]);
+            await fetchAdDetails();
+            navigate('/employer/advertisement');
           }
-    
-          const updatedData: AdDetails = {
-            ...data,
-            id,
-            media: updatedMedia,
-            status: adDetails.status,
-          }
-    
-          const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, updatedData)
-          if (!response.ok) throw new Error('Failed to update ad')
-          
-          toast.success('Ad updated successfully')
-          setIsEditing(false)
-          setAdDetails(updatedData)
-          reset(updatedData)
-          setNewMedia([])
-        } catch (err) {
-          console.error('Error updating ad:', err)
+        }
+         catch (err) {
           toast.error('Failed to update ad')
         }
     }
 
 
-    if (loading) {
+    if (loading || !ads) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <CircularProgress />
@@ -171,24 +252,28 @@ const ViewAds = () => {
         );
     }
     
-    if (error || !adDetails) {
+    if (error || !ads) {
         return (
             <div className="items-center justify-center min-h-screen">
-                <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/advertisement-management')} />
-                <p className="text-center text-red-500">Ad not found</p>;
+                <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/employer/advertisement')} />
+                <p className="text-center text-red-500">{error || 'Ad not found'}</p>;
             </div>
         ) 
     };
 
-    const isAdStarted = adDetails.status === 'approved' && new Date(adDetails.startDate) <= new Date();
+    const isAdStarted = ads.status === 'Approved' && new Date(ads.startDate) <= new Date();
+
+    if (!ads || !ads.coverURL) {
+        return <div>No ad data available</div>
+    }
 
   return (
     <div className="p-6 bg-gray-50 mb-8">
-      <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/admin/advertisement-management')} />
+      <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={() => navigate('/employer/advertisement')} />
       
       <div className="bg-white p-10 shadow-md rounded-2xl transform transition-all duration-300">
         <div className="flex justify-end items-center mb-4">
-            <Button variant={isEditing? 'red' : 'success'} label={isEditing ? 'Cancel' : 'Edit Advert'} onClick={() => setIsEditing(isEditing)} />
+            <Button variant={isEditing? 'red' : 'success'} label={isEditing ? 'Cancel' : 'Edit Advert'} onClick={() => setIsEditing(!isEditing)} />
         </div>
         
         {isEditing ? (
@@ -255,7 +340,7 @@ const ViewAds = () => {
                         )}
                     />
                 </div>
-                <Controller
+                {/* <Controller
                     name='adType'
                     control={control}
                     render={({ field }) => (
@@ -268,7 +353,7 @@ const ViewAds = () => {
                             errors={errors}
                         />
                     )}
-                />
+                /> */}
                 <Controller
                     name='files'
                     control={control}
@@ -297,47 +382,44 @@ const ViewAds = () => {
             </form>
         ) : (
             <>
-                <h1 className="text-3xl font-semibold text-gray-700 mb-4">{adDetails.adName}</h1>
+                <h1 className="text-3xl font-semibold text-gray-700 mb-4">{ads.adName}</h1>
                 <div className="mb-3">
-                    <span className="font-semibold text-gray-800">Description:</span> <span className="text-gray-600 text-lg leading-relaxed">{adDetails.adDescription}</span>
+                    <span className="font-semibold text-gray-800">Description:</span> <span className="text-gray-600 text-lg leading-relaxed">{ads.adDescription}</span>
                 </div>
                 <div className="mb-3">
-                    <span className="font-semibold text-gray-800">Ad Type:</span> <span className="text-gray-600">{adDetails.adType}</span>
+                    <span className="font-semibold text-gray-800">Ad Type:</span> <span className="text-gray-600">{ads.adType}</span>
                 </div>
                 <div className="mb-3">
                     <span className="font-semibold text-gray-800">Redirect URL:</span>
-                    <a href={adDetails.adUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 ml-2 underline transition duration-200 hover:text-blue-800">
-                        {adDetails.adUrl}
+                    <a href={ads.redirectUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 ml-2 underline transition duration-200 hover:text-blue-800">
+                        {ads.redirectUrl}
                     </a>
                 </div>
                 <div className="mb-3">
-                    <span className="font-semibold text-gray-800">Start Date:</span> <span className="text-gray-600">{formatDate(adDetails.startDate)}</span>
+                    <span className="font-semibold text-gray-800">Start Date:</span> <span className="text-gray-600">{handleDate(ads.startDate)}</span>
                 </div>
                 <div className="mb-3">
-                    <span className="font-semibold text-gray-800">End Date:</span> <span className="text-gray-600">{formatDate(adDetails.endDate)}</span>
+                    <span className="font-semibold text-gray-800">End Date:</span> <span className="text-gray-600">{handleDate(ads.endDate)}</span>
                 </div>
                 <h2 className="text-xl font-semibold mt-10 mb-6 text-gray-800">Media</h2>
                 <Grid container spacing={4}>
-                    {[...(adDetails.media ? adDetails.media : []), ...newMedia.map(file => ({
-                        type: file.type.startsWith('image/') ? 'image' as const : 'video' as const,
-                        url: URL.createObjectURL(file)
-                    }))].map((item, index) => (
-                        <Grid item xs={12} md={6} key={index}>
-                            {item.type === 'image' ? (
-                                <img
-                                    src={item.url}
-                                    alt={`Ad Media ${index + 1}`}
-                                    className="rounded-lg shadow-md"
+                    {ads.coverURL &&  (
+                        <Grid item xs={12} md={6}>
+                            {ads.coverURL.toLowerCase().endsWith('.mp4') ? (
+                                <video
+                                    src={ads.coverURL}
+                                    controls
+                                    className="rounded-lg shadow-md w-full"
                                 />
                             ) : (
-                                <video
-                                    src={item.url}
-                                    controls
-                                    className="rounded-lg shadow-md"
+                                <img
+                                    src={ads.coverURL}
+                                    alt="Ad Media"
+                                    className="rounded-lg shadow-md w-full"
                                 />
                             )}
                         </Grid>
-                    ))}
+                    )}
                 </Grid>
             </>
         )}

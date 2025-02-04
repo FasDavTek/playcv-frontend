@@ -9,6 +9,7 @@ import CONFIG from './../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../../libs/utils/apis/apiEndpoints';
 import { useAuth } from './../../../../../../libs/context/AuthContext';
 import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 interface UploadType {
   id: string;
@@ -25,63 +26,6 @@ interface UserSignupData {
   lastName: string;
   phone?: any;
 }
-
-// interface VerifyPaymentResponse {
-//   status: string;
-//   message: string;
-//   data: {
-//     id: number;
-//     domain: string;
-//     status: string;
-//     reference: string;
-//     amount: number;
-//     message: string;
-//     gateway_response: string;
-//     paid_at: string;
-//     created_at: string;
-//     channel: string;
-//     currency: string;
-//     ip_address: string;
-//     metadata: any;
-//     log: any;
-//     fees: number;
-//     fees_split: any;
-//     authorization: {
-//       authorization_code: string;
-//       bin: string;
-//       last4: string;
-//       exp_month: string;
-//       exp_year: string;
-//       channel: string;
-//       card_type: string;
-//       bank: string;
-//       country_code: string;
-//       brand: string;
-//       reusable: boolean;
-//       signature: string;
-//       account_name: string;
-//     };
-//     customer: {
-//       id: number;
-//       first_name: string;
-//       last_name: string;
-//       email: string;
-//       customer_code: string;
-//       phone: string;
-//       metadata: any;
-//       risk_action: string;
-//     };
-//     plan: any;
-//     split: any;
-//     order_id: string;
-//     paidAt: string;
-//     createdAt: string;
-//     requested_amount: number;
-//     transaction_date: string;
-//     plan_object: any;
-//     subaccount: any;
-//   };
-// }
 
 export interface PaymentDetails {
   id: number;
@@ -120,7 +64,7 @@ const VideoUploadTypes = () => {
 
   const fetchUploadTypes = useCallback(async () => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD_TYPE}?Page=1&Limit=100`, {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD_TYPE}?Download=true`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       
@@ -141,11 +85,6 @@ const VideoUploadTypes = () => {
       setIsLoading(false)
     }
   }, [token]);
-
-
-  useEffect(() => {
-    fetchUploadTypes()
-  }, [fetchUploadTypes]);
 
 
   useEffect(() => {
@@ -193,8 +132,6 @@ const VideoUploadTypes = () => {
         isUploaded: false,
       };
 
-      console.log('Sending payment confirmation to backend:', paymentConfirmationData);
-
       const paymentResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.PAYMENT}`, paymentConfirmationData, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -215,7 +152,6 @@ const VideoUploadTypes = () => {
       
 
     } catch (error) {
-      console.error('Error creating upload request:', error);
       toast.error('Failed to process your request. Please try again.');
     }
   }, [authState.user, navigate, token]);
@@ -231,7 +167,6 @@ const VideoUploadTypes = () => {
 
   
   const handlePayment = useCallback((type: UploadType) => {
-    console.log('Initiating payment for:', type);
     setSelectedType(type);
     selectedTypeRef.current = type;
     const amount = Math.round(Number(type.uploadPrice));
@@ -247,12 +182,11 @@ const VideoUploadTypes = () => {
       phone = userSignupData?.phoneNumber;
     }
 
-    console.log("", firstName, lastName, phone);
-
     if (amount > 0) {
       payButtonFn(amount, email, firstName, lastName, phone);
     }
   }, [authState.user, payButtonFn]);
+
 
   if (isLoading) {
     return (
@@ -262,8 +196,13 @@ const VideoUploadTypes = () => {
     )
   }
 
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="p-5">
+      <ChevronLeftIcon className="cursor-pointer text-base ml-1 top-4 sticky p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.95rem' }} onClick={handleBackClick} />
       <h2 className="text-2xl font-bold mb-4">Choose Your Video Upload Type</h2>
       {uploadTypes.map((uploadType) => (
         <div key={uploadType.id} className="my-4 p-4 border rounded-lg shadow-md">

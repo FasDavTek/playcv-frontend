@@ -20,6 +20,7 @@ export enum apiEndpoints {
     VIDEO_CATEGORY = '/api/v1/video/categories',
     VIDEO_UPLOAD_TYPE = '/api/v1/video/uploadtype/get',
     VIDEO_STATUS = '/api/v1/video/check/upload-request',
+    VIDEO_VIEWS = `/api/v1/video/add-view`,
 
     // payment flow
     PAYMENT = '/api/v1/payment/checkout',
@@ -35,6 +36,7 @@ export enum apiEndpoints {
     GET_USER = '/api/v1/admin/get/user/profile/:useremail',
     CREATE_PROF_EMP_USER = '/api/v1/admin/user/create-prof-emp',
     MANAGE_PROF_EMP_USER = '/api/v1/admin/user/manage-prof-emp',
+    APPROVE_EMPLOYER_USER = '/api/v1/admin/employer/manage',
     CREATE_AD_TYPE = '/api/v1/ads/adtypes/create-edit',
     CREATE_VIDEO_TYPE = '/api/v1/video/uploadtype/create-edit',
 

@@ -29,6 +29,8 @@ const CreateAdsConfirmationModal = forwardRef<HTMLDivElement, CreateAdsConfirmat
     //   onClose();
     // };
 
+    
+
     const ProceedToTypes = () => {
       navigate('/employer/advertisement/types');
     };

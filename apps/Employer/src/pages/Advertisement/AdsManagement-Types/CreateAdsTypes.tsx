@@ -9,6 +9,7 @@ import CONFIG from '../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from '../../../../../../libs/utils/apis/apiEndpoints';
 import { useAuth } from './../../../../../../libs/context/AuthContext';
 import { LOCAL_STORAGE_KEYS } from './../../../../../../libs/utils/localStorage';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 interface AdType {
   typeId: string;
@@ -21,64 +22,6 @@ interface AdType {
   coverUrl?: string;
   redirectUrl? : string;
 }
-
-
-// interface VerifyPaymentResponse {
-//   status: string;
-//   message: string;
-//   data: {
-//     id: number;
-//     domain: string;
-//     status: string;
-//     reference: string;
-//     amount: number;
-//     message: string;
-//     gateway_response: string;
-//     paid_at: string;
-//     created_at: string;
-//     channel: string;
-//     currency: string;
-//     ip_address: string;
-//     metadata: any;
-//     log: any;
-//     fees: number;
-//     fees_split: any;
-//     authorization: {
-//       authorization_code: string;
-//       bin: string;
-//       last4: string;
-//       exp_month: string;
-//       exp_year: string;
-//       channel: string;
-//       card_type: string;
-//       bank: string;
-//       country_code: string;
-//       brand: string;
-//       reusable: boolean;
-//       signature: string;
-//       account_name: string;
-//     };
-//     customer: {
-//       id: number;
-//       first_name: string;
-//       last_name: string;
-//       email: string;
-//       customer_code: string;
-//       phone: string;
-//       metadata: any;
-//       risk_action: string;
-//     };
-//     plan: any;
-//     split: any;
-//     order_id: string;
-//     paidAt: string;
-//     createdAt: string;
-//     requested_amount: number;
-//     transaction_date: string;
-//     plan_object: any;
-//     subaccount: any;
-//   };
-// }
 
 export interface PaymentDetails {
   id: number;
@@ -113,7 +56,6 @@ const AdUploadTypes = () => {
   const [adTypes, setAdTypes] = useState<AdType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [paymentReference, setPaymentReference] = useState<PaymentDetails | null>(null);
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
   // if (!token) {
@@ -123,7 +65,7 @@ const AdUploadTypes = () => {
 
   const fetchUploadTypes = useCallback(async () => {
     try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}?Page=1&Limit=100`, {
+      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ADS_TYPE}?Download=true`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       
@@ -133,8 +75,14 @@ const AdUploadTypes = () => {
       }
     } 
     catch (err: any) {
-      setError(err.message)
-      toast.error('Failed to load video upload types')
+      if(!token) {
+        toast.error('Your session has expired. Please log in again');
+        navigate('/');
+      }
+      else {
+        setError(err.message)
+        toast.error('Failed to load ad types')
+      }
     } 
     finally {
       setIsLoading(false)
@@ -148,22 +96,19 @@ const AdUploadTypes = () => {
   }, [fetchUploadTypes])
 
 
-  const onPaymentInitiated = useCallback(async (response: any) => {
+  const onPaymentSuccess = useCallback(async (response: any) => {
+
     if (!selectedTypeRef.current) {
-      console.error('No selected upload type found');
-      toast.error('An error occurred. Please try again.');
+      toast.error('No selected ad type found. Please try again.');
       return;
     }
     
     if (!authState.user) {
-      console.error('No user found in auth state');
       toast.error('User authentication error. Please log in and try again.');
       return;
     }
 
     try {
-      console.log(response)
-
       const paymentConfirmationData = {
         userId: authState.user?.id,
         buyerId: authState.user?.id,
@@ -181,7 +126,7 @@ const AdUploadTypes = () => {
         // cardType: selectedTypeRef.current.cardType || '',
         // cardDetails: selectedTypeRef.current.cardDetails || '',
         // last_Four: selectedTypeRef.current.last_Four || "Unknown",
-        paymentType: "upload",
+        paymentType: "advert",
         uploadType: selectedTypeRef.current.typeName,
         uploadTypeId: selectedTypeRef.current.typeId,
         userIdentifier: authState?.user?.id,
@@ -196,52 +141,34 @@ const AdUploadTypes = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      if (paymentResponse.code === '00') {
+        toast.success('Payment Successful');
 
-      const uploadRequestPayload = {
-        buyerId: authState.user?.id,
-        adId: null, // This will be filled later when the ad is uploaded
-        name: '',
-        adTypeId: selectedTypeRef.current.typeId,
-        description: "",
-        coverUrl: "",
-        redirectUrl: "",
-        action: "create",
-        statusId: null,
-        startDate: null,
-        endDate: null,
-        paymentId: paymentResponse.data.id
-      };
-
-      const uploadRequestResponse = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, uploadRequestPayload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-
-      navigate(`/admin/advertisement-management/confirmation`, { 
-        state: {
-          uploadRequestId: uploadRequestResponse.data.id,
-          adTypeId: selectedTypeRef.current.typeId,
-          adTypeName: selectedTypeRef.current.typeName,
-          price: selectedTypeRef.current.price,
-          paymentReference: response,
-          paymentId: paymentResponse.data.id
-        }
-      });
+        navigate(`/employer/advertisement/confirmation`, { 
+          state: {
+            adTypeId: selectedTypeRef.current.typeId,
+            adTypeName: selectedTypeRef.current.typeName,
+            price: selectedTypeRef.current.price,
+            paymentReference: response,
+            paymentId: response.reference
+          }
+        });
+      }
     }
     catch(err: any) {
-      console.error('Error creating upload request:', err);
       toast.error('Failed to process your request. Please try again.');
     }
-  }, [authState.user, navigate]);
+  }, [authState.user, navigate, token]);
 
 
 
   const onPaymentFailure = useCallback(() => {
     toast.error('Payment failed');
     setSelectedType(null);
+    selectedTypeRef.current = null;
   }, []);
 
-  const { payButtonFn, isProcessing } = usePaystack(onPaymentInitiated, onPaymentFailure);
+  const { payButtonFn, isProcessing } = usePaystack(onPaymentSuccess, onPaymentFailure);
 
 
   const handlePayment = useCallback((type: AdType) => {
@@ -274,9 +201,14 @@ const AdUploadTypes = () => {
     )
   }
 
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
 
   return (
     <div className="p-5">
+      <ChevronLeftIcon className="cursor-pointer text-base ml-1 top-4 sticky p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.95rem' }} onClick={handleBackClick} />
       <h2 className="text-2xl font-bold mb-4">Choose Your Ad Creation Type</h2>
       {adTypes.map((adType) => (
         <div key={adType.typeId} className="my-4 p-4 border rounded-lg shadow-md">
@@ -297,17 +229,6 @@ const AdUploadTypes = () => {
           <Button variant='black' onClick={() => handlePayment(adType)} label={isProcessing ? 'Processing...' : `Choose ${adType.typeName}`} disabled={isProcessing || isLoading} />
         </div>
       ))}
-     
-      {/* <div className="my-4 p-4 border rounded-lg shadow-md bg-gray-100">
-        <h3 className="text-xl font-semibold mb-2">Additional Notes</h3>
-        <ul className="list-disc ml-5">
-          <li className="mb-2">Pinned videos will be displayed at the top of relevant search results, potentially increasing engagement.</li>
-          <li className="mb-2">Both options include a feature to add a title, description, and tags to your video.</li>
-          <li className="mb-2">Ensure that your video complies with our content guidelines to avoid any issues during the upload process.</li>
-        </ul>
-        <p className="mt-4">If you have any questions or need assistance, please contact our support team.</p>
-        <p className='text-red-500 mt-6'><span className='font-semibold'>NOTE: </span>By uploading your videoCV on this platfom, you have read the videoCV guideline thoroughly and you agree to this platform's Terms and Conditions</p>
-      </div> */}
     </div>
   );
 };
