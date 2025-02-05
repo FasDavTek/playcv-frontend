@@ -4,7 +4,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Input, Modal } from '@mui/material';
 
 import { formatDate } from '@video-cv/utils';
-import { Button, Table, TextArea } from '@video-cv/ui-components';
+import { Button, RejectionDialog, SelectMenu, Table, TextArea } from '@video-cv/ui-components';
 import { useNavigate } from 'react-router-dom';
 import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 import CONFIG from './../../../../../libs/utils/helpers/config';
@@ -13,9 +13,13 @@ import { toast } from 'react-toastify';
 import { CreateAdsModal } from './modals';
 import { handleDate } from '@video-cv/utils'
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
+import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
+import RecommendOutlinedIcon from '@mui/icons-material/RecommendOutlined';
+import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 
 type Advert = {
-  id: string;
+  id: number;
   status: string;
   statusId: number;
   adName: string;
@@ -52,6 +56,9 @@ const Payment = () => {
   const [filter, setFilter] = useState("");
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [reason, setReason] = useState('');
+  const [rejectionDialogOpen, setRejectionDialogOpen] = useState(false);
+  const [selectedAdvert, setSelectedAdvert] = useState<Advert | null>(null);
+  const [selectedAction, setSelectedAction] = useState<"approve" | "deny" | "delete" | "deactivate" | null>(null);
 
   const closeModal = () => setOpenModal(null);
   const openSetModalFn = (modalType: ModalTypes) => setOpenModal(modalType);
@@ -63,7 +70,7 @@ const Payment = () => {
     setLoading(true);
     try {
 
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_ADS}?Page=1&Limit=100`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_ADS}?Dowload=true`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -133,44 +140,118 @@ const Payment = () => {
     };
   };
 
-  const handleActivate = (id: string) => handleAdAction(id, 'a')
 
-  const handleOpenSuspendDialog = (id: string, title: string) => {
-    setSelectedAdId(id)
-    setSelectedAdTitle(title)
-    setOpenDialog(true)
-  }
-
-  const handleConfirmSuspend = () => {
-    if (selectedAdId !== null) {
-      handleAdAction(selectedAdId, 'd', reason)
+  const handleStatusToggle = async (ad: Advert, newStatusId: number, action: 'approve' | 'deny' | 'delete' | 'deactivate', reason?: string) => {
+    if (action === "deny" || action === "delete" || action === "deactivate") {
+      setSelectedAdvert(ad)
+      setSelectedAction(action)
+      setRejectionDialogOpen(true)
+    } else {
+      let statusId = newStatusId
+      await updateAdvertStatus(ad, action)
     }
-    handleCloseDialog()
-  }
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false)
-    setSelectedAdId(null)
-    setSelectedAdTitle('')
-    setReason('')
-  }
+    
+  };
 
-  const handleStatusToggle = async (id: string, currentStatus: string) => {
+
+
+  const updateAdvertStatus = async (ad: Advert, action: 'approve' | 'deny' | 'delete' | 'deactivate', reason?: string ) => {
     try {
-      const newStatus = currentStatus === 'active' ? 'suspended' : 'active'
-      
-      setAds((prevAds) =>
-        prevAds.map((ad) =>
-          ad.id === id ? { ...ad, status: newStatus } : ad
-        )
-      )
-      toast.success(`Ad ${newStatus === 'active' ? 'activated' : 'suspended'} successfully`)
-    } catch (err) {
+      let status: "a" | "d" | "p" | 'del' | 'deactivate';
+      switch (action) {
+        case 'approve':
+          status = "a"
+          break
+        case 'deny':
+          status = "d"
+          break
+        case 'delete':
+          status = 'del'
+          break
+        case 'deactivate':
+          status = "deactivate"
+          break
+        default:
+          throw new Error("Invalid status")
+      }
+
+      const payload: any = {
+        action: status,
+        adId: ad.id
+      }
+
+      if (reason) {
+        payload.reasonForRejection = reason
+      }
+
+      const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.MANAGE_ADS}`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      await fetchAds();
+      toast.success(`Video status updated successfully`);
+    }
+    catch (err) {
       console.error('Error updating ad status:', err)
       toast.error('Failed to update ad status')
     }
+  }
+
+
+
+  const handleRejectionReasonSubmit = (reason: string) => {
+    if (selectedAdvert && selectedAction) {
+      updateAdvertStatus(selectedAdvert, selectedAction, reason)
+      setRejectionDialogOpen(false)
+      setSelectedAdvert(null)
+      setSelectedAction(null)
+    }
+    
+  }
+
+
+  const statusOptions = [
+    { value: "Active", label: "Active" },
+    { value: "Suspended", label: "Suspended" },
+    { value: "InReview", label: "In Review" },
+    { value: "Rejected", label: "Rejected" },
+    { value: "Closed", label: "Closed" },
+  ]
+
+  const getStatusLabel = (statusId: number) => {
+    switch (statusId) {
+      case 1:
+        return "Approved"
+      case 2:
+        return "InReview"
+      case 3:
+        return "Rejected"
+      case 4:
+        return "Closed"
+      default:
+        return "Unknown"
+    }
+  }
+
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Active":
+        return "bg-green-200 text-green-700"
+      case "InReview":
+        return "bg-yellow-200 text-yellow-700"
+      case "Rejected":
+        return "bg-red-200 text-red-700"
+      case "Closed":
+        return "bg-gray-200 text-gray-700"
+      default:
+        return "bg-gray-200 text-gray-700"
+    }
   };
 
+
+   type userStatus = "Active" | "Suspended" | "InReview" | "Rejected" | "Closed"
 
 
 
@@ -204,22 +285,23 @@ const Payment = () => {
     }),
     columnHelper.accessor('status', {
       header: 'Status',
-      cell: (info) => (
-        <span
-          className={`px-2 py-1.5 text-center items-center rounded-full text-white ${
-            info.getValue() === 'Active' ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
-          }`}
-        >
-          {info.getValue()}
-        </span>
-      ),
+      cell: (info) => {
+        const status = info.getValue() as unknown as userStatus
+        return (
+          <span
+            className={`px-2 py-1.5 text-center items-center rounded-full ${getStatusColor(statusOptions.find((option) => option.value === status)?.label || "")}`}
+          >
+            {statusOptions.find((option) => option.value === status)?.label}
+          </span>
+        )
+      },
     }),
     columnHelper.display({
       id: 'actions',
       header: 'Action',
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Button variant="custom"
+          {/* <Button variant="custom"
             onClick={() => handleView(row.original)}
             label={'View'}  
           >
@@ -227,7 +309,7 @@ const Payment = () => {
           {row.original.status === 'active' ? (
             <Button
               variant={'red'}
-              onClick={() => handleOpenSuspendDialog(row.original.id, row.original.adName)}
+              onClick={() => handleOpenSuspendDialog(row.original, row.original.adName)}
               label={'Suspend'}
             >
             </Button>
@@ -238,7 +320,18 @@ const Payment = () => {
               label={'Activate'}
             >
             </Button>
-          )}
+          )} */}
+
+          <SelectMenu
+            options={[
+              { label: "Activate", onClick: () => handleStatusToggle(row.original, 1, 'approve'), value: 1, icon: <RecommendOutlinedIcon />, },
+              { label: "Deny", onClick: () => handleStatusToggle(row.original, 5, 'deny'), value: 5, icon: <ThumbDownOutlinedIcon />,},
+              { label: "Delete", onClick: () => handleStatusToggle(row.original, 1, 'delete'), value: 8, icon: <ThumbDownOutlinedIcon />, },
+              { label: "Deactivate", onClick: () => handleStatusToggle(row.original, 5, 'deactivate'), value: 5, icon: <ThumbDownOutlinedIcon />,},
+              { label: "View", onClick: () => handleView(row.original), icon: <PreviewOutlinedIcon />, },
+            ]}
+            buttonVariant="text"
+          />
         </div>
       ),
     }),
@@ -269,7 +362,7 @@ const Payment = () => {
 
       <Table loading={false} data={ads} columns={columns} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} tableHeading="All Ads" />
 
-      <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="dialog-title" aria-describedby="dialog-description" PaperProps={{ sx: { padding: 3, borderRadius: 2, boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)', width: { xs: '90%', sm: '500px' }, maxWidth: '750px' }, }} BackdropProps={{ sx: { backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.2)', }, }}>
+      {/* <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="dialog-title" aria-describedby="dialog-description" PaperProps={{ sx: { padding: 3, borderRadius: 2, boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)', width: { xs: '90%', sm: '500px' }, maxWidth: '750px' }, }} BackdropProps={{ sx: { backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.2)', }, }}>
         <DialogTitle>Suspension Reason</DialogTitle>
         <DialogContent>
           <TextArea label="" rows={5} value={reason} onChange={(e) => setReason(e.target.value)}/>
@@ -278,7 +371,9 @@ const Payment = () => {
             <Button variant='red' label='Cancel' type='reset' onClick={handleCloseDialog}></Button>
             <Button variant='black' label='Confirm Suspension' type='submit' onClick={handleConfirmSuspend}></Button>
           </DialogActions>
-      </Dialog>
+      </Dialog> */}
+
+      <RejectionDialog open={rejectionDialogOpen} onClose={() => setRejectionDialogOpen(false)} onSubmit={handleRejectionReasonSubmit} />
 
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>
         <>

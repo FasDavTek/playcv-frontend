@@ -242,7 +242,7 @@ const index = () => {
 
 
   const statusOptions = [
-    { value: "Active", label: "Active" },
+    { value: "Approved", label: "Approved" },
     { value: "Pending", label: "Pending" },
     { value: "InReview", label: "In Review" },
     { value: "Rejected", label: "Rejected" },
@@ -252,7 +252,7 @@ const index = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Active":
+      case "Approved":
         return "bg-green-200 text-green-700"
       case "InReview":
         return "bg-yellow-200 text-yellow-700"
@@ -297,7 +297,7 @@ const index = () => {
           <span
             className={`px-2 py-1.5 text-center items-center rounded-full ${getStatusColor(statusOptions.find((option) => option.value === status)?.label || "")}`}
           >
-            {status}
+            {statusOptions.find((option) => option.value === status)?.label}
           </span>
         )
       },
