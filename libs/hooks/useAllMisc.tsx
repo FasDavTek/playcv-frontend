@@ -97,7 +97,7 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
           } else {
             setData(response)
           }
-          hasFetched.current = true
+          hasFetched.current = false
         } catch (err) {
           setError(err instanceof Error ? err : new Error("An error occurred while fetching data"))
         } finally {
@@ -106,9 +106,9 @@ export const useAllMisc = (params: MiscQueryParams): UseAllMiscResult => {
     }, [params.page, params.limit, params.download, params.resource, params.structureType])
 
     useEffect(() => {
-    if (params.enabled !== false && !hasFetched.current) {
-        fetchData()
-    }
+      if (params.enabled !== false && !hasFetched.current) {
+          fetchData()
+      }
     }, [fetchData, params.enabled])
 
     const refetch = useCallback(() => {

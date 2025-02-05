@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Modal } from '@mui/material';
-import { Button, Table } from '@video-cv/ui-components';
+import { Button, SelectMenu, Table } from '@video-cv/ui-components';
 import { CategoryModal } from './modals';
 // import { ContentModal } from './modals';
 import { useAllMisc } from './../../../../../libs/hooks/useAllMisc';
 import { useAllCountry } from './../../../../../libs/hooks/useAllCountries';
 import { useAllState } from './../../../../../libs/hooks/useAllState';
+import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
+import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 
 const truncateText = (text: string, wordLimit: number) => {
   const words = text.split(' ');
@@ -117,9 +119,6 @@ const ContentPage = () => {
     structureType: 'data',
   });
 
-  console.log(miscData);
-  console.log(activeTab)
-
   const { data: countryData, isLoading: isCountryLoading, error: countryError, refetch: refetchCountryData, } = useAllCountry();
   const { data: stateData, isLoading: isStateLoading, error: stateError, refetch: refetchStateData } = useAllState();
 
@@ -203,7 +202,7 @@ const ContentPage = () => {
       header: 'Actions',
       cell: ({ row }) => (
         <div className='flex gap-2'>
-          <Button variant='custom' label='View' onClick={() => handleView(row.original)} />
+          {/* <Button variant='custom' label='View' onClick={() => handleView(row.original)} />
           <Button variant='custom' label='Edit' onClick={() => handleEdit(row.original)} />
           {activeTab === 'category' ? (
             <Button 
@@ -217,7 +216,14 @@ const ContentPage = () => {
                       label={row.original.status ? 'Deactivate' : 'Activate'} 
                   />
               )
-          )}
+          )} */}
+          <SelectMenu
+            options={[
+              { label: "View", onClick: () => handleView(row.original), icon: <PreviewOutlinedIcon />, },
+              { label: "Edit", onClick: () => handleEdit(row.original), icon: <CreateOutlinedIcon />, },
+            ]}
+            buttonVariant="text"
+          />
         </div>
       )
     });
@@ -230,10 +236,10 @@ const ContentPage = () => {
             header: 'Answer',
             cell: (info) => truncateText(info.getValue() as string || '', 10),
           }),
-          columnHelper.accessor('isActive', {
-            header: 'Status',
-            cell: (info) => info.getValue() ? 'Active' : 'Inactive'
-          }),
+          // columnHelper.accessor('isActive', {
+          //   header: 'Status',
+          //   cell: (info) => info.getValue() ? 'Active' : 'Inactive'
+          // }),
           actionColumn,
         ];
       case 'country':
