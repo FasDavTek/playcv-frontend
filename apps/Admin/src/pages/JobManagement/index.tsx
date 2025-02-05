@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
-import { Button, Table } from '@video-cv/ui-components';
+import { Button, SelectMenu, Table } from '@video-cv/ui-components';
 import { useNavigate } from 'react-router-dom';
 import JobStatusModal from './modal/jobStatusModal';
 import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
@@ -10,6 +10,8 @@ import { toast } from 'react-toastify';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 import { useAllCountry } from './../../../../../libs/hooks/useAllCountries';
 import { handleDate } from '@video-cv/utils';
+import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
+import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import { useAllState } from './../../../../../libs/hooks/useAllState';
 
 const truncateText = (text: string, wordLimit: number) => {
@@ -202,11 +204,18 @@ const JobManagement = () => {
       header: 'Actions',
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Button variant="custom" label="View" onClick={() => handleView(row.original)} />
+          {/* <Button variant="custom" label="View" onClick={() => handleView(row.original)} />
           <Button variant="success" label="Edit" onClick={() => handleEdit(row.original)} />
           {row.original.status && (
             <Button variant={row.original.status === 'Active' ? 'red' : 'success'} label={row.original.status === 'Active' ? 'Deactivate' : 'Activate'} />
-          )}
+          )} */}
+          <SelectMenu
+            options={[
+              { label: "View", onClick: () => handleView(row.original), icon: <PreviewOutlinedIcon />, },
+              { label: "Edit", onClick: () => handleEdit(row.original), icon: <CreateOutlinedIcon />, },
+            ]}
+            buttonVariant="text"
+          />
         </div>
       ),
     }),
