@@ -27,7 +27,6 @@ type Vacancy = {
   jobTitle: string;
   startDate: string;
   location: string;
-  createdAt: string;
   companyName: string;
   companyImage: string;
   jobDetails: string;
@@ -61,17 +60,17 @@ const JobManagement = () => {
   const fetchJobs = async () => {
     try {
 
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Download=true`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      const data = await resp.data;
+      const data = await resp.vacancies;
       setJobs(data);
       console.log(jobs)
       setLoading(false);
 
       const currentTime = Date.now();
-      const newJobs = data.filter((job: Vacancy) => new Date(job.createdAt).getTime() > lastFetchTime);
+      const newJobs = data?.filter((job: Vacancy) => new Date(job.dateCreated).getTime() > lastFetchTime);
       if (newJobs.length > 0) {
         await fetchJobs();
         toast.info(`${newJobs.length} new job(s) uploaded`);
