@@ -54,7 +54,7 @@ const JobCard: React.FC<JobProps> = ({ job }) => {
       )}
     >
       <div className="flex flex-col space-y-4 gap-2">
-        <Typography variant="h5" component="h3" className="font-semibold truncate">
+        <Typography variant="h6" component="h3" className="font-semibold truncate">
           {jobTitle}
         </Typography>
         <Typography variant="h6" component='h4' className="text-gray-600 font-medium truncate">
@@ -69,7 +69,7 @@ const JobCard: React.FC<JobProps> = ({ job }) => {
           </Typography>
         </div>
         <div className="flex items-center text-gray-500">
-          <LocationOnIcon className="mr-1" />
+          <LocationOnIcon fontSize='inherit' className="mr-1 text-sm" />
           <Typography variant="body2" className="truncate">
             {location}
           </Typography>
@@ -78,7 +78,7 @@ const JobCard: React.FC<JobProps> = ({ job }) => {
       <div className=" line-clamp-3 mt-4">
         <Typography 
           variant="body2" 
-          fontSize='1rem'
+          fontSize='0.95rem'
           className="text-neutral-200 line-clamp-3"
         >
           {truncateText(jobDetails, 150)}
@@ -88,7 +88,7 @@ const JobCard: React.FC<JobProps> = ({ job }) => {
         <button 
           type='button'
           onClick={() => handleViewDetails(job)}
-          className="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200"
+          className="text-blue-600 text-sm hover:text-blue-800 hover:underline transition-colors duration-200"
         >
           Read More
         </button>

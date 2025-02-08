@@ -147,7 +147,7 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category
 
   return (
     <div className="space-y-4">
-        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
           {/* {videoCVs.map((item: any, idx: number) => (
             <Box key={idx}>{item.url && <VideoCard video={item} />}</Box>
           ))} */}
@@ -162,8 +162,8 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category
           <Link to={'/talent'} className='mr-3 text-blue-600'>
             <span>View more</span>
           </Link>
-          <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
-          <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
+          <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
+          <Button icon={<NavigateNextIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
         </div>
     </div>
   );

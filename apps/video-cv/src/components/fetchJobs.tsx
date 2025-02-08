@@ -138,7 +138,7 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
 
   return (
     <div className='space-y-4'>
-      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
+      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
         {currentJobs.map((job: Jobs) => (
           <Box key={job?.vId}>
             <JobCard job={job} />
@@ -150,8 +150,8 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
         <Link to={'/job-board'} className='mr-3 text-blue-600'>
             <span>View more</span>
         </Link>
-        <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
-        <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
+        <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
+        <Button icon={<NavigateNextIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
       </div>
     </div>
   );

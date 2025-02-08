@@ -129,12 +129,19 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
       sx={{
         width: { xs: '100%', sm: '100%', md: '100%' },
         maxWidth: '300px',
-        boxShadow: { xs: '1', sm: '1', lg:'0'},
+        // boxShadow: { xs: '1', sm: '1', lg:'0'},
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         mx: 'auto',
+        height: '100%',
+        display: "flex",
+        flexDirection: "column",
         borderRadius: 2,
+        transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
         '&:hover': {
           cursor: 'pointer',
-          boxShadow: '5',
+          // boxShadow: '5',
+          transform: "translateY(-5px)",
+          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.15)",
         },
       }}
       elevation={4}
@@ -154,9 +161,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
           sx={{ width: { xs: '100%', sm: '358px' }, height: 180 }}
         />
       {/* </Link> */}
-      <CardContent sx={{ backgroundColor: 'transparent', height: 'auto' }} >
+      <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", backgroundColor: 'transparent', height: 'auto' }} >
         
-          <Typography variant="subtitle1" fontWeight="bold" color="#000">
+          <Typography variant="subtitle1" fontWeight="medium" color="#000">
             {title?.slice(0, 30)}{' '}
             {/* <CheckCircleIcon
               sx={{ fontSize: '12px', color: 'gray', ml: '5px' }}
