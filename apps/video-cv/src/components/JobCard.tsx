@@ -49,11 +49,11 @@ const JobCard: React.FC<JobProps> = ({ job }) => {
       square={false}
       onClick={() => handleViewDetails(job)}
       className={clsx(
-        "bg-white p-6 h-auto max-h-96 max-w-sm rounded-2xl",
+        "bg-white p-6 h-auto max-h-96 max-w-[320px] rounded-2xl",
         "transition-all duration-300 ease-in-out hover:shadow-lg"
       )}
     >
-      <div className="flex flex-col space-y-4 gap-2">
+      <div className="flex flex-col gap-2">
         <Typography variant="h6" component="h3" className="font-semibold truncate">
           {jobTitle}
         </Typography>
