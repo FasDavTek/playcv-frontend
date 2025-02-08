@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button, Input } from '@video-cv/ui-components';
 import { Images } from '@video-cv/assets';
-import { useAuth } from '../../context/AuthProvider';
+// import { useAuth } from '../../context/AuthProvider';
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const { handleLogin } = useAuth();
+  // const { handleLogin } = useAuth();
 
   const [loading, setLoading] = React.useState(false);
 
@@ -25,7 +25,7 @@ const Login = () => {
       console.log('Login3')
       setLoading(false);
       console.log('Login4')
-      handleLogin();
+      // handleLogin();
       navigate('/dashboard');
       console.log('Login5')
       // window.location.href = 'home';
