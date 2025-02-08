@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { CircularProgress, Modal, Stack } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -15,21 +15,61 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 import { handleDate } from '@video-cv/utils';
+import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
+
+
+const truncateText = (text: string, charLimit: number) => {
+  if (text.length > charLimit) {
+    return text.slice(0, charLimit) + '...';
+  }
+  return text;
+};
+
 
 export type ModalTypes = null | 'confirmationModal' | 'uploadModal';
 
 type Video = {
-  id: string;
-  title: string;
-  status: string;
-  startDate: Date;
-  endDate: Date;
-  authorName: string;
-  search: string;
-  category: string;
-  userType: string;
-  userId: string;
+  id: number
+  title: string
+  typeId: number
+  type: string
+  transcript: string
+  categoryId: number
+  category: string | null
+  userId: string
+  dateCreated: string
+  views: number
+  videoUrl: string
+  thumbnailUrl: string
+  status: string
+  totalRecords: number
   rejectionReason?: string
+  authorProfile: {
+    userDetails: {
+      fullName: string
+      email: string
+      profileImage: string | null
+      userId: string;
+      firstName: string;
+      middleName: string;
+      lastName: string;
+      phoneNo: string;
+      dateOfBirth: string;
+      gender: string;
+      type: string;
+      isActive: boolean;
+      phoneVerification: boolean;
+      isBusinessUser: boolean;
+      isProfessionalUser: boolean;
+      isAdmin: boolean;
+      isEmailVerified: boolean;
+      isDeleted: boolean;
+      createdAt: string;
+      updatedAt: string;
+      lastLoginDate: string;
+      genderId: number;
+    }
+  }
 }
 
 const Dashboard = () => {
@@ -37,8 +77,9 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
+  const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active');
   const [videos, setVideos] = useState<Video[]>([]);
-  const [activeTab, setActiveTab] = useState<'pending' | 'approved'>('pending');
+  const [selectedItem, setSelectedItem] = useState<Video | null>(null);
   const [approvedVideos, setApprovedVideos] = useState<Video[]>([]);
   const [pendingVideos, setPendingVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,38 +127,43 @@ const Dashboard = () => {
     }
   };
 
+
+
+
   const fetchVideos = async () => {
     setIsLoading(true);
-    setError(null);
     try {
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.AUTH_VIDEO_LIST}?Download=true`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      let data;
       if (resp.code === '00') {
-        const data = await resp.videos;
-        const currentTime = Date.now();
-        console.log(data);
-        setVideos(data);
-
-        const newVideos = data.filter((video: Video) => new Date(video.startDate).getTime() > lastFetchTime);
-        const approved = data.filter((video: Video) => video.status === 'approved');
-        const pending = data.filter((video: Video) => ['pending', 'rejected', 'InReview'].includes(video.status));
-        setVideos(data);
-        setApprovedVideos(approved);
-        setPendingVideos(pending);
-
-        newVideos.forEach((video: Video) => {
-          if (video.status === 'approved') {
-            toast.success(`Your video "${video.title}" has been approved!`)
-          } 
-          else if (video.status === 'rejected') {
-            toast.error(`Your video "${video.title}" has been rejected. Reason: ${video.rejectionReason}`)
-          }
-        })
-
-        setLastFetchTime(currentTime)
+        data = await resp.videos;
       }
+
+      const currentTime = Date.now();
+
+      const newVideos = data.filter((video: Video) => new Date(video.dateCreated).getTime() > lastFetchTime);
+
+      const videosApproved = data.filter((video: Video) => video.status === 'Approved');
+      const videosPending = data.filter((video: Video) => ['Pending', 'Rejected', 'InReview'].includes(video.status));
+      setApprovedVideos(videosApproved);
+      setPendingVideos(videosPending);
+
+      console.log(`Current tab ${activeTab}`, videos)
+
+      newVideos.forEach((video: Video) => {
+        if (video.status === 'Approved') {
+          toast.success(`Your video "${video.title}" has been approved!`)
+        } 
+        else if (video.status === 'Rejected') {
+          toast.error(`Your video "${video.title}" has been rejected. Reason: ${video.rejectionReason}`)
+        }
+      })
+
+      setLastFetchTime(currentTime)
+
     }
     catch (err) {
       if(!token) {
@@ -135,8 +181,11 @@ const Dashboard = () => {
     }
   }
 
+
+
+
   useEffect(() => {
-    fetchVideos()
+    fetchVideos();
     const interval = setInterval(fetchVideos, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [])
@@ -144,33 +193,19 @@ const Dashboard = () => {
 
 
 
-  const handleView = async (id: string) => {
-    try {
-      const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // if (!response.ok) {
-      //   throw new Error('Error fetching video details');
-      // }
-
-      const videoDetails = await response.json();
-      navigate(`/admin/video-management/:${id}`, {
-        state: { videoDetails },
-      });
-    }
-    catch (err) {
-      console.error('Error fetching video details:', err)
-      toast.error('Failed to fetch video details')
-    }
+  const handleView = async (item: Video) => {
+    setSelectedItem(item);
+    navigate(`/candidate/video-management/view/:${item.id}`, {
+      state: { video: item },
+    });
   };
 
 
 
   const statusOptions = [
-    { value: "Active", label: "Active" },
+    { value: "Approved", label: "Approved" },
     { value: "Suspended", label: "Suspended" },
-    { value: "In Review", label: "In Review" },
+    { value: "InReview", label: "In Review" },
     { value: "Rejected", label: "Rejected" },
     { value: "Closed", label: "Closed" },
   ]
@@ -178,7 +213,7 @@ const Dashboard = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Active":
+      case "Approved":
         return "bg-green-200 text-green-700"
       case "InReview":
         return "bg-yellow-200 text-yellow-700"
@@ -194,13 +229,17 @@ const Dashboard = () => {
 
   const columns = [
     { header: 'Video Name', accessorKey: 'title', },
+    { header: 'Video Link', accessorKey: 'videoUrl',  cell: (info: { getValue: () => string; }):any => truncateText(info.getValue() as string || '', 30), },
     { header: 'Uploader', accessorKey: 'authorProfile.userDetails.fullName', },
     { header: 'Video Type', accessorKey: 'type', },
     { header: 'Email', accessorKey: 'email', },
     { header: 'Course of Study', accessorKey: 'courseOfStudy', },
+    { header: 'Institution', accessorKey: 'institution', },
     { header: 'Grade', accessorKey: 'grade', },
     { header: 'Gender', accessorKey: 'gender', },
-    { header: 'Phone', accessorKey: 'phone', },
+    { header: 'Business Name', accessorKey: 'businessName', },
+    { header: 'BusinessPhone', accessorKey: 'businessPhoneNo', },
+    { header: 'Industry', accessorKey: 'industry', },
     { header: 'Upload Date', accessorKey: 'dateCreated', cell: (info: any) => handleDate(info.getValue()) },
     { header: 'Status', accessorKey: 'status', 
       cell: (info: any) => {
@@ -220,14 +259,7 @@ const Dashboard = () => {
         <Button variant='red' label='Reject' type='submit' onClick={() => handleOpenRejectDialog(row.original.id, row.original.title)} disabled={row.original.status !== 'Pending'}></Button> */}
         <SelectMenu
           options={[
-            { label: "View", onClick: () => handleView(row.original.id) },
-            // {
-            //   label: "Reject",
-            //   onClick: () => handleOpenRejectDialog(row.original.id, row.original.title),
-            //   value: 5,
-            // },
-            // { label: "Revoke", onClick: () => handleStatusChange(row.original.id, 8), value: 8 },
-            // { label: "Decline", onClick: () => handleStatusChange(row.original.id, 9), value: 9 },
+            { label: "View", onClick: () => handleView(row.original), icon: <PreviewOutlinedIcon />, },
           ]}
           buttonVariant="text"
         />
@@ -245,16 +277,21 @@ const Dashboard = () => {
         <CircularProgress className="w-8 h-8 animate-spin" />
       </div>
     )
-  }
+  };
 
-  // if (error) {
-  //   return (
-  //     <div className="flex flex-col items-center justify-center min-h-screen">
-  //       <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-  //       <p className="text-lg font-semibold text-red-500">{error}</p>
-  //     </div>
-  //   )
-  // }
+
+
+  const getCurrentItems = () => {
+    switch (activeTab) {
+      case 'active':
+        return approvedVideos;
+      case 'pending':
+        return pendingVideos;
+      default:
+        return [];
+    }
+  };
+
   
 
   return (
@@ -270,7 +307,7 @@ const Dashboard = () => {
 
       <div className="bg-gray-300 border-b border-gray-200 rounded-lg">
         <div className="flex p-1">
-          {['pending', 'approved'].map((tab) => (
+          {['active', 'pending'].map((tab) => (
             <button
               key={tab}
               className={`py-2 px-4 text-sm font-medium ${
@@ -278,16 +315,16 @@ const Dashboard = () => {
                   ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg'
                   : 'text-blue-600 hover:text-blue-600'
               }`}
-              onClick={() => setActiveTab(tab as typeof activeTab)}
+              onClick={() => { setActiveTab(tab as typeof activeTab);console.log('Clicked ' + tab, 'Current ' + activeTab, videos)}}
             >
-              {tab === "pending" ? "Pending Videos" : 'Approved Videos'}
+              {tab === 'active' ? 'Approved Videos' : 'Pending Videos'}
             </button>
           ))}
         </div>
       </div>
 
       <div className='mt-4'>
-        <Table loading={false} data={`${activeTab === 'pending' ? pendingVideos : approvedVideos}`} columns={columns} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} tableHeading={`All My ${activeTab === "pending" ? "Pending Videos" : 'Approved Videos'}`} />
+        <Table loading={false} data={getCurrentItems()} columns={columns} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} tableHeading={`All My ${activeTab === 'active' ? 'Approved Videos' : 'Pending Videos' }`} />
       </div>
 
       <Modal open={openModal === 'confirmationModal'} onClose={closeModal}>

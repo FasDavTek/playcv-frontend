@@ -18,6 +18,26 @@ import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import RecommendOutlinedIcon from '@mui/icons-material/RecommendOutlined';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 
+
+const truncateText = (text: string, wordLimit: number) => {
+  const words = text.split(' ');
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+  return text;
+};
+
+
+
+const truncateLetter = (text: string, charLimit: number) => {
+  if (text.length > charLimit) {
+    return text.slice(0, charLimit) + '...';
+  }
+  return text;
+};
+
+
+
 type Advert = {
   id: number;
   status: string;
@@ -264,6 +284,7 @@ const Payment = () => {
     }),
     columnHelper.accessor('redirectUrl', {
       header: 'Ad Link',
+      cell: (info) => truncateLetter(info.getValue() as string || '', 30),
     }),
     columnHelper.accessor('adType', {
       header: 'Ad Type',
@@ -274,6 +295,7 @@ const Payment = () => {
     }),
     columnHelper.accessor('adDescription', {
       header: 'Description',
+      cell: (info) => truncateText(info.getValue() as string || '', 10),
     }),
     columnHelper.accessor('startDate', {
       header: 'Start Date',

@@ -1,10 +1,4 @@
-import {
-  useContext,
-  createContext,
-  ReactNode,
-  useEffect,
-  useReducer,
-} from 'react';
+import { useContext, createContext, ReactNode, useEffect, useReducer, } from 'react';
 
 import { GetItemsFromLocalStorage, RemoveFromLocalStorage, AddToLocalStorage, } from '@video-cv/utils';
 export interface ICartItem {
@@ -12,6 +6,7 @@ export interface ICartItem {
   id: string;
   imageSrc: string;
   price: number;
+  uploader: string;
 }
 
 interface IState {
@@ -26,16 +21,20 @@ const initialState: IState = {
 
 export const CartContext = createContext<{ cartState: IState; dispatch: React.Dispatch<any> } | undefined>(undefined);
 
-const CartReducer = (
-  state: IState,
-  action: { type: string; payload: ICartItem }
-): IState => {
+const CartReducer = ( state: IState, action: { type: string; payload: ICartItem }): IState => {
   // TODO: find out why it is being added twice
   switch (action.type) {
     case 'ADD_TO_CART': {
-      console.log('add to cart type', action);
       const newItem = action.payload;
-      const updatedCart = [...state.cart, newItem];
+      // const updatedCart = [...state.cart, newItem];
+      const existingItemIndex = state.cart.findIndex((item) => item.id === newItem.id)
+
+      if (existingItemIndex !== -1) {
+        // Item already exists, don't add it again
+        return state
+      }
+
+      const updatedCart = [...state.cart, newItem]
       AddToLocalStorage(updatedCart, CART_KEY);
       return {
         ...state,
@@ -43,9 +42,7 @@ const CartReducer = (
       };
     }
     case 'REMOVE_FROM_CART': {
-      const filteredList = state.cart.filter(
-        (item) => item.id !== action.payload.id
-      );
+      const filteredList = state.cart.filter((item) => item.id !== action.payload.id);
       // REFACTOR: think through and see if we can pass filteredList
       // instead of action.payload.id
       RemoveFromLocalStorage(action.payload.id, CART_KEY);

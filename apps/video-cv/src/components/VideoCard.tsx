@@ -15,6 +15,7 @@ import {
 import { Button } from '@video-cv/ui-components';
 import { useCart } from '../context/CartProvider';
 import { useAuth } from './../../../../libs/context/AuthContext';
+import { toast } from 'react-toastify';
 
 interface Video {
   id: number
@@ -31,10 +32,31 @@ interface Video {
   thumbnailUrl: string
   status: string
   totalRecords: number
+  rejectionReason?: string
   authorProfile: {
     userDetails: {
       fullName: string
+      email: string
       profileImage: string | null
+      userId: string;
+      firstName: string;
+      middleName: string;
+      lastName: string;
+      phoneNo: string;
+      dateOfBirth: string;
+      gender: string;
+      type: string;
+      isActive: boolean;
+      phoneVerification: boolean;
+      isBusinessUser: boolean;
+      isProfessionalUser: boolean;
+      isAdmin: boolean;
+      isEmailVerified: boolean;
+      isDeleted: boolean;
+      createdAt: string;
+      updatedAt: string;
+      lastLoginDate: string;
+      genderId: number;
     }
   }
 }
@@ -72,9 +94,12 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
       return;
     }
 
-    if (authState?.user?.userType !== 'Employer') {
+    if (authState?.user?.userTypeId !== 2) {
+      toast.error("Only employers can add videos to the cart.");
       return;
     }
+
+    console.log('clicking')
 
     const itemInCart = cartState.cart.some((item: any) => item.id === id);
     setIsInWishlist(!isInWishlist);
@@ -88,8 +113,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
       const value = {
         name: title,
         id: id,
-        imageSrc: videoUrl,
+        imageSrc: thumbnailUrl,
         price: price,
+        uploader: authorProfile.userDetails.fullName,
       };
       dispatch({
         type: 'ADD_TO_CART',
@@ -128,7 +154,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
           sx={{ width: { xs: '100%', sm: '358px' }, height: 180 }}
         />
       {/* </Link> */}
-      <CardContent sx={{ backgroundColor: 'transparent', height: 'auto' }} onClick={() => handleViewDetails(video)}>
+      <CardContent sx={{ backgroundColor: 'transparent', height: 'auto' }} >
         
           <Typography variant="subtitle1" fontWeight="bold" color="#000">
             {title?.slice(0, 30)}{' '}
@@ -145,7 +171,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
             </Typography>
             {type === 'Pinned' && <PushPinIcon sx={{ fontSize: '1rem', color: 'red', ml: '.5rem' }} />}
           </Stack>
-          {(authState?.isAuthenticated && authState?.user?.userType === 'Employer') || !authState?.isAuthenticated ? (
+          {(authState?.isAuthenticated && authState?.user?.userTypeId === 2) || !authState?.isAuthenticated ? (
             <Tooltip title='Add to wishlist' placeholder='right-start'>
               <span>
                 <Button variant="custom" color="gray" className='text-[#5c6bc0] hover:text-[#2e3a86]' onClick={handleAddToCart} icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />}></Button>

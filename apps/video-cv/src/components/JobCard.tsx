@@ -36,51 +36,52 @@ const JobCard: React.FC<JobProps> = ({ job }) => {
     navigate(`/job/${item.vId}`, { state: { job: item } });
   };
 
+
+  const truncateText = (text: string | undefined, maxLength: number) => {
+    if (!text) return ""
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text
+  }
+
+
   return (
     <Paper
       elevation={4}
       square={false}
       onClick={() => handleViewDetails(job)}
       className={clsx(
-        "bg-white p-4 h-72 max-w-[400px] flex flex-col justify-between",
+        "bg-white p-6 h-auto max-h-96 max-w-sm rounded-2xl",
         "transition-all duration-300 ease-in-out hover:shadow-lg"
       )}
     >
-      <div className="flex flex-col space-y-1 gap-2">
-        <Typography variant="h5" component="h3" className="font-bold truncate">
+      <div className="flex flex-col space-y-4 gap-2">
+        <Typography variant="h5" component="h3" className="font-semibold truncate">
           {jobTitle}
         </Typography>
         <Typography variant="h6" component='h4' className="text-gray-600 font-medium truncate">
           {companyName}
         </Typography>
-        <div className='flex items-center gap-3'>
+        <div className='flex flex-col items-start justify-center gap-1'>
           <Typography variant="subtitle1" className="text-gray-500 truncate">
-            {companyEmail}
+            {truncateText(companyEmail, 30)}
           </Typography>
           <Typography variant="subtitle1" className="text-gray-400">
             Posted on: {new Date(dateCreated).toLocaleDateString()}
           </Typography>
         </div>
         <div className="flex items-center text-gray-500">
-          <LocationOnIcon fontSize="small" className="mr-1" />
+          <LocationOnIcon className="mr-1" />
           <Typography variant="body2" className="truncate">
             {location}
           </Typography>
         </div>
       </div>
-      <div className="flex-grow overflow-hidden mt-3">
+      <div className=" line-clamp-3 mt-4">
         <Typography 
           variant="body2" 
-          fontSize='1.125rem'
-          className="text-gray-700 line-clamp-3"
-          style={{
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}
+          fontSize='1rem'
+          className="text-neutral-200 line-clamp-3"
         >
-          {jobDetails}
+          {truncateText(jobDetails, 150)}
         </Typography>
       </div>
       <div className="flex justify-end mt-2">

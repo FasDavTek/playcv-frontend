@@ -27,10 +27,31 @@ interface Video {
   thumbnailUrl: string
   status: string
   totalRecords: number
+  rejectionReason?: string
   authorProfile: {
     userDetails: {
       fullName: string
+      email: string
       profileImage: string | null
+      userId: string;
+      firstName: string;
+      middleName: string;
+      lastName: string;
+      phoneNo: string;
+      dateOfBirth: string;
+      gender: string;
+      type: string;
+      isActive: boolean;
+      phoneVerification: boolean;
+      isBusinessUser: boolean;
+      isProfessionalUser: boolean;
+      isAdmin: boolean;
+      isEmailVerified: boolean;
+      isDeleted: boolean;
+      createdAt: string;
+      updatedAt: string;
+      lastLoginDate: string;
+      genderId: number;
     }
   }
 }
@@ -38,10 +59,11 @@ interface Video {
 interface VideosProps {
   category?: string
   limit?: number
+  type?: "pinned" | "latest" | "category"
 }
 
 // TODO: Rename component
-const Videos: React.FC<VideosProps> = ({ category, limit = 100 }) => {
+const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category" }) => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +91,19 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100 }) => {
         let data;
         if (response.code === '00') {
           data = await response.videos;
-          setVideos(data || []);
+          let approvedVideos = data.filter((video: Video) => video.status === "Approved")
+
+          if (type === "pinned") {
+            approvedVideos = approvedVideos.filter((video: Video) => video.type === "Pinned")
+          } else if (type === "latest") {
+            approvedVideos.sort(
+              (a: Video, b: Video) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
+            )
+          } else if (category) {
+            approvedVideos = approvedVideos.filter((video: Video) => video.category === category)
+          }
+
+          setVideos(approvedVideos)
         }
       } catch (error) {
         console.error('Error fetching videos:', error);
@@ -112,8 +146,8 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100 }) => {
   const currentVideos = videos?.slice(startIndex, startIndex + videosPerPage);
 
   return (
-    <div>
-        <div className={` items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+    <div className="space-y-4">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
           {/* {videoCVs.map((item: any, idx: number) => (
             <Box key={idx}>{item.url && <VideoCard video={item} />}</Box>
           ))} */}

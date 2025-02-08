@@ -4,6 +4,9 @@ import type { ColumnDef } from '@tanstack/react-table';
 
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+
+import { useAuth } from './../../../libs/context/AuthContext';
 
 import TableSkeleton from '../TableSkeleton';
 import * as Assets from '../../assets';
@@ -44,10 +47,11 @@ const Table: React.FC<any> = <T extends object>({
   const [pageSize, setPageSize] = useState(10);
   const [columnFilters, setColumnFilters] = useState([]);
 
+  const { authState } = useAuth();
+
   const filteredData = useMemo(() => {
     if (!data || !Array.isArray(data)) return [];
     if (!searchQuery && !filter) return data;
-    console.log(data);
     return data.filter((item) =>
       Object.values(item).some((value) =>
         value?.toString().toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -96,6 +100,34 @@ const Table: React.FC<any> = <T extends object>({
   //   console.log(search && search(e.target.value));
   // };
 
+
+
+  const downloadCSV = () => {
+    const headers = columns?.map((column) => column.header);
+    const csvContent = [
+      headers.join(','),
+      ...filteredData?.map((row: any) =>
+        columns.map((column: any) => {
+          const value = row[column.accessorKey]
+          return typeof value === 'string' && value.includes(',') ? `"${value}"` : value
+        }).join(','),
+      ),
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${tableHeading}.csv`)
+    link.style.visibility = "hidden"
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+
+
   if (loading) {
     return <TableSkeleton />;
   }
@@ -104,6 +136,13 @@ const Table: React.FC<any> = <T extends object>({
       <h5 className="table-heading px-4">{tableHeading}</h5>
       <div className="flex justify-between items-center px-4 mb-2">
           <input type="text" placeholder="Search..." value={globalFilter ?? ''} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGlobalFilter(e.target.value)} className="border rounded-lg outline-none p-2"/>
+
+          {authState?.user?.userTypeId === 1 && (
+            <div className='flex items-center justify-between gap-2 cursor-pointer text-sm text-blue-500/80 ml-0 lg:ml-2 underline underline-offset-1' onClick={downloadCSV}>
+              <CloudDownloadIcon sx={{ fontSize: "1rem" }} />
+              <p>Download csv</p>
+            </div>
+          )}
       </div>
       <table>
         <thead className={tableHeadingColorClassName}>

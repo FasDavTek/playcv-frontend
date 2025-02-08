@@ -45,7 +45,7 @@ export const ROUTES = {
   ADMIN_GUIDELINE: "video-guideline",
   CANDIDATE: "/candidate",
   CANDIDATE_DASHBOARD: "dashboard",
-  CANDIDATE_VIDEO_DETAIL: "video-management/details",
+  CANDIDATE_VIDEO_DETAIL: "video-management/view/:id",
   CANDIDATE_VIDEO_MANAGEMENT: "video-management",
   CANDIDATE_VIDEO_UPLOAD: "video-management/upload",
   CANDIDATE_VIDEO_UPLOAD_TYPES: "video-management/types",

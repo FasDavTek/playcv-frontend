@@ -123,19 +123,15 @@ const JobManagement = () => {
     }),
     columnHelper.accessor('companyName', {
       header: 'Employer/Organization Name',
-      cell: (info) => info.getValue(),
+      cell: (info) => truncateText(info.getValue() as string, 10),
     }),
     columnHelper.accessor('companyEmail', {
       header: 'Company Email',
-      cell: (info) => <a href={`mailto:${info.getValue()}`}>{info.getValue()}</a>,
+      cell: (info) => truncateText(info.getValue() as string, 10),
     }),
     columnHelper.accessor('linkToApply', {
       header: 'Job URL',
-      cell: (info) => (
-        <a href={info.getValue()} target="_blank" rel="noopener noreferrer">
-          {info.getValue()}
-        </a>
-      ),
+      cell: (info) => truncateText(info.getValue() as string, 7),
     }),
     columnHelper.accessor('jobDetails', {
       header: 'Job Details',

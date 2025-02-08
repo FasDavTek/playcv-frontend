@@ -9,6 +9,7 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import { CreateAdsConfirmModal } from './modals';
+import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 
@@ -215,7 +216,7 @@ const Advertisement = () => {
           </Button> */}
           <SelectMenu
             options={[
-              { label: "View", onClick: () => handleView(row.original)},
+              { label: "View", onClick: () => handleView(row.original) , icon: <PreviewOutlinedIcon />, },
             ]}
             buttonVariant="text"
           />

@@ -74,7 +74,7 @@ const Feed = () => {
               Announce your amazing business, inventions, products and services as a young entrepreneur via your video profile
             </Typography>
             <Box className="flex items-center gap-10" sx={{ marginBottom: '1.25rem' }}>
-              <Button variant="blue" color="primary" label={'Explore Jobs'} onClick={() => navigate('/job-board')} className="text-lg cursor-pointer"></Button>
+              <Button variant="black" color="primary" label={'Explore Jobs'} onClick={() => navigate('/job-board')} className="text-lg cursor-pointer"></Button>
               <Button variant="custom" color="primary" label={'Hire a talent'} onClick={() => navigate('/talents')} className="text-lg cursor-pointer"></Button>
             </Box>
             <Typography variant='body2' className="text-lg" sx={{ fontSize: '1rem', color: '#7f8c8d' }}>
@@ -112,12 +112,26 @@ const Feed = () => {
             fontWeight="bold"
             mb={2}
             sx={{ color: 'black' }}
-            className="font-bold text-5xl my-5"
+            className="font-medium text-5xl my-5"
           >
-            LATEST VIDEOS
+            Featured Videos
           </Typography>
 
-          <Videos />
+          <Videos type='pinned' />
+        </Box>
+
+        <Box className="mt-10">
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            mb={2}
+            sx={{ color: 'black' }}
+            className="font-medium text-5xl my-5"
+          >
+            Latest Videos
+          </Typography>
+
+          <Videos type='latest' />
         </Box>
 
           {/* LAtest jobs section */}
@@ -127,26 +141,28 @@ const Feed = () => {
            fontWeight="bold"
            mb={2}
            sx={{ color: 'black' }}
-           className="font-bold text-3xl my-5">LATEST JOBS</Typography>
+           className="font-medium text-3xl my-5">Latest Jobs</Typography>
           {/* <JobCardBoard jobs={jobs}> */}
           <JobCardBoard filterOptions={{ searchText: '', selectedCategories: [], selectedLocations: [], selectedDates: [], selectedStatus: 'all' }} />
         </Box>
 
-        <Box className="mt-20 ">
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            mb={2}
-            sx={{ color: 'black' }}
-            className="font-bold text-5xl my-5"
-          >
-            VIDEOS
-          </Typography>
+        {['Building service', 'VideoCV'].map((category) => (
+          <Box key={category} className="mt-20 ">
+            <Typography
+              variant="h5"
+              fontWeight="bold"
+              mb={2}
+              sx={{ color: 'black' }}
+              className="font-medium text-5xl my-5"
+            >
+              {category}
+            </Typography>
 
-          <Videos />
-        </Box>
+            <Videos category={category} />
+          </Box>
+        ))}
 
-        <Box className="mt-20">
+        {/* <Box className="mt-20">
           <Typography
             variant="h5"
             fontWeight="bold"
@@ -158,7 +174,7 @@ const Feed = () => {
           </Typography>
 
           <Videos />
-        </Box>
+        </Box> */}
 
       </Box>
     </Stack>

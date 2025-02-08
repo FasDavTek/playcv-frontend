@@ -33,6 +33,7 @@ interface Video {
   thumbnailUrl: string
   status: string
   totalRecords: number
+  rejectionReason?: string
   authorProfile: {
     userDetails: {
       fullName: string
@@ -116,26 +117,6 @@ const index = () => {
     const interval = setInterval(fetchVideos, 5 * 60 * 1000)
     return () => clearInterval(interval)
   }, [])
-
-  // const { fetchVideos, approveVideo, rejectVideo } = useAdminApi();
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const videoData = await fetchVideos();
-  //     setVideos(videoData);
-  //   };
-  //   fetchData();
-  // }, []);
-
-  // const handleApprove = async (id: any) => {
-  //   await approveVideo(id);
-  //   setVideos(prevVideos => prevVideos.map(video => video.id === id ? { ...video, status: 'approved' } : video));
-  // };
-
-  // const handleReject = async (id: any, reason: string) => {
-  //   await rejectVideo(id, reason);
-  //   setVideos(prevVideos => prevVideos.map(video => video.id === id ? { ...video, status: 'rejected', rejectionReason: reason } : video));
-  // };
 
   const handleStatusChange = async (id: number, newStatus: number, reason?: string) => {
     try {

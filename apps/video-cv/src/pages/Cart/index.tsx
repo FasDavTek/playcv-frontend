@@ -17,85 +17,6 @@ import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
 
 
-// interface VerifyPaymentResponse {
-//   status: string;
-//   message: string;
-//   data: {
-//     id: number;
-//     domain: string;
-//     status: string;
-//     reference: string;
-//     amount: number;
-//     message: string;
-//     gateway_response: string;
-//     paid_at: string;
-//     created_at: string;
-//     channel: string;
-//     currency: string;
-//     ip_address: string;
-//     metadata: any;
-//     log: any;
-//     fees: number;
-//     fees_split: any;
-//     authorization: {
-//       authorization_code: string;
-//       bin: string;
-//       last4: string;
-//       exp_month: string;
-//       exp_year: string;
-//       channel: string;
-//       card_type: string;
-//       bank: string;
-//       country_code: string;
-//       brand: string;
-//       reusable: boolean;
-//       signature: string;
-//       account_name: string;
-//     };
-//     customer: {
-//       id: number;
-//       first_name: string;
-//       last_name: string;
-//       email: string;
-//       customer_code: string;
-//       phone: string;
-//       metadata: any;
-//       risk_action: string;
-//     };
-//     plan: any;
-//     split: any;
-//     order_id: string;
-//     paidAt: string;
-//     createdAt: string;
-//     requested_amount: number;
-//     transaction_date: string;
-//     plan_object: any;
-//     subaccount: any;
-//   };
-// }
-
-export interface PaymentDetails {
-  id: number;
-  email: string;
-  reference: string;
-  access_code?: string;
-  status: string;
-  transaction?: string;
-  amount: number;
-  currency: string;
-  cardType?: string;
-  cardDetails?: string;
-  last_Four?: string;
-  bank?: string;
-  channelType?: string;
-  paidAt?: string;
-  createdAt?: string;
-  added_fees?: number;
-  duration?: string;
-}
-
-
-
 const Cart = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -106,7 +27,6 @@ const Cart = () => {
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [paymentReference, setPaymentReference] = useState<PaymentDetails | null>(null);
 
 
 
@@ -300,7 +220,7 @@ const Cart = () => {
                         <img alt="" className=" w-[60px] h-[60px] md:w-[100px] md:h-[100px] rounded-xl" src={item.imageSrc}/>
                         <Stack className='' width='85%' spacing={1}>
                           <Typography variant='subtitle1'>
-                            Frontend Developer
+                            {item.name}
                           </Typography>
                           <Typography variant='body1' fontWeight='400'>
                             Lorem Ipsum

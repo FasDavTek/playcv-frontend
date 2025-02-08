@@ -10,25 +10,63 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
 
+
+
+const truncateText = (text: string, charLimit: number) => {
+  if (text.length > charLimit) {
+    return text.slice(0, charLimit) + '...';
+  }
+  return text;
+};
+
+
 interface Video {
-  id: string;
-  title: string;
-  status: string;
-  startDate: Date;
-  endDate: Date;
-  uploadDate: Date
-  authorName: string;
-  search: string;
-  category: string;
-  userType: string;
-  userId: string;
-  email: string;
-  courseOfStudy: string;
-  gender: string;
-  phone: string;
-  stateOfOrigin: string;
-  grade: string;
-  action: string;
+  id: number
+  title: string
+  typeId: number
+  type: string
+  transcript: string
+  categoryId: number
+  category: string | null
+  userId: string
+  dateCreated: string
+  views: number
+  videoUrl: string
+  thumbnailUrl: string
+  status: string
+  totalRecords: number
+  rejectionReason?: string
+  businessName?: string
+  businessPhone?: string
+  industry?: string
+  authorProfile: {
+    userDetails: {
+      fullName: string
+      email: string
+      profileImage: string | null
+      userId: string;
+      firstName: string;
+      middleName: string;
+      lastName: string;
+      phoneNo: string;
+      dateOfBirth: string;
+      gender: string;
+      type: string;
+      isActive: boolean;
+      phoneVerification: boolean;
+      isBusinessUser: boolean;
+      isProfessionalUser: boolean;
+      isAdmin: boolean;
+      isEmailVerified: boolean;
+      isDeleted: boolean;
+      createdAt: string;
+      updatedAt: string;
+      lastLoginDate: string;
+      genderId: number;
+      courseOfStudy?: string;
+      grade?: string
+    }
+  }
 }
 
 
@@ -39,6 +77,7 @@ const VideoManagement = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [activeTab, setActiveTab] = useState<'viewed' | 'vidoes'>('viewed');
   const [viewedVideos, setViewedVideos] = useState<Video[]>([]);
+  const [selectedItem, setSelectedItem] = useState<Video | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [search, setSearch] = useState("");
@@ -52,17 +91,17 @@ const VideoManagement = () => {
 
   const fetchVideos = useCallback(async () => {
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.EMPLOYER_AUTH_VIDEO_LIST}?Page=1&Limit=100`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.EMPLOYER_AUTH_VIDEO_LIST}?Download=true`, {
         headers: { Authorization: `Bearer ${token}` },
       })
 
-      if (resp.succeeded === true) {
-        const data = await resp.data;
+      if (resp.code === '00') {
+        const data = await resp.videos;
         setVideos(data);
         setLoading(false);
 
         const currentTime = Date.now();
-        const newVideos = data.filter((video: Video) => new Date(video.uploadDate).getTime() > lastFetchTime);
+        const newVideos = data.filter((video: Video) => new Date(video.dateCreated).getTime() > lastFetchTime);
         if (newVideos.length > 0) {
           toast.info(`${newVideos.length} new video(s) uploaded`);
         }
@@ -126,23 +165,33 @@ const VideoManagement = () => {
     columnHelper.accessor('title', {
       header: 'Video Name',
     }),
-    columnHelper.accessor('authorName', {
+    columnHelper.accessor('videoUrl', {
+      header: 'Video Link',
+      cell: (info) => truncateText(info.getValue() as string || '', 30),
+    }),
+    columnHelper.accessor('authorProfile.userDetails.fullName', {
       header: 'Full Name',
     }),
-    columnHelper.accessor('email', {
+    columnHelper.accessor('authorProfile.userDetails.email', {
       header: 'Email',
     }),
-    columnHelper.accessor('courseOfStudy', {
+    columnHelper.accessor('authorProfile.userDetails.courseOfStudy', {
       header: 'Course of Study',
     }),
-    columnHelper.accessor('grade', {
+    columnHelper.accessor('authorProfile.userDetails.grade', {
       header: 'Grade',
     }),
-    columnHelper.accessor('gender', {
+    columnHelper.accessor('authorProfile.userDetails.gender', {
       header: 'Gender',
     }),
-    columnHelper.accessor('phone', {
-      header: 'Phone',
+    columnHelper.accessor('businessName', {
+      header: 'Business Name',
+    }),
+    columnHelper.accessor('businessPhone', {
+      header: 'Business Phone',
+    }),
+    columnHelper.accessor('industry', {
+      header: 'Industry',
     }),
     columnHelper.accessor('status', {
       header: 'Status',

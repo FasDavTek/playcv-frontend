@@ -31,10 +31,31 @@ interface Video {
   thumbnailUrl: string
   status: string
   totalRecords: number
+  rejectionReason?: string
   authorProfile: {
     userDetails: {
       fullName: string
+      email: string
       profileImage: string | null
+      userId: string;
+      firstName: string;
+      middleName: string;
+      lastName: string;
+      phoneNo: string;
+      dateOfBirth: string;
+      gender: string;
+      type: string;
+      isActive: boolean;
+      phoneVerification: boolean;
+      isBusinessUser: boolean;
+      isProfessionalUser: boolean;
+      isAdmin: boolean;
+      isEmailVerified: boolean;
+      isDeleted: boolean;
+      createdAt: string;
+      updatedAt: string;
+      lastLoginDate: string;
+      genderId: number;
     }
   }
 }
@@ -223,13 +244,18 @@ const index = () => {
 
   const columns = [
     { header: 'Video Name', accessorKey: 'title', },
+    { header: 'Uploader', accessorKey: 'videoUrl', },
     { header: 'Uploader', accessorKey: 'authorProfile.userDetails.fullName', },
     { header: 'Video Type', accessorKey: 'type', },
     { header: 'Email', accessorKey: 'email', },
+    { header: 'Phone', accessorKey: 'phone', },
     { header: 'Course of Study', accessorKey: 'courseOfStudy', },
+    { header: 'Institution', accessorKey: 'institution', },
     { header: 'Grade', accessorKey: 'grade', },
     { header: 'Gender', accessorKey: 'gender', },
-    { header: 'Phone', accessorKey: 'phone', },
+    { header: 'Business Name', accessorKey: 'businessName', },
+    { header: 'BusinessPhone', accessorKey: 'businessPhoneNo', },
+    { header: 'Industry', accessorKey: 'industry', },
     { header: 'Upload Date', accessorKey: 'dateCreated', cell: (info: any) => handleDate(info.getValue()) },
     { header: 'Status', accessorKey: 'status', },
     // { header: 'View Video', accessorKey: 'viewVideo', cell: ({ row }: { row: { original: Video } }) => (

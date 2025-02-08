@@ -42,7 +42,9 @@ type Professional = User & {
   phoneNumber: string;
   dateOfBirth: string;
   gender: string;
+  grade?: string;
   institution: string;
+  industry: string;
   cvUrl: string;
   location: string;
   nyscStateCode: string;
@@ -60,6 +62,7 @@ type Employer = User & {
   companyUrl: string;
   location: string;
   businessName: string;
+  businessPhone: string;
   businessAddress: string;
   contactPersonName: string;
   contactPersonPosition: string;
@@ -321,30 +324,14 @@ const UserManagement = () => {
       header: 'Phone Number',
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('userBioDetails.businessName', {
-      header: 'Business Name',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('userBioDetails.gender', {
-      header: 'Gender',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('userBioDetails.dateOfBirth', {
-      header: 'Date of birth',
-      cell: (info) => info.getValue(),
-    }),
     ...(activeTab === "professionals"
       ? [
-          columnHelper.accessor("userBioDetails.institution", {
-            header: "Institution",
+          columnHelper.accessor('userBioDetails.gender', {
+            header: 'Gender',
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor("userBioDetails.qualification", {
-            header: "Qualification",
-            cell: (info) => info.getValue(),
-          }),
-          columnHelper.accessor("userBioDetails.courseOfStudy", {
-            header: "Course of Study",
+          columnHelper.accessor('userBioDetails.dateOfBirth', {
+            header: 'Date of birth',
             cell: (info) => info.getValue(),
           }),
           columnHelper.accessor("userBioDetails.nyscStateCode", {
@@ -359,20 +346,53 @@ const UserManagement = () => {
             header: "NYSC End Date",
             cell: (info) => info.getValue(),
           }),
+          columnHelper.accessor("userBioDetails.courseOfStudy", {
+            header: "Course of Study",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.institution", {
+            header: "Institution",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor('userBioDetails.businessName', {
+            header: 'Business Name',
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor('userBioDetails.businessPhone', {
+            header: 'Business Phone Number',
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor('userBioDetails.grade', {
+            header: 'Grade',
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.businessSector", {
+            header: "Industry",
+            cell: (info) => info.getValue(),
+          }),
+          
         ]
     : []),
     ...(activeTab === "employers" || activeTab === 'pendingEmployers'
       ? [
-          columnHelper.accessor("userBioDetails.companyUrl", {
-            header: "Company URL",
+          columnHelper.accessor('userBioDetails.businessName', {
+            header: 'Business Name',
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor("userBioDetails.location", {
-            header: "Location",
+          columnHelper.accessor('userBioDetails.businessPhone', {
+            header: 'Business Phone Number',
             cell: (info) => info.getValue(),
           }),
           columnHelper.accessor("userBioDetails.businessAddress", {
             header: "Business Address",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.companyUrl", {
+            header: "Company Website",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBioDetails.location", {
+            header: "Location",
             cell: (info) => info.getValue(),
           }),
           columnHelper.accessor("userBioDetails.contactPersonName", {

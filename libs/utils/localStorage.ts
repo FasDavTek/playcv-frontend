@@ -1,28 +1,54 @@
-import { ICartItem } from './../../apps/video-cv/src/context/CartProvider';
+// import { ICartItem } from './../../apps/video-cv/src/context/CartProvider';
 
-export const GetItemsFromLocalStorage = (key: string) => {
-  const data = localStorage.getItem(key);
-  const parsedData = data ? JSON.parse(data) : [];
-  return parsedData;
-};
+// export const GetItemsFromLocalStorage = (key: string) => {
+//   const data = localStorage.getItem(key);
+//   const parsedData = data ? JSON.parse(data) : [];
+//   return parsedData;
+// };
 
-// REFACTOR:
-export const AddToLocalStorage = (item: any, key: string) => {
-  const data = GetItemsFromLocalStorage(key);
-  // const joinedData = data ? [...data, item] : [item];
-  // localStorage.setItem(key, JSON.stringify(joinedData));
-  const updatedData = Array.isArray(data) ? [...data, item] : [item];
-  localStorage.setItem(key, JSON.stringify(updatedData));
-  // return joinedData;
-};
+// // REFACTOR:
+// export const AddToLocalStorage = (item: any, key: string) => {
+//   const data = GetItemsFromLocalStorage(key);
+//   // const joinedData = data ? [...data, item] : [item];
+//   // localStorage.setItem(key, JSON.stringify(joinedData));
+//   const updatedData = Array.isArray(data) ? [...data, item] : [item];
+//   localStorage.setItem(key, JSON.stringify(updatedData));
+//   // return joinedData;
+// };
 
-export const RemoveFromLocalStorage = (id: string, key: string) => {
-  const data = GetItemsFromLocalStorage(key);
-  // const filteredData = data ? data.filter((item: any) => item.id !== id) : [];
-  const updatedData = data.filter((item: ICartItem) => item.id !== id);
-  // localStorage.setItem(key, JSON.stringify(filteredData));
-  localStorage.setItem(key, JSON.stringify(updatedData));
-};
+// export const RemoveFromLocalStorage = (id: string, key: string) => {
+//   const data = GetItemsFromLocalStorage(key);
+//   // const filteredData = data ? data.filter((item: any) => item.id !== id) : [];
+//   const updatedData = data.filter((item: ICartItem) => item.id !== id);
+//   // localStorage.setItem(key, JSON.stringify(filteredData));
+//   localStorage.setItem(key, JSON.stringify(updatedData));
+// };
+
+
+
+
+
+import type { ICartItem } from './../../apps/video-cv/src/context/CartProvider';
+
+export const GetItemsFromLocalStorage = (key: string): ICartItem[] => {
+  const data = localStorage.getItem(key)
+  return data ? JSON.parse(data) : []
+}
+
+export const AddToLocalStorage = (items: ICartItem[], key: string): void => {
+  localStorage.setItem(key, JSON.stringify(items))
+}
+
+export const RemoveFromLocalStorage = (id: string, key: string): void => {
+  const data = GetItemsFromLocalStorage(key)
+  const updatedData = data.filter((item: ICartItem) => item.id !== id)
+  localStorage.setItem(key, JSON.stringify(updatedData))
+}
+
+
+
+
+
 
 
 
@@ -37,6 +63,9 @@ export enum LOCAL_STORAGE_KEYS {
   PROFILE = "profile",
   SIGNUP_DATA = "signupData",
 }
+
+
+
 
 
 
