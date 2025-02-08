@@ -159,7 +159,7 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category
         </div>
 
         <div className="flex items-center justify-end gap-2 mt-4">
-          <Link to={'/talent'} className='mr-3 text-blue-600'>
+          <Link to={'/talent'} className='mr-3 text-blue-600 text-sm'>
             <span>View more</span>
           </Link>
           <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
