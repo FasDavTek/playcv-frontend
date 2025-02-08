@@ -17,26 +17,47 @@ import CONFIG from './../../../../../libs/utils/helpers/config';
 import { Controller, useForm } from 'react-hook-form';
 
 interface Video {
-  id: number
-  title: string
-  typeId: number
-  type: string
-  transcript: string
-  categoryId: number
-  category: string | null
-  userId: string
-  dateCreated: string
-  views: number
-  videoUrl: string
-  thumbnailUrl: string
-  status: string
-  totalRecords: number
-  authorProfile: {
-    userDetails: {
-      fullName: string
-      profileImage: string | null
+    id: number
+    title: string
+    typeId: number
+    type: string
+    transcript: string
+    categoryId: number
+    category: string | null
+    userId: string
+    dateCreated: string
+    views: number
+    videoUrl: string
+    thumbnailUrl: string
+    status: string
+    totalRecords: number
+    rejectionReason?: string
+    authorProfile: {
+      userDetails: {
+        fullName: string
+        email: string
+        profileImage: string | null
+        userId: string;
+        firstName: string;
+        middleName: string;
+        lastName: string;
+        phoneNo: string;
+        dateOfBirth: string;
+        gender: string;
+        type: string;
+        isActive: boolean;
+        phoneVerification: boolean;
+        isBusinessUser: boolean;
+        isProfessionalUser: boolean;
+        isAdmin: boolean;
+        isEmailVerified: boolean;
+        isDeleted: boolean;
+        createdAt: string;
+        updatedAt: string;
+        lastLoginDate: string;
+        genderId: number;
+      }
     }
-  }
 }
 
 const heroImages = [Images.HeroImage10, Images.HeroImage11, Images.HeroImage13, Images.HeroImage14, Images.HeroImage15];

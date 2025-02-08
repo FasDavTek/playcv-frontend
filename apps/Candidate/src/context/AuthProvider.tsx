@@ -1,40 +1,42 @@
-import {
-  useContext,
-  createContext,
-  ReactNode,
-  useState,
-  useEffect,
-} from 'react';
+import { useContext, createContext, ReactNode, useState, useEffect, } from 'react';
 
-import {
-  GetItemsFromLocalStorage,
-  RemoveFromLocalStorage,
-  AddToLocalStorage,
-} from '@video-cv/utils';
+import { GetItemsFromLocalStorage } from '@video-cv/utils';
 
-export const AuthContext = createContext<any>(null); // Specify the context type
+interface AuthState {
+  isAuthenticated: boolean
+  user: any // Replace 'any' with a more specific user type if available
+}
+
+interface AuthContextType {
+  authState: AuthState
+  handleLogin: (userData: any) => void // Replace 'any' with a more specific user data type
+  handleLogout: () => void
+}
+
+export const AuthContext = createContext<AuthContextType | null>(null); // Specify the context type
 
 const AUTH_LOCALSTORAGE_KEY = 'VIDEO-CV-CANDIDATE';
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   // TODO: Make this a useReducer
-  const [authState, setAuthState] = useState(
-    GetItemsFromLocalStorage(AUTH_LOCALSTORAGE_KEY) ?? null
-  );
+  // const [authState, setAuthState] = useState(
+  //   GetItemsFromLocalStorage(AUTH_LOCALSTORAGE_KEY) ?? null
+  // );
 
-  const handleLogin = () => {
-    localStorage.setItem('video-cv-candidate', 'true');
-    setAuthState(true);
+  const [authState, setAuthState] = useState<AuthState>(() => {
+    const storedAuth = GetItemsFromLocalStorage(AUTH_LOCALSTORAGE_KEY)
+    return storedAuth ? { isAuthenticated: true, user: storedAuth } : { isAuthenticated: false, user: null }
+  })
+
+  const handleLogin = (userData: any) => {
+    localStorage.setItem(AUTH_LOCALSTORAGE_KEY, JSON.stringify(userData))
+    setAuthState({ isAuthenticated: true, user: userData })
   };
 
   const handleLogout = () => {
-    // localStorage.removeItem(AUTH_LOCALSTORAGE_KEY);
-    // localStorage.clear();
+    localStorage.removeItem(AUTH_LOCALSTORAGE_KEY)
+    setAuthState({ isAuthenticated: false, user: null })
   };
-
-  // useEffect(() => {
-
-  // }, [])
 
   return (
     <AuthContext.Provider value={{ authState, handleLogin, handleLogout }}>
@@ -46,7 +48,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 export default AuthProvider;
 
 export const useAuth = () => {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider")
+  }
+  return context
 };
 
 
