@@ -287,7 +287,8 @@ const VideoDetails = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
 
-        setAdUrl(randomAd);
+        const resp = randomAd.data;
+        setAdUrl(resp.coverURL);
       }
       catch (err) {
 
