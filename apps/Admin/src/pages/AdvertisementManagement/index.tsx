@@ -235,6 +235,7 @@ const Payment = () => {
     { value: "Active", label: "Active" },
     { value: "Suspended", label: "Suspended" },
     { value: "InReview", label: "In Review" },
+    { value: "Inactive", label: "In Active" },
     { value: "Rejected", label: "Rejected" },
     { value: "Closed", label: "Closed" },
   ]
@@ -249,6 +250,8 @@ const Payment = () => {
         return "Rejected"
       case 4:
         return "Closed"
+      case 5:
+        return "Inactive"
       default:
         return "Unknown"
     }
@@ -265,13 +268,15 @@ const Payment = () => {
         return "bg-red-200 text-red-700"
       case "Closed":
         return "bg-gray-200 text-gray-700"
+      case "Inactive":
+        return "bg-red-200 text-red-600"
       default:
         return "bg-gray-200 text-gray-700"
     }
   };
 
 
-   type userStatus = "Active" | "Suspended" | "InReview" | "Rejected" | "Closed"
+   type userStatus = "Active" | "Suspended" | "InReview" | "Rejected" | "Closed" | 'Inactive'
 
 
 
