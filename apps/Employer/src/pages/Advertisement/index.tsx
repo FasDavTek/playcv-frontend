@@ -76,7 +76,7 @@ const Advertisement = () => {
       const data = await response.data;
       
       if (response.status === 'success' && response.hasValidAdRequest === true) {
-        toast.info('You have an existing payment for video upload that you have not yet completed.');
+        toast.info('You have an existing payment for ad upload request that you have not yet completed.');
         navigate(`/employer/advertisement/create`, { 
           state: { 
             adTypeId: response.adRequest.adTypeId,

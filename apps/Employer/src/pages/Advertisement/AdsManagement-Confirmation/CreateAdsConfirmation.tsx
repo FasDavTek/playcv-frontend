@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@video-cv/ui-components';
 import axios from 'axios';
-import { Stack } from '@mui/material';
+import { Stack, duration } from '@mui/material';
 import { getData, postData } from '../../../../../../libs/utils/apis/apiMethods';
 import CONFIG from '../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from '../../../../../../libs/utils/apis/apiEndpoints';
@@ -25,7 +25,7 @@ const CreateAdsConfirmation = () => {
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
 
-  const { adRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
+  const { adRequestId, adTypeId, adTypeName, price, paymentReference, paymentId, duration } = location.state || {};
 
   const handleCreateNow = async () => {
     setIsLoading(true);
@@ -44,7 +44,7 @@ const CreateAdsConfirmation = () => {
             price: price,
             paymentReference: paymentReference,
             paymentId: paymentId,
-            duration: response.adRequest.duration,
+            duration: duration,
             paymentDate: response.adRequest.paymentDate,
           }
         });

@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '@video-cv/ui-components';
+import { Button, DurationModal } from '@video-cv/ui-components';
 import { usePaystack } from '@video-cv/payment';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Card, CardContent, CardHeader, CircularProgress, Typography } from '@mui/material';
+import { Card, CardContent, CardHeader, CircularProgress, duration, Typography } from '@mui/material';
 import { getData, postData } from '../../../../../../libs/utils/apis/apiMethods';
 import CONFIG from '../../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from '../../../../../../libs/utils/apis/apiEndpoints';
@@ -56,6 +56,8 @@ const AdUploadTypes = () => {
   const [adTypes, setAdTypes] = useState<AdType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showDurationModal, setShowDurationModal] = useState(false)
+  const [selectedDuration, setSelectedDuration] = useState(1)
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
   // if (!token) {
@@ -109,18 +111,20 @@ const AdUploadTypes = () => {
     }
 
     try {
+      const totalAmount = selectedTypeRef.current.price * selectedDuration;
+
       const paymentConfirmationData = {
         userId: authState.user?.id,
         buyerId: authState.user?.id,
         currency: "NGN",
-        total: selectedTypeRef.current.price,
-        amount: selectedTypeRef.current.price,
+        total: totalAmount,
+        amount: totalAmount,
         countryCode: "NG",
         reference_Id: response.reference,
         purchaseDetails: [{
           adId: selectedTypeRef.current.typeId,
           quantity: 1,
-          amount: selectedTypeRef.current.price
+          amount: totalAmount
         }],
         status: response.status === 'success' ? 's' : response.status === 'failed' ? 'f' : 'a',
         // cardType: selectedTypeRef.current.cardType || '',
@@ -134,6 +138,7 @@ const AdUploadTypes = () => {
         // transactionFee: selectedTypeRef.current?.added_fees,
         // chargedTaxAmount: 0,
         isUploaded: false,
+        // duration: selectedDuration,
         // duration: selectedTypeRef.current?.duration,
       };
 
@@ -150,7 +155,8 @@ const AdUploadTypes = () => {
             adTypeName: selectedTypeRef.current.typeName,
             price: selectedTypeRef.current.price,
             paymentReference: response,
-            paymentId: response.reference
+            paymentId: response.reference,
+            duration: selectedDuration,
           }
         });
       }
@@ -158,7 +164,7 @@ const AdUploadTypes = () => {
     catch(err: any) {
       toast.error('Failed to process your request. Please try again.');
     }
-  }, [authState.user, navigate, token]);
+  }, [authState.user, navigate, token, selectedDuration]);
 
 
 
@@ -174,7 +180,38 @@ const AdUploadTypes = () => {
   const handlePayment = useCallback((type: AdType) => {
     setSelectedType(type);
     selectedTypeRef.current = type;
-    const amount = Math.round(Number(type.price));
+    setShowDurationModal(true)
+    // const amount = Math.round(Number(type.price));
+    // const email = authState?.user?.username || '';
+    // const userSignupDataString = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
+    // let firstName = '';
+    // let lastName = '';
+    // let phone = '';
+    // if (userSignupDataString) {
+    //   const userSignupData = JSON.parse(userSignupDataString);
+    //   firstName = userSignupData?.surname;
+    //   lastName = userSignupData?.firstName;
+    //   phone = userSignupData?.phoneNumber;
+    // }
+
+    // if (amount > 0) {
+    //   payButtonFn(amount, email, firstName, lastName, phone);
+    // }
+  }, []);
+
+
+
+
+  const handleContinuePayment = (duration: number) => {
+    setSelectedDuration(duration);
+    setShowDurationModal(false);
+
+    if (!selectedType) {
+      toast.error("No ad type selected. Please try again.")
+      return
+    }
+
+    const amount = Math.round(Number(selectedType.price * duration));
     const email = authState?.user?.username || '';
     const userSignupDataString = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
     let firstName = '';
@@ -190,7 +227,9 @@ const AdUploadTypes = () => {
     if (amount > 0) {
       payButtonFn(amount, email, firstName, lastName, phone);
     }
-  }, [authState.user, payButtonFn]);
+  }
+
+
 
 
   if (isLoading) {
@@ -229,6 +268,9 @@ const AdUploadTypes = () => {
           <Button variant='black' onClick={() => handlePayment(adType)} label={isProcessing ? 'Processing...' : `Choose ${adType.typeName}`} disabled={isProcessing || isLoading} />
         </div>
       ))}
+      {selectedType && (
+        <DurationModal open={showDurationModal} onClose={() => setShowDurationModal(false)} onContinue={handleContinuePayment} adPrice={selectedType.price} />
+      )}
     </div>
   );
 };

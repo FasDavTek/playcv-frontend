@@ -16,11 +16,13 @@ import { getData } from './../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import CONFIG from './../../../../../libs/utils/helpers/config';
+import { useAuth } from '../../context/AuthProvider';
 
 const heroImages = [Images.HeroImage, Images.HeroImage1, Images.HeroImage2, Images.HeroImage3, Images.HeroImage4, Images.HeroImage5, Images.HeroImage6, Images.HeroImage7, Images.HeroImage8, Images.HeroImage9];
 
 const Feed = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
@@ -44,8 +46,10 @@ const Feed = () => {
       }
     } 
     catch (error) {
+      if (isAuthenticated) {
         console.error('Error checking payment status:', error);
         toast.warning('There was an error checking your payment status. Please try again later.');
+      }
     }
   };
 
@@ -114,7 +118,7 @@ const Feed = () => {
             sx={{ color: 'black' }}
             className="font-medium text-5xl my-5"
           >
-            Featured Videos
+            Pinned Videos
           </Typography>
 
           <Videos type='pinned' />

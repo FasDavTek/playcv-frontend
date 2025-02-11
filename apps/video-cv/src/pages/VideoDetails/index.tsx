@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { Box, Stack, Typography, Card, CardMedia, CardContent, Paper, CircularProgress } from '@mui/material';
 import { useCart } from '../../context/CartProvider';
-import { Button } from '@video-cv/ui-components';
+import { AdPlayer, Button } from '@video-cv/ui-components';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -41,10 +41,31 @@ interface Video {
   thumbnailUrl: string
   status: string
   totalRecords: number
+  rejectionReason?: string
   authorProfile: {
     userDetails: {
       fullName: string
+      email: string
       profileImage: string | null
+      userId: string;
+      firstName: string;
+      middleName: string;
+      lastName: string;
+      phoneNo: string;
+      dateOfBirth: string;
+      gender: string;
+      type: string;
+      isActive: boolean;
+      phoneVerification: boolean;
+      isBusinessUser: boolean;
+      isProfessionalUser: boolean;
+      isAdmin: boolean;
+      isEmailVerified: boolean;
+      isDeleted: boolean;
+      createdAt: string;
+      updatedAt: string;
+      lastLoginDate: string;
+      genderId: number;
     }
   }
 }
@@ -97,6 +118,9 @@ const VideoDetails = () => {
   const isFromTalentGallery = location.state?.fromTalentGallery;
   const searchParams = location.state?.searchParams;
   const [viewCounted, setViewCounted] = useState(false)
+  const [showAd, setShowAd] = useState(true)
+  const [adUrl, setAdUrl] = useState("")
+  const [adType, setAdType] = useState<"video" | "image">("video")
 
   const itemsPerPage = 4;
 
@@ -169,7 +193,7 @@ const VideoDetails = () => {
 
   useEffect(() => {
     getVideoDetails();
-  }, [video, id]);
+  }, [id, getVideoDetails]);
 
   const getRelatedVideos = async (searchParams: any) => {
     // Replace with actual API call or data fetching logic
@@ -254,24 +278,28 @@ const VideoDetails = () => {
     }
   }
 
-  // if (loading) {
-  //   return (
-  //     <Box className="flex items-center justify-center min-h-screen">
-  //       <CircularProgress />
-  //     </Box>
-  //   )
-  // }
 
-  // if (error || !video) {
-  //   return (
-  //     <Box className="items-center justify-center min-h-screen">
-  //       <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-0 p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
-  //       <Typography variant="h6" color="error" gutterBottom>
-  //         {error || 'Video not found'}
-  //       </Typography>
-  //     </Box>
-  //   )
-  // };
+  useEffect(() => {
+    const getRandomAds = async () => {
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        const randomAd = await getData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+
+        setAdUrl(randomAd);
+      }
+      catch (err) {
+
+      }
+    }
+
+    getRandomAds();
+  }, [])
+
+  const handleAdEnd = () => {
+    setShowAd(false)
+  }
 
 
   return (
@@ -280,7 +308,13 @@ const VideoDetails = () => {
         <Box className="rounded-lg">
           <Stack mx='auto' direction="column" spacing={4}>
             <Box className="w-full top-24 rounded-3xl">
-              <ReactPlayer url={video?.videoUrl} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} onStart={incrementViewCount} />
+              {showAd
+                ? (
+                  <AdPlayer adUrl={adUrl} adType={adType} adDuration={10} onAdEnd={handleAdEnd} />
+                )
+                : (
+                  <ReactPlayer url={video?.videoUrl} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} onStart={incrementViewCount} />
+                )}
             </Box>
             <Box className="flex flex-col gap-1 ">
               <Stack direction="row" alignItems="center" justifyContent="space-between" p={1}>

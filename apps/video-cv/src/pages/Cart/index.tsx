@@ -172,13 +172,21 @@ const Cart = () => {
     // textOverflow: 'ellipsis',
   });
 
+  // const handleCheckboxChange = (id: string) => {
+  //   if (selectedItems.includes(id)) {
+  //     setSelectedItems(selectedItems.filter(itemId => itemId !== id));
+  //   } else {
+  //     setSelectedItems([...selectedItems, id]);
+  //   }
+  // };
+
   const handleCheckboxChange = (id: string) => {
-    if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter(itemId => itemId !== id));
-    } else {
-      setSelectedItems([...selectedItems, id]);
-    }
-  };
+    const newSelectedItems = selectedItems.includes(id)
+      ? selectedItems.filter((itemId) => itemId !== id)
+      : [...selectedItems, id]
+    setSelectedItems(newSelectedItems)
+    setSelectAll(newSelectedItems.length === cartState.cart.length)
+  }
 
   const handleDeleteSelected = () => {
     selectedItems.forEach(id => {
@@ -200,7 +208,7 @@ const Cart = () => {
           <div className="border py-4 px-3 rounded-lg">
             <Stack direction='row' spacing={3} justifyContent='space-between'>
               <Stack direction='row' alignItems='center' justifyContent='center'>
-                <Checkbox color="success" checked={selectAll} onChange={(e) => setSelectAll(e.target.checked)} />
+                <Checkbox color="success" checked={selectAll} onChange={() => setSelectAll(!selectAll)} />
                 <Typography variant='body1' fontWeight='550'>
                   Select All
                 </Typography>
@@ -223,12 +231,12 @@ const Cart = () => {
                             {item.name}
                           </Typography>
                           <Typography variant='body1' fontWeight='400'>
-                            Lorem Ipsum
+                            {item.title}
                           </Typography>
                           <Box>
                             
                           <ClampedText variant='body2'>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quisquam impedit repellendus eum eaque sed dolore nesciunt, blanditiis animi maiores atque enim corporis ratione voluptates, ipsa reiciendis necessitatibus at architecto ea ab distinctio aperiam fuga! Ex sunt facilis vel? Dicta fugiat animi inventore adipisci beatae! Laudantium quasi doloremque debitis odio eos animi dicta recusandae velit aliquid pariatur quisquam architecto voluptas delectus provident maiores, quaerat earum rerum. Officia nihil, velit, facilis veniam assumenda reiciendis dolore quisquam, provident recusandae culpa voluptatum eos numquam.
+                            {item.description}
                           </ClampedText>
                             
                             {/* <Typography onClick={handleToggle} variant='body2' sx={{ cursor: 'pointer', fontWeight: 'semibold' }} style={{ color: 'white' }}>
@@ -278,7 +286,7 @@ const Cart = () => {
       </div>
 
       {/* MOBILE CHECKOUT */}
-      <div className={`fixed bottom-0 left-0 right-0 bg-white z-10 transition-height rounded-t-xl duration-300 ${isSummaryOpen ? 'h-auto' : 'h-0 overflow-hidden'} md:hidden`}>
+      <div className={`sticky bottom-0 left-0 right-0 bg-white z-10 transition-height rounded-t-xl duration-300 ${isSummaryOpen ? 'h-auto' : 'h-0 overflow-hidden'} md:hidden`}>
         <div className="border flex flex-col gap-3 p-4 rounded-t-xl">
           <h5 className="border-b uppercase px-1 py-0.5">Cart Summary</h5>
           <div className="flex justify-between px-1 py-0.5">

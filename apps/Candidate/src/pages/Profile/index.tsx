@@ -39,6 +39,14 @@ interface State extends SnackbarOrigin {
   open: boolean;
 }
 
+const truncateText = (text: string, wordLimit: number) => {
+  const words = text.split(' ');
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+  return text;
+};
+
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
@@ -700,7 +708,7 @@ const Profile = () => {
               ) : (
                 <Box className="input-box">
                   <label>Business Name</label>
-                  <Typography className="input-like">{watch('userProfile.professionalDetails.businessName')}</Typography>
+                  <Typography className="input-like">{truncateText(watch('userProfile.professionalDetails.businessName') || '', 1)}</Typography>
                   <IconButton onClick={() => handleEditClick('userProfile.professionalDetails.businessName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                       <SaveAsOutlinedIcon />
                   </IconButton>
@@ -773,7 +781,7 @@ const Profile = () => {
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('userProfile.professionalDetails.businessProfile')}>
                   <label>Business Profile</label>
-                  <Typography className="input-like">{watch('userProfile.professionalDetails.businessProfile')}</Typography>
+                  <Typography className="input-like">{truncateText(watch('userProfile.professionalDetails.businessProfile') || '', 1)}</Typography>
                   <IconButton onClick={() => handleEditClick('userProfile.professionalDetails.businessProfile')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                     <SaveAsOutlinedIcon />
                   </IconButton>

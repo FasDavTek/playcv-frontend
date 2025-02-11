@@ -80,7 +80,7 @@ const CreateAds = () => {
   });
 
   
-  const { adRequestId, adTypeId, adTypeName, price, paymentReference, paymentId } = location.state || {};
+  const { adRequestId, adTypeId, adTypeName, price, paymentReference, paymentId, duration } = location.state || {};
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
   if (!token) {
@@ -153,6 +153,21 @@ const CreateAds = () => {
 
 
 
+
+  useEffect(() => {
+    // Set the start date to today
+    setValue("startDate", dayjs())
+
+    // Calculate and set the end date based on the duration
+    if (duration) {
+      const endDate = dayjs().add(duration, "week")
+      setValue("endDate", endDate)
+    }
+  }, [setValue, duration]);
+
+
+
+
   const onSubmit = async (data: AdFormData) => {
     try {
 
@@ -207,6 +222,7 @@ const CreateAds = () => {
         endDate: data.endDate,
         action: 'create',
         coverURL: mediaUrl,
+        duration: duration,
       };
 
       const response = await postData(`${CONFIG.BASE_URL}${apiEndpoints.ADD_ADS}`, adData, {
