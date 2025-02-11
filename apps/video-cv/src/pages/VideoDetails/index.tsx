@@ -120,7 +120,8 @@ const VideoDetails = () => {
   const [viewCounted, setViewCounted] = useState(false)
   const [showAd, setShowAd] = useState(true)
   const [adUrl, setAdUrl] = useState("")
-  const [adType, setAdType] = useState<"video" | "image">("video")
+  const [adType, setAdType] = useState<"video" | "image">("video");
+  const [adId, setAdId] = useState<string | null>(null);
 
   const itemsPerPage = 4;
 
@@ -289,17 +290,34 @@ const VideoDetails = () => {
 
         const resp = randomAd.data;
         setAdUrl(resp.coverURL);
+        setAdId(resp.id);
       }
       catch (err) {
-
+        console.error("Error fetching random ad:", err)
+        setShowAd(false)
       }
     }
 
     getRandomAds();
   }, [])
 
-  const handleAdEnd = () => {
-    setShowAd(false)
+  const handleAdEnd = async () => {
+    setShowAd(false);
+    if (adId) {
+      console.log(adId)
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        const avg = await postData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS_COUNT}/${adId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
+      }
+      catch (err) {
+        console.error("Error updating ad view count:", err)
+      }
+      
+    }
   }
 
 

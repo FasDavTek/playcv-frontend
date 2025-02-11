@@ -173,7 +173,7 @@ const router = createBrowserRouter([
         element: (
             <Suspense fallback={<h1>Loading...</h1>}>
                 <ProtectedRoute allowedUserTypes={[3, 1]}>
-                    {<Layout type="Candidate" />}
+                    {<Layout type="Professional" />}
                 </ProtectedRoute>
             </Suspense>
           ),

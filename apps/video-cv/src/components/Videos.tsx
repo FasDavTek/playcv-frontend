@@ -54,6 +54,13 @@ interface Video {
       genderId: number;
     }
   }
+  paymentDetails: {
+    amountPaid: number
+    totalAmount: number
+    paymentStatus: string
+    currency: string
+    paymentDate: string
+  }
 }
 
 interface VideosProps {

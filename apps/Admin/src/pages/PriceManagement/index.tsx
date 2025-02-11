@@ -26,6 +26,14 @@ type PriceItem = {
   [key: string]: any;
 }
 
+const truncateText = (text: string, wordLimit: number) => {
+  const words = text.split(' ');
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+  return text;
+};
+
 const columnHelper = createColumnHelper<PriceItem>();
 
 const index = () => {
@@ -208,7 +216,7 @@ const index = () => {
         return [
           ...baseColumn,
           columnHelper.accessor('price', { header: 'Price', }),
-          columnHelper.accessor('typeDescription', { header: 'Description' }),
+          columnHelper.accessor('typeDescription', { header: 'Description', cell: (info) => truncateText(info.getValue() as string || '', 7), }),
           statusColumn,
           actionColumn,
         ]

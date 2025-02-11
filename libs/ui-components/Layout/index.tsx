@@ -11,17 +11,24 @@ import LogoutModal from './LogoutModal';
 import { CandidateRoutes, EmployerRoutes, AdminRoutes } from '../../constants';
 import * as Assets from '../../assets';
 
+const userTypeIdMap: { [key: string]: 1 | 2 | 3 } = {
+  Professional: 3,
+  Employer: 2,
+  Admin: 1,
+}
+
+
 const Layout = ({
-  type = 'Candidate',
+  type = 'Professional',
 }: {
-  type?: 'Candidate' | 'Employer' | 'Admin';
+  type?: 'Professional' | 'Employer' | 'Admin';
 }) => {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
-  const [logoutModalOpen, setLogoutMOdalOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const routes = {
-    Candidate: CandidateRoutes,
+    Professional: CandidateRoutes,
     Employer: EmployerRoutes,
     Admin: AdminRoutes,
   };
@@ -29,17 +36,18 @@ const Layout = ({
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
   const openLogoutModal = () => {
-    setLogoutMOdalOpen(true);
+    setLogoutModalOpen(true);
   };
 
-  const closeLogoutModal = () => setLogoutMOdalOpen(false);
+  const closeLogoutModal = () => setLogoutModalOpen(false);
 
   const toggleSidebarExpanded = () => {
     setSidebarExpanded(!sidebarExpanded);
   };
 
+ 
   const handleLogout = () => {
-    setLogoutMOdalOpen(true);
+    setLogoutModalOpen(true);
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -85,6 +93,7 @@ const Layout = ({
           onLogout={handleLogout}
           userDetails={{}}
           toggleSidebar={() => setSidebarOpen((prev) => !prev)}
+          userTypeId={userTypeIdMap[type]}
           // navbarConfig={navbarConfig}
         />
 

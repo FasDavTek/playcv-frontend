@@ -23,17 +23,19 @@ interface Account {
   userType: string;
 }
 
+interface NavbarProps {
+  userDetails: any
+  onLogout: () => void
+  toggleSidebar?: () => void
+  userTypeId: 1 | 2 | 3
+}
+
 const Navbar = ({
   userDetails,
   onLogout,
   toggleSidebar = () => {},
-}: // navbarConfig,
-{
-  userDetails: any | null;
-  onLogout: () => void;
-  toggleSidebar?: () => void;
-  // navbarConfig: { name: string; path: string }[];
-}) => {
+  userTypeId,
+}: NavbarProps) => {
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -44,15 +46,28 @@ const Navbar = ({
     if (pathname === '/') {
       return 'Dashboard';
     }
-    const route = [...CandidateRoutes, ...EmployerRoutes, ...AdminRoutes].find(
-      (item) => pathname === item.route || pathname.includes(item?.route)
+
+    let routes
+    switch (userTypeId) {
+      case 1:
+        routes = AdminRoutes
+        break
+      case 2:
+        routes = EmployerRoutes
+        break
+      case 3:
+      default:
+        routes = CandidateRoutes
+    }
+
+    const route = routes.find((item: { route: string; }) => pathname === item.route || pathname.includes(item?.route)
     );
     return route ? route.pageName : 'Unknown Page';
   };
 
   useEffect(() => {
     setCurrentPageName(getPageName(location.pathname) || '');
-  }, [location.pathname]);
+  }, [location.pathname, userTypeId, getPageName]);
 
   const currentAccount: Account = {
     id: userDetails?.id || '1',

@@ -48,6 +48,7 @@ export enum apiEndpoints {
     ADS_BY_ID = '/api/v1/ads/get/:{adId}',
     ADS_STATUS = '/api/v1/ads/check/ad-request',
     RANDOM_ADS = '/api/v1/ads/get/rad',
+    RANDOM_ADS_COUNT = '/api/v1/ads/avc',
 
     // vacancy flow
     OPEN_VACANCY = '/api/v1/vacancy/create-edit',
