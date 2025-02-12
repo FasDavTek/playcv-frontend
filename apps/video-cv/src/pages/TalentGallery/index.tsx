@@ -58,6 +58,13 @@ interface Video {
         genderId: number;
       }
     }
+    paymentDetails: {
+      amountPaid: number
+      totalAmount: number
+      paymentStatus: string
+      currency: string
+      paymentDate: string
+    }
 }
 
 const heroImages = [Images.HeroImage10, Images.HeroImage11, Images.HeroImage13, Images.HeroImage14, Images.HeroImage15];
