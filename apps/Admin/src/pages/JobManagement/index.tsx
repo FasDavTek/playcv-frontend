@@ -47,6 +47,8 @@ const JobManagement = () => {
   const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active');
   const [jobs, setJobs] = useState<Vacancy[]>([]);
   const [selectedItem, setSelectedItem] = useState<Vacancy | null>(null);
+  const [approvedJobs, setApprovedJobs] = useState<Vacancy[]>([]);
+  const [pendingJobs, setPendingJobs] = useState<Vacancy[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
   const navigate = useNavigate();
@@ -71,8 +73,13 @@ const JobManagement = () => {
 
       const currentTime = Date.now();
       const newJobs = data?.filter((job: Vacancy) => new Date(job.dateCreated).getTime() > lastFetchTime);
+
+      const videosApproved = data.filter((job: Vacancy) => job.status === 'Approved');
+      const videosPending = data.filter((job: Vacancy) => ['Pending', 'Rejected', 'InReview'].includes(job.status));
+      setApprovedJobs(videosApproved);
+      setPendingJobs(videosPending);
+
       if (newJobs.length > 0) {
-        await fetchJobs();
         toast.info(`${newJobs.length} new job(s) uploaded`);
       }
       setLastFetchTime(currentTime);
@@ -229,6 +236,21 @@ const JobManagement = () => {
     navigate('/admin/job-management/vacancy')
   };
 
+
+
+  const getCurrentItems = () => {
+    switch (activeTab) {
+      case 'active':
+        return approvedJobs;
+      case 'pending':
+        return pendingJobs;
+      default:
+        return [];
+    }
+  };
+
+
+
   return (
     <div className="min-h-screen px-3 md:px-10 py-10">
       <div className="bg-gray-300 border-b border-gray-200 rounded-lg">
@@ -243,7 +265,7 @@ const JobManagement = () => {
               }`}
               onClick={() => setActiveTab(tab as typeof activeTab)}
             >
-              {tab === 'active' ? 'Active/Expired Vacancies' : 'Pending/Rejected Vacancies'}
+              {tab === 'active' ? 'Active Vacancies' : 'Pending/Rejected Vacancies'}
             </button>
           ))}
         </div>
@@ -255,7 +277,7 @@ const JobManagement = () => {
         </div>
         <Table
           loading={false}
-          data={jobs}
+          data={getCurrentItems()}
           columns={columns}
           search={setSearch}
           filter={filter}

@@ -70,6 +70,13 @@ type Video = {
       genderId: number;
     }
   }
+  paymentDetails: {
+    amountPaid: number
+    totalAmount: number
+    paymentStatus: string
+    currency: string
+    paymentDate: string
+  }
 }
 
 const Dashboard = () => {
@@ -315,7 +322,7 @@ const Dashboard = () => {
                   ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg'
                   : 'text-blue-600 hover:text-blue-600'
               }`}
-              onClick={() => { setActiveTab(tab as typeof activeTab);console.log('Clicked ' + tab, 'Current ' + activeTab, videos)}}
+              onClick={() => { setActiveTab(tab as typeof activeTab) }}
             >
               {tab === 'active' ? 'Approved Videos' : 'Pending Videos'}
             </button>

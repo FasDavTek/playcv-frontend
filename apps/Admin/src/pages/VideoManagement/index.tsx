@@ -60,16 +60,26 @@ interface Video {
       genderId: number;
     }
   }
+  paymentDetails: {
+    amountPaid: number
+    totalAmount: number
+    paymentStatus: string
+    currency: string
+    paymentDate: string
+  }
 }
 
 const columnHelper = createColumnHelper<Video>();
 
 const index = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active');
   const [videos, setVideos] = useState<Video[]>([]);
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState('');
   const [selectedItem, setSelectedItem] = useState<Video | null>(null);
+  const [approvedVideos, setApprovedVideos] = useState<Video[]>([]);
+  const [pendingVideos, setPendingVideos] = useState<Video[]>([]);
   const [selectedVideoId, setSelectedVideoId] = useState<number | null>(null);
   const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
   const [loading, setLoading] = useState(true);
@@ -97,6 +107,12 @@ const index = () => {
 
       const currentTime = Date.now();
       const newVideos = data.filter((video: Video) => new Date(video.dateCreated).getTime() > lastFetchTime);
+
+      const videosApproved = data.filter((video: Video) => video.status === 'Approved');
+      const videosPending = data.filter((video: Video) => ['Pending', 'Rejected', 'InReview'].includes(video.status));
+      setApprovedVideos(videosApproved);
+      setPendingVideos(videosPending);
+
       if (newVideos.length > 0) {
         toast.info(`${newVideos.length} new video(s) uploaded`);
       }
@@ -273,7 +289,7 @@ const index = () => {
     columnHelper.accessor('status', {
       header: 'Status',
       cell: (info) => {
-        const status = info.getValue()
+        const status = info.getValue();
         return (
           <span
             className={`px-2 py-1.5 text-center items-center rounded-full ${getStatusColor(statusOptions.find((option) => option.value === status)?.label || "")}`}
@@ -304,22 +320,43 @@ const index = () => {
       )
     })
   ];
+
+
+
+  const getCurrentItems = () => {
+    switch (activeTab) {
+      case 'active':
+        return approvedVideos;
+      case 'pending':
+        return pendingVideos;
+      default:
+        return [];
+    }
+  };
+
+
   
   return (
     <div className='p-4 mb-8'>
-      {/* {loading ? (
-        <div className="flex items-center justify-center min-h-screen">
-          <CircularProgress className="w-8 h-8 animate-spin" />
+      <div className="bg-gray-300 border-b border-gray-200 rounded-lg">
+        <div className="flex p-1">
+          {['active', 'pending'].map((tab) => (
+            <button
+              key={tab}
+              className={`py-2 px-4 text-sm font-medium ${
+                activeTab === tab
+                  ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg'
+                  : 'text-blue-600 hover:text-blue-600'
+              }`}
+              onClick={() => { setActiveTab(tab as typeof activeTab) }}
+            >
+              {tab === 'active' ? 'Approved Videos' : 'Pending Videos'}
+            </button>
+          ))}
         </div>
-      ) : (
-        videos.length > 0 ? (
-          
-        ) : (
-          <p>No videos available</p>
-        )
-      )} */}
+      </div>
 
-      <Table loading={false} columns={columns} data={videos} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+      <Table loading={false} columns={columns} data={getCurrentItems()} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="dialog-title" aria-describedby="dialog-description" PaperProps={{ sx: { padding: 3, borderRadius: 2, boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)', width: { xs: '90%', sm: '500px' }, maxWidth: '750px' }, }} BackdropProps={{ sx: { backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.2)', }, }} >
         <DialogTitle>Rejection Reason</DialogTitle>

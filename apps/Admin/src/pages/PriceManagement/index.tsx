@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Container, Tab, Tabs, Typography, Box, TextField, Stack, Modal } from '@mui/material';
-import { Button, Input, Table } from '@video-cv/ui-components';
+import { Button, Input, SelectMenu, Table } from '@video-cv/ui-components';
 import { toast } from 'react-toastify';
 
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,10 @@ import VideoUploadTypes from './../../../../Candidate/src/pages/VideoManagement/
 import { useCurrentUser } from './../../../../../libs/hooks/useCurrentUser';
 import { useAuth } from './../../../../../libs/context/AuthContext';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
+import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
+import RecommendOutlinedIcon from '@mui/icons-material/RecommendOutlined';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 
 type PriceItem = {
   id: string;
@@ -197,8 +201,17 @@ const index = () => {
       header: 'Actions',
       cell: ({ row }) => (
         <div className='flex gap-2'>
-          <Button variant='custom' label='Edit' onClick={() => handleEdit(row.original)} />
-          <Button variant={row.original.active ? 'red' : 'success'} label={row.original.active ? 'Suspend' : 'Activate'} onClick={() => handleStatusToggle(row.original)} />
+          {/* <Button variant='custom' label='Edit' onClick={() => handleEdit(row.original)} />
+          <Button variant={row.original.active ? 'red' : 'success'} label={row.original.active ? 'Suspend' : 'Activate'} onClick={() => handleStatusToggle(row.original)} /> */}
+
+          <SelectMenu
+            options={[
+              { label: "Activate", onClick: () => handleStatusToggle(row.original), icon: <RecommendOutlinedIcon sx={{ fontSize: 'medium' }} />, },
+              { label: "Deactivate", onClick: () => handleStatusToggle(row.original), icon: <BlockOutlinedIcon sx={{ fontSize: 'medium' }} />, },
+              { label: "Edit", onClick: () => handleEdit(row.original), icon: <CreateOutlinedIcon sx={{ fontSize: 'medium' }} />, },
+            ]}
+            buttonVariant="text"
+          />
         </div>
       )
     });

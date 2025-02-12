@@ -17,6 +17,8 @@ import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
 import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import RecommendOutlinedIcon from '@mui/icons-material/RecommendOutlined';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 
 
 const truncateText = (text: string, wordLimit: number) => {
@@ -61,12 +63,15 @@ type ModalTypes = null | 'confirmationModal' | 'createAds';
 const columnHelper = createColumnHelper<Advert>();
 
 const Payment = () => {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active');
   const [ads, setAds] = useState<Advert[]>([]);
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Advert | null>(null);
   const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState<ModalTypes>(null);
-  const navigate = useNavigate();
+  const [approvedAdverts, setApprovedAdverts] = useState<Advert[]>([]);
+  const [pendingAdverts, setPendingAdverts] = useState<Advert[]>([]);
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedAdId, setSelectedAdId] = useState<string | null>(null);
@@ -102,6 +107,12 @@ const Payment = () => {
 
       const currentTime = Date.now();
       const newAds = data.filter((ad: Advert) => new Date(ad.dateCreated).getTime() > lastFetchTime);
+
+      const videosApproved = data.filter((ad: Advert) => ad.status === 'Active');
+      const videosPending = data.filter((ad: Advert) => ['Rejected', 'Inactive', 'InReview'].includes(ad.status));
+      setApprovedAdverts(videosApproved);
+      setPendingAdverts(videosPending);
+
       if (newAds.length > 0) {
         toast.info(`${newAds.length} new ad(s) uploaded`);
       }
@@ -328,34 +339,13 @@ const Payment = () => {
       header: 'Action',
       cell: ({ row }) => (
         <div className="flex gap-2">
-          {/* <Button variant="custom"
-            onClick={() => handleView(row.original)}
-            label={'View'}  
-          >
-          </Button>
-          {row.original.status === 'active' ? (
-            <Button
-              variant={'red'}
-              onClick={() => handleOpenSuspendDialog(row.original, row.original.adName)}
-              label={'Suspend'}
-            >
-            </Button>
-          ) : (
-            <Button
-              variant={'success'}
-              onClick={() => handleActivate(row.original.id)}
-              label={'Activate'}
-            >
-            </Button>
-          )} */}
-
           <SelectMenu
             options={[
-              { label: "Activate", onClick: () => handleStatusToggle(row.original, 1, 'approve'), value: 1, icon: <RecommendOutlinedIcon />, },
-              { label: "Deny", onClick: () => handleStatusToggle(row.original, 5, 'deny'), value: 5, icon: <ThumbDownOutlinedIcon />,},
-              { label: "Delete", onClick: () => handleStatusToggle(row.original, 1, 'delete'), value: 8, icon: <ThumbDownOutlinedIcon />, },
-              { label: "Deactivate", onClick: () => handleStatusToggle(row.original, 5, 'deactivate'), value: 5, icon: <ThumbDownOutlinedIcon />,},
-              { label: "View", onClick: () => handleView(row.original), icon: <PreviewOutlinedIcon />, },
+              { label: "Activate", onClick: () => handleStatusToggle(row.original, 1, 'approve'), value: 1, icon: <RecommendOutlinedIcon sx={{ fontSize: 'medium' }} />, },
+              { label: "Deny", onClick: () => handleStatusToggle(row.original, 5, 'deny'), value: 5, icon: <ThumbDownOutlinedIcon sx={{ fontSize: 'medium' }} />,},
+              { label: "Delete", onClick: () => handleStatusToggle(row.original, 1, 'delete'), value: 8, icon: <DeleteOutlinedIcon sx={{ fontSize: 'medium' }} />, },
+              { label: "Deactivate", onClick: () => handleStatusToggle(row.original, 5, 'deactivate'), value: 5, icon: <BlockOutlinedIcon sx={{ fontSize: 'medium' }} />,},
+              { label: "View", onClick: () => handleView(row.original), icon: <PreviewOutlinedIcon sx={{ fontSize: 'medium' }} />, },
             ]}
             buttonVariant="text"
           />
@@ -364,9 +354,24 @@ const Payment = () => {
     }),
   ];
 
+
+
+  const getCurrentItems = () => {
+    switch (activeTab) {
+      case 'active':
+        return approvedAdverts;
+      case 'pending':
+        return pendingAdverts;
+      default:
+        return [];
+    }
+  };
+
+
+
   return (
     <div className="min-h-screen px-3 md:px-10 py-10">
-      <div className="flex justify-end">
+      <div className="flex justify-end mb-3">
         <Button
           label="Create Ad"
           variant="black"
@@ -374,20 +379,27 @@ const Payment = () => {
         />
       </div>
 
-      {/* {loading ? (
-        <div className="flex items-center justify-center min-h-screen">
-          <CircularProgress className="w-8 h-8 animate-spin" />
-        </div>
-      ) : (
-          ads.length > 0 ? (
-            
-          ) : (
-            <p>No ads available</p>
-          )
-        
-      )} */}
 
-      <Table loading={false} data={ads} columns={columns} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} tableHeading="All Ads" />
+      <div className="bg-gray-300 border-b border-gray-200 rounded-lg">
+        <div className="flex p-1">
+          {['active', 'pending'].map((tab) => (
+            <button
+              key={tab}
+              className={`py-2 px-4 text-sm font-medium ${
+                activeTab === tab
+                  ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg'
+                  : 'text-blue-600 hover:text-blue-600'
+              }`}
+              onClick={() => { setActiveTab(tab as typeof activeTab) }}
+            >
+              {tab === 'active' ? 'Approved Adverts' : 'Pending Adverts'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+
+      <Table loading={false} data={getCurrentItems()} columns={columns} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} tableHeading="All Ads" />
 
       {/* <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="dialog-title" aria-describedby="dialog-description" PaperProps={{ sx: { padding: 3, borderRadius: 2, boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)', width: { xs: '90%', sm: '500px' }, maxWidth: '750px' }, }} BackdropProps={{ sx: { backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.2)', }, }}>
         <DialogTitle>Suspension Reason</DialogTitle>

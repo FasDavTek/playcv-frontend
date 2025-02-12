@@ -144,50 +144,54 @@ const Table: React.FC<any> = <T extends object>({
             </div>
           )}
       </div>
-      <table>
-        <thead className={tableHeadingColorClassName}>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                  <th className="!font-semibold" key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender( header.column.columnDef.header, header.getContext() )}
-                  </th>
+      <div className="overflow-x-auto">
+        <div className="hide-scrollbar scroll-smooth">
+          <table>
+            <thead className={tableHeadingColorClassName}>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                      <th className="!font-semibold" key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender( header.column.columnDef.header, header.getContext() )}
+                      </th>
+                    ))}
+                </tr>
+              ))}
+            </thead>
+            {filteredData?.length > 0 && (
+              <tbody className="">
+                {table.getRowModel().rows.map((row) => (
+                  <tr
+                    className="cursor-pointer"
+                    onClick={() => tableRowOnclickFunction(row.original)}
+                    key={row.id}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <td className="" key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-            </tr>
-          ))}
-        </thead>
-        {filteredData?.length > 0 && (
-          <tbody className="">
-            {table.getRowModel().rows.map((row) => (
-              <tr
-                className="cursor-pointer"
-                onClick={() => tableRowOnclickFunction(row.original)}
-                key={row.id}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <td className="" key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </tbody>
+            )}
+          </table>
+          {paginatedData?.length === 0 && (
+            <table className="">
+              <tbody className="flex items-center justify-center border py-10 w-full">
+                <tr className="flex flex-col items-center justify-center w-full !bg-transparent">
+                  <td className="border-0 !border-b-0">
+                    {/* <img src={Assets.Icons.NoTableData} alt="" /> */}
+                    <h5 className="">No Data Yet</h5>
                   </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        )}
-      </table>
-      {paginatedData?.length === 0 && (
-        <table className="">
-          <tbody className="flex items-center justify-center border py-10 w-full">
-            <tr className="flex flex-col items-center justify-center w-full !bg-transparent">
-              <td className="border-0 !border-b-0">
-                {/* <img src={Assets.Icons.NoTableData} alt="" /> */}
-                <h5 className="">No Data Yet</h5>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      )}
+                </tr>
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
       <div className='sticky left-0 right-0 mt-2 flex justify-end gap-2 px-4'>
         <Button variant={currentPage === 1 ? 'custom' : 'black'} icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
           Previous

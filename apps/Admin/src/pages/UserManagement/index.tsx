@@ -518,7 +518,7 @@ const UserManagement = () => {
           {['subAdmins', 'professionals', 'employers', 'pendingEmployers'].map((tab) => (
             <button
               key={tab}
-              className={`py-2 px-4 text-sm font-medium ${
+              className={`py-2 px-4 text-xs md:text-sm font-medium ${
                 activeTab === tab
                   ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg'
                   : 'text-blue-600 hover:text-blue-600'
