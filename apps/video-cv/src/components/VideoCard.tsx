@@ -96,7 +96,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
     navigate(`/video/${item.id}`, { state: { video: item } });
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation()
     if (!authState.isAuthenticated) {
       navigate('/auth/login');
       return;
@@ -154,6 +155,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
         },
       }}
       elevation={4}
+      onClick={() => handleViewDetails(video)}
     >
       {/* <Link to={`/video/${id}`} style={{ textDecoration: 'none' }} > */}
         <CardMedia
@@ -193,7 +195,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
           {(authState?.isAuthenticated && authState?.user?.userTypeId === 2) || !authState?.isAuthenticated ? (
             <Tooltip title='Add to wishlist' placeholder='right-start'>
               <span>
-                <Button variant="custom" color="gray" className='text-[#5c6bc0] hover:text-[#2e3a86]' onClick={handleAddToCart} icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />}></Button>
+                <Button variant="custom" color="gray" className='text-[#5c6bc0] hover:text-[#2e3a86] touch-action-manipulation' onClick={handleAddToCart} icon={isInWishlist ? <ShoppingCartIcon /> : <AddShoppingCartIcon />} style={{ touchAction: "manipulation" }} ></Button>
               </span>
             </Tooltip>
           ) : null}

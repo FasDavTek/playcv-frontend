@@ -1,8 +1,9 @@
 import React from "react"
 import { useState, useEffect } from "react"
 import ReactPlayer from "react-player"
-import { Box, Button, Typography } from "@mui/material"
+import { Box, Typography } from "@mui/material"
 import Image from '@mui/material'
+import { Button } from '@video-cv/ui-components';
 
 interface AdPlayerProps {
   adUrl: string
@@ -54,11 +55,11 @@ const AdPlayer: React.FC<AdPlayerProps> = ({ adUrl, adDuration, adType, onAdEnd 
         paddingY={1}
         paddingX={3}
         borderRadius={5}
+        className="cursor-pointer touch-action-manipulation"
+        onClick={handleSkip}
       >
         {canSkip ? (
-          <Typography onClick={handleSkip} >
-            Skip Ad
-          </Typography>
+          <Button variant='none' type='button' label='Skip Ad' onClick={handleSkip} className="cursor-pointer touch-action-manipulation" style={{ touchAction: "manipulation" }}></Button>
         ) : (
           <Typography>Ad ends in {timeLeft} seconds</Typography>
         )}

@@ -64,10 +64,10 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Download=true`, {
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const data = resp.vacancies;
+        const data = resp.data;
         // if (resp.status === 200) {
         //   setJobs(resp.data);
         // }

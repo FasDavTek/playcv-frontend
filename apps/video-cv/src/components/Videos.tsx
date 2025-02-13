@@ -128,12 +128,12 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Download=true`, {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=100`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         let data;
-        if (response.code === '00') {
-          data = await response.videos;
+        if (response.succeeded === true) {
+          data = await response.data;
           let approvedVideos = data.filter((video: Video) => video.status === "Approved")
 
 
@@ -148,11 +148,13 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category
 
           if (type === "pinned") {
             approvedVideos = approvedVideos.filter((video: Video) => video.type === "Pinned")
-          } else if (type === "latest") {
+          }
+          else if (type === "latest") {
             approvedVideos.sort(
               (a: Video, b: Video) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
             )
-          } else if (category) {
+          }
+          else if (category) {
             approvedVideos = approvedVideos.filter((video: Video) => video.category === category)
           }
 
@@ -214,7 +216,7 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category
         </div>
 
         <div className="flex items-center justify-end gap-2 mt-4">
-          <Link to={'/talent'} className='mr-3 text-blue-600 text-sm'>
+          <Link to={'/talents'} className='mr-3 text-blue-600 text-sm'>
             <span>View more</span>
           </Link>
           <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>

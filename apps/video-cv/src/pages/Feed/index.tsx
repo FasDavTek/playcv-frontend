@@ -17,6 +17,7 @@ import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { useAuth } from '../../context/AuthProvider';
+import { useAllMisc } from './../../../../../libs/hooks/useAllMisc';
 
 const heroImages = [Images.HeroImage, Images.HeroImage1, Images.HeroImage2, Images.HeroImage3, Images.HeroImage4, Images.HeroImage5, Images.HeroImage6, Images.HeroImage7, Images.HeroImage8, Images.HeroImage9];
 
@@ -53,9 +54,22 @@ const Feed = () => {
     }
   };
 
+
+
+  const { data: videoCategory, isLoading: isCategoryLoading, error: categoryError, refetch: refetchCategoryData, } = useAllMisc({
+    resource:  "video-category",
+    // page: 1,
+    // limit: 100,
+    download: true,
+    structureType: 'data',
+  });
+
+
+
   useEffect(() => {
     if (token) {
       checkPaymentStatus()
+      
     }
   }, [token])
 
@@ -150,8 +164,8 @@ const Feed = () => {
           <JobCardBoard filterOptions={{ searchText: '', selectedCategories: [], selectedLocations: [], selectedDates: [], selectedStatus: 'all' }} />
         </Box>
 
-        {['Building service', 'VideoCV'].map((category) => (
-          <Box key={category} className="mt-20 ">
+        {videoCategory && videoCategory?.map((category) => (
+          <Box key={category.id} className="mt-20 ">
             <Typography
               variant="h5"
               fontWeight="bold"
@@ -159,10 +173,10 @@ const Feed = () => {
               sx={{ color: 'black' }}
               className="font-medium text-5xl my-5"
             >
-              {category}
+              {category.name}
             </Typography>
 
-            <Videos category={category} />
+            <Videos category={category.name} />
           </Box>
         ))}
 
