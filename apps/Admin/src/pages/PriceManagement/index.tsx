@@ -254,10 +254,6 @@ const index = () => {
 
 
 
-
-
-
-
   const handleEdit = (item: PriceItem) => {
     setSelectedItem(item);
     setOpenModal('edit');

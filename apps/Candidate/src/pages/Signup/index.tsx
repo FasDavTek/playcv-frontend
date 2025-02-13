@@ -287,7 +287,7 @@ const Index = () => {
         <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-2 sticky p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: "1.75rem" }} onClick={handleBackClick} />
         <form onSubmit={handleSubmit(submitForm)} >
           <p className="text-lg mb-7 text-center md:text-left text-neutral-300">Create Your Professional Profile</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 px-2">
+          <div className="grid grid-cols-1 xmd:grid-cols-2 gap-5 px-2">
             <div>
               <Input
                 label={
@@ -349,155 +349,10 @@ const Index = () => {
                 isValid={!errors.email && !!watchedFields.email}
               />
             </div>
-            {/* <div>
-                    <Controller
-                      name="professionalInfo.course"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          name="Course of Study"
-                          control={control}
-                          placeholder="Course of sudy"
-                          defaultValue={
-                            Array.isArray(courses) &&
-                            courses?.find((c) => c.courseName === watch("professionalInfo.course"))
-                          }
-                          options={model(courses, "courseName", "id")}
-                          handleChange={(newValue) => {
-                            if (newValue.__isNew__) {
-                              field.onChange(newValue?.value || newValue?.label)
-                              setValue("professionalInfo.course", newValue?.label || "")
-                              setValue("professionalInfo.courseId", null)
-                            } else {
-                              field.onChange(newValue?.value || newValue?.label)
-                              setValue("professionalInfo.course", newValue?.label)
-                              setValue("professionalInfo.courseId", newValue?.value)
-                            }
-                          }}
-                          isDisabled={isLoadingCourses}
-                          errors={errors}
-                          allowCreate={true}
-                          label={"Course of Study"}
-                        />
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <Controller
-                      name="professionalInfo.institution"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          name="Institution Attended"
-                          control={control}
-                          placeholder="Institution attended"
-                          defaultValue={
-                            Array.isArray(institutions) &&
-                            institutions?.find((i) => i.name === watch("professionalInfo.institution"))
-                          }
-                          options={model(institutions, "name", "id")}
-                          handleChange={(newValue) => {
-                            if (newValue.__isNew__) {
-                              field.onChange(newValue?.value || newValue?.label)
-                              setValue("professionalInfo.institution", newValue?.label || "")
-                              setValue("professionalInfo.institutionId", null)
-                            } else {
-                              field.onChange(newValue?.value || newValue?.label)
-                              setValue("professionalInfo.institution", newValue?.label)
-                              setValue("professionalInfo.institutionId", newValue?.value)
-                            }
-                          }}
-                          isDisabled={isLoadingInstitutions}
-                          errors={errors}
-                          allowCreate={true}
-                          label={"Institution Attended"}
-                        />
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <Controller
-                      name="professionalInfo.classOfDegree"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          name="Class of Degree"
-                          control={control}
-                          placeholder="Class of degree"
-                          defaultValue={
-                            Array.isArray(degreeClasses) &&
-                            degreeClasses?.find((dc) => dc.name === watch("professionalInfo.classOfDegree"))
-                          }
-                          options={model(degreeClasses, "name", "id")}
-                          handleChange={(newValue) => {
-                            if (newValue.__isNew__) {
-                              field.onChange(newValue?.value || newValue?.label)
-                              setValue("professionalInfo.classOfDegree", newValue?.label || "")
-                              setValue("professionalInfo.degreeClassId", null)
-                            } else {
-                              field.onChange(newValue?.value || newValue?.label)
-                              setValue("professionalInfo.classOfDegree", newValue?.label)
-                              setValue("professionalInfo.degreeClassId", newValue?.value)
-                            }
-                          }}
-                          isDisabled={isLoadingDegreeClasses}
-                          errors={errors}
-                          allowCreate={true}
-                          label={"Class of degree"}
-                        />
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <Input
-                      label={<span>NYSC State Code</span>}
-                      {...register("professionalInfo.nyscStateCode")}
-                      placeholder="NYSC State Code"
-                      type="text"
-                      error={errors?.professionalInfo?.nyscStateCode}
-                      isValid={
-                        !errors?.professionalInfo?.nyscStateCode && !!watchedFields?.professionalInfo?.nyscStateCode
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Controller
-                      control={control}
-                      name="professionalInfo.nyscStartYear"
-                      render={({ field }) => (
-                        <DatePicker
-                          {...field}
-                          label="NYSC Service year (start)"
-                          value={field.value ? dayjs().year(field.value) : null}
-                          onChange={(date) => {
-                            field.onChange(date ? date.year() : null)
-                          }}
-                          views={["year"]}
-                        />
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <Controller
-                      name="professionalInfo.nyscEndYear"
-                      control={control}
-                      render={({ field }) => (
-                        <DatePicker
-                          {...field}
-                          label="NYSC Service year (end)"
-                          value={field.value ? dayjs().year(field.value) : null}
-                          onChange={(date) => {
-                            field.onChange(date ? date.year() : null)
-                          }}
-                          views={["year"]}
-                        />
-                      )}
-                    />
-                  </div> */}
             {watchHasBusiness && (
-              <div className="col-span-2 mt-4">
+              <div className="mt-4">
                 <h3 className="text-lg font-semibold mb-3">Business Profile</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 xmd:grid-cols-2 gap-5">
                   <div>
                     <Input
                       label={
@@ -588,6 +443,8 @@ const Index = () => {
               <FormHelperText>Passwords must match.</FormHelperText>
             </FormControl>
           </div>
+
+
 
           <div className="mt-5">
             <FormControlLabel

@@ -26,6 +26,7 @@ interface Video {
   videoUrl: string
   thumbnailUrl: string
   status: string
+  price: number
   totalRecords: number
   rejectionReason?: string
   authorProfile: {
@@ -69,6 +70,12 @@ interface VideosProps {
   type?: "pinned" | "latest" | "category"
 }
 
+interface VideoType {
+  id: string
+  name: string
+  buyPrice: number
+}
+
 // TODO: Rename component
 const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category" }) => {
   const navigate = useNavigate();
@@ -76,6 +83,7 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [videosPerPage, setVideosPerPage] = useState(0);
+  const [videoTypes, setVideoTypes] = useState<VideoType[]>([])
   const [columns, setColumns] = useState(1);
 
   const calculateColumns = () => {
@@ -86,6 +94,34 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category
     if (width >= 450) return 2; // sm
     return 1;
   };
+
+
+
+
+  useEffect(() => {
+    const fetchVideoTypes = async () => {
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN)
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_UPLOAD_TYPE}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        if (resp.code === "00") {
+          setVideoTypes(resp.data)
+        } 
+        else {
+          throw new Error("Failed to fetch video types")
+        }
+      } catch (error) {
+        console.error("Error fetching video types:", error)
+        toast.error("Failed to fetch video types")
+      }
+    }
+
+    fetchVideoTypes()
+  }, [])
+
+
+
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -99,6 +135,16 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category
         if (response.code === '00') {
           data = await response.videos;
           let approvedVideos = data.filter((video: Video) => video.status === "Approved")
+
+
+          approvedVideos = approvedVideos.map((video: Video) => {
+            const videoType = videoTypes.find((vt) => vt.name === video.type)
+            return {
+              ...video,
+              price: videoType ? videoType.buyPrice : 0,
+            }
+          })
+
 
           if (type === "pinned") {
             approvedVideos = approvedVideos.filter((video: Video) => video.type === "Pinned")
@@ -119,8 +165,10 @@ const Videos: React.FC<VideosProps> = ({ category, limit = 100, type = "category
       }
     };
 
-    fetchVideos();
-  }, []);
+    if (videoTypes.length > 0) {
+      fetchVideos()
+    }
+  }, [category, type, videoTypes]);
 
   useEffect(() => {
     const handleResize = () => {

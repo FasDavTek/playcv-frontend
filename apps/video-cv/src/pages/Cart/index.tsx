@@ -23,12 +23,11 @@ const Cart = () => {
   const { cartState, dispatch } = useCart();
   const { authState } = useAuth();
   const [price, setPrice] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   const [triggerPayment, setTriggerPayment] = useState<boolean>(false);
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-
-
 
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
   if (!token) {
@@ -36,6 +35,22 @@ const Cart = () => {
     navigate('/')
   };
 
+
+  useEffect(() => {
+    if (selectAll) {
+      setSelectedItems(cartState.cart.map(item => item.id));
+    } else {
+      setSelectedItems([]);
+    }
+  }, [selectAll, cartState.cart]);
+
+
+  useEffect(() => {
+    const newTotalPrice = cartState.cart
+      .filter(item => selectedItems.includes(item.id))
+      .reduce((acc, item) => acc + item.price, 0);
+    setTotalPrice(newTotalPrice);
+  }, [selectedItems, cartState.cart]);
 
 
   const onPaymentSuccess = useCallback(async (response: any) => {
@@ -46,8 +61,8 @@ const Cart = () => {
         userId: authState.user?.id,
         buyerId: authState.user?.id,
         currency: "NGN",
-        total: price,
-        amount: price,
+        total: totalPrice,
+        amount: totalPrice,
         countryCode: 'NG',
         datetime: new Date().toISOString(),
         reference_Id: response.reference,
@@ -91,9 +106,7 @@ const Cart = () => {
       toast.error("An error occurred while saving payment details");
     }
 
-    const from = location.state?.from || '/';
-    navigate(from, { replace: true });
-  }, [authState.user, navigate, selectedItems, cartState.cart, dispatch, ]);
+  }, [authState.user, navigate, selectedItems, cartState.cart, dispatch, totalPrice, token, ]);
 
 
 
@@ -103,48 +116,30 @@ const Cart = () => {
   };
 
 
-
-
   const { payButtonFn, isProcessing } = usePaystack(onPaymentSuccess, onPaymentFailure);
 
   const handlePayment = useCallback(() => {
-    const amount = price;
-    const email = authState?.user?.username || '';
-    const userSignupDataString = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
-    let firstName = '';
-    let lastName = '';
-    let phone = '';
-    if (userSignupDataString) {
-      const userSignupData = JSON.parse(userSignupDataString);
-      firstName = userSignupData?.surname;
-      lastName = userSignupData?.firstName;
-      phone = userSignupData?.phoneNumber;
+    if (totalPrice > 0) {
+      const email = authState?.user?.username || '';
+      const userSignupDataString = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
+      let firstName = '';
+      let lastName = '';
+      let phone = '';
+      if (userSignupDataString) {
+        const userSignupData = JSON.parse(userSignupDataString);
+        firstName = userSignupData?.surname;
+        lastName = userSignupData?.firstName;
+        phone = userSignupData?.phoneNumber;
+      }
+
+      payButtonFn(totalPrice, email, firstName, lastName, phone);
     }
-
-    if (amount > 0) {
-      payButtonFn(amount, email, firstName, lastName, phone);
-    }
-  }, [authState.user, payButtonFn, price]);
-
-  useEffect(() => {
-    if (selectAll) {
-      setSelectedItems(cartState.cart.map(item => item.id));
-    } else {
-      setSelectedItems([]);
-    }
-  }, [selectAll, cartState.cart]);
-
-
-  useEffect(() => {
-    const newTotalPrice = cartState.cart
-      .filter(item => selectedItems.includes(item.id))
-      .reduce((acc, item) => acc + item.price, 0);
-    setPrice(newTotalPrice);
-  }, [selectedItems, cartState.cart]);
+  }, [authState.user, payButtonFn, totalPrice]);
 
 
   const handleRemoveFromCart = (id: string) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: { id } });
+    setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
   };
 
   // console.log('isAuth', isAuthenticated);
@@ -157,11 +152,10 @@ const Cart = () => {
 
     if (selectedItems.length === 0) {
       toast.info('Please select items to purchase');
+      return
     }
 
     handlePayment();
-    
-    // payButtonFn();
   };
 
   const ClampedText = styled(Typography)({
@@ -231,8 +225,9 @@ const Cart = () => {
                             {item.name}
                           </Typography>
                           <Typography variant='body1' fontWeight='400'>
-                            {item.title}
+                            {item.uploader}
                           </Typography>
+                          <Typography variant="body2">Type: {item.type}</Typography>
                           <Box>
                             
                           <ClampedText variant='body2'>
@@ -268,7 +263,7 @@ const Cart = () => {
             <div className="flex justify-between px-1 py-0.5">
               <p className="px-1 py-0.5">Subtotal</p>
               <p className="">
-                ₦{price}
+                ₦{totalPrice}
               </p>
             </div>
             <div className="px-1 py-0.5">

@@ -31,6 +31,7 @@ interface Video {
   videoUrl: string
   thumbnailUrl: string
   status: string
+  price: number
   totalRecords: number
   rejectionReason?: string
   authorProfile: {
@@ -123,6 +124,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
         imageSrc: thumbnailUrl,
         price: price,
         uploader: authorProfile.userDetails.fullName,
+        type: type,
       };
       dispatch({
         type: 'ADD_TO_CART',
@@ -134,7 +136,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
   return (
     <Card
       sx={{
-        width: { xs: '100%', sm: '100%', md: '100%' },
+        width: { xs: '300px', sm: '100%', md: '100%' },
         maxWidth: '300px',
         // boxShadow: { xs: '1', sm: '1', lg:'0'},
         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
@@ -185,6 +187,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
             </Typography>
             {type === 'Pinned' && <PushPinIcon sx={{ fontSize: '1rem', color: 'red', ml: '.5rem' }} />}
           </Stack>
+          <Typography variant="body2" fontWeight="normal" hidden>
+            ₦{price}
+          </Typography>
           {(authState?.isAuthenticated && authState?.user?.userTypeId === 2) || !authState?.isAuthenticated ? (
             <Tooltip title='Add to wishlist' placeholder='right-start'>
               <span>
