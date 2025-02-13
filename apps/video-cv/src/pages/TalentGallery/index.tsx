@@ -30,6 +30,7 @@ interface Video {
     videoUrl: string
     thumbnailUrl: string
     status: string
+    price: number
     totalRecords: number
     rejectionReason?: string
     authorProfile: {
