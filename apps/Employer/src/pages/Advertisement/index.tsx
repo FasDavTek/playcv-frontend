@@ -216,7 +216,7 @@ const Advertisement = () => {
           </Button> */}
           <SelectMenu
             options={[
-              { label: "View", onClick: () => handleView(row.original) , icon: <PreviewOutlinedIcon />, },
+              { label: "View", onClick: () => handleView(row.original) , icon: <PreviewOutlinedIcon sx={{ fontSize: 'medium' }} />, },
             ]}
             buttonVariant="text"
           />

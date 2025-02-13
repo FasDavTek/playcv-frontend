@@ -19,7 +19,7 @@ const s3Client = new S3Client({
 });
 
 interface AdTypeItem {
-    id?: string;
+    id?: number;
     name: string;
     typeDescription: string;
     price: number;
@@ -33,7 +33,7 @@ interface AdTypeItem {
 }
   
 interface VideoUploadTypeItem {
-    id?: string;
+    id?: number;
     typeId?: string;
     name: string;
     shortName: string;

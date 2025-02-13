@@ -266,7 +266,7 @@ const Dashboard = () => {
         <Button variant='red' label='Reject' type='submit' onClick={() => handleOpenRejectDialog(row.original.id, row.original.title)} disabled={row.original.status !== 'Pending'}></Button> */}
         <SelectMenu
           options={[
-            { label: "View", onClick: () => handleView(row.original), icon: <PreviewOutlinedIcon />, },
+            { label: "View", onClick: () => handleView(row.original), icon: <PreviewOutlinedIcon sx={{ fontSize: 'medium' }} />, },
           ]}
           buttonVariant="text"
         />

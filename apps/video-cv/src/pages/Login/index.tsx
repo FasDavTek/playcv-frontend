@@ -70,6 +70,31 @@ const Login = () => {
     navigate('/auth/forgot-password');
   };
 
+
+
+
+  const fetchUserProfile = async (token: string) => {
+    try {
+      console.log("Fetching user profile with token:", token)
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_PROFILE}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      console.log("User profile response:", resp)
+
+      if (resp.code === "00") {
+        return resp.userProfile
+      } else {
+        throw new Error(resp.message || "Failed to fetch user profile")
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error)
+      throw error
+    }
+  }
+
+
+
+
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     const { username, password } = data;
@@ -85,18 +110,29 @@ const Login = () => {
 
       if (res.code === "200") {
 
-        toast.success(`Welcome aboard once again! Let's continue where we left off.`);
-
         const token = res.token;
         const decoded = decodeJWT(token);
-        
-        localStorage.setItem(
-          LOCAL_STORAGE_KEYS.USER,
-          JSON.stringify({ ...res, ...decoded })
-        );
+
+        localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, res.token);
+
+        const userToken = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        let userProfile;
+        try {
+          userProfile = await fetchUserProfile(userToken || '')
+        } catch (profileError) {
+          console.error("Error fetching user profile:", profileError)
+          toast.warning("Logged in successfully, but there was an issue fetching your profile.")
+        }
+
+        const userData = {
+          ...res,
+          ...decoded,
+          profile: userProfile,
+        }
+
+        localStorage.setItem(LOCAL_STORAGE_KEYS.USER,JSON.stringify({ userData }) );
 
         localStorage.setItem(LOCAL_STORAGE_KEYS.IS_USER_EXIST, "true");
-        localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, res.token);
         localStorage.setItem(LOCAL_STORAGE_KEYS.USER_BIO_DATA_ID, res.user.id);
 
           // Update the global auth state
@@ -104,17 +140,20 @@ const Login = () => {
             isAuthenticated: true,
             user: {
               id: res.user.id,
-              email: res.user.email,
-              username: res.user.email,
-              name: res.user.fullName || 'User',
+              email: res.user.userTypeId === 2 ?  userProfile.businessDetails?.businessEmail : res.user.email,
+              username: res.user.userTypeId === 2 ?  userProfile.businessDetails?.businessEmail : res.user.email,
+              name: res.user.userTypeId === 2 ? userProfile.businessDetails?.businessName : res.user.fullName || "User",
               userTypeId: res.user.userTypeId,
               firstName: res.user.firstName,
               lastName: res.user.lastName,
-              phone: res.user.mobile,
+              phone: res.user.userTypeId === 2 ? userProfile.businessDetails?.contactPhone : res.user.mobile,
+              businessName: userProfile.businessDetails?.businessName,
+              businessEmail: userProfile.businessDetails?.businessEmail,
               // Add other relevant user fields
             }
           });
 
+        toast.success(`Welcome aboard once again! Let's continue where we left off.`);
         reset();
 
         const from = location.state?.from || '/';

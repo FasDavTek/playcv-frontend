@@ -20,7 +20,7 @@ import RecommendOutlinedIcon from '@mui/icons-material/RecommendOutlined';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 
 type PriceItem = {
-  id: string;
+  id: number;
   price: string;
   typeName?: string;
   name?: string;
@@ -46,6 +46,7 @@ const index = () => {
   const [priceItems, setPriceItems] = useState<PriceItem[]>([]);
   const [videoUploadTypes, setVideoUploadTypes] = useState<PriceItem[]>([]);
   const [adsTypes, setAdsTypes] = useState<PriceItem[]>([]);
+  const [reasonForRejection, setReasonForRejection] = useState('');
   const [buyVideoTypes, setBuyVideoTypes] = useState<PriceItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<PriceItem | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -53,6 +54,9 @@ const index = () => {
   const [filter, setFilter] = useState("");
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [rejectionDialogOpen, setRejectionDialogOpen] = useState(false);
+  const [selectedPrice, setSelectedPrice] = useState<PriceItem | null>(null);
+  const [selectedAction, setSelectedAction] = useState<"reject" | "revoke" | null>(null);
 
   const navigate = useNavigate();
   const { authState } = useAuth();
@@ -124,47 +128,134 @@ const index = () => {
   };
 
 
-  const handleStatusToggle = async (price: PriceItem) => {
-    try {
+  // const handleStatusToggle = async (price: PriceItem, newStatusId: number, action: "approve" | "reject" | "revoke") => {
+  //   if (action === "reject" || action === "revoke") {
+  //     setSelectedPrice(price)
+  //     setSelectedAction(action)
+  //     setRejectionDialogOpen(true)
+  //   } else {
+  //     let statusId = newStatusId
+  //     statusId = action === "approve" ? 1 : 3
+  //     await updateStatus(price, newStatusId, action)
+  //   }
+
+
+  //   // try {
       
-      const newStatus = price.active === 'true' ? 'false' : 'true';
-      const endpoint = activeTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE;
+  //   //   const newStatus = price.active === 'true' ? 'false' : 'true';
+  //   //   const endpoint = activeTab === 'videoUploadTypes' ? apiEndpoints.CREATE_VIDEO_TYPE : apiEndpoints.CREATE_AD_TYPE;
 
-      const resp = await postData(`${CONFIG.BASE_URL}${endpoint}`, {
-        ...price,
-        ...(activeTab === 'videoUploadTypes' ? { typeId: price.id } : { id: price.id }),
-        active: newStatus,
-        name: price.name,
-        userId: userId,
-        action: "edit",
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  //   //   const resp = await postData(`${CONFIG.BASE_URL}${endpoint}`, {
+  //   //     ...price,
+  //   //     ...(activeTab === 'videoUploadTypes' ? { typeId: price.id } : { id: price.id }),
+  //   //     active: newStatus,
+  //   //     name: price.name,
+  //   //     userId: userId,
+  //   //     action: "edit",
+  //   //   },
+  //   //   {
+  //   //     headers: { Authorization: `Bearer ${token}` },
+  //   //   });
 
-      if (resp.code === "00") {
-        await fetchPriceItems();
-        const toastMessage = newStatus === 'true' 
-          ? `${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} activated successfully`
-            : `${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} suspended successfully`;
+  //   //   if (resp.code === "00") {
+  //   //     await fetchPriceItems();
+  //   //     const toastMessage = newStatus === 'true' 
+  //   //       ? `${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} activated successfully`
+  //   //         : `${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} suspended successfully`;
 
-        toast.success(toastMessage);
-      }
-      else {
-        throw new Error(`Failed to update ${activeTab === 'videoUploadTypes' ? 'video type' : 'ad type'} status`)
-      }
-    }
-    catch (err) {
-      if(!token) {
-        toast.error('Your session has expired. Please log in again');
-        navigate('/');
-      }
-      else {
-        console.error(`Error updating ${activeTab} status:`, err)
-        toast.error(`Failed to update ${activeTab} status`)
-      }
-    }
-  };
+  //   //     toast.success(toastMessage);
+  //   //   }
+  //   //   else {
+  //   //     throw new Error(`Failed to update ${activeTab === 'videoUploadTypes' ? 'video type' : 'ad type'} status`)
+  //   //   }
+  //   // }
+  //   // catch (err) {
+  //   //   if(!token) {
+  //   //     toast.error('Your session has expired. Please log in again');
+  //   //     navigate('/');
+  //   //   }
+  //   //   else {
+  //   //     console.error(`Error updating ${activeTab} status:`, err)
+  //   //     toast.error(`Failed to update ${activeTab} status`)
+  //   //   }
+  //   // }
+  // };
+
+
+
+
+
+
+
+  // const updateStatus = async (price: PriceItem, newStatusId: number, action: 'approve' | 'reject' | 'revoke', reasonForRejection?: string ) => {
+  //   try {
+  //     let endpoint;
+  //     let status: "a" | "d" | 'r' | "p";
+  //     switch (action) {
+  //       case 'approve':
+  //         status = "a"
+  //         break
+  //       case "reject":
+  //         status = "r"
+  //         break
+  //       case "revoke":
+  //         status = "d"
+  //         break
+  //       default:
+  //         throw new Error("Invalid status")
+  //     }
+
+  //     const payload: any = {
+  //       // statusId: newStatusId,
+  //       action: status,
+  //     }
+
+  //     const newStatus = price.active === 'true' ? 'false' : 'true';
+      
+  //     if (activeTab === 'videoUploadTypes') {
+  //       endpoint = apiEndpoints.CREATE_VIDEO_TYPE;
+  //       payload.businessId = price.userBusinessDetails.id;
+  //       if (reasonForRejection) {
+  //         payload.reasonForRejection = reasonForRejection;
+  //       }
+  //     }
+  //     else if (activeTab === 'adsTypes') {
+  //       endpoint = apiEndpoints.CREATE_AD_TYPE
+  //       payload.userId = price.userBioDetails.userId;
+  //       payload.statusId = newStatusId
+  //       payload.isActive = action === 'approve'
+  //       payload.action = 'edit'
+  //       if (reasonForRejection) {
+  //         payload.reasonForRejection = reasonForRejection;
+  //       }
+  //     }
+
+  //     const response = await postData(`${CONFIG.BASE_URL}${endpoint}`, payload, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     })
+
+  //     if (response.statusCode === "200" || response.status === 'success') {
+  //       await fetchPriceItems();
+  //       const toastMessage = newStatus === 'true' 
+  //         ? `${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} activated successfully`
+  //           : `${activeTab === 'videoUploadTypes' ? 'Video type' : 'Ad type'} suspended successfully`;
+
+  //       toast.success(toastMessage);
+  //     }
+  //     else {
+  //       toast.error(`Failed to update ${activeTab === 'videoUploadTypes' ? 'video type' : 'ad type'} status`);
+  //     }
+  //   }
+  //   catch (err) {
+  //     console.error(`Error updating ${activeTab} status:`, err);
+  //     toast.error(`Failed to update ${activeTab} status`);
+  //   }
+  // }
+
+
+
+
+
 
 
   const handleEdit = (item: PriceItem) => {
@@ -203,15 +294,16 @@ const index = () => {
         <div className='flex gap-2'>
           {/* <Button variant='custom' label='Edit' onClick={() => handleEdit(row.original)} />
           <Button variant={row.original.active ? 'red' : 'success'} label={row.original.active ? 'Suspend' : 'Activate'} onClick={() => handleStatusToggle(row.original)} /> */}
-
-          <SelectMenu
-            options={[
-              { label: "Activate", onClick: () => handleStatusToggle(row.original), icon: <RecommendOutlinedIcon sx={{ fontSize: 'medium' }} />, },
-              { label: "Deactivate", onClick: () => handleStatusToggle(row.original), icon: <BlockOutlinedIcon sx={{ fontSize: 'medium' }} />, },
-              { label: "Edit", onClick: () => handleEdit(row.original), icon: <CreateOutlinedIcon sx={{ fontSize: 'medium' }} />, },
-            ]}
-            buttonVariant="text"
-          />
+          {activeTab !== 'buyVideoTypes' && (
+            <SelectMenu
+              options={[
+                // { label: "Activate", onClick: () => handleStatusToggle(row.original), icon: <RecommendOutlinedIcon sx={{ fontSize: 'medium' }} />, },
+                // { label: "Deactivate", onClick: () => handleStatusToggle(row.original), icon: <BlockOutlinedIcon sx={{ fontSize: 'medium' }} />, },
+                { label: "Edit", onClick: () => handleEdit(row.original), icon: <CreateOutlinedIcon sx={{ fontSize: 'medium' }} />, },
+              ]}
+              buttonVariant="text"
+            />
+          )}
         </div>
       )
     });
@@ -239,7 +331,7 @@ const index = () => {
           ...baseColumn,
           columnHelper.accessor('buyPrice', { header: 'Price', }),
           statusColumn,
-          actionColumn,
+          // actionColumn,
         ]
 
       default:

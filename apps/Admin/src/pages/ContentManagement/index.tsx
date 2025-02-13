@@ -219,8 +219,8 @@ const ContentPage = () => {
           )} */}
           <SelectMenu
             options={[
-              { label: "View", onClick: () => handleView(row.original), icon: <PreviewOutlinedIcon />, },
-              { label: "Edit", onClick: () => handleEdit(row.original), icon: <CreateOutlinedIcon />, },
+              { label: "View", onClick: () => handleView(row.original), icon: <PreviewOutlinedIcon sx={{ fontSize: 'medium' }} />, },
+              { label: "Edit", onClick: () => handleEdit(row.original), icon: <CreateOutlinedIcon sx={{ fontSize: 'medium' }} />, },
             ]}
             buttonVariant="text"
           />

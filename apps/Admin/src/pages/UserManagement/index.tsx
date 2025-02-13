@@ -440,10 +440,10 @@ const UserManagement = () => {
               options={
                 activeTab === "pendingEmployers"
                 ? [
-                    { label: "Approve", onClick: () => handleStatusToggle(row.original, 1, 'approve'), value: 1, icon: <RecommendOutlinedIcon />, variant: 'black' },
-                    { label: "Reject", onClick: () => handleStatusToggle(row.original, 3, 'reject'), value: 3, icon: <ThumbDownOutlinedIcon />, variant: 'red' },
-                    { label: "View", onClick: () => navigate(`/admin/user-management/${activeTab}-view/${row.original.userBioDetails.email}`, { state: { user: row.original }, }), icon: <PreviewOutlinedIcon />, variant: 'black' },
-                    { label: "Edit", onClick: () => navigate(`/admin/user-management/edit/${activeTab}/${row.original.userBioDetails.email}`, { state: { user: row.original }, }), icon: <CreateOutlinedIcon />, variant: 'tertiary' },
+                    { label: "Approve", onClick: () => handleStatusToggle(row.original, 1, 'approve'), value: 1, icon: <RecommendOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'black' },
+                    { label: "Reject", onClick: () => handleStatusToggle(row.original, 3, 'reject'), value: 3, icon: <ThumbDownOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'red' },
+                    { label: "View", onClick: () => navigate(`/admin/user-management/${activeTab}-view/${row.original.userBioDetails.email}`, { state: { user: row.original }, }), icon: <PreviewOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'black' },
+                    { label: "Edit", onClick: () => navigate(`/admin/user-management/edit/${activeTab}/${row.original.userBioDetails.email}`, { state: { user: row.original }, }), icon: <CreateOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'tertiary' },
                   ]
                 : activeTab === "professionals"
                 ? [
@@ -458,9 +458,9 @@ const UserManagement = () => {
                     //   value: row.original.userBioDetails.status === "Active" ? 3 : 1,
                     //   icon:
                     //     row.original.userBioDetails.status === "Active" ? (
-                    //       <ThumbDownOutlinedIcon />
+                    //       <ThumbDownOutlinedIcon sx={{ fontSize: 'medium' }} />
                     //     ) : (
-                    //       <RecommendOutlinedIcon />
+                    //       <RecommendOutlinedIcon sx={{ fontSize: 'medium' }} />
                     //     ),
                     //   variant: row.original.userBioDetails.status === "Active" ? "red" : "success",
                     // },
@@ -470,7 +470,7 @@ const UserManagement = () => {
                         navigate(`/admin/user-management/${activeTab}-view/${row.original.userBioDetails.email}`, {
                           state: { user: row.original },
                         }),
-                      icon: <PreviewOutlinedIcon />,
+                      icon: <PreviewOutlinedIcon sx={{ fontSize: 'medium' }} />,
                       variant: "black",
                     },
                     {
@@ -479,15 +479,15 @@ const UserManagement = () => {
                         navigate(`/admin/user-management/edit/${activeTab}/${row.original.userBioDetails.email}`, {
                           state: { user: row.original },
                         }),
-                      icon: <CreateOutlinedIcon />,
+                      icon: <CreateOutlinedIcon sx={{ fontSize: 'medium' }} />,
                       variant: "tertiary",
                     },
                   ]
                 : [
-                { label: "Approve", onClick: () => handleStatusToggle(row.original, 1, 'approve'), value: 1, icon: <RecommendOutlinedIcon />, variant: 'success' },
-                { label: "Revoke", onClick: () => handleStatusToggle(row.original, 3, 'revoke'), value: 3, icon: <ThumbDownOutlinedIcon />, variant: 'red' },
-                { label: "View", onClick: () => navigate(`/admin/user-management/${activeTab}-view/${row.original.userBioDetails.email}`, { state: { user: row.original }, }), icon: <PreviewOutlinedIcon />, variant: 'black' },
-                { label: "Edit", onClick: () => navigate(`/admin/user-management/edit/${activeTab}/${row.original.userBioDetails.email}`, { state: { user: row.original }, }), icon: <CreateOutlinedIcon />, variant: 'tertiary' },
+                { label: "Approve", onClick: () => handleStatusToggle(row.original, 1, 'approve'), value: 1, icon: <RecommendOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'success' },
+                { label: "Revoke", onClick: () => handleStatusToggle(row.original, 3, 'revoke'), value: 3, icon: <ThumbDownOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'red' },
+                { label: "View", onClick: () => navigate(`/admin/user-management/${activeTab}-view/${row.original.userBioDetails.email}`, { state: { user: row.original }, }), icon: <PreviewOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'black' },
+                { label: "Edit", onClick: () => navigate(`/admin/user-management/edit/${activeTab}/${row.original.userBioDetails.email}`, { state: { user: row.original }, }), icon: <CreateOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'tertiary' },
               ]}
             />
           )}

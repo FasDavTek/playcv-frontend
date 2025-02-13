@@ -55,7 +55,8 @@ const Table: React.FC<any> = <T extends object>({
     return data.filter((item) =>
       Object.values(item).some((value) =>
         value?.toString().toLowerCase().includes(searchQuery.toLowerCase()) || 
-        value?.toString().toLowerCase().includes(filter.toLowerCase())
+        value?.toString().toLowerCase().includes(filter.toLowerCase()) ||
+        value?.toString().toLowerCase().includes(globalFilter?.toLowerCase())
       )
     );
   }, [data, searchQuery, filter]);
