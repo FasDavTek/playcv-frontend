@@ -15,6 +15,8 @@ import { getData } from './../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { Controller, useForm } from 'react-hook-form';
+import { useAllMisc } from './../../../../../libs/hooks/useAllMisc';
+import model from './../../../../../libs/utils/helpers/model';
 
 interface Video {
     id: number
@@ -79,6 +81,7 @@ const index = () => {
     const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
     const [searchText, setSearchText] = useState('');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
     const [isFilterApplied, setIsFilterApplied] = useState(false);
     const navigate = useNavigate();
     const { control } = useForm();
@@ -86,9 +89,11 @@ const index = () => {
     useEffect(() => {
         const fetchVideos = async () => {
           try {
-            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page=1&Limit=100`);
-            if (response.succeeded === true) {
-              setVideos(response.data);
+            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Download=true`);
+            if (response.code === '00') {
+              const data = await response.videos;
+              let approvedVideos = data.filter((video: Video) => video.status === "Approved")
+              setVideos(approvedVideos);
             } else {
               console.error('Failed to fetch videos:', response.message);
             }
@@ -101,6 +106,15 @@ const index = () => {
     
         fetchVideos();
     }, []);
+
+
+    const { data: videoCategory, isLoading: isLoadingIndustries } = useAllMisc({
+        resource: 'video-category',
+        page: 1,
+        limit: 100,
+        download: false,
+    });
+
 
     useEffect(() => {
         const handleResize = () => {
@@ -127,9 +141,17 @@ const index = () => {
     const filterVideoCVs = () => {
         return videos.filter((video) => {
             const matchesText = video.title.toLowerCase().includes(searchText.toLowerCase());
-            // const matchesCategory = setSelectedCategories.length === 0 || selectedCategories.includes(video.category);
-            // return matchesText && matchesCategory;
-            return matchesText;
+            // const matchesCategory = selectedCategories.length === 0 || (video.category && selectedCategories.includes(video.category));
+            const matchesCategory = !selectedCategory || video.category === selectedCategory
+
+            console.log("Video:", video.title);
+            console.log("Matches Text:", matchesText);
+            console.log("Video Category:", video.category);
+            console.log("Selected Categories:", selectedCategories);
+            console.log("Matches Category:", matchesCategory);
+
+            return matchesText && matchesCategory;
+            // return matchesText;
         });
     };
     
@@ -157,16 +179,23 @@ const index = () => {
         setSearchText(e.target.value);
         setIsFilterApplied(true);
     };
-    
-    const handleCategoryChange = (value: string) => {
-        setSelectedCategories([...selectedCategories, value]);
-        setIsFilterApplied(true);
-    };
+
+    const handleCategoryChange = (value: any) => {
+        console.log("Selected Category:", value)
+        if (value && value.name) {
+          setSelectedCategory(value.name)
+        } else {
+          setSelectedCategory(null)
+        }
+        setIsFilterApplied(true)
+        setCurrentPage(0) // Reset to first page when changing category
+    }
     
     const handleClearFilters = () => {
         setSearchText('');
         setSelectedCategories([]);
         setIsFilterApplied(false);
+        setCurrentPage(0)
     };
 
     const handleVideoClick = (videoId: any, searchParams: any) => {
@@ -197,7 +226,7 @@ const index = () => {
                     width='40%'
                 >
                     
-                    <Swiper grabCursor={false} loop={true} autoplay={{ delay: 3000, disableOnInteraction: false }} speed={3000} effect={'creative'} creativeEffect={{ prev: { shadow: true, translate: ['-20%', 0, -1], }, next: { translate: ['100%', 0, 0] } }} modules={[EffectCreative, Autoplay]} style={{ width: '550px', alignItems: 'center', justifyContent: 'center', height: '600px', borderRadius: '.75rem' }}>
+                    <Swiper grabCursor={false} loop={true} autoplay={{ delay: 3000, disableOnInteraction: false }} speed={3000} effect={'creative'} creativeEffect={{ prev: { shadow: true, translate: ['-20%', 0, -1], }, next: { translate: ['100%', 0, 0] } }} modules={[EffectCreative, Autoplay]} style={{ width: '550px', alignItems: 'center', justifyContent: 'center', height: '479px', borderRadius: '.75rem' }}>
                         {heroImages.map((image: any, index: any) => (
                             <SwiperSlide key={index}>
                                 <img className='!rounded-lg' src={image} alt={`Hero image ${index + 1}`} style={{ objectFit: 'contain', borderRadius: 'lg' }} />
@@ -210,7 +239,7 @@ const index = () => {
         </Box>
 
         <Box className="bg-white min-h-[400px] flex flex-col lg:flex-row w-[95%] md:w-[90%] mx-auto gap-2 my-6 ">
-            <div className="card-containers flex-[2] h-fit min-h-[200px]">
+            <div className="card-containers md:flex-[3.5] 2xl:flex-[2] h-fit min-h-[200px]">
                 <div className="border-b flex p-4 justify-between">
                     <p className="font-bold" role="button" onClick={() => {console.log('');}}>Filter</p>
                     <p className="text-red-500" role="button" onClick={handleClearFilters}>Clear All</p>
@@ -228,40 +257,19 @@ const index = () => {
                         control={control}
                         render={({ field }) => (
                             <Select
-                                name="Categories"
-                                options={categoryOptions.map(option => ({ label: option, value: option }))}
+                                name="categories"
+                                options={model(videoCategory, 'name', 'label')}
                                 control={control}
                                 placeholder="Select Categories"
-                                defaultValue={selectedCategories[0]}
+                                // defaultValue={selectedCategories.map(cat => ({ value: cat, label: cat }))}
+                                defaultValue={selectedCategory ? { name: selectedCategory, label: selectedCategory } : null}
                                 handleChange={handleCategoryChange}
+                                // isMulti={true}
                             />
                         )}
                     />
 
-                    {/* <Select
-                        options={[]}
-                        label="Location"
-                        placeholder="Select Location"
-                        containerClass="flex-1"
-                    />
-                    <Select
-                        options={[]}
-                        label="Date Posted"
-                        placeholder="Select Date"
-                        containerClass="flex-1"
-                    /> */}
-
-                    <Radio
-                        label="Job Status"
-                        options={[
-                            { value: 'all', label: 'All' },
-                            { value: 'closed', label: 'Closed' },
-                        ]}
-                        // onChange={handleFilter}
-                        defaultValue={'all'}
-                    />
-
-                    <div className=""></div>
+                    {/* <div className=""></div> */}
                 </div>
             </div>
 
@@ -270,7 +278,9 @@ const index = () => {
 
                 {filteredVideoCVs.length > 0 ? (
                     <h4 className="font-black text-xl text-gray-700">{filteredVideoCVs.length} CV Results</h4>
-                ) : null}
+                ) : 
+                    <h4 className="font-black text-xl text-gray-700">No results found</h4>
+                }
                 <div className="mt-10 mx-auto">
                     <Typography
                         variant="h5"
@@ -279,7 +289,7 @@ const index = () => {
                         sx={{ color: 'black' }}
                         className="font-bold text-3xl my-5">LATEST VIDEO CVs
                     </Typography>
-                    <div className={`items-center md:items-start justify-start grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
                         {paginatedItems.map((video) => (
                             <VideoCard key={video.id} video={video} />
                         ))}
