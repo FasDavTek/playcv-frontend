@@ -33,9 +33,8 @@ interface Jobs {
 
 interface FilterOptions {
   searchText: string;
-  selectedCategories: string[];
-  selectedLocations: string[];
-  selectedDates: string[];
+  selectedLocation: string | null;
+  selectedDate: Date | null;
   selectedStatus: string;
 }
 
@@ -64,14 +63,12 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`, {
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=30`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const data = resp.data;
-        // if (resp.status === 200) {
-        //   setJobs(resp.data);
-        // }
-        setJobs(data);
+        const jobData = resp.data;
+        setJobs(jobData);
+        console.log(jobs)
       }
       catch (err) {
         console.error('Error fetching jobs:', err);
@@ -99,21 +96,17 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
 
 
 
-  const filterJobs = (jobs: Jobs[]) => {
+  const filterJobs = () => {
     return jobs.filter((job) => {
       const matchesText = job.jobTitle.toLowerCase().includes(filterOptions.searchText.toLowerCase());
-      const matchesCategory = filterOptions.selectedCategories.length === 0 || filterOptions.selectedCategories.includes(job.specialization);
-      const matchesLocation = filterOptions.selectedLocations.length === 0 || filterOptions.selectedLocations.includes(job.location);
+      const matchesLocation = !filterOptions.selectedLocation || job.location === filterOptions.selectedLocation
 
-      const jobDate = dayjs(job.dateCreated).startOf('day');
-      const matchesDate = filterOptions.selectedDates.length === 0 || filterOptions.selectedDates.some(date => 
-        dayjs(date).startOf('day').isSame(jobDate)
-      );
+      const matchesDate = !filterOptions.selectedDate || dayjs(job.dateCreated).isSame(filterOptions.selectedDate, "day");
 
       // Assuming job status is part of the job object. If not, you'll need to adjust this.
       const matchesStatus = filterOptions.selectedStatus === 'all' || job?.status === filterOptions.selectedStatus;
 
-      return matchesText && matchesCategory && matchesLocation && matchesDate && matchesStatus;
+      return matchesText && matchesLocation && matchesDate && matchesStatus;
     });
   };
 
@@ -122,7 +115,7 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
   if (loading) return <Loader />;
   if (!jobs?.length) return <p>No jobs found</p>;
 
-  const filteredJobs = filterJobs(jobs);
+  const filteredJobs = filterJobs();
   const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   const handleNextPage = () => {
@@ -138,7 +131,7 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
 
   return (
     <div className='space-y-4'>
-      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
         {currentJobs.map((job: Jobs) => (
           <Box key={job?.vId}>
             <JobCard job={job} />

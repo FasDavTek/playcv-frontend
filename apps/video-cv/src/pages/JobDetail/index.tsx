@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getData } from './../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { toast } from 'react-toastify';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { Button, Loader } from '@video-cv/ui-components';
 import { useParams } from 'react-router-dom';
@@ -36,6 +37,8 @@ const JobDetail = () => {
   const [job, setJob] = useState<Jobs | undefined>(location.state?.job);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -71,13 +74,20 @@ const JobDetail = () => {
     fetchJobDetails();
   }, [job, vId]);
 
+
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
+  
   if (loading) return <Loader />;
   if (error) return <div className="text-red-500">{error}</div>;
   if (!job) return <div className='items-center flex text-center'>No job found</div>;
 
   return (
     <div className="job-detail overflow-hidden flex flex-col md:flex-row py-10 px-3 md:px-10 gap-5 md:gap-10">
-      <section className="flex-[9] overflow-x-scroll">
+      <section className="flex-[6] overflow-x-scroll">
+        <ChevronLeftIcon className="cursor-pointer text-7xl mr-1 sticky p-1 -mt-0 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
         <div className="flex flex-row items-center justify-between mb-3">
             <h5 className="font-semibold text-2xl my-5">{job.jobTitle}</h5>
             <Button variant='black' label="Apply Now" onClick={() => window.open(job.linkToApply, '_blank')} />

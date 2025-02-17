@@ -124,7 +124,7 @@ const Feed = () => {
       </Box>
 
       <Box py={2} className="px-3 md:px-10">
-        <Box className="mt-10">
+        {/* <Box className="mt-10">
           <Typography
             variant="h5"
             fontWeight="bold"
@@ -136,7 +136,7 @@ const Feed = () => {
           </Typography>
 
           <Videos type='pinned' />
-        </Box>
+        </Box> */}
 
         <Box className="mt-10">
           <Typography
@@ -161,7 +161,7 @@ const Feed = () => {
            sx={{ color: 'black' }}
            className="font-medium text-3xl my-5">Latest Jobs</Typography>
           {/* <JobCardBoard jobs={jobs}> */}
-          <JobCardBoard filterOptions={{ searchText: '', selectedCategories: [], selectedLocations: [], selectedDates: [], selectedStatus: 'all' }} />
+          <JobCardBoard filterOptions={{ searchText: '', selectedLocation: '', selectedDate: null, selectedStatus: 'all' }} />
         </Box>
 
         {videoCategory && videoCategory?.map((category) => (

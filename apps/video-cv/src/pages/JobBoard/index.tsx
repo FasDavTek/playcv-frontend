@@ -22,9 +22,13 @@ import dayjs from 'dayjs';
 import { getData } from './../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import CONFIG from './../../../../../libs/utils/helpers/config';
+import { useAllMisc } from './../../../../../libs/hooks/useAllMisc';
+import { useAllCountry } from './../../../../../libs/hooks/useAllCountries';
+import { useAllState } from './../../../../../libs/hooks/useAllState';
+import model from './../../../../../libs/utils/helpers/model';
 
 interface Jobs {
-  vid: number;
+  vId: number;
   jobTitle: string;
   dateCreated: Date;
   startDate: Date;
@@ -37,14 +41,14 @@ interface Jobs {
   keyResponsibilities?: string;
   location: string;
   linkToApply?: string;
+  status?: string;
     // url: string;
 }
 
 interface FilterOptions {
   searchText: string;
-  selectedCategories: string[];
-  selectedLocations: string[];
-  selectedDates: string[];
+  selectedLocation: string | null;
+  selectedDate: Date | null;
   selectedStatus: string;
 }
 
@@ -54,13 +58,12 @@ const JobBoard = () => {
   const [jobs, setJobs] = useState<Jobs[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(30);
 
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     searchText: '',
-    selectedCategories: [],
-    selectedLocations: [],
-    selectedDates: [],
+    selectedLocation: null,
+    selectedDate: null,
     selectedStatus: 'all'
   });
 
@@ -68,8 +71,8 @@ const JobBoard = () => {
 
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [isFilterApplied, setIsFilterApplied] = useState(false);
@@ -77,7 +80,7 @@ const JobBoard = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=100`);
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=30`);
         if (resp.succeeded === true) {
           setJobs(resp.data);
         }
@@ -95,6 +98,22 @@ const JobBoard = () => {
 
     fetchJobs();
   }, []);
+
+
+  // const { data: videoCategory, isLoading: isLoadingIndustries } = useAllMisc({
+  //     resource: 'video-category',
+  //     page: 1,
+  //     limit: 100,
+  //     download: false,
+  // });
+
+
+  const { data: countryData, isLoading: isCountryLoading } = useAllCountry();
+  const { data: stateData, isLoading: isStateLoading } = useAllState();
+  
+  console.log(countryData);
+  console.log(stateData)
+
 
   useEffect(() => {
         const handleResize = () => {
@@ -121,16 +140,12 @@ const JobBoard = () => {
   const filterJobs = () => {
       return jobs.filter((job) => {
           const matchesText = job.jobTitle.toLowerCase().includes(searchText.toLowerCase());
-          // const matchesCategory = setSelectedCategories.length === 0 || selectedCategories.includes(video.category);
-          const matchesLocation = selectedLocations.length === 0 || selectedLocations.includes(job.location);
+          const matchesLocation = !filterOptions.selectedLocation || job.location === filterOptions.selectedLocation
 
-          const jobDate = dayjs(job.dateCreated).startOf('day');
-          const matchesDate = selectedDates.length === 0 || selectedDates.some(date => 
-            dayjs(date).startOf('day').isSame(jobDate)
-          );
+          const matchesDate = !filterOptions.selectedDate || dayjs(job.dateCreated).isSame(filterOptions.selectedDate, "day");
           // const matchesStatus = selectedStatus === 'all' || job.status === selectedStatus;
           // return matchesText && matchesCategory;
-          return matchesText && matchesLocation && matchesDate /* && matchesStatus */ ;
+          return matchesText /* && matchesLocation */ && matchesDate /* && matchesStatus */ ;
       });
   };
   
@@ -155,23 +170,23 @@ const JobBoard = () => {
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterOptions(prev => ({ ...prev, searchText: e.target.value }));
-    setIsFilterApplied(true);
-  };
-  
-  const handleCategoryChange = (value: string) => {
-    setFilterOptions(prev => ({ ...prev, selectedCategories: [...prev.selectedCategories, value] }));
+    setSearchText(e.target.value);
     setIsFilterApplied(true);
   };
 
-  const handleLocationChange = (value: string) => {
-    setFilterOptions(prev => ({ ...prev, selectedLocations: [...prev.selectedLocations, value] }));
-    setIsFilterApplied(true);
+  const handleLocationChange = (value: any) => {
+    if (value && value.name) {
+      setSelectedLocation(value.name)
+    } else {
+      setSelectedLocation(null)
+    }
+    setIsFilterApplied(true)
+    setCurrentPage(0)
   };
 
-  const handleDateChange = (e: ChangeEvent<{ value: string[] }>) => {
-    setFilterOptions(prev => ({ ...prev, selectedDates: e.target.value }));
-    setIsFilterApplied(true);
+  const handleDateChange = (date: Date | null) => {
+    setFilterOptions((prev) => ({ ...prev, selectedDate: date }))
+    setCurrentPage(0)
   };
 
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -182,12 +197,12 @@ const JobBoard = () => {
   const handleClearFilters = () => {
     setFilterOptions({
       searchText: '',
-      selectedCategories: [],
-      selectedLocations: [],
-      selectedDates: [],
+      selectedLocation: null,
+      selectedDate: null,
       selectedStatus: 'all'
     });
     setIsFilterApplied(false);
+    setCurrentPage(0)
   };
 
   return (
@@ -240,57 +255,28 @@ const JobBoard = () => {
           </div>
           <div className="p-3 mx-auto flex flex-col gap-3">
             <Input
-              label="Role"
+              label="Job Title"
               placeholder="Search..."
               containerClass="flex-1"
               name="role"
-              value={filterOptions.searchText}
+              value={searchText}
               onChange={handleSearchChange}
             />
 
-            {/* <Select
-              options={categoryOptions.map(option => ({ label: option, value: option }))} // Replace with actual options
-              label="Categories"
-              value={filterOptions.selectedCategories.join(', ')}
-              onChange={handleCategoryChange}
-            />
-
-            <Select
-              options={[]} // Replace with actual options
-              label="Location"
-              value={filterOptions.selectedLocations.join(', ')}
-              onChange={handleLocationChange}
-            /> */}
-
-            <Controller
-              name="categories"
+            {/* <Controller
+              name="country"
               control={control}
               render={({ field }) => (
                 <Select
-                  name="Categories"
-                  options={[]}
+                  name="country"
+                  options={model(countryData, 'name', 'id')}
                   control={control}
-                  placeholder="Select Categories"
-                  defaultValue={selectedCategories[0]}
-                  handleChange={handleCategoryChange}
-                />
-              )}
-            />
-
-            <Controller
-              name="location"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  name="Location"
-                  options={[]}
-                  control={control}
-                  placeholder="Select Location"
-                  defaultValue={selectedLocations[0]}
+                  placeholder="Select Country"
+                  defaultValue={selectedLocations ? { name: selectedLocation } : null}
                   handleChange={handleLocationChange}
                 />
               )}
-            />
+            /> */}
 
             <Controller
               name='datePosted'
@@ -298,13 +284,13 @@ const JobBoard = () => {
               render={({ field: { onChange, value } }) => (
                 <DatePicker
                   label="Date Posted"
-                  value={value}
-                  onChange={(newValue) => onChange(dayjs(newValue))}
+                  value={filterOptions.selectedDate}
+                  onChange={handleDateChange}
                 />
               )}
             />
 
-            <Radio
+            {/* <Radio
               label="Job Status"
               options={[
                 { value: 'all', label: 'All' },
@@ -316,19 +302,19 @@ const JobBoard = () => {
               name="jobStatus"
               onChange={handleStatusChange}
               value={filterOptions.selectedStatus}
-            />
+            /> */}
 
-            <div className=""></div>
+            {/* <div className=""></div> */}
           </div>
         </div>
-        {/* job board */}
+
         <div className=" flex-[9] p-4">
           {/* Search box comes here */}
 
           {filteredJobs.length > 0 ? (
             <h4 className="font-black text-xl text-gray-700">{filteredJobs.length} Job Results</h4>
           ) : (
-            <p>No jobs match your search criteria.</p>
+            <h4 className="font-black text-xl text-gray-700">No jobs match your search criteria.</h4>
           )}
           <div className="mt-10 mx-auto">
             <Typography
@@ -338,12 +324,10 @@ const JobBoard = () => {
               sx={{ color: 'black' }}
               className="font-bold text-3xl my-5">LATEST JOBS</Typography>
             <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-              {/* {paginatedJobs.map((job: Jobs) => (
-                <Box key={job?.id}>
-                  <JobCard job={job} />
-                </Box>
-              ))} */}
-              <JobCardBoard filterOptions={filterOptions} />
+              {paginatedJobs.map((job: Jobs) => (
+                  <JobCard key={job.vId} job={job} />
+              ))}
+              {/* <JobCardBoard filterOptions={filterOptions} /> */}
             </div>
             {/* <div className="flex justify-end gap-2 mt-4">
                 <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>

@@ -76,7 +76,7 @@ const index = () => {
     const [videos, setVideos] = useState<Video[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(0);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [itemsPerPage, setItemsPerPage] = useState(30);
 
     const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
     const [searchText, setSearchText] = useState('');
@@ -89,9 +89,9 @@ const index = () => {
     useEffect(() => {
         const fetchVideos = async () => {
           try {
-            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Download=true`);
-            if (response.code === '00') {
-              const data = await response.videos;
+            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page1&Limit=30`);
+            if (response.succeeded === true) {
+              const data = await response.data;
               let approvedVideos = data.filter((video: Video) => video.status === "Approved")
               setVideos(approvedVideos);
             } else {
@@ -110,9 +110,7 @@ const index = () => {
 
     const { data: videoCategory, isLoading: isLoadingIndustries } = useAllMisc({
         resource: 'video-category',
-        page: 1,
-        limit: 100,
-        download: false,
+        download: true,
     });
 
 
@@ -141,15 +139,7 @@ const index = () => {
     const filterVideoCVs = () => {
         return videos.filter((video) => {
             const matchesText = video.title.toLowerCase().includes(searchText.toLowerCase());
-            // const matchesCategory = selectedCategories.length === 0 || (video.category && selectedCategories.includes(video.category));
             const matchesCategory = !selectedCategory || video.category === selectedCategory
-
-            console.log("Video:", video.title);
-            console.log("Matches Text:", matchesText);
-            console.log("Video Category:", video.category);
-            console.log("Selected Categories:", selectedCategories);
-            console.log("Matches Category:", matchesCategory);
-
             return matchesText && matchesCategory;
             // return matchesText;
         });
@@ -181,7 +171,6 @@ const index = () => {
     };
 
     const handleCategoryChange = (value: any) => {
-        console.log("Selected Category:", value)
         if (value && value.name) {
           setSelectedCategory(value.name)
         } else {

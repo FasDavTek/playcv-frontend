@@ -42,9 +42,9 @@ const AdPlayer: React.FC<AdPlayerProps> = ({ adUrl, adDuration, adType, onAdEnd 
   return (
     <Box position="relative">
       {adType === "video" ? (
-        <ReactPlayer url={adUrl} width="100%" height="100%" playing controls={false} onEnded={onAdEnd} />
+        <ReactPlayer url={adUrl} width="100%" height="100%" playing controls={false} onEnded={onAdEnd} className="react-player" />
       ) : (
-        <img src={adUrl || "/placeholder.svg"} alt="Advertisement" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <img src={adUrl} alt="Advertisement" style={{ width: "100%", height: "100%", objectFit: "cover" }} className="react-player" />
       )}
       <Box
         position="absolute"

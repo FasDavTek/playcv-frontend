@@ -155,7 +155,7 @@ const Navbar = () => {
   return (
     <div
       ref={navbarRef}
-      className={`flex items-center px-3 md:px-7 sticky bg-white top-0 justify-center z-20 navbar ${
+      className={`flex items-center px-3 md:px-7 sticky bg-white top-0 justify-center z-50 navbar ${
         isScrolled ? 'scrolled' : ''
       } bg-white`}
     >
@@ -174,13 +174,12 @@ const Navbar = () => {
         </div>
         <div className={`nav-elements ${showNavbar && 'active'} justify-start md:px-3`}>
           <div className="mt-4 flex lg:hidden" onClick={handleShowNavbar}>
-            {showNavbar && <MenuOpenIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 lg:w-24 lg:h-24 z-50 ml-auto sm:mr-0 md:mr-3 lg:mr-4' />}
+            {showNavbar && <MenuOpenIcon sx={{ width: {xs: '1.75rem', lg:'2rem'}, height: {xs: '1.75rem', lg:'2rem'} }} className='w-12 h-12 lg:w-24 lg:h-24 z-50 ml-auto mr-3 lg:mr-4' />}
           </div>
           <ul className='items-start'>
             <li>
               <NavLink
                 to="/"
-                end
                 className={({ isActive, isPending }) =>
                   `text-black text-lg  ${
                     isPending
@@ -192,7 +191,7 @@ const Navbar = () => {
                 }
                 onClick={handleNavItemClick}
               >
-                Find VideoCV
+                Home
               </NavLink>
             </li>
             <li>
@@ -248,6 +247,28 @@ const Navbar = () => {
                   }}
                 >
                   Cv Guidelines
+                </NavLink>
+              </li>
+            )}
+            {token && authState.isAuthenticated && authState?.user?.userTypeId === 3 || authState?.user?.userTypeId === 1 && (
+              <li className='my-3 md:my-0'>
+                <NavLink
+                  to="/candidate/faq"
+                  className={({ isActive, isPending }) =>
+                    `text-black text-lg  ${
+                      isPending
+                        ? 'pending'
+                        : isActive
+                        ? 'active-nav-link'
+                        : 'nav-link'
+                    }`
+                  }
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleAuthenticatedNavigation('/candidate/faq')
+                  }}
+                >
+                  FAQ
                 </NavLink>
               </li>
             )}
@@ -317,7 +338,7 @@ const Navbar = () => {
                 </NavLink>
               </li>
             )}
-            {token && authState.isAuthenticated && (
+            {token && authState.isAuthenticated && authState.user?.userTypeId === 2 && (
               <li className='mt-5 md:mt-0'>
                 {/* TODO: Show logged in if user is logged in */}
                 <IconButton aria-label="cart" onClick={handleCartClick} className='w-5 h-5 lg:w-10 lg:h-10'>

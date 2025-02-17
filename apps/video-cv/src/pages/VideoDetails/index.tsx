@@ -102,10 +102,10 @@ const TabPanel = ({ children, value, index }: any) => {
 };
 
 const VideoDetails = () => {
-  const { id } = useParams<{ id: any }>()
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [video, setVideo] = useState<Video>();
   const location = useLocation();
-  const [video, setVideo] = useState<Video | undefined>(location.state?.video);
   // const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -125,6 +125,42 @@ const VideoDetails = () => {
 
   const itemsPerPage = 4;
 
+
+
+  const getVideoDetails = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        console.log(resp);
+
+        let data = await resp.videoDetails;
+        if (resp.code === '200') {
+          setVideo(data);
+          console.log(video);
+          if (location.state?.fromVideosList) {
+            incrementViewCount()
+          }
+        }
+        else {
+          setError('Failed to fetch related videos')
+        }
+      }
+      catch (err) {
+        console.error('Error fetching video detail:', err);
+        setError('Error fetching video detail');
+        toast.error('Error fetching video detail');
+      }
+      finally {
+        setLoading(false);
+      }
+  };
+
+
+
   useEffect(() => {
     // Check if the item is in the cart on component mount
     const itemInCart = cartState.cart.some((item: any) => item.id === id);
@@ -142,7 +178,7 @@ const VideoDetails = () => {
     }
     else {
       const value = {
-        name: video?.authorProfile.userDetails.fullName,
+        name: video?.authorProfile.userDetails?.fullName,
         id: id,
         imageSrc: video?.videoUrl,
         // price: video?.price,
@@ -155,46 +191,9 @@ const VideoDetails = () => {
   };
 
 
-  const getVideoDetails = async () => {
-    // Replace with actual API call or data fetching logic
-    if (!video && id) {
-      setLoading(true);
-      try {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (resp && resp.videoDetails) {
-          setVideo(resp.videoDetails);
-          if (location.state?.fromVideosList) {
-            incrementViewCount()
-          }
-        }
-        else {
-          setError('Failed to fetch related videos')
-        }
-      }
-      catch (err) {
-        console.error('Error fetching video detail:', err);
-        setError('Error fetching video detail');
-        toast.error('Error fetching video detail');
-      }
-      finally {
-        setLoading(false);
-      }
-    }
-    else if (!id) {
-      setError('No video Id provided');
-      setLoading(false);
-      return;
-    }
-  };
-
-
   useEffect(() => {
     getVideoDetails();
-  }, [id, getVideoDetails]);
+  }, []);
 
   const getRelatedVideos = async (searchParams: any) => {
     // Replace with actual API call or data fetching logic
@@ -258,6 +257,7 @@ const VideoDetails = () => {
     }
   }, [isFromTalentGallery, searchParams]);
 
+
   const handleBackClick = () => {
     navigate(-1);
   };
@@ -267,9 +267,11 @@ const VideoDetails = () => {
     if (!viewCounted && video) {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-        await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_VIEWS}`, {id}, {
+
+        await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_VIEWS}?videoId=${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         setViewCounted(true);
         setVideo((prevVideo) => (prevVideo ? { ...prevVideo, views: prevVideo.views + 1 } : prevVideo));
       }
@@ -322,8 +324,9 @@ const VideoDetails = () => {
 
 
   return (
-    <Stack direction={{ sm: 'column', md: 'row' }} gap={3} className="min-h-screen flex-col md:flex-row mx-auto py-9 px-3 md:px-7 w-[98%]">
+    <Stack direction={{ sm: 'column', md: 'row' }} gap={3} className="min-h-screen flex-col md:flex-row mx-auto py-4 md:py-7 px-3 md:px-7 w-[98%]">
       <Stack direction="column" flex={4} spacing={3}>
+        <ChevronLeftIcon className="cursor-pointer text-7xl mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
         <Box className="rounded-lg">
           <Stack mx='auto' direction="column" spacing={4}>
             <Box className="w-full top-24 rounded-3xl">
@@ -355,9 +358,9 @@ const VideoDetails = () => {
                     {/* <Typography variant="h6" gutterBottom>
                       {video?.role}
                     </Typography> */}
-                    <Typography variant="body1" gutterBottom>
-                      Uploaded by {video?.authorProfile.userDetails.fullName}
-                    </Typography>
+                    {/* <Typography variant="body1" gutterBottom>
+                      Uploaded by {video?.authorProfile?.userDetails?.fullName}
+                    </Typography> */}
                     {/* <Typography variant="body2">
                       {video?.description}
                     </Typography> */}
@@ -373,9 +376,9 @@ const VideoDetails = () => {
                     {/* <Typography variant="h6" gutterBottom>
                       {video?.role}
                     </Typography> */}
-                    <Typography variant="body1" gutterBottom>
-                      Uploaded by {video?.authorProfile.userDetails.fullName}
-                    </Typography>
+                    {/* <Typography variant="body1" gutterBottom>
+                      Uploaded by {video?.authorProfile?.userDetails?.fullName}
+                    </Typography> */}
                     <label></label>
                     {/* <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
                       {video?.description}
@@ -404,7 +407,7 @@ const VideoDetails = () => {
         )}
         {/* CART ITEM ENDS */}
         
-        <JobCardBoard filterOptions={{ searchText: '', selectedCategories: [], selectedLocations: [], selectedDates: [], selectedStatus: 'all' }} />
+        <JobCardBoard filterOptions={{ searchText: '', selectedLocation: null, selectedDate: null, selectedStatus: 'all' }} />
       </Stack>
 
       <Box className={`flex-col w-[30%] gap-4 lg:flex hidden`}>
@@ -416,9 +419,9 @@ const VideoDetails = () => {
             {/* <Typography variant="h6" gutterBottom>
               {video?.role}
             </Typography> */}
-            <Typography variant="body1" gutterBottom>
+            {/* <Typography variant="body1" gutterBottom>
               Uploaded by {video?.authorProfile.userDetails.fullName}
-            </Typography>
+            </Typography> */}
             {/* <Typography variant="body2">
               {video?.description}
             </Typography> */}
@@ -431,9 +434,9 @@ const VideoDetails = () => {
             {/* <Typography variant="h6" gutterBottom>
               {video?.role}
             </Typography> */}
-            <Typography variant="body1" gutterBottom>
+            {/* <Typography variant="body1" gutterBottom>
               Uploaded by {video?.authorProfile.userDetails.fullName}
-            </Typography>
+            </Typography> */}
             {/* <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
               {video.description}
             </ClampedText> */}

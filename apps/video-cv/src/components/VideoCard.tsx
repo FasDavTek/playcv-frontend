@@ -153,7 +153,9 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
           transform: "translateY(-5px)",
           boxShadow: "0 6px 12px rgba(0, 0, 0, 0.15)",
         },
+        touchAction: "manipulation"
       }}
+      className="cursor-pointer touch-action-manipulation"
       elevation={4}
       onClick={() => handleViewDetails(video)}
     >

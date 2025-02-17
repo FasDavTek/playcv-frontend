@@ -15,7 +15,7 @@ export enum apiEndpoints {
     ALL_VIDEO_LIST = '/api/v1/video/fetch/all',
     AUTH_VIDEO_LIST = '/api/v1/video/auth/fetch/all',
     EMPLOYER_AUTH_VIDEO_LIST = '/api/v1/video/employer/auth/fetch/all',
-    VIDEO_BY_ID = '/api/v1/video/get/{videoId}',
+    VIDEO_BY_ID = '/api/v1/video/get',
     VIDEO_UPLOAD = '/api/v1/video/upload-edit',
     VIDEO_CATEGORY = '/api/v1/video/categories',
     VIDEO_UPLOAD_TYPE = '/api/v1/video/uploadtype/get',

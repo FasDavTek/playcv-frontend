@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Paper, Typography } from '@mui/material';
+import { Card, CardContent, Paper, Typography } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import clsx from 'clsx';
@@ -26,10 +26,10 @@ interface JobProps {
   job: Jobs;
 }
 
-const JobCard: React.FC<JobProps> = ({ job }) => {
-  const navigate = useNavigate();
+const JobCard: React.FC<JobProps> = ({ job }: any) => {
   const { vId, jobTitle, specialization, dateCreated, jobDetails, companyName, companyEmail, keyResponsibilities, linkToApply, qualifications, location } = job;
   const [selectedItem, setSelectedItem] = useState<Jobs | null>(null);
+  const navigate = useNavigate();
 
   const handleViewDetails = async (item: Jobs) => {
     setSelectedItem(item);
@@ -44,56 +44,77 @@ const JobCard: React.FC<JobProps> = ({ job }) => {
 
 
   return (
-    <Paper
+    <Card
       elevation={4}
       square={false}
       onClick={() => handleViewDetails(job)}
-      className={clsx(
-        "bg-white p-6 h-auto max-h-96 max-w-[320px] rounded-2xl",
-        "transition-all duration-300 ease-in-out hover:shadow-lg"
-      )}
+      // className={clsx(
+      //   "bg-white py-6 px-4 h-72 w-[320px] rounded-2xl",
+      //   "transition-all duration-300 ease-in-out hover:shadow-lg"
+      // )}
+      sx={{
+        width: { xs: '300px', sm: '100%', md: '100%' },
+        maxWidth: '300px',
+        // boxShadow: { xs: '1', sm: '1', lg:'0'},
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        mx: 'auto',
+        height: '100%',
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: 2,
+        transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+        '&:hover': {
+          cursor: 'pointer',
+          // boxShadow: '5',
+          transform: "translateY(-5px)",
+          boxShadow: "0 6px 12px rgba(0, 0, 0, 0.15)",
+        },
+        touchAction: "manipulation"
+      }}
     >
-      <div className="flex flex-col gap-2">
-        <Typography variant="h6" component="h3" className="font-semibold truncate">
-          {jobTitle}
-        </Typography>
-        <Typography variant="h6" component='h4' className="text-gray-600 font-medium truncate">
-          {companyName}
-        </Typography>
-        <div className='flex flex-col items-start justify-center gap-1'>
-          <Typography variant="subtitle1" className="text-gray-500 truncate">
-            {truncateText(companyEmail, 30)}
+      <CardContent>
+        <div className="flex flex-col gap-2">
+          <Typography variant="h6" component="h5" className="font-semibold truncate">
+            {jobTitle}
           </Typography>
-          <Typography variant="subtitle1" className="text-gray-400">
-            Posted on: {new Date(dateCreated).toLocaleDateString()}
+          <Typography variant="subtitle1" component='h6' className="text-gray-600 font-medium truncate">
+            {companyName}
+          </Typography>
+          <div className='flex flex-col items-start justify-center gap-1'>
+            <Typography variant="subtitle2" className="text-gray-500 truncate">
+              {truncateText(companyEmail, 30)}
+            </Typography>
+            <Typography variant="caption" className="text-gray-400">
+              Posted on: {new Date(dateCreated).toLocaleDateString()}
+            </Typography>
+          </div>
+          <div className="flex items-center text-gray-500">
+            <LocationOnIcon sx={{ fontSize: 'small' }} fontSize='small' className="mr-1 text-sm" />
+            <Typography variant="body2" className="truncate">
+              {location}
+            </Typography>
+          </div>
+        </div>
+        <div className=" line-clamp-3 mt-4">
+          <Typography 
+            variant="body2" 
+            fontSize='0.85rem'
+            className="text-neutral-200 line-clamp-3"
+          >
+            {truncateText(jobDetails, 100)}
           </Typography>
         </div>
-        <div className="flex items-center text-gray-500">
-          <LocationOnIcon fontSize='inherit' className="mr-1 text-sm" />
-          <Typography variant="body2" className="truncate">
-            {location}
-          </Typography>
+        <div className="flex justify-end mt-2">
+          <button 
+            type='button'
+            onClick={() => handleViewDetails(job)}
+            className="text-blue-600 text-sm hover:text-blue-800 hover:underline transition-colors duration-200"
+          >
+            Read More
+          </button>
         </div>
-      </div>
-      <div className=" line-clamp-3 mt-4">
-        <Typography 
-          variant="body2" 
-          fontSize='0.95rem'
-          className="text-neutral-200 line-clamp-3"
-        >
-          {truncateText(jobDetails, 150)}
-        </Typography>
-      </div>
-      <div className="flex justify-end mt-2">
-        <button 
-          type='button'
-          onClick={() => handleViewDetails(job)}
-          className="text-blue-600 text-sm hover:text-blue-800 hover:underline transition-colors duration-200"
-        >
-          Read More
-        </button>
-      </div>
-    </Paper>
+      </CardContent>
+    </Card>
   )
 }
 
