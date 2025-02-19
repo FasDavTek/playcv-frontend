@@ -74,9 +74,10 @@ const heroImages = [Images.HeroImage10, Images.HeroImage11, Images.HeroImage13, 
 
 const index = () => {
     const [videos, setVideos] = useState<Video[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(30);
+    const [totalRecords, setTotalRecords] = useState(0);
 
     const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
     const [searchText, setSearchText] = useState('');
@@ -86,26 +87,6 @@ const index = () => {
     const navigate = useNavigate();
     const { control } = useForm();
 
-    useEffect(() => {
-        const fetchVideos = async () => {
-          try {
-            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Page1&Limit=30`);
-            if (response.succeeded === true) {
-              const data = await response.data;
-              let approvedVideos = data.filter((video: Video) => video.status === "Approved")
-              setVideos(approvedVideos);
-            } else {
-              console.error('Failed to fetch videos:', response.message);
-            }
-          } catch (error) {
-            console.error('Error fetching videos:', error);
-          } finally {
-            setLoading(false);
-          }
-        };
-    
-        fetchVideos();
-    }, []);
 
 
     const { data: videoCategory, isLoading: isLoadingIndustries } = useAllMisc({
@@ -114,14 +95,49 @@ const index = () => {
     });
 
 
+
+    useEffect(() => {
+        const fetchVideos = async () => {
+          try {
+            setLoading(true);
+
+            const queryParams = new URLSearchParams({
+                Page: currentPage.toString(),
+                Limit: itemsPerPage.toString(),
+                ...(searchText && { SearchText: searchText }),
+                ...(selectedCategory && { Category: selectedCategory }),
+            })
+            const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?${queryParams}`);
+            if (response.succeeded === true) {
+              const data = await response.data;
+              const approvedVideos = data.filter((video: Video) => video.status === "Approved")
+
+              approvedVideos.sort((a: Video, b: Video) => {
+                if (a.type === "Pinned" && b.type !== "Pinned") return -1
+                if (a.type !== "Pinned" && b.type === "Pinned") return 1
+                return 0
+              })
+
+              setVideos(approvedVideos);
+            //   setTotalRecords(videos.length || 0);
+            }
+          } 
+          catch (error) {
+            console.error('Error fetching videos:', error);
+          }
+          finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchVideos();
+    }, [currentPage, itemsPerPage, searchText, selectedCategory]);
+
+
     useEffect(() => {
         const handleResize = () => {
           const screenWidth = window.innerWidth;
-          if (screenWidth >= 768) {
-            setItemsPerPage(30);
-          } else {
-            setItemsPerPage(10);
-          }
+          setItemsPerPage(screenWidth >= 768 ? 30 : 10)
         };
     
         // Set the initial items per page based on screen width
@@ -146,21 +162,21 @@ const index = () => {
     };
     
     const filteredVideoCVs = filterVideoCVs();
-    const totalPages = Math.ceil(filteredVideoCVs.length / itemsPerPage);
+    const totalPages = Math.ceil(videos.length / itemsPerPage)
 
     const handlePrevPage = () => {
-        if (currentPage > 0) {
+        if (currentPage > 1) {
             setCurrentPage((prevPage) => prevPage - 1);
         }
     };
 
     const handleNextPage = () => {
-        if (currentPage < totalPages - 1) {
+        if (currentPage < totalPages) {
             setCurrentPage((prevPage) => prevPage + 1);
         }
     };
 
-    const paginatedItems = filteredVideoCVs.slice(
+    const paginatedItems = videos.slice(
         currentPage * itemsPerPage,
         (currentPage + 1) * itemsPerPage
     );
@@ -168,27 +184,24 @@ const index = () => {
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchText(e.target.value);
         setIsFilterApplied(true);
+        setCurrentPage(1);
     };
 
     const handleCategoryChange = (value: any) => {
-        if (value && value.name) {
-          setSelectedCategory(value.name)
-        } else {
-          setSelectedCategory(null)
-        }
-        setIsFilterApplied(true)
-        setCurrentPage(0) // Reset to first page when changing category
+        setSelectedCategory(value?.name || null);
+        setIsFilterApplied(true);
+        setCurrentPage(1) // Reset to first page when changing category
     }
     
     const handleClearFilters = () => {
         setSearchText('');
-        setSelectedCategories([]);
+        setSelectedCategory(null);
         setIsFilterApplied(false);
-        setCurrentPage(0)
+        setCurrentPage(1)
     };
 
     const handleVideoClick = (videoId: any, searchParams: any) => {
-        navigate(`/video-details/${videoId}`, { state: { fromTalentGallery: true, searchParams } });
+        navigate(`/video-details/${videoId}`);
     };
 
 
@@ -265,8 +278,8 @@ const index = () => {
             <div className=" flex-[9] p-4">
                 {/* Search box comes here */}
 
-                {filteredVideoCVs.length > 0 ? (
-                    <h4 className="font-black text-xl text-gray-700">{filteredVideoCVs.length} CV Results</h4>
+                {videos.length > 0 ? (
+                    <h4 className="font-black text-xl text-gray-700">{videos.length} Video CV Results</h4>
                 ) : 
                     <h4 className="font-black text-xl text-gray-700">No results found</h4>
                 }
@@ -279,11 +292,14 @@ const index = () => {
                         className="font-bold text-3xl my-5">LATEST VIDEO CVs
                     </Typography>
                     <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
-                        {paginatedItems.map((video) => (
+                        {videos.map((video) => (
                             <VideoCard key={video.id} video={video} />
                         ))}
                     </div>
                     <div className="flex justify-end gap-2 mt-4">
+                        <span className="text-sm text-gray-600 mr-10">
+                          Page {currentPage} of {totalPages}
+                        </span>
                         <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
                         <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
                     </div>

@@ -56,7 +56,7 @@ const Feed = () => {
 
 
 
-  const { data: videoCategory, isLoading: isCategoryLoading, error: categoryError, refetch: refetchCategoryData, } = useAllMisc({
+  const { data: videoCategories, isLoading: isCategoryLoading, error: categoryError, refetch: refetchCategoryData, } = useAllMisc({
     resource:  "video-category",
     // page: 1,
     // limit: 100,
@@ -69,7 +69,6 @@ const Feed = () => {
   useEffect(() => {
     if (token) {
       checkPaymentStatus()
-      
     }
   }, [token])
 
@@ -164,7 +163,7 @@ const Feed = () => {
           <JobCardBoard filterOptions={{ searchText: '', selectedLocation: '', selectedDate: null, selectedStatus: 'all' }} />
         </Box>
 
-        {videoCategory && videoCategory?.map((category) => (
+        {!isCategoryLoading && !categoryError && videoCategories && videoCategories.map((category) => (
           <Box key={category.id} className="mt-20 ">
             <Typography
               variant="h5"

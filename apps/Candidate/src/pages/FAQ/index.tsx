@@ -74,26 +74,6 @@ const FAQ = () => {
           ))}
         </div>
       )}
-
-      <div className="bg-white p-8 rounded-lg shadow-md">
-        <Typography variant="h5" className="font-semibold mb-4 text-primary-800">
-          Ask a Question
-        </Typography>
-        <Typography className="text-gray-600 mb-6">
-          If your query is not clarified, post your question. Our customer support team will attend to you.
-        </Typography>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-8">
-          <Input label="Name" placeholder="Full Name" {...register("name")} error={errors.name} />
-          <Input label="Email" placeholder="Email" {...register("email")} error={errors.email} />
-          <TextArea
-            label="Query"
-            placeholder="Type your question here..."
-            {...register("query")}
-            error={errors.query}
-          />
-          <Button className="w-full md:w-auto" variant="black" label="Send Question" type="submit" />
-        </form>
-      </div>
     </div>
   );
 };
