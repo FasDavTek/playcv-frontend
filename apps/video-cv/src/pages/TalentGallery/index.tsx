@@ -77,11 +77,8 @@ const index = () => {
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(30);
-    const [totalRecords, setTotalRecords] = useState(0);
-
-    const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
+    
     const [searchText, setSearchText] = useState('');
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
     const [isFilterApplied, setIsFilterApplied] = useState(false);
     const navigate = useNavigate();
@@ -104,10 +101,12 @@ const index = () => {
             const queryParams = new URLSearchParams({
                 Page: currentPage.toString(),
                 Limit: itemsPerPage.toString(),
-                ...(searchText && { SearchText: searchText }),
-                ...(selectedCategory && { Category: selectedCategory }),
+                ...(searchText && { search: searchText }),
+                ...(selectedCategory && { category: selectedCategory }),
             })
+
             const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?${queryParams}`);
+            
             if (response.succeeded === true) {
               const data = await response.data;
               const approvedVideos = data.filter((video: Video) => video.status === "Approved")
@@ -134,6 +133,7 @@ const index = () => {
     }, [currentPage, itemsPerPage, searchText, selectedCategory]);
 
 
+
     useEffect(() => {
         const handleResize = () => {
           const screenWidth = window.innerWidth;
@@ -152,17 +152,20 @@ const index = () => {
         };
     }, []);
 
+
     const filterVideoCVs = () => {
         return videos.filter((video) => {
             const matchesText = video.title.toLowerCase().includes(searchText.toLowerCase());
+            const matchesAuthor = video.authorProfile.userDetails.fullName.toLowerCase().includes(searchText.toLowerCase());
+            const matchesStatus = video.status.toLowerCase().includes(searchText.toLowerCase());
             const matchesCategory = !selectedCategory || video.category === selectedCategory
-            return matchesText && matchesCategory;
+            return (matchesText || matchesAuthor || matchesStatus) && matchesCategory;
             // return matchesText;
         });
     };
     
     const filteredVideoCVs = filterVideoCVs();
-    const totalPages = Math.ceil(videos.length / itemsPerPage)
+    const totalPages = Math.ceil(filteredVideoCVs.length / itemsPerPage)
 
     const handlePrevPage = () => {
         if (currentPage > 1) {
@@ -176,7 +179,7 @@ const index = () => {
         }
     };
 
-    const paginatedItems = videos.slice(
+    const paginatedItems = filteredVideoCVs.slice(
         currentPage * itemsPerPage,
         (currentPage + 1) * itemsPerPage
     );
@@ -198,10 +201,6 @@ const index = () => {
         setSelectedCategory(null);
         setIsFilterApplied(false);
         setCurrentPage(1)
-    };
-
-    const handleVideoClick = (videoId: any, searchParams: any) => {
-        navigate(`/video-details/${videoId}`);
     };
 
 
@@ -278,8 +277,8 @@ const index = () => {
             <div className=" flex-[9] p-4">
                 {/* Search box comes here */}
 
-                {videos.length > 0 ? (
-                    <h4 className="font-black text-xl text-gray-700">{videos.length} Video CV Results</h4>
+                {filteredVideoCVs.length > 0 ? (
+                    <h4 className="font-black text-xl text-gray-700">{filteredVideoCVs.length} Video CV Results</h4>
                 ) : 
                     <h4 className="font-black text-xl text-gray-700">No results found</h4>
                 }
@@ -292,7 +291,7 @@ const index = () => {
                         className="font-bold text-3xl my-5">LATEST VIDEO CVs
                     </Typography>
                     <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
-                        {videos.map((video) => (
+                        {filteredVideoCVs.map((video) => (
                             <VideoCard key={video.id} video={video} />
                         ))}
                     </div>

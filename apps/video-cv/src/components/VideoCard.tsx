@@ -93,7 +93,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
 
   const handleViewDetails = async (item: Video) => {
     setSelectedItem(item);
-    navigate(`/video/${item.id}`, { state: { video: item } });
+    navigate(`/video/${item.id}`);
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
