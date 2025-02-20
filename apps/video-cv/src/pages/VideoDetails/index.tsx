@@ -73,7 +73,7 @@ interface Video {
       subscriptionId: number,
       videoId: number,
       totalAmountPaid: number,
-      canAccessProduct: boolean,
+      canAccessProduct: string,
       datePaid: string,
       checkOutId: number
   },
@@ -132,6 +132,9 @@ const VideoDetails = () => {
   const [adType, setAdType] = useState<"video" | "image">("video");
   const [adId, setAdId] = useState<string | null>(null);
 
+  const currentUser = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
   const itemsPerPage = 4;
 
 
@@ -144,7 +147,6 @@ const VideoDetails = () => {
   const getVideoDetails = async () => {
       setLoading(true);
       try {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -174,7 +176,6 @@ const VideoDetails = () => {
 
   const getRandomAds = async () => {
     try {
-      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
       const randomAd = await getData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
@@ -196,7 +197,6 @@ const VideoDetails = () => {
     setShowAd(false);
     if (adId) {
       try {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
         const avg = await postData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS_COUNT}/${adId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -211,15 +211,32 @@ const VideoDetails = () => {
   };
 
 
-
+  console.log(isAuthenticated)
   const handleReadMoreClick = () => {
-    if (!isAuthenticated) {
+    if (!currentUser && !token) {
       navigate('/auth/login');
-    } else if (user?.userTypeId !== 2) {
-      toast.warning('You cannot make a payment for this video. Please sign into an employer account.');
-    } else if (!video?.userSubscription?.canAccessProduct) {
+    }
+    else if (currentUser?.userTypeId !== 2) {
+      toast.warning('You have no subscription payment for this video. Please sign into an employer account.');
+    }
+    else if (video?.userSubscription?.canAccessProduct === null) {
+      if (video) {
+        const videoDetails = {
+          id: video.id,
+          title: video.title,
+          thumbnailUrl: video.thumbnailUrl,
+          authorName: video.authorProfile.userDetails.fullName,
+          // Add any other relevant details you want to include
+        }
+        dispatch({
+          type: "ADD_TO_CART",
+          payload: videoDetails,
+        })
+        // toast.success("Video added to cart")
+      }
       navigate('/cart');
-    } else {
+    }
+    else {
       setIsExpanded(true);
     }
   };

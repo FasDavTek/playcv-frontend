@@ -1,26 +1,28 @@
 import { useContext, createContext, ReactNode, useState, useEffect, } from 'react';
 
 import { GetItemsFromLocalStorage, RemoveFromLocalStorage, AddToLocalStorage, } from '@video-cv/utils';
+import { LOCAL_STORAGE_KEYS } from '../../../../libs/utils/localStorage';
 
 export const AuthContext = createContext<any>(null); // Specify the context type
 
 const AUTH_LOCALSTORAGE_KEY = 'VIDEO-CV-AUTH';
+const currentUser = localStorage.getItem(LOCAL_STORAGE_KEYS.USER);
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   // TODO: Make this a useReducer
   const [authState, setAuthState] = useState(() => {
-    const storedAuth = GetItemsFromLocalStorage(AUTH_LOCALSTORAGE_KEY)
+    const storedAuth = GetItemsFromLocalStorage(currentUser)
     return storedAuth ? { isAuthenticated: true, user: storedAuth } : { isAuthenticated: false, user: null }
 });
 
   const handleLogin = (userType: string) => {
     const userAuthData = { isAuthenticated: true, userType };
-    localStorage.setItem(AUTH_LOCALSTORAGE_KEY, JSON.stringify(userAuthData));
+    localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(userAuthData));
     setAuthState({isAuthenticated: true, user: userAuthData});
   };
 
   const handleLogout = () => {
-    localStorage.removeItem(AUTH_LOCALSTORAGE_KEY)
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.USER)
     setAuthState({ isAuthenticated: false, user: null })
   };
 
