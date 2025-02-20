@@ -13,24 +13,21 @@ interface AdPlayerProps {
 }
 
 const AdPlayer: React.FC<AdPlayerProps> = ({ adUrl, adDuration, adType, onAdEnd }) => {
-  const [timeLeft, setTimeLeft] = useState(adType === "video" ? 5 : 0)
+  const [timeLeft, setTimeLeft] = useState(adType === "video" ? 5 : 4)
   const [canSkip, setCanSkip] = useState(adType === "image")
 
   useEffect(() => {
-    if (adType === "video") {
-        const timer = setInterval(() => {
-          setTimeLeft((prevTime) => {
-            if (prevTime <= 1) {
-              clearInterval(timer)
-              setCanSkip(true)
-              return 0
-            }
-            return prevTime - 1
-          })
-        }, 1000)
-  
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(timer)
+          setCanSkip(true)
+          return 0
+        }
+        return prevTime - 1
+      })
+    }, 1000)
     return () => clearInterval(timer)
-    }
 }, [adType])
 
   const handleSkip = () => {
@@ -44,7 +41,7 @@ const AdPlayer: React.FC<AdPlayerProps> = ({ adUrl, adDuration, adType, onAdEnd 
       {adType === "video" ? (
         <ReactPlayer url={adUrl} width="100%" height="100%" playing controls={false} onEnded={onAdEnd} className="react-player" />
       ) : (
-        <img src={adUrl} alt="Advertisement" style={{ width: "100%", height: "100%", objectFit: "cover" }} className="react-player" />
+        <img src={adUrl} alt="Advertisement" style={{ width: "100%", height: "100%", objectFit: "contain" }} onEnded={onAdEnd} className="react-player" />
       )}
       <Box
         position="absolute"

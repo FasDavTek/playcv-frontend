@@ -256,8 +256,7 @@ import React, { useEffect, useState } from 'react';
 import { Stack, Box } from '@mui/material';
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { videoCVs } from '../utils/videoCVs'
-import { ChannelCard, Loader, VideoCard } from '.';
+import { Loader, VideoCard } from '.';
 import { Button } from '@video-cv/ui-components';
 import { Link, useNavigate } from 'react-router-dom';
 import { getData } from './../../../../libs/utils/apis/apiMethods';
@@ -392,7 +391,7 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
       try {
         setLoading(true);
         setError(null);
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        // const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
         let queryString = `Page=${currentPage}&Limit=${limit}&Download=${download}`
         if (startDate) queryString += `&StartDate=${startDate}`
@@ -404,9 +403,7 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
         if (userType) queryString += `&UserType=${userType}`
         if (userId) queryString += `&UserId=${userId}`
 
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?${queryString}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?${queryString}`);
 
         // let data;
         
@@ -435,7 +432,7 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
 
           setPinnedVideos(pinned)
           setRegularVideos(regular)
-          setTotalPages(Math.ceil(response.totalRecords / limit));
+          setTotalPages(Math.ceil(filteredVideos.length / limit));
         }
       } 
       catch (error) {
@@ -447,6 +444,7 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
 
     fetchVideos(); 
   }, [currentPage, limit, startDate, endDate, title, authorName, status, category, download, userType, userId, type]);
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -495,14 +493,10 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
           ))} */}
 
           {pinnedVideos.map((video: Video) => (
-            <Box key={video.id}>
-              <VideoCard video={video} />
-            </Box>
+              <VideoCard key={video.id} video={video} />
           ))}
           {regularVideos.map((video: Video) => (
-            <Box key={video.id}>
-              <VideoCard video={video} />
-            </Box>
+              <VideoCard key={video.id} video={video} />
           ))}
         </div>
 

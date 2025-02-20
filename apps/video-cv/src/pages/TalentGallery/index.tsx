@@ -7,7 +7,7 @@ import 'swiper/css/autoplay';
 import { EffectCreative, Autoplay } from 'swiper/modules';
 import { Images } from '@video-cv/assets';
 import { Button, Input, Radio, Select } from '@video-cv/ui-components';
-import { VideoCard, Videos } from '../../components';
+import { VideoCard, Loader, Videos } from '../../components';
 import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { useNavigate } from 'react-router-dom';
@@ -101,8 +101,8 @@ const index = () => {
             const queryParams = new URLSearchParams({
                 Page: currentPage.toString(),
                 Limit: itemsPerPage.toString(),
-                ...(searchText && { search: searchText }),
-                ...(selectedCategory && { category: selectedCategory }),
+                ...(searchText && { Search: searchText }),
+                ...(selectedCategory && { Category: selectedCategory }),
             })
 
             const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?${queryParams}`);
@@ -204,6 +204,8 @@ const index = () => {
     };
 
 
+    if (loading) return <Loader />
+
   return (
     <Box>
         <Box className="min-h-[500px] bg-[#F7FaFF] px-3 md:px-16 flex justify-center w-full items-start py-10 flex-col gap-3">
@@ -242,7 +244,7 @@ const index = () => {
         <Box className="bg-white min-h-[400px] flex flex-col lg:flex-row w-[95%] md:w-[90%] mx-auto gap-2 my-6 ">
             <div className="card-containers md:flex-[3.5] 2xl:flex-[2] h-fit min-h-[200px]">
                 <div className="border-b flex p-4 justify-between">
-                    <p className="font-bold" role="button" onClick={() => {console.log('');}}>Filter</p>
+                    <p className="font-bold" role="button" onClick={() => {}}>Filter</p>
                     <p className="text-red-500" role="button" onClick={handleClearFilters}>Clear All</p>
                 </div>
                 <div className="p-3 mx-auto flex flex-col gap-3">
@@ -278,9 +280,9 @@ const index = () => {
                 {/* Search box comes here */}
 
                 {filteredVideoCVs.length > 0 ? (
-                    <h4 className="font-black text-xl text-gray-700">{filteredVideoCVs.length} Video CV Results</h4>
+                    <h4 className="font-medium text-lg text-gray-700">{filteredVideoCVs.length} Video CV Results</h4>
                 ) : 
-                    <h4 className="font-black text-xl text-gray-700">No results found</h4>
+                    <h4 className="font-medium text-lg text-gray-700">No results found</h4>
                 }
                 <div className="mt-10 mx-auto">
                     <Typography

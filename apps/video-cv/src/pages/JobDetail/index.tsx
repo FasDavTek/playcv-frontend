@@ -32,47 +32,37 @@ interface Jobs {
 }
 
 const JobDetail = () => {
-  const { vId } = useParams<{ vId: any }>();
+  const { vId } = useParams();
   const location = useLocation();
-  const [job, setJob] = useState<Jobs | undefined>(location.state?.job);
+  const [job, setJob] = useState<Jobs>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   
 
   useEffect(() => {
-    const fetchJobDetails = async () => {
-      if (!job && vId) {
-        setLoading(false);
-        try {
-          const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-          const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}/${vId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-  
-          if (resp && resp.data) {
-            setJob(resp.data);
-            setLoading(false);
-          } else {
-            setError('No job data found');
-          }
-        } catch (err) {
-          console.error('Error fetching job detail:', err);
-          setError('Error fetching job detail');
-          toast.error('Error fetching job detail');
-        } finally {
-          setLoading(false);
-        }
-      }
-      else if (!vId) {
-        setError('No job ID provided');
-        setLoading(false);
-        return;
-      }
-    };
-
     fetchJobDetails();
-  }, [job, vId]);
+  }, []);
+
+
+  const fetchJobDetails = async () => {
+    setLoading(false);
+    try {
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_BY_ID}?VacancyId=${vId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setJob(resp);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching job detail:', err);
+      setError('Error fetching job detail');
+      toast.error('Error fetching job detail');
+    } finally {
+      setLoading(false);
+    }
+  }
 
 
   const handleBackClick = () => {
@@ -141,7 +131,7 @@ const JobDetail = () => {
       </section>
       <section className="border flex-[2] rounded-lg min-h-[400px] overflow-y-scroll mt-5 md:mt-0">
         <h5 className="mt-3 mb-2 font-semibold text-xl p-5">Similar roles</h5>
-        <SimilarJobs  currentJobId={job.vId} jobTitle={job.jobTitle} specialization={job.specialization} location={job.location} />
+        <SimilarJobs  currentJobId={job.vId} jobTitle={job.jobTitle} /* location={job.location} */ />
       </section>
     </div>
   );

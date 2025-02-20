@@ -24,43 +24,42 @@ interface Jobs {
 }
 
 interface SimilarJobsProps {
-  currentJobId: number;
-  jobTitle: string;
-  specialization: string;
-  location: string;
+  page?: number
+  limit?: number
+  currentJobId?: number;
+  jobTitle?: string;
+  // location?: string;
 }
 
-const SimilarJobs: React.FC<SimilarJobsProps> = ({ currentJobId, jobTitle, specialization, location }) => {
+const SimilarJobs: React.FC<SimilarJobsProps> = ({ page =1, limit = 3, currentJobId, jobTitle= "", /* location= "", */ }) => {
   const [similarJobs, setSimilarJobs] = useState<Jobs[]>([]);
+  const [currentPage, setCurrentPage] = useState(page)
+  const [totalPages, setTotalPages] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchSimilarJobs = async () => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-        const queryParams = new URLSearchParams({
-          specialization,
-          location,
-          jobTitle,
-          limit: '12',
-        }).toString();
+        let queryString = `Page=${currentPage}&Limit=${limit}`
+        if (jobTitle) queryString += `&JobTitle=${jobTitle}`
+        // if (location) queryString += `&Location=${location}`
         
-        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?${queryParams}`, {
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?${queryString}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (response && response.data) {
+        if (response.succeeded === true) {
           const filteredJobs = response.data
             .filter((job: Jobs) => job.vId !== currentJobId)
             .sort((a: Jobs, b: Jobs) => {
               let scoreA = 0;
               let scoreB = 0;
 
-              if (a.specialization === specialization) scoreA += 3;
-              if (b.specialization === specialization) scoreB += 3;
-
-              if (a.location === location) scoreA += 2;
-              if (b.location === location) scoreB += 2;
+              // if (a.location === location) scoreA += 2;
+              // if (b.location === location) scoreB += 2;
 
               if (a.jobTitle.toLowerCase().includes(jobTitle.toLowerCase())) scoreA += 1;
               if (b.jobTitle.toLowerCase().includes(jobTitle.toLowerCase())) scoreB += 1;
@@ -68,14 +67,26 @@ const SimilarJobs: React.FC<SimilarJobsProps> = ({ currentJobId, jobTitle, speci
               return scoreB - scoreA;
             })
           setSimilarJobs(filteredJobs.slice(0, 3));
+          setTotalPages(Math.ceil(filteredJobs.length / limit))
         }
       } catch (error) {
         console.error('Error fetching similar jobs:', error);
       }
     };
-
     fetchSimilarJobs();
-  }, [currentJobId, jobTitle, specialization, location]);
+  }, [currentJobId, jobTitle, /* location, */ currentPage, limit]);
+
+  if (loading) {
+    return <div>Loading similar jobs...</div>
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>
+  }
+
+  if (similarJobs.length === 0) {
+    return <div>No similar jobs found.</div>
+  }
 
   return (
     <div className="space-y-4">

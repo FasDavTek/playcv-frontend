@@ -68,6 +68,15 @@ interface Video {
       genderId: number;
     }
   }
+  userSubscription: {
+      userId: number,
+      subscriptionId: number,
+      videoId: number,
+      totalAmountPaid: number,
+      canAccessProduct: boolean,
+      datePaid: string,
+      checkOutId: number
+  },
 }
 
 const ClampedText = styled(Typography)({
@@ -126,6 +135,11 @@ const VideoDetails = () => {
   const itemsPerPage = 4;
 
 
+  useEffect(() => {
+    getVideoDetails();
+    getRandomAds();
+  }, []);
+
 
   const getVideoDetails = async () => {
       setLoading(true);
@@ -135,18 +149,15 @@ const VideoDetails = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log(resp);
-
-        let data = await resp.videoDetails;
         if (resp.code === '200') {
+          let data = await resp.videoDetails;
           setVideo(data);
-          console.log(video);
           if (location.state?.fromVideosList) {
             incrementViewCount()
           }
-        }
-        else {
-          setError('Failed to fetch related videos')
+          else {
+            setError('Failed to fetch related videos')
+          }
         }
       }
       catch (err) {
@@ -157,6 +168,60 @@ const VideoDetails = () => {
       finally {
         setLoading(false);
       }
+  };
+
+
+
+  const getRandomAds = async () => {
+    try {
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+      const randomAd = await getData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
+      const resp = randomAd.data;
+      setAdUrl(resp.coverURL);
+      setAdId(resp.id);
+      setAdType(resp.coverURL.toLowerCase().endsWith(".mp4") ? "video" : "image")
+    }
+    catch (err) {
+      console.error("Error fetching random ad:", err)
+      setShowAd(false)
+    }
+  }
+
+
+
+  const handleAdEnd = async () => {
+    setShowAd(false);
+    if (adId) {
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        const avg = await postData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS_COUNT}/${adId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
+      }
+      catch (err) {
+        console.error("Error updating ad view count:", err)
+      }
+      
+    }
+  };
+
+
+
+  const handleReadMoreClick = () => {
+    if (!isAuthenticated) {
+      navigate('/auth/login');
+    } else if (user?.userTypeId !== 2) {
+      toast.warning('You cannot make a payment for this video. Please sign into an employer account.');
+    } else if (!video?.userSubscription?.canAccessProduct) {
+      navigate('/cart');
+    } else {
+      setIsExpanded(true);
+    }
   };
 
 
@@ -191,9 +256,6 @@ const VideoDetails = () => {
   };
 
 
-  useEffect(() => {
-    getVideoDetails();
-  }, []);
 
   const getRelatedVideos = async (searchParams: any) => {
     // Replace with actual API call or data fetching logic
@@ -205,16 +267,20 @@ const VideoDetails = () => {
 
 
   const shareOnWhatsApp = (videoUrl: string) => {
-    const message = `Check out my video: ${videoUrl}`;
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    if (video) {
+      const message = `Check out my video: ${video.title} - ${window.location.href}`;
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    }
   }
 
   const shareViaEmail = (videoUrl: string) => {
-    const subject = `Check out my video`;
-    const body = `Here is the link: ${videoUrl}`;
-    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoUrl;
+    if (video) {
+      const emailSubject = `Check out this video: ${video.title}`
+      const emailBody = `I thought you might be interested in this video: ${window.location.href}`
+      const mailtoUrl = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`
+      window.location.href = mailtoUrl
+    }
   };
 
   const getTabs = (items: string[]) => {
@@ -224,22 +290,6 @@ const VideoDetails = () => {
       const end = start + itemsPerPage;
       return items.slice(start, end);
     });
-  };
-
-
-  const handleReadMoreClick = () => {
-    const isBusinessAccount = user?.userType === 'Employer';
-    const hasPaidForVideo = false;
-
-    if (!isAuthenticated) {
-      navigate('/auth/login');
-    } else if (!isBusinessAccount) {
-      toast.warning('You cannot make a payment for this video. Please sign into an employer account.');
-    } else if (!hasPaidForVideo) {
-      navigate('/cart');
-    } else {
-      setIsExpanded(true);
-    }
   };
 
   useEffect(() => {
@@ -258,13 +308,8 @@ const VideoDetails = () => {
   }, [isFromTalentGallery, searchParams]);
 
 
-  const handleBackClick = () => {
-    navigate(-1);
-  };
-
-
   const incrementViewCount = async () => {
-    if (!viewCounted && video) {
+    if (video && !viewCounted) {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
@@ -273,7 +318,7 @@ const VideoDetails = () => {
         });
 
         setViewCounted(true);
-        setVideo((prevVideo) => (prevVideo ? { ...prevVideo, views: prevVideo.views + 1 } : prevVideo));
+        // setVideo((prevVideo) => (prevVideo ? { ...prevVideo, views: prevVideo.views + 1 } : prevVideo));
       }
       catch (err) {
         console.error('Error incrementing view count:', err)
@@ -282,45 +327,9 @@ const VideoDetails = () => {
   }
 
 
-  useEffect(() => {
-    const getRandomAds = async () => {
-      try {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-        const randomAd = await getData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-
-        const resp = randomAd.data;
-        setAdUrl(resp.coverURL);
-        setAdId(resp.id);
-      }
-      catch (err) {
-        console.error("Error fetching random ad:", err)
-        setShowAd(false)
-      }
-    }
-
-    getRandomAds();
-  }, [])
-
-  const handleAdEnd = async () => {
-    setShowAd(false);
-    if (adId) {
-      console.log(adId)
-      try {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-        const avg = await postData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS_COUNT}/${adId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        )
-      }
-      catch (err) {
-        console.error("Error updating ad view count:", err)
-      }
-      
-    }
-  }
+  const handleBackClick = () => {
+    navigate(-1);
+  };
 
 
   return (
@@ -379,7 +388,6 @@ const VideoDetails = () => {
                     {/* <Typography variant="body1" gutterBottom>
                       Uploaded by {video?.authorProfile?.userDetails?.fullName}
                     </Typography> */}
-                    <label></label>
                     {/* <ClampedText variant="body2" className={`${isExpanded ? '' : 'line-clamp-2'} relative overflow-hidden`} sx={{ WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', display: '-webkit-box'}}>
                       {video?.description}
                     </ClampedText> */}
@@ -407,7 +415,7 @@ const VideoDetails = () => {
         )}
         {/* CART ITEM ENDS */}
         
-        <JobCardBoard filterOptions={{ searchText: '', selectedLocation: null, selectedDate: null, selectedStatus: 'all' }} />
+        <JobCardBoard filterOptions={{ searchText: '', selectedLocation: null, selectedDate: null, selectedStatus: 'all' }} limit={4} />
       </Stack>
 
       <Box className={`flex-col w-[30%] gap-4 lg:flex hidden`}>

@@ -1,23 +1,15 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-
-import { Link } from 'react-router-dom';
-import { Paper, Pagination, Box, Stack, Typography } from '@mui/material';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { Box, Stack, Typography } from '@mui/material';
 
 import { Select, Radio, Input, DatePicker } from '@video-cv/ui-components';
-import { useFilters } from '@video-cv/hooks';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/effect-creative';
 import 'swiper/css/autoplay';
 import { EffectCreative, Autoplay } from 'swiper/modules';
 import { Images } from '@video-cv/assets';
-import { Button } from '@video-cv/ui-components';
-import { mockJobs } from '../../utils/jobs';
-import { JobCard, JobCardBoard } from '../../components';
-import ChevronLeftOutlinedIcon from '@mui/icons-material/ChevronLeftOutlined';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { Controller, FieldError, useForm } from 'react-hook-form';
+import { JobCard } from '../../components';
+import { Controller, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
 import { getData } from './../../../../../libs/utils/apis/apiMethods';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
@@ -56,36 +48,32 @@ const heroImages = [Images.HeroImage16, Images.HeroImage17, Images.HeroImage18, 
 
 const JobBoard = () => {
   const [jobs, setJobs] = useState<Jobs[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(30);
-
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
-    searchText: '',
-    selectedLocation: null,
-    selectedDate: null,
-    selectedStatus: 'all'
-  });
 
   const { control } = useForm();
 
-  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
-  const [selectedDates, setSelectedDates] = useState<string[]>([]);
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isFilterApplied, setIsFilterApplied] = useState(false);
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=30`);
+        setLoading(true);
+
+        const queryParams = new URLSearchParams({
+          Page: currentPage.toString(),
+          Limit: itemsPerPage.toString(),
+          ...(searchText && { Search: searchText }),
+      })
+
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?${queryParams}`);
+
         if (resp.succeeded === true) {
           setJobs(resp.data);
-        }
-        else {
-          console.error('Unable to fetch jobs:', resp.message);
         }
       }
       catch (err) {
@@ -97,32 +85,17 @@ const JobBoard = () => {
     }
 
     fetchJobs();
-  }, []);
+  }, [currentPage, itemsPerPage, searchText]);
 
 
-  // const { data: videoCategory, isLoading: isLoadingIndustries } = useAllMisc({
-  //     resource: 'video-category',
-  //     page: 1,
-  //     limit: 100,
-  //     download: false,
-  // });
-
-
-  const { data: countryData, isLoading: isCountryLoading } = useAllCountry();
-  const { data: stateData, isLoading: isStateLoading } = useAllState();
-  
-  console.log(countryData);
-  console.log(stateData)
+  // const { data: countryData, isLoading: isCountryLoading } = useAllCountry();
+  // const { data: stateData, isLoading: isStateLoading } = useAllState();
 
 
   useEffect(() => {
         const handleResize = () => {
           const screenWidth = window.innerWidth;
-          if (screenWidth >= 768) {
-            setItemsPerPage(30);
-          } else {
-            setItemsPerPage(10);
-          }
+          setItemsPerPage(screenWidth >= 768 ? 30 : 10)
         };
     
         // Set the initial items per page based on screen width
@@ -137,15 +110,18 @@ const JobBoard = () => {
         };
   }, []);
 
+
   const filterJobs = () => {
       return jobs.filter((job) => {
           const matchesText = job.jobTitle.toLowerCase().includes(searchText.toLowerCase());
-          const matchesLocation = !filterOptions.selectedLocation || job.location === filterOptions.selectedLocation
+          const matcheseResponsibilities = job?.keyResponsibilities?.toLowerCase().includes(searchText.toLowerCase());
+          const matchesQualifications = job?.qualifications?.toLowerCase().includes(searchText.toLowerCase());
+          const matchesLocation = job.location?.toLowerCase().includes(searchText.toLowerCase())
 
-          const matchesDate = !filterOptions.selectedDate || dayjs(job.dateCreated).isSame(filterOptions.selectedDate, "day");
-          // const matchesStatus = selectedStatus === 'all' || job.status === selectedStatus;
-          // return matchesText && matchesCategory;
-          return matchesText /* && matchesLocation */ && matchesDate /* && matchesStatus */ ;
+          const matchesDate = !selectedDate || dayjs(job.dateCreated).isSame(selectedDate, "day");
+          return (matchesText || matchesLocation || matcheseResponsibilities || matchesQualifications)  && matchesDate;
+
+          // return (matchesText || matchesLocation || matcheseResponsibilities || matchesQualifications);
       });
   };
   
@@ -153,13 +129,13 @@ const JobBoard = () => {
   const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
 
   const handlePrevPage = () => {
-      if (currentPage > 0) {
+      if (currentPage > 1) {
           setCurrentPage((prevPage) => prevPage - 1);
       }
   };
 
   const handleNextPage = () => {
-      if (currentPage < totalPages - 1) {
+      if (currentPage < totalPages) {
           setCurrentPage((prevPage) => prevPage + 1);
       }
   };
@@ -172,6 +148,7 @@ const JobBoard = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
     setIsFilterApplied(true);
+    setCurrentPage(1);
   };
 
   const handleLocationChange = (value: any) => {
@@ -185,24 +162,20 @@ const JobBoard = () => {
   };
 
   const handleDateChange = (date: Date | null) => {
-    setFilterOptions((prev) => ({ ...prev, selectedDate: date }))
-    setCurrentPage(0)
+    setSelectedDate(date)
+    setCurrentPage(1)
   };
 
-  const handleStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFilterOptions(prev => ({ ...prev, selectedStatus: e.target.value }));
-    setIsFilterApplied(true);
-  };
+  // const handleStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   setFilterOptions(prev => ({ ...prev, selectedStatus: e.target.value }));
+  //   setIsFilterApplied(true);
+  // };
   
   const handleClearFilters = () => {
-    setFilterOptions({
-      searchText: '',
-      selectedLocation: null,
-      selectedDate: null,
-      selectedStatus: 'all'
-    });
+    setSearchText('');
+    setSelectedDate(null)
     setIsFilterApplied(false);
-    setCurrentPage(0)
+    setCurrentPage(1)
   };
 
   return (
@@ -246,9 +219,9 @@ const JobBoard = () => {
           </Box>
         </Stack>
       </Box>
-      <div className="bg-white min-h-[400px] flex flex-col md:flex-row w-[95%] md:w-[90%] mx-auto gap-2 my-6 ">
+      <div className="bg-white min-h-[400px] flex flex-col lg:flex-row w-[95%] md:w-[90%] mx-auto gap-2 my-6 ">
         {/* filter */}
-        <div className="card-containers flex-[2] h-fit min-h-[200px]">
+        <div className="card-containers  md:flex-[3.5] 2xl:flex-[2] h-fit min-h-[200px]">
           <div className="border-b flex p-4 justify-between">
             <p className="font-bold" role="button" onClick={() => {}}>Filter</p>
             <p className="text-red-500" role="button" onClick={handleClearFilters}>Clear All</p>
@@ -263,48 +236,17 @@ const JobBoard = () => {
               onChange={handleSearchChange}
             />
 
-            {/* <Controller
-              name="country"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  name="country"
-                  options={model(countryData, 'name', 'id')}
-                  control={control}
-                  placeholder="Select Country"
-                  defaultValue={selectedLocations ? { name: selectedLocation } : null}
-                  handleChange={handleLocationChange}
-                />
-              )}
-            /> */}
-
             <Controller
               name='datePosted'
               control={control}
               render={({ field: { onChange, value } }) => (
                 <DatePicker
                   label="Date Posted"
-                  value={filterOptions.selectedDate}
+                  value={selectedDate}
                   onChange={handleDateChange}
                 />
               )}
             />
-
-            {/* <Radio
-              label="Job Status"
-              options={[
-                { value: 'all', label: 'All' },
-                { value: 'active', label: 'Active' },
-                { value: 'closed', label: 'Closed' },
-              ]}
-              // onChange={handleFilter}
-              defaultValue={'all'}
-              name="jobStatus"
-              onChange={handleStatusChange}
-              value={filterOptions.selectedStatus}
-            /> */}
-
-            {/* <div className=""></div> */}
           </div>
         </div>
 
@@ -312,9 +254,9 @@ const JobBoard = () => {
           {/* Search box comes here */}
 
           {filteredJobs.length > 0 ? (
-            <h4 className="font-black text-xl text-gray-700">{filteredJobs.length} Job Results</h4>
+            <h4 className="font-medium text-lg text-gray-700">{filteredJobs.length} Job Results</h4>
           ) : (
-            <h4 className="font-black text-xl text-gray-700">No jobs match your search criteria.</h4>
+            <h4 className="font-medium text-lg text-gray-700">No jobs match your search criteria.</h4>
           )}
           <div className="mt-10 mx-auto">
             <Typography
@@ -323,8 +265,8 @@ const JobBoard = () => {
               mb={2}
               sx={{ color: 'black' }}
               className="font-bold text-3xl my-5">LATEST JOBS</Typography>
-            <div className={`items-center grid gap-4`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-              {paginatedJobs.map((job: Jobs) => (
+            <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+              {filteredJobs.map((job: Jobs) => (
                   <JobCard key={job.vId} job={job} />
               ))}
               {/* <JobCardBoard filterOptions={filterOptions} /> */}

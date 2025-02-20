@@ -39,13 +39,23 @@ interface FilterOptions {
 }
 
 interface FetchJobsProps {
+  page?: number
+  limit?: number
+  startDate?: string
+  endDate?: string
+  jobTitle?: string
+  location?: string
+  keyResponsibilities?: string
+  status?: string
+  qualifications?: string
   filterOptions: FilterOptions;
 }
 
-const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
+const fetchJobs: React.FC<FetchJobsProps> = ({ page =1, limit = 30, startDate, endDate, jobTitle, location, keyResponsibilities, status, qualifications, filterOptions }) => {
   const [jobs, setJobs] = useState<Jobs[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(page)
+  const [totalPages, setTotalPages] = useState(1)
   const [jobsPerPage, setJobsPerPage] = useState(0);
   const [columns, setColumns] = useState(1);
 
@@ -61,14 +71,23 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+        setLoading(true);
 
-        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?Page=1&Limit=30`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        let queryString = `Page=${currentPage}&Limit=${limit}`
+        if (startDate) queryString += `&StartDate=${startDate}`
+        if (endDate) queryString += `&EndDate=${endDate}`
+        if (jobTitle) queryString += `&JobTitle=${jobTitle}`
+        if (location) queryString += `&Location=${location}`
+        if (keyResponsibilities) queryString += `&KeyResponsibilities=${keyResponsibilities}`
+        if (status) queryString += `&Status=${status}`
+        if (qualifications) queryString += `&Qualifications=${qualifications}`
+
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?${queryString}`);
+
         const jobData = resp.data;
         setJobs(jobData);
-        console.log(jobs)
+        setTotalPages(Math.ceil(jobData.length / limit));
+
       }
       catch (err) {
         console.error('Error fetching jobs:', err);
@@ -79,7 +98,8 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
     }
 
     fetchJobs();
-  }, []);
+  }, [currentPage, limit, startDate, endDate, jobTitle, location, keyResponsibilities, status, qualifications]);
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -95,51 +115,41 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ filterOptions }) => {
   }, []);
 
 
+  console.log(jobs)
 
-  const filterJobs = () => {
-    return jobs.filter((job) => {
-      const matchesText = job.jobTitle.toLowerCase().includes(filterOptions.searchText.toLowerCase());
-      const matchesLocation = !filterOptions.selectedLocation || job.location === filterOptions.selectedLocation
-
-      const matchesDate = !filterOptions.selectedDate || dayjs(job.dateCreated).isSame(filterOptions.selectedDate, "day");
-
-      // Assuming job status is part of the job object. If not, you'll need to adjust this.
-      const matchesStatus = filterOptions.selectedStatus === 'all' || job?.status === filterOptions.selectedStatus;
-
-      return matchesText && matchesLocation && matchesDate && matchesStatus;
-    });
-  };
-
-
-  
-  if (loading) return <Loader />;
-  if (!jobs?.length) return <p>No jobs found</p>;
-
-  const filteredJobs = filterJobs();
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+  // const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   const handleNextPage = () => {
-    setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1)
+    }
   };
 
   const handlePrevPage = () => {
-    setCurrentPage((prevPage) => (prevPage - 1 + totalPages) % totalPages);
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1)
+    }
   };
 
-  const startIndex = currentPage * jobsPerPage;
-  const currentJobs = filteredJobs.slice(startIndex, startIndex + jobsPerPage);
+
+
+  if (loading) return <Loader />;
+  if (!jobs?.length) return <p>No jobs found</p>;
+
+
 
   return (
     <div className='space-y-4'>
-      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-        {currentJobs.map((job: Jobs) => (
-          <Box key={job?.vId}>
-            <JobCard job={job} />
-          </Box>
+      <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+        {jobs.map((job: Jobs) => (
+            <JobCard  key={job?.vId} job={job} />
         ))}
       </div>
 
       <div className="flex items-center justify-end gap-2 mt-4">
+        <span className="text-sm text-gray-600 mr-10">
+          Page {currentPage} of {totalPages}
+        </span>
         <Link to={'/job-board'} className='mr-3 text-blue-600 text-sm'>
             <span>View more</span>
         </Link>

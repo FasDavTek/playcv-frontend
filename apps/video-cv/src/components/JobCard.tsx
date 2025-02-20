@@ -33,7 +33,7 @@ const JobCard: React.FC<JobProps> = ({ job }: any) => {
 
   const handleViewDetails = async (item: Jobs) => {
     setSelectedItem(item);
-    navigate(`/job/${item.vId}`, { state: { job: item } });
+    navigate(`/job/${item.vId}`);
   };
 
 
