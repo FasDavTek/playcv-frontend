@@ -79,6 +79,16 @@ interface Video {
   },
 }
 
+interface User {
+  id: string;
+  email: string;
+  username: string;
+  name: string;
+  userTypeId: number;
+  firstName: string | null;
+  lastName: string | null;
+}
+
 const ClampedText = styled(Typography)({
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
@@ -211,13 +221,19 @@ const VideoDetails = () => {
   };
 
 
-  console.log(isAuthenticated)
+
+
   const handleReadMoreClick = () => {
+
     if (!currentUser && !token) {
       navigate('/auth/login');
     }
-    else if (currentUser?.userTypeId !== 2) {
-      toast.warning('You have no subscription payment for this video. Please sign into an employer account.');
+    else if (currentUser) {
+      const user = JSON.parse(currentUser);
+
+      if (user?.userTypeId !== 2) {
+        toast.warning('You have no subscription payment for this video. Please sign into an employer account.');
+      }
     }
     else if (video?.userSubscription?.canAccessProduct === null) {
       if (video) {
