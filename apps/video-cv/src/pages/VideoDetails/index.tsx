@@ -299,7 +299,7 @@ const VideoDetails = () => {
   };
 
 
-  const shareOnWhatsApp = (videoUrl: string) => {
+  const shareOnWhatsApp = () => {
     if (video) {
       const message = `Check out my video: ${video.title} - ${window.location.href}`;
       const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
@@ -307,7 +307,7 @@ const VideoDetails = () => {
     }
   }
 
-  const shareViaEmail = (videoUrl: string) => {
+  const shareViaEmail = () => {
     if (video) {
       const emailSubject = `Check out this video: ${video.title}`
       const emailBody = `I thought you might be interested in this video: ${window.location.href}`
@@ -387,8 +387,8 @@ const VideoDetails = () => {
               </Stack>
               <Stack direction="row" alignItems="center" justifyContent="space-between" p={1} spacing={8}>
                 <Stack direction='row' spacing={1}>
-                  <Button variant="custom" className='text-green-600 hover:text-green-500' icon={<WhatsAppIcon />} onClick={() => shareOnWhatsApp(`https://www.youtube.com/watch?v=${id}`)} />
-                  <Button variant='custom' className='text-blue-600 hover:text-blue-500' icon={<EmailIcon />} onClick={() => shareViaEmail(`https://www.youtube.com/watch?v=${id}`)} />
+                  <Button variant="custom" className='text-green-600 hover:text-green-500' icon={<WhatsAppIcon />} onClick={shareOnWhatsApp} />
+                  <Button variant='custom' className='text-blue-600 hover:text-blue-500' icon={<EmailIcon />} onClick={shareViaEmail} />
                 </Stack>
               </Stack>
               <Box flex={1} className={`bg-white p-4 rounded-xl text-neutral-400 backdrop-blur-sm flex lg:hidden border border-neutral-100 shadow-md ${isExpanded ? 'h-auto' : 'max-h-44'}`}>
