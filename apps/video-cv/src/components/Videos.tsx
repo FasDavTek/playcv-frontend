@@ -326,6 +326,7 @@ interface VideosProps {
   authorName?: string
   status?: string
   category?: string
+  categoryId?: number
   download?: boolean
   userType?: string
   userId?: string
@@ -339,7 +340,7 @@ interface VideoType {
 }
 
 // TODO: Rename component
-const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate, title, authorName, status, category, download = false, userType, userId, type = "category" }) => {
+const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate, title, authorName, status, category, categoryId, download = false, userType, userId, type = "category" }) => {
   const navigate = useNavigate();
   const [pinnedVideos, setPinnedVideos] = useState<Video[]>([])
   const [regularVideos, setRegularVideos] = useState<Video[]>([])
@@ -400,6 +401,7 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
         if (authorName) queryString += `&AuthorName=${encodeURIComponent(authorName)}`
         if (status) queryString += `&Status=${status}`
         if (category) queryString += `&Category=${category}`
+        if (categoryId) queryString += `&CategoryId=${categoryId}`
         if (userType) queryString += `&UserType=${userType}`
         if (userId) queryString += `&UserId=${userId}`
 

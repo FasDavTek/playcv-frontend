@@ -380,6 +380,7 @@ const Profile = () => {
                   <Select
                     name="Business Sector"
                     control={control}
+                    placeholder='Industry'
                     defaultValue={Array.isArray(industry) && industry?.find(i => i.name === watch('userProfile.businessDetails.industry'))}
                     options={model(industry, 'name', 'id')}
                     handleChange={(newValue) => { 

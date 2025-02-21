@@ -11,9 +11,9 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
-import { Button } from '@video-cv/ui-components';
+import { AdPlayer, Button } from '@video-cv/ui-components';
 import { LOCAL_STORAGE_KEYS } from './../../../../../libs/utils/localStorage';
-import { getData } from './../../../../../libs/utils/apis/apiMethods';
+import { getData, postData } from './../../../../../libs/utils/apis/apiMethods';
 
 interface VideoDetails {
   id: string
@@ -58,81 +58,153 @@ const VideoDetails = () => {
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [viewCounted, setViewCounted] = useState(false)
+  const [showAd, setShowAd] = useState(true)
+  const [adUrl, setAdUrl] = useState("")
+  const [adType, setAdType] = useState<"video" | "image">("video");
+  const [adId, setAdId] = useState<string | null>(null);
 
 
-  console.log(video);
-  console.log(id);
-
-//   const fetchVideoDetails = async () => {
-//     if (!video && id) {
-//       setLoading(true);
-//       try {
-//         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-//         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${id}`, {
-//           headers: { Authorization: `Bearer ${token}` },
-//         });
-
-//         if (resp && resp.videoDetails) {
-//           setVideo(resp.videoDetails);
-//         }
-//         else {
-//           setError('Failed to fetch related videos')
-//         }
-//       }
-//       catch (err) {
-//         setError('Error fetching video detail');
-//         toast.error('Error fetching video detail');
-//       }
-//       finally {
-//         setLoading(false);
-//       }
-//   }
-//   else if (!id) {
-//     setError('No video Id provided');
-//     setLoading(false);
-//     return;
-//   }
-// }
+  const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
 
-// useEffect(() => {
-//   fetchVideoDetails();
-// }, [video, id]);
+  useEffect(() => {
+    fetchVideoDetails();
+    getRandomAds();
+  }, []);
 
 
-const handleBackClick = () => {
-  navigate(-1);
-};
+  const fetchVideoDetails = async () => {
+    if (!video && id) {
+      setLoading(true);
+      try {
+        const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (resp.code === '200') {
+          let data = await resp.videoDetails;
+          setVideo(data);
+          if (location.state?.fromVideosList) {
+            incrementViewCount()
+          }
+        }
+        else {
+          setError('Failed to fetch related videos')
+        }
+      }
+      catch (err) {
+        setError('Error fetching video detail');
+        toast.error('Error fetching video detail');
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+    else if (!id) {
+      setError('No video Id provided');
+      setLoading(false);
+      return;
+    }
+  }
 
 
-if (loading) {
+
+  const getRandomAds = async () => {
+    try {
+      const randomAd = await getData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
+      const resp = randomAd.data;
+      setAdUrl(resp.coverURL);
+      setAdId(resp.id);
+      setAdType(resp.coverURL.toLowerCase().endsWith(".mp4") ? "video" : "image")
+    }
+    catch (err) {
+      console.error("Error fetching random ad:", err)
+      setShowAd(false)
+    }
+  }
+
+
+
+  const handleAdEnd = async () => {
+    setShowAd(false);
+    if (adId) {
+      try {
+        const avg = await postData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS_COUNT}/${adId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
+      }
+      catch (err) {
+        console.error("Error updating ad view count:", err)
+      }
+      
+    }
+  };
+
+
+  const incrementViewCount = async () => {
+    if (video && !viewCounted) {
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
+        await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_VIEWS}?videoId=${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setViewCounted(true);
+        // setVideo((prevVideo) => (prevVideo ? { ...prevVideo, views: prevVideo.views + 1 } : prevVideo));
+      }
+      catch (err) {
+        console.error('Error incrementing view count:', err)
+      }
+    }
+  }
+
+
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
+
+  if (loading) {
+    return (
+      <Box className="flex items-center justify-center min-h-screen">
+        <CircularProgress />
+      </Box>
+    )
+  }
+
+  if (error || !video) {
+    return (
+      <Box className="items-center justify-center min-h-screen">
+        <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-0 p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
+        <Typography variant="h6" color="error" gutterBottom>
+          {error || 'Video not found'}
+        </Typography>
+      </Box>
+    )
+  }
+
+
   return (
-    <Box className="flex items-center justify-center min-h-screen">
-      <CircularProgress />
-    </Box>
-  )
-}
-
-if (error || !video) {
-  return (
-    <Box className="items-center justify-center min-h-screen">
-      <ChevronLeftIcon className="cursor-pointer text-base mr-1 top-0 p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
-      <Typography variant="h6" color="error" gutterBottom>
-        {error || 'Video not found'}
-      </Typography>
-    </Box>
-  )
-}
-
-
-  return (
-    <Stack direction={{ sm: 'column', md: 'row' }} gap={3} className="min-h-screen flex-col md:flex-row mx-auto py-4 px-3 md:px-7 w-[98%]">
+    <Stack direction={{ sm: 'column', md: 'row' }} gap={3} className="min-h-screen flex-col md:flex-row mx-auto py-4 px-3 md:px-7 w-[90%]">
       <Stack direction="column" flex={4} spacing={3}>
-        <ChevronLeftIcon className="cursor-pointer text-3xl mr-1 top-0 p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
+        <ChevronLeftIcon className="cursor-pointer text-9xl mr-1 top-0 p-1 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
         <Box className="rounded-lg">
-          <Stack mx='auto' direction="column" spacing={4}>
+          <Stack  mx='auto' direction="column" spacing={4}>
             <Box className="w-full top-24 rounded-3xl">
-              <ReactPlayer url={video?.videoUrl} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} />
+              {showAd
+                ? (
+                  <AdPlayer adUrl={adUrl} adType={adType} adDuration={10} onAdEnd={handleAdEnd} />
+                )
+                : (
+                  <ReactPlayer url={video?.videoUrl} className="react-player" controls style={{ borderRadius: '1.5rem', overflow: 'hidden' }} onStart={incrementViewCount} />
+                )}
             </Box>
             <Box className="flex flex-col gap-1">
               <Typography variant="h5" gutterBottom>

@@ -80,13 +80,14 @@ const index = () => {
     
     const [searchText, setSearchText] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
     const [isFilterApplied, setIsFilterApplied] = useState(false);
     const navigate = useNavigate();
     const { control } = useForm();
 
 
 
-    const { data: videoCategory, isLoading: isLoadingIndustries } = useAllMisc({
+    const { data: videoCategories, isLoading: isLoadingIndustries } = useAllMisc({
         resource: 'video-category',
         download: true,
     });
@@ -102,7 +103,7 @@ const index = () => {
                 Page: currentPage.toString(),
                 Limit: itemsPerPage.toString(),
                 ...(searchText && { Search: searchText }),
-                ...(selectedCategory && { Category: selectedCategory }),
+                ...(selectedCategoryId && { CategoryId: selectedCategoryId.toString() }),
             })
 
             const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?${queryParams}`);
@@ -122,7 +123,6 @@ const index = () => {
             }
           } 
           catch (error) {
-            console.error('Error fetching videos:', error);
           }
           finally {
             setLoading(false);
@@ -130,7 +130,7 @@ const index = () => {
         };
     
         fetchVideos();
-    }, [currentPage, itemsPerPage, searchText, selectedCategory]);
+    }, [currentPage, itemsPerPage, searchText, selectedCategoryId]);
 
 
 
@@ -158,7 +158,7 @@ const index = () => {
             const matchesText = video.title.toLowerCase().includes(searchText.toLowerCase());
             const matchesAuthor = video.authorProfile.userDetails.fullName.toLowerCase().includes(searchText.toLowerCase());
             const matchesStatus = video.status.toLowerCase().includes(searchText.toLowerCase());
-            const matchesCategory = !selectedCategory || video.category === selectedCategory
+            const matchesCategory = !selectedCategoryId || video.categoryId === selectedCategoryId
             return (matchesText || matchesAuthor || matchesStatus) && matchesCategory;
             // return matchesText;
         });
@@ -191,14 +191,14 @@ const index = () => {
     };
 
     const handleCategoryChange = (value: any) => {
-        setSelectedCategory(value?.name || null);
+        setSelectedCategoryId(value?.id || null);
         setIsFilterApplied(true);
         setCurrentPage(1) // Reset to first page when changing category
     }
     
     const handleClearFilters = () => {
         setSearchText('');
-        setSelectedCategory(null);
+        setSelectedCategoryId(null);
         setIsFilterApplied(false);
         setCurrentPage(1)
     };
@@ -261,11 +261,11 @@ const index = () => {
                         render={({ field }) => (
                             <Select
                                 name="categories"
-                                options={model(videoCategory, 'name', 'label')}
+                                options={model(videoCategories, 'name', 'id')}
                                 control={control}
                                 placeholder="Select Categories"
                                 // defaultValue={selectedCategories.map(cat => ({ value: cat, label: cat }))}
-                                defaultValue={selectedCategory ? { name: selectedCategory, label: selectedCategory } : null}
+                                defaultValue={selectedCategoryId ? { id: selectedCategoryId, name: Array.isArray(videoCategories) && videoCategories.find((cat) => Number(cat.id) === selectedCategoryId)?.name, } : null}
                                 handleChange={handleCategoryChange}
                                 // isMulti={true}
                             />

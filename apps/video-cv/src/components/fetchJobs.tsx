@@ -90,7 +90,7 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ page =1, limit = 30, startDate, e
 
       }
       catch (err) {
-        console.error('Error fetching jobs:', err);
+        setLoading(false);
       }
       finally {
         setLoading(false);
@@ -113,9 +113,6 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ page =1, limit = 30, startDate, e
     
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-
-  console.log(jobs)
 
   // const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 

@@ -11,6 +11,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import CONFIG from './../../../../../libs/utils/helpers/config';
 import { apiEndpoints } from './../../../../../libs/utils/apis/apiEndpoints';
 import { toast } from 'react-toastify';
+import { getData } from './../../../../../libs/utils/apis/apiMethods';
 
 interface VideoDetails {
   id: string
@@ -42,12 +43,11 @@ const VideoDetails = () => {
       setLoading(true)
       setError(null)
       try {
-        const response = await fetch(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}${videoId}`)
-        if (!response.ok) {
-          throw new Error('Failed to fetch video details')
+        const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_BY_ID}${videoId}`)
+        if (response.code === '200') {
+          const data = await response.json()
+          setVideoDetails(data)
         }
-        const data = await response.json()
-        setVideoDetails(data)
       } 
       catch (err) {
         console.error('Error fetching video details:', err)

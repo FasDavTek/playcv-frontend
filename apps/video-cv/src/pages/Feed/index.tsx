@@ -175,7 +175,7 @@ const Feed = () => {
               {category.name}
             </Typography>
 
-            <Videos category={category.name} />
+            <Videos category={category.id} />
           </Box>
         ))}
 

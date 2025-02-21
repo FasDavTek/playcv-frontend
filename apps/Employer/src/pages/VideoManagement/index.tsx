@@ -91,12 +91,12 @@ const VideoManagement = () => {
 
   const fetchVideos = useCallback(async () => {
     try {
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.EMPLOYER_AUTH_VIDEO_LIST}?Download=true`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.EMPLOYER_AUTH_VIDEO_LIST}?Page=1&Limit=10`, {
         headers: { Authorization: `Bearer ${token}` },
       })
 
       if (resp.code === '00') {
-        const data = await resp.videos;
+        const data = await resp.data;
         setVideos(data);
         setLoading(false);
 
@@ -126,7 +126,7 @@ const VideoManagement = () => {
     // Set up interval to fetch videos every 5 minutes
     const interval = setInterval(fetchVideos, 5 * 60 * 1000)
     return () => clearInterval(interval)
-  }, [fetchVideos]);
+  }, []);
 
 
   const handleView = async (videoId: string) => {
@@ -213,14 +213,14 @@ const VideoManagement = () => {
                 }`}
                 onClick={() => setActiveTab(tab as typeof activeTab)}
               >
-                {tab === "viewed" ? "Viewed Video CVs" : 'All Video CV'}
+                {tab === "viewed" ? "History" : 'Video Archive'}
               </button>
             ))}
           </div>
         </div>
 
         <div className='mt-4'>
-          <Table loading={false} data={`${activeTab === 'viewed' ? viewedVideos : videos}`} columns={columns} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} tableHeading={`All My ${activeTab === "viewed" ? "Viewed Video CVs" : 'New Video CVs'}`} />
+          <Table loading={false} data={`${activeTab === 'viewed' ? viewedVideos : videos}`} columns={columns} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} tableHeading={`${activeTab === "viewed" ? "History" : 'Video Archive'}`} />
         </div>
 
     </div>

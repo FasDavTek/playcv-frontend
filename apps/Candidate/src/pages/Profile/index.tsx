@@ -98,7 +98,7 @@ const schema = z.object({
       degreeTypeId: z.number().nullable(),
       institution: z.string().min(1, "Institution attended is required"),
       institutionId: z.number().nullable(),
-      degreeClass: z.string().min(1, "Class of degree is required"),
+      classOfDegree: z.string().min(1, "Class of degree is required"),
       degreeClassId: z.number().nullable(),
       coverLetter: z.string().min(1, "Cover letter content is required"),
       businessName: z.string().min(3, "Business Name is required"),
@@ -190,7 +190,7 @@ const Profile = () => {
           //       // setValue('userProfile.professionalDetails.nyscStartYear', professionalDetails.nyscStartYear)
           //       // setValue('userProfile.professionalDetails.nyscEndYear', professionalDetails.nyscEndYear)
           //       setValue(`userProfile.professionalDetails.${fieldKey}`, Number(value));
-          //       console.log(value)
+        
           //     }
           //   }
           // });
@@ -211,8 +211,6 @@ const Profile = () => {
             }
           });
 
-          console.log('Fetched NYSC Start Year:', professionalDetails.nyscStartYear)
-          console.log('Fetched NYSC End Year:', professionalDetails.nyscEndYear)
           // setValue('userProfile.userDetails.dateOfBirth', new Date(userDetails.dateOfBirth))
         }
       }
@@ -238,7 +236,6 @@ const Profile = () => {
     structureType: 'full'
   });
 
-  console.log(courses)
 
   const { data: degreeClasses, isLoading: isLoadingDegreeClasses } = useAllMisc({
     resource: 'degree-class',
@@ -248,12 +245,12 @@ const Profile = () => {
     structureType: 'full'
   });
 
-  // const { data: degreeTypes, isLoading: isLoadingDegreeTypes } = useAllMisc({
-  //   resource: 'degree-type',
-  //   page: 1,
-  //   limit: 100,
-  //   download: false,
-  // });
+  const { data: qualifications, isLoading: isLoadingQualifications } = useAllMisc({
+    resource: 'qualification',
+    page: 1,
+    limit: 100,
+    download: false,
+  });
 
   const { data: institutions, isLoading: isLoadingInstitutions } = useAllMisc({
     resource: 'institution',
@@ -263,7 +260,6 @@ const Profile = () => {
     structureType: 'full'
   });
 
-  console.log(institutions)
 
   const { data: industry, isLoading: isLoadingIndustries } = useAllMisc({
     resource: 'industries',
@@ -273,13 +269,11 @@ const Profile = () => {
     structureType: 'full'
   });
 
-  // console.log(industry);
 
 
   useEffect(() => {
     if (courses && degreeClasses && institutions && industry && !fetchedCoursesRef.current) {
       fetchedCoursesRef.current = true; // Mark as fetched
-      console.log('Courses fetched:', courses);
     }
   }, [courses, degreeClasses, industry, institutions]);
 
@@ -287,11 +281,9 @@ const Profile = () => {
 
   const submitForm = async (data: FormData) => {
     setLoading(true);
-    console.log('Submitting form with data:', data);
 
     try {
 
-      console.log('I am collecting data here', data)
 
       const formattedData = {
         userProfile: {
@@ -386,7 +378,6 @@ const Profile = () => {
           e.preventDefault();
           const data = getValues();
           submitForm(data);
-          console.log(data);
         }}>
           <CustomTabPanel value={values} index={0}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -582,11 +573,31 @@ const Profile = () => {
                 </Box>
               )}
               {editField === 'userProfile.professionalDetails.degree' ? (
-                <Input
-                  {...register('userProfile.professionalDetails.degree')}
-                  label="Degree / Certificate Awarded"
-                  type='text'
-                  placeholder='Degree / Certificate Awarded'
+                <Controller
+                  name='userProfile.professionalDetails.degree'
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      name="Degree / Certificate Awarded"
+                      control={control}
+                      placeholder="Institution attended"
+                      defaultValue={Array.isArray(qualifications) &&  qualifications?.find(i => i.name === watch('userProfile.professionalDetails.degree'))}
+                      options={model(qualifications, "name", "id")}
+                      handleChange={(newValue) => { 
+                      if (newValue.__isNew__) {
+                        field.onChange(newValue?.value || newValue?.label);
+                        setValue('userProfile.professionalDetails.degree', newValue?.label || '');
+                        setValue('userProfile.professionalDetails.degreeTypeId', null);
+                      } else {
+                        field.onChange(newValue?.value || newValue?.label);
+                        setValue('userProfile.professionalDetails.degree', newValue?.label);
+                        setValue('userProfile.professionalDetails.degreeTypeId', newValue?.value);
+                      } }}
+                      isDisabled={isLoadingQualifications}
+                      errors={errors}
+                      allowCreate={true}
+                    />
+                  )}
                 />
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('userProfile.professionalDetails.degree')}>
@@ -633,25 +644,25 @@ const Profile = () => {
                   </IconButton>
                 </Box>
               )}
-              {editField === 'userProfile.professionalDetails.degreeClass' ? (
+              {editField === 'userProfile.professionalDetails.classOfDegree' ? (
                 <Controller
-                  name='userProfile.professionalDetails.degreeClass'
+                  name='userProfile.professionalDetails.classOfDegree'
                   control={control}
                   render={({ field }) => (
                     <Select
                       name="Class of Degree"
                       control={control}
                       placeholder="Class of degree"
-                      defaultValue={Array.isArray(degreeClasses) &&  degreeClasses?.find(dc => dc.name === watch('userProfile.professionalDetails.degreeClass'))}
+                      defaultValue={Array.isArray(degreeClasses) &&  degreeClasses?.find(dc => dc.name === watch('userProfile.professionalDetails.classOfDegree'))}
                       options={model(degreeClasses, "name", "id")}
                       handleChange={(newValue) => { 
                       if (newValue.__isNew__) {
                         field.onChange(newValue?.value || newValue?.label);
-                        setValue('userProfile.professionalDetails.degreeClass', newValue?.label || '');
+                        setValue('userProfile.professionalDetails.classOfDegree', newValue?.label || '');
                         setValue('userProfile.professionalDetails.degreeClassId', null);
                       } else {
                         field.onChange(newValue?.value || newValue?.label);
-                        setValue('userProfile.professionalDetails.degreeClass', newValue?.label);
+                        setValue('userProfile.professionalDetails.classOfDegree', newValue?.label);
                         setValue('userProfile.professionalDetails.degreeClassId', newValue?.value);
                       } }}
                       isDisabled={isLoadingDegreeClasses}
@@ -661,10 +672,10 @@ const Profile = () => {
                   )}
                 />
               ) : (
-                <Box className="input-box" onClick={() => handleEditClick('userProfile.professionalDetails.degreeClass')}>
+                <Box className="input-box" onClick={() => handleEditClick('userProfile.professionalDetails.classOfDegree')}>
                   <label>Class of Degree</label>
-                  <Typography className="input-like">{watch('userProfile.professionalDetails.degreeClass')}</Typography>
-                  <IconButton onClick={() => handleEditClick('userProfile.professionalDetails.degreeClass')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
+                  <Typography className="input-like">{watch('userProfile.professionalDetails.classOfDegree')}</Typography>
+                  <IconButton onClick={() => handleEditClick('userProfile.professionalDetails.classOfDegree')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                     <SaveAsOutlinedIcon />
                   </IconButton>
                 </Box>
@@ -685,7 +696,7 @@ const Profile = () => {
               ) : (
                 <Box className="input-box" onClick={() => handleEditClick('userProfile.professionalDetails.coverLetter')}>
                   <label>Cover Letter</label>
-                  <Typography className="input-like">{watch('userProfile.professionalDetails.coverLetter')}</Typography>
+                  <Typography className="input-like">{truncateText(watch('userProfile.professionalDetails.coverLetter') || '', 1)}</Typography>
                   <IconButton onClick={() => handleEditClick('userProfile.professionalDetails.coverLetter')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                     <SaveAsOutlinedIcon />
                   </IconButton>
@@ -708,7 +719,7 @@ const Profile = () => {
               ) : (
                 <Box className="input-box">
                   <label>Business Name</label>
-                  <Typography className="input-like">{truncateText(watch('userProfile.professionalDetails.businessName') || '', 1)}</Typography>
+                  <Typography className="input-like">{watch('userProfile.professionalDetails.businessName')}</Typography>
                   <IconButton onClick={() => handleEditClick('userProfile.professionalDetails.businessName')} sx={{ position: 'absolute', top: 15, p: 0, right: 9 }}>
                       <SaveAsOutlinedIcon />
                   </IconButton>

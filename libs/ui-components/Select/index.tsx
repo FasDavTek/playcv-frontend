@@ -121,7 +121,7 @@ const SelectDropdown: FC<CustomSelectProps> = ({
       <Controller
         name={name}
         control={control}
-        defaultValue={defaultValue}
+        defaultValue={isMulti ? defaultValue : options?.find((option) => option.value === defaultValue)}
         render={({ field }) => {
           const { onChange, value } = field;
           const SelectComponent = allowCreate ? CreatableSelect : Select;
@@ -138,7 +138,7 @@ const SelectDropdown: FC<CustomSelectProps> = ({
                 }
               }}
               isDisabled={isDisabled}
-              value={options?.find((c) => c.value === value) || { value: value, label: value }}
+              value={isMulti ? value : options?.find((c) => c.value === value) || (value ? { value: value, label: value } : null)}
               isClearable
               styles={customStyles}
               components={{
