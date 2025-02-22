@@ -1,4 +1,4 @@
-* !text !filter !merge !diff
+*.log filter=lfs diff=lfs merge=lfs -text
 .nx/workspace-data/d/daemon.log filter=lfs diff=lfs merge=lfs -text
 .nx/workspace-data/d/*daemon.log filter=lfs diff=lfs merge=lfs -text
 *.nx/workspace-data/d/daemon.log filter=lfs diff=lfs merge=lfs -text
