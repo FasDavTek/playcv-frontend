@@ -75,11 +75,9 @@ const Login = () => {
 
   const fetchUserProfile = async (token: string) => {
     try {
-      console.log("Fetching user profile with token:", token)
       const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_PROFILE}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      console.log("User profile response:", resp)
 
       if (resp.code === "00") {
         return resp.userProfile

@@ -176,7 +176,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
       {/* </Link> */}
       <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", backgroundColor: 'transparent', height: 'auto' }} >
         
-          <Typography variant="subtitle1" fontWeight="medium" color="#000">
+          <Typography variant="body2" component='h6' fontWeight="medium" color="#000">
             {title?.slice(0, 30)}{' '}
             {/* <CheckCircleIcon
               sx={{ fontSize: '12px', color: 'gray', ml: '5px' }}
@@ -185,8 +185,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
           
         
         <Stack direction='row' alignItems='center' justifyContent='space-between' my='.3125rem'>
-          <Stack direction='row' alignItems='center'>
-            <Typography variant="subtitle2" color="gray">
+          <Stack direction='row' alignItems='start' justifyContent='space-between'>
+            <Typography variant="caption" color="gray">
               {authorProfile.userDetails.fullName}
             </Typography>
             {type === 'Pinned' && <PushPinIcon sx={{ fontSize: '1rem', color: 'red', ml: '.5rem' }} />}
@@ -202,7 +202,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }: any) => {
             </Tooltip>
           ) : null}
         </Stack>
-        <Typography variant="subtitle2" color="gray">
+        <Typography variant="body2" component='span' color="gray">
          {views} views
         </Typography>
         {/* <div className="flex justify-end mt-2">

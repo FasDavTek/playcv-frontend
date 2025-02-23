@@ -340,11 +340,11 @@ interface VideoType {
 }
 
 // TODO: Rename component
-const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate, title, authorName, status, category, categoryId, download = false, userType, userId, type = "category" }) => {
+const Videos: React.FC<VideosProps> = ({ page = 1, limit = 10, startDate, endDate, title, authorName, status = 'Approved', category, categoryId, download = false, userType, userId, type = "category" }) => {
   const navigate = useNavigate();
+  const [videos, setVideos] = useState<Video[]>([]);
   const [pinnedVideos, setPinnedVideos] = useState<Video[]>([])
   const [regularVideos, setRegularVideos] = useState<Video[]>([])
-  const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(page)
   const [totalPages, setTotalPages] = useState(1)
@@ -407,11 +407,11 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
 
         const response = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?${queryString}`);
 
-        // let data;
+        let videoData;
         
         if (response.succeeded === true) {
-          // data = await response.data;
-          let filteredVideos = response.data.filter((video: Video) => video.status === "Approved")
+          videoData = await response.data;
+          // let filteredVideos = response.data.filter((video: Video) => video.status === "Approved")
 
 
           // filteredVideos = filteredVideos.map((video: Video) => {
@@ -422,9 +422,8 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
           //   }
           // })
 
-
-          const pinned = filteredVideos.filter((video: Video) => video.type === "Pinned")
-          const regular = filteredVideos.filter((video: Video) => video.type !== "Pinned")
+          const pinned = videoData.filter((video: Video) => video.type === "Pinned")
+          const regular = videoData.filter((video: Video) => video.type !== "Pinned")
 
           // Sort videos based on the type prop
           if (type === "latest") {
@@ -434,7 +433,8 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
 
           setPinnedVideos(pinned)
           setRegularVideos(regular)
-          setTotalPages(Math.ceil(filteredVideos.length / limit));
+          setVideos([...pinned, ...regular])
+          setTotalPages(Math.ceil(response.totalRecords / limit));
         }
       } 
       catch (error) {
@@ -448,18 +448,28 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
   }, [currentPage, limit, startDate, endDate, title, authorName, status, category, download, userType, userId, type]);
 
 
-  useEffect(() => {
-    const handleResize = () => {
-      const cols = calculateColumns();
-      setColumns(cols);
-      setVideosPerPage(cols * 2);
-    };
+  console.log(videos.length)
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
+  console.log(currentPage)
+  console.log(totalPages)
+
+
+  console.log(videos)
+
+  console.log(videos.length)
+
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     const cols = calculateColumns();
+  //     setColumns(cols);
+  //     setVideosPerPage(cols * 2);
+  //   };
+
+  //   handleResize();
+  //   window.addEventListener('resize', handleResize);
     
-    return () => window.removeEventListener('resize', handleResize);
-  }, [calculateColumns]);
+  //   return () => window.removeEventListener('resize', handleResize);
+  // }, [calculateColumns]);
 
   const filteredVideos = category ? videos.filter(video => video.category === category) : videos;
 
@@ -470,7 +480,7 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
   };
 
   const handlePrevPage = () => {
-    if (currentPage > 1) {
+    if (currentPage > 0) {
       setCurrentPage((prevPage) => prevPage - 1)
     }
   };
@@ -482,7 +492,7 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
 
   if (loading) return <Loader />
   if (error) return <p>{error}</p>
-  if (pinnedVideos.length === 0 && regularVideos.length === 0) return <p>No videos available</p>
+  if (!videos.length) return <p>No videos available</p>
 
   return (
     <div className="space-y-4">
@@ -490,16 +500,16 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
           {/* {videoCVs.map((item: any, idx: number) => (
             <Box key={idx}>{item.url && <VideoCard video={item} />}</Box>
           ))} */}
-          {/* {videos.map((video: Video) => (
+          {videos.map((video: Video) => (
             <VideoCard key={video.id} video={video} />
-          ))} */}
+          ))}
 
-          {pinnedVideos.map((video: Video) => (
+          {/* {pinnedVideos.map((video: Video) => (
               <VideoCard key={video.id} video={video} />
           ))}
           {regularVideos.map((video: Video) => (
               <VideoCard key={video.id} video={video} />
-          ))}
+          ))} */}
         </div>
 
         <div className="flex items-center justify-end gap-2 mt-4">
@@ -509,8 +519,8 @@ const Videos: React.FC<VideosProps> = ({ page =1, limit = 30, startDate, endDate
           <Link to={'/talents'} className='mr-3 text-blue-600 text-sm'>
             <span>View more</span>
           </Link>
-          <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
-          <Button icon={<NavigateNextIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
+          <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 1}></Button>
+          <Button icon={<NavigateNextIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages}></Button>
         </div>
     </div>
   );

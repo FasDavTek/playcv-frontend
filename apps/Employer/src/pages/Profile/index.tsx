@@ -152,7 +152,6 @@ const Profile = () => {
 
 
   const submitForm = async (data: FormData) => {
-    // console.log("Submit form called", data);
     setLoading(true);
     
     try {

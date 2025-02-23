@@ -242,69 +242,73 @@ const index = () => {
         </Box>
 
         <Box className="bg-white min-h-[400px] flex flex-col lg:flex-row w-[95%] md:w-[90%] mx-auto gap-2 my-6 ">
-            <div className="card-containers md:flex-[3.5] 2xl:flex-[2] h-fit min-h-[200px]">
-                <div className="border-b flex p-4 justify-between">
-                    <p className="font-bold" role="button" onClick={() => {}}>Filter</p>
-                    <p className="text-red-500" role="button" onClick={handleClearFilters}>Clear All</p>
-                </div>
-                <div className="p-3 mx-auto flex flex-col gap-3">
-                    <Input
-                        label="Find CV"
-                        placeholder="Search..."
-                        containerClass="flex-1"
-                        value={searchText}
-                        onChange={handleSearchChange}
-                    />
-                    <Controller
-                        name="categories"
-                        control={control}
-                        render={({ field }) => (
-                            <Select
-                                name="categories"
-                                options={model(videoCategories, 'name', 'id')}
-                                control={control}
-                                placeholder="Select Categories"
-                                // defaultValue={selectedCategories.map(cat => ({ value: cat, label: cat }))}
-                                defaultValue={selectedCategoryId ? { id: selectedCategoryId, name: Array.isArray(videoCategories) && videoCategories.find((cat) => Number(cat.id) === selectedCategoryId)?.name, } : null}
-                                handleChange={handleCategoryChange}
-                                // isMulti={true}
-                            />
-                        )}
-                    />
-
-                    {/* <div className=""></div> */}
-                </div>
-            </div>
+            
 
             <div className=" flex-[9] p-4">
-                {/* Search box comes here */}
-
-                {filteredVideoCVs.length > 0 ? (
-                    <h4 className="font-medium text-lg text-gray-700">{filteredVideoCVs.length} Video CV Results</h4>
-                ) : 
-                    <h4 className="font-medium text-lg text-gray-700">No results found</h4>
-                }
-                <div className="mt-10 mx-auto">
-                    <Typography
-                        variant="h5"
-                        fontWeight="bold"
-                        mb={2}
-                        sx={{ color: 'black' }}
-                        className="font-bold text-3xl my-5">LATEST VIDEO CVs
-                    </Typography>
-                    <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
-                        {filteredVideoCVs.map((video) => (
-                            <VideoCard key={video.id} video={video} />
-                        ))}
+                <div className="card-containers w-80 h-fit min-h-[200px] mb-5">
+                    <div className="border-b flex p-4 justify-between">
+                        <p className="font-bold" role="button" onClick={() => {}}>Filter</p>
+                        <p className="text-red-500" role="button" onClick={handleClearFilters}>Clear All</p>
                     </div>
-                    <div className="flex justify-end gap-2 mt-4">
-                        <span className="text-sm text-gray-600 mr-10">
-                          Page {currentPage} of {totalPages}
-                        </span>
-                        <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
-                        <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
+                    <div className="p-3 mx-auto flex flex-col gap-3">
+                        <Input
+                            label="Find CV"
+                            placeholder="Search..."
+                            containerClass="flex-1"
+                            value={searchText}
+                            onChange={handleSearchChange}
+                        />
+                        <Controller
+                            name="categories"
+                            control={control}
+                            render={({ field }) => (
+                                <Select
+                                    name="categories"
+                                    options={model(videoCategories, 'name', 'id')}
+                                    control={control}
+                                    placeholder="Select Categories"
+                                    // defaultValue={selectedCategories.map(cat => ({ value: cat, label: cat }))}
+                                    defaultValue={selectedCategoryId ? { id: selectedCategoryId, name: Array.isArray(videoCategories) && videoCategories.find((cat) => Number(cat.id) === selectedCategoryId)?.name, } : null}
+                                    handleChange={handleCategoryChange}
+                                    // isMulti={true}
+                                />
+                            )}
+                        />
+
+                        {/* <div className=""></div> */}
                     </div>
                 </div>
+                <div>
+                    {filteredVideoCVs.length > 0 ? (
+                        <h4 className="font-medium text-lg text-gray-700">{filteredVideoCVs.length} Video CV Results</h4>
+                    ) : 
+                        <h4 className="font-medium text-lg text-gray-700">No results found</h4>
+                    }
+                    <div className="mt-10 mx-auto">
+                        <Typography
+                            variant="h5"
+                            fontWeight="bold"
+                            mb={2}
+                            sx={{ color: 'black' }}
+                            className="font-bold text-3xl my-5">LATEST VIDEO CVs
+                        </Typography>
+                        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 justify-items-center md:justify-items-start`} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+                            {filteredVideoCVs.map((video) => (
+                                <VideoCard key={video.id} video={video} />
+                            ))}
+                        </div>
+                        <div className="flex justify-end gap-2 mt-4">
+                            <span className="text-sm text-gray-600 mr-10">
+                            Page {currentPage} of {totalPages}
+                            </span>
+                            <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
+                            <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
+                        </div>
+                    </div>
+                </div>
+                {/* Search box comes here */}
+
+                
             </div>
         </Box>
     </Box>

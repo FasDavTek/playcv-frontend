@@ -130,7 +130,6 @@ const VideoDetails = () => {
   const [error, setError] = useState<string | null>(null);
   const { cartState, dispatch } = useCart();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [tabValue, setTabValue] = useState(0);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const { user, isAuthenticated } = useAuth();
   const [relatedVideos, setRelatedVideos] = useState([]);
@@ -207,7 +206,7 @@ const VideoDetails = () => {
     setShowAd(false);
     if (adId) {
       try {
-        const avg = await postData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS_COUNT}/${adId}`,
+        await postData(`${CONFIG.BASE_URL}${apiEndpoints.RANDOM_ADS_COUNT}/${adId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -264,6 +263,7 @@ const VideoDetails = () => {
     const itemInCart = cartState.cart.some((item: any) => item.id === id);
     setIsInWishlist(itemInCart);
   }, [cartState, id]);
+
 
   const handleAddToCart = () => {
     const itemInCart = cartState.cart.some((item: any) => item.id === id);
@@ -346,12 +346,10 @@ const VideoDetails = () => {
       try {
         const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
-        await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_VIEWS}?videoId=${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await postData(`${CONFIG.BASE_URL}${apiEndpoints.VIDEO_VIEWS}?videoId=${id}`, {});
 
         setViewCounted(true);
-        // setVideo((prevVideo) => (prevVideo ? { ...prevVideo, views: prevVideo.views + 1 } : prevVideo));
+        setVideo((prevVideo) => (prevVideo ? { ...prevVideo, views: prevVideo.views + 1 } : prevVideo));
       }
       catch (err) {
         console.error('Error incrementing view count:', err)
@@ -360,7 +358,8 @@ const VideoDetails = () => {
   }
 
 
-  const handleBackClick = () => {
+  const handleBackClick = (event: React.MouseEvent) => {
+    event.preventDefault()
     navigate(-1);
   };
 
@@ -368,7 +367,9 @@ const VideoDetails = () => {
   return (
     <Stack direction={{ sm: 'column', md: 'row' }} gap={3} className="min-h-screen flex-col md:flex-row mx-auto py-4 md:py-7 px-3 md:px-7 w-[98%]">
       <Stack direction="column" flex={4} spacing={3}>
-        <ChevronLeftIcon className="cursor-pointer text-7xl mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '1.75rem' }} onClick={handleBackClick} />
+        <a href="#" onClick={handleBackClick}>
+          <ChevronLeftIcon className="cursor-pointer text-7xl mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '2rem' }} />
+        </a>
         <Box className="rounded-lg">
           <Stack mx='auto' direction="column" spacing={4}>
             <Box className="w-full top-24 rounded-3xl">
