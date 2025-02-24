@@ -9,7 +9,7 @@ import { Layout } from '@video-cv/ui-components';
 import * as Assets from '@video-cv/assets';
 import { useTokenExpiration } from './../../../../libs/utils/helpers/useTokenExpiration';
 
-const routesWithoutDashboardLayout = ['job-board', 'cart', 'talents', 'video/', 'job/', '/terms-and-conditions', '/advert-policy', '/privacy-policy'];
+const routesWithoutDashboardLayout = ['job-board', 'cart', 'talents', 'video/', 'job/', '/terms-and-conditions', '/advert-policy', '/privacy-policy', 'faq', 'video-guideline'];
 
 export default function AppLayout(): React.ReactElement {
   const { authState } = useAuth();

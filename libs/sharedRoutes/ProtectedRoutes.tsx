@@ -29,6 +29,8 @@ const VerifyMail = lazy(() => import('../ui-components/Confirmation/EmailConfirm
 const Terms = lazy(() => import("../../apps/video-cv/src/pages/Terms and Conditions/index"));
 const Privacy = lazy(() => import("../../apps/video-cv/src/pages/Privacy Policy/index"));
 const AdsPolicy = lazy(() => import("../../apps/video-cv/src/pages/Advert Policy/index"));
+const VideoGuideline = lazy(() => import('../../apps/video-cv/src/pages/VideoCvGuideline/index'));
+const FAQ = lazy(() => import('../../apps/video-cv/src/pages/FAQ'));
 
 // EMPLOYER ROUTES
 const Dashboard = lazy(() => import('../../apps/Employer/src/pages/Dashboard'));
@@ -73,11 +75,9 @@ const CandidateVideoManagement = lazy(() => import('../../apps/Candidate/src/pag
 const CandidateVideoUploadTypes = lazy(() => import('../../apps/Candidate/src/pages/VideoManagement/VideoManagement-Types/VideoUploadTypes'));
 const CandidateVideoUploadDetails = lazy(() => import('../../apps/Candidate/src/pages/VideoManagement/VideoManagement-VideoUpload/VideoUpload'));
 const CandidateVideoUploadConfirmation = lazy(() => import('../../apps/Candidate/src/pages/VideoManagement/VideoManagement-Confirmation/VideoUploadConfirmation'));
-const CandidateVideoGuideline = lazy(() => import('../../apps/Candidate/src/pages/VideoCvGuideline/index'));
 const VideoDetail = lazy(() => import('../../apps/Candidate/src/pages/VideoDetail'));
 const Vacancies = lazy(() => import('../../apps/Candidate/src/pages/Vacancies'));
 const CandidateProfile = lazy(() => import('../../apps/Candidate/src/pages/Profile'));
-const FAQ = lazy(() => import('../../apps/Candidate/src/pages/FAQ'));
 const Payment = lazy(() => import('../../apps/Candidate/src/pages/Payment'));
 const PaymentRecords = lazy(() => import('../../apps/Candidate/src/pages/Payment/PaymentInvoice/InvoiceDetails'));
 const CandidateLogin = lazy(() => import('../../apps/Candidate/src/pages/Login'));
@@ -166,6 +166,14 @@ const router = createBrowserRouter([
                 path: ROUTES.ADVERT_POLICY,
                 element: <AdsPolicy />,
             },
+            {
+                path: ROUTES.FAQ,
+                element: <FAQ />,
+            },
+            {
+                path: ROUTES.VIDEO_GUIDELINE,
+                element: <VideoGuideline />,
+            },
           ],
     },
     {
@@ -185,10 +193,6 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.CANDIDATE_PROFILE,
                 element: <CandidateProfile />,
-            },
-            {
-                path: ROUTES.CANDIDATE_FAQ,
-                element: <FAQ />,
             },
             {
                 path: ROUTES.CANDIDATE_VIDEO_MANAGEMENT,
@@ -221,10 +225,6 @@ const router = createBrowserRouter([
             {
                 path: ROUTES.CANDIDATE_VIDEO_DETAIL,
                 element: <VideoDetail />,
-            },
-            {
-                path: ROUTES.CANDIDATE_VIDEO_GUIDELINE,
-                element: <CandidateVideoGuideline />,
             },
           ],
     },

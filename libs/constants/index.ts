@@ -24,7 +24,7 @@ const CandidateRoutes = [
   {
     name: 'VideoCV Guideline',
     img: Icons.Guideline,
-    route: ROUTES.CANDIDATE_VIDEO_GUIDELINE,
+    route: ROUTES.VIDEO_GUIDELINE,
     pageName: 'Video CV GuideLine',
   },
   {
@@ -43,7 +43,7 @@ const CandidateRoutes = [
   {
     name: 'FAQ',
     img: Icons.FAQ,
-    route: ROUTES.CANDIDATE_FAQ,
+    route: ROUTES.FAQ,
     pageName: 'Frequently Asked Questions',
   },
 ];

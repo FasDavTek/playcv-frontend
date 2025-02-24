@@ -228,50 +228,40 @@ const Navbar = () => {
                 Job Board
               </NavLink>
             </li>
-            {token && authState.isAuthenticated && authState?.user?.userTypeId === 3 || authState?.user?.userTypeId === 1 && (
-              <li className='my-3 md:my-0'>
-                <NavLink
-                  to="/candidate/video-guideline"
-                  className={({ isActive, isPending }) =>
-                    `text-black text-lg  ${
-                      isPending
-                        ? 'pending'
-                        : isActive
-                        ? 'active-nav-link'
-                        : 'nav-link'
-                    }`
-                  }
-                  onClick={(e) => {
-                    e.preventDefault()
-                    handleAuthenticatedNavigation('/candidate/video-guideline')
-                  }}
-                >
-                  Cv Guidelines
-                </NavLink>
-              </li>
-            )}
-            {token && authState.isAuthenticated && authState?.user?.userTypeId === 3 || authState?.user?.userTypeId === 1 && (
-              <li className='my-3 md:my-0'>
-                <NavLink
-                  to="/candidate/faq"
-                  className={({ isActive, isPending }) =>
-                    `text-black text-lg  ${
-                      isPending
-                        ? 'pending'
-                        : isActive
-                        ? 'active-nav-link'
-                        : 'nav-link'
-                    }`
-                  }
-                  onClick={(e) => {
-                    e.preventDefault()
-                    handleAuthenticatedNavigation('/candidate/faq')
-                  }}
-                >
-                  FAQ
-                </NavLink>
-              </li>
-            )}
+            <li className='my-3 md:my-0'>
+              <NavLink
+                to="/video-guideline"
+                className={({ isActive, isPending }) =>
+                  `text-black text-lg  ${
+                    isPending
+                      ? 'pending'
+                      : isActive
+                      ? 'active-nav-link'
+                      : 'nav-link'
+                  }`
+                }
+                onClick={handleNavItemClick}
+              >
+                Cv Guidelines
+              </NavLink>
+            </li>
+            <li className='my-3 md:my-0'>
+              <NavLink
+                to="/faq"
+                className={({ isActive, isPending }) =>
+                  `text-black text-lg  ${
+                    isPending
+                      ? 'pending'
+                      : isActive
+                      ? 'active-nav-link'
+                      : 'nav-link'
+                  }`
+                }
+                onClick={handleNavItemClick}
+              >
+                FAQ
+              </NavLink>
+            </li>
             {token && authState.isAuthenticated && authState?.user?.userTypeId === 3 && (
               <li>
                 <NavLink

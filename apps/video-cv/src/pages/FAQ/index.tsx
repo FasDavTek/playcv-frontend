@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { faqSchema } from '../../schema/formValidations/Faq.schema';
-import { useAllMisc } from "./../../../../../libs/hooks/useAllMisc";
+import { faqSchema } from '../../../../Candidate/src/schema/formValidations/Faq.schema';
+import { useAllMisc } from "../../../../../libs/hooks/useAllMisc";
 import { Input, TextArea, Button } from '@video-cv/ui-components';
 import { Box, CircularProgress, Typography } from '@mui/material';
 
@@ -21,9 +21,9 @@ const FAQ = () => {
 
   const { data: faqs, isLoading: isLoadingFaqs } = useAllMisc({
     resource: "faq",
-    page: 1,
-    limit: 100,
-    download: false,
+    // page: 1,
+    // limit: 10,
+    download: true,
     structureType: "data",
   });
 
@@ -38,7 +38,7 @@ const FAQ = () => {
   };
 
   return (
-    <div className="min-h-screen p-6 flex flex-col gap-10">
+    <div className="min-h-screen p-6 mt-12 flex flex-col gap-10">
       <Typography variant='h5' className="text-center text-gray-600 mb-12">What can we help you find?</Typography>
       {isLoadingFaqs ? (
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
@@ -47,7 +47,7 @@ const FAQ = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           {faqs?.map((faq: any) => (
-            <div key={faq.id} className={`${expanded && expanded === faq.id ? ' rounded-lg shadow-sm bg-white' : ''}`}>
+            <div key={faq.id} className={`${expanded && expanded === faq.id ? ' rounded-lg shadow-md bg-white' : ''}`}>
               <button
                 className="w-full p-4 text-left flex justify-between items-center bg-black/90 text-white hover:bg-black rounded-t-lg"
                 onClick={() => togglePanel(faq.id)}
