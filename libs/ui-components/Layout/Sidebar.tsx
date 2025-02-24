@@ -117,7 +117,7 @@ const Sidebar = forwardRef<HTMLDivElement, SidebarProps>(
 
           <div className="messaging-holder mb-14 mt-10">
             <a
-              href="https://wa.link/ev1zz4"
+              href="https://wa.me/2347065245969"
               target="_blank"
               className="collapse-hideText text-white font-semibold underline messaging-navlink"
             >

@@ -51,7 +51,7 @@ interface FetchJobsProps {
   filterOptions: FilterOptions;
 }
 
-const fetchJobs: React.FC<FetchJobsProps> = ({ page =1, limit = 30, startDate, endDate, jobTitle, location, keyResponsibilities, status, qualifications, filterOptions }) => {
+const fetchJobs: React.FC<FetchJobsProps> = ({ page = 1, limit = 10, startDate, endDate, jobTitle, location, keyResponsibilities, status, qualifications, filterOptions }) => {
   const [jobs, setJobs] = useState<Jobs[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(page)
@@ -123,7 +123,7 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ page =1, limit = 30, startDate, e
   };
 
   const handlePrevPage = () => {
-    if (currentPage > 1) {
+    if (currentPage > 0) {
       setCurrentPage((prevPage) => prevPage - 1)
     }
   };
@@ -150,8 +150,8 @@ const fetchJobs: React.FC<FetchJobsProps> = ({ page =1, limit = 30, startDate, e
         <Link to={'/job-board'} className='mr-3 text-blue-600 text-sm'>
             <span>View more</span>
         </Link>
-        <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
-        <Button icon={<NavigateNextIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
+        <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 1}></Button>
+        <Button icon={<NavigateNextIcon sx={{ fontSize: '0.875rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages}></Button>
       </div>
     </div>
   );

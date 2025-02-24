@@ -148,18 +148,18 @@ const Navbar = () => {
         }
         break
       default:
-        navigate(path)
+        return;
     }
   };
 
   return (
     <div
       ref={navbarRef}
-      className={`flex items-center px-3 md:px-7 sticky bg-white top-0 justify-center z-50 navbar ${
+      className={`flex items-center px-3 md:px-7 sticky bg-white top-0 justify-center navbar ${
         isScrolled ? 'scrolled' : ''
       } bg-white`}
     >
-      <div className="w-full mx-auto flex items-center justify-between h-dvh lg:h-auto">
+      <div className="w-full mx-auto flex items-center justify-between lg:h-auto">
         <Link
           className=""
           to="/"

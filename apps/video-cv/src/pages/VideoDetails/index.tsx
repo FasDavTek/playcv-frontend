@@ -358,8 +358,7 @@ const VideoDetails = () => {
   }
 
 
-  const handleBackClick = (event: React.MouseEvent) => {
-    event.preventDefault()
+  const handleBackClick = () => {
     navigate(-1);
   };
 
@@ -367,9 +366,9 @@ const VideoDetails = () => {
   return (
     <Stack direction={{ sm: 'column', md: 'row' }} gap={3} className="min-h-screen flex-col md:flex-row mx-auto py-4 md:py-7 px-3 md:px-7 w-[98%]">
       <Stack direction="column" flex={4} spacing={3}>
-        <a href="#" onClick={handleBackClick}>
-          <ChevronLeftIcon className="cursor-pointer text-7xl mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '2rem' }} />
-        </a>
+        {/* <a href="/"> */}
+          <ChevronLeftIcon className="cursor-pointer text-7xl mr-1 sticky p-1 mb-4 hover:text-white hover:bg-black rounded-full" sx={{ fontSize: '2rem' }} onClick={handleBackClick} />
+        {/* </a> */}
         <Box className="rounded-lg">
           <Stack mx='auto' direction="column" spacing={4}>
             <Box className="w-full top-24 rounded-3xl">

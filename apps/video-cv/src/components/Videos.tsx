@@ -325,6 +325,7 @@ interface VideosProps {
   title?: string
   authorName?: string
   status?: string
+  search?: string
   category?: string
   categoryId?: number
   download?: boolean
@@ -340,7 +341,7 @@ interface VideoType {
 }
 
 // TODO: Rename component
-const Videos: React.FC<VideosProps> = ({ page = 1, limit = 10, startDate, endDate, title, authorName, status = 'Approved', category, categoryId, download = false, userType, userId, type = "category" }) => {
+const Videos: React.FC<VideosProps> = ({ page = 1, limit = 10, startDate, endDate, title, authorName, status = 'Approved', category, categoryId, search, download = false, userType, userId, type = "category" }) => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState<Video[]>([]);
   const [pinnedVideos, setPinnedVideos] = useState<Video[]>([])
@@ -446,17 +447,6 @@ const Videos: React.FC<VideosProps> = ({ page = 1, limit = 10, startDate, endDat
 
     fetchVideos(); 
   }, [currentPage, limit, startDate, endDate, title, authorName, status, category, download, userType, userId, type]);
-
-
-  console.log(videos.length)
-
-  console.log(currentPage)
-  console.log(totalPages)
-
-
-  console.log(videos)
-
-  console.log(videos.length)
 
   // useEffect(() => {
   //   const handleResize = () => {
