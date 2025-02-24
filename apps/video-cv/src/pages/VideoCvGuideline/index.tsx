@@ -31,8 +31,8 @@ const index = () => {
   };
 
   return (
-    <div className="min-h-screen mt-12 px-3 md:px-10 py-10">
-      <div className="flex flex-col p-6 md:p-8 mx-auto gap-6">
+    <div className="min-h-screen mt-6 px-3 md:px-10 py-10">
+      <div className="flex flex-col lg:p-6 md:p-8 w-[95%] lg:w-[90%] mx-auto gap-6">
         <Typography variant="h5" className="mb-6 text-gray-600 text-center">
           Creating a compelling Video CV can significantly enhance your job application.
         </Typography>
