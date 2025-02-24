@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 
-import { Select, Radio, Input, DatePicker } from '@video-cv/ui-components';
+import { Select, Radio, Input, DatePicker, Button } from '@video-cv/ui-components';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/effect-creative';
@@ -9,6 +9,8 @@ import 'swiper/css/autoplay';
 import { EffectCreative, Autoplay } from 'swiper/modules';
 import { Images } from '@video-cv/assets';
 import { JobCard } from '../../components';
+import ChevronLeftOutlinedIcon from "@mui/icons-material/ChevronLeftOutlined"
+import NavigateNextIcon from "@mui/icons-material/NavigateNext"
 import { Controller, useForm } from 'react-hook-form';
 import dayjs from 'dayjs';
 import { getData } from './../../../../../libs/utils/apis/apiMethods';
@@ -50,7 +52,8 @@ const JobBoard = () => {
   const [jobs, setJobs] = useState<Jobs[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(30);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1)
 
   const { control } = useForm();
 
@@ -68,12 +71,14 @@ const JobBoard = () => {
           Page: currentPage.toString(),
           Limit: itemsPerPage.toString(),
           ...(searchText && { Search: searchText }),
+          ...(selectedDate && { Date: dayjs(selectedDate).format("YYYY-MM-DDTHH:mm:ss.SSSZ") }),
       })
 
         const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.VACANCY_LIST}?${queryParams}`);
 
         if (resp.succeeded === true) {
           setJobs(resp.data);
+          setTotalPages(Math.ceil(jobs.length / itemsPerPage))
         }
       }
       catch (err) {
@@ -85,30 +90,30 @@ const JobBoard = () => {
     }
 
     fetchJobs();
-  }, [currentPage, itemsPerPage, searchText]);
+  }, [currentPage, itemsPerPage, searchText, selectedDate]);
 
 
   // const { data: countryData, isLoading: isCountryLoading } = useAllCountry();
   // const { data: stateData, isLoading: isStateLoading } = useAllState();
 
 
-  useEffect(() => {
-        const handleResize = () => {
-          const screenWidth = window.innerWidth;
-          setItemsPerPage(screenWidth >= 768 ? 30 : 10)
-        };
+  // useEffect(() => {
+  //       const handleResize = () => {
+  //         const screenWidth = window.innerWidth;
+  //         setItemsPerPage(screenWidth >= 768 ? 30 : 10)
+  //       };
     
-        // Set the initial items per page based on screen width
-        handleResize();
+  //       // Set the initial items per page based on screen width
+  //       handleResize();
     
-        // Add event listener to update items per page on resize
-        window.addEventListener('resize', handleResize);
+  //       // Add event listener to update items per page on resize
+  //       window.addEventListener('resize', handleResize);
     
-        // Clean up event listener on component unmount
-        return () => {
-          window.removeEventListener('resize', handleResize);
-        };
-  }, []);
+  //       // Clean up event listener on component unmount
+  //       return () => {
+  //         window.removeEventListener('resize', handleResize);
+  //       };
+  // }, []);
 
 
   const filterJobs = () => {
@@ -126,7 +131,7 @@ const JobBoard = () => {
   };
   
   const filteredJobs = filterJobs();
-  const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
+  // const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
 
   const handlePrevPage = () => {
       if (currentPage > 1) {
@@ -164,6 +169,7 @@ const JobBoard = () => {
   const handleDateChange = (date: Date | null) => {
     setSelectedDate(date)
     setCurrentPage(1)
+    setIsFilterApplied(true)
   };
 
   // const handleStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -271,10 +277,10 @@ const JobBoard = () => {
               ))}
               {/* <JobCardBoard filterOptions={filterOptions} /> */}
             </div>
-            {/* <div className="flex justify-end gap-2 mt-4">
+            <div className="flex justify-end gap-2 mt-4">
                 <Button icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handlePrevPage} disabled={currentPage === 0}></Button>
                 <Button icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} variant="neutral" onClick={handleNextPage} disabled={currentPage === totalPages - 1}></Button>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
