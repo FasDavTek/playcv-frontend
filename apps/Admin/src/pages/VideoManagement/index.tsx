@@ -1,6 +1,6 @@
 import { CircularProgress, Stack } from '@mui/material';
 import { Button, SelectMenu, Table, TextArea } from '@video-cv/ui-components'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
@@ -69,9 +69,25 @@ interface Video {
   }
 }
 
+interface VideosProps {
+  page?: number
+  limit?: number
+  startDate?: string
+  endDate?: string
+  title?: string
+  authorName?: string
+  status?: any
+  category?: string
+  categoryId?: number
+  download?: boolean
+  userType?: string
+  userId?: string
+  type?: "pinned" | "latest" | "category"
+}
+
 const columnHelper = createColumnHelper<Video>();
 
-const index = () => {
+const index: React.FC<VideosProps> = ({ page = 1, limit = 10, status, download = false, type = "category", }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active');
   const [videos, setVideos] = useState<Video[]>([]);
@@ -81,6 +97,8 @@ const index = () => {
   const [approvedVideos, setApprovedVideos] = useState<Video[]>([]);
   const [pendingVideos, setPendingVideos] = useState<Video[]>([]);
   const [selectedVideoId, setSelectedVideoId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(page)
+  const [pageSize, setPageSize] = useState(limit)
   const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -88,35 +106,57 @@ const index = () => {
   const [filter, setFilter] = useState("");
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [lastFetchTime, setLastFetchTime] = useState(Date.now());
-
+  
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
+
+
+  useEffect(() => {
+    fetchVideos()
+    // // Set up interval to fetch videos every 5 minutes
+    const interval = setInterval(fetchVideos, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [activeTab, token, lastFetchTime])
+
 
   const fetchVideos = async () => {
     setLoading(true);
-    try {  
+    try {
+      const queryParams = new URLSearchParams({
+        Page: currentPage.toString(),
+        Limit: pageSize.toString(),
+      })
 
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Download=true`, {
+      switch (activeTab) {
+        case "active":
+          queryParams.append('Status', 'Approved')
+          break
+        case "pending":
+          queryParams.append('Status', 'InReview')
+          break
+      }
+
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?${queryParams}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      let data;
-      if (resp.code === '00') {
-        data = await resp.videos;
-        setVideos(data || []);
+    
+      if (resp.succeeded === true) {
+        let videoData = await resp.data;
+        setVideos(videoData);
+
+        const currentTime = Date.now();
+        const newVideos = videoData.filter((video: Video) => new Date(video.dateCreated).getTime() > lastFetchTime);
+
+        if (newVideos.length > 0) {
+          toast.info(`${newVideos.length} new video(s) uploaded`);
+        }
+        setLastFetchTime(currentTime);
       }
 
-      const currentTime = Date.now();
-      const newVideos = data.filter((video: Video) => new Date(video.dateCreated).getTime() > lastFetchTime);
-
-      const videosApproved = data.filter((video: Video) => video.status === 'Approved');
-      const videosPending = data.filter((video: Video) => ['Pending', 'Rejected', 'InReview'].includes(video.status));
-      setApprovedVideos(videosApproved);
-      setPendingVideos(videosPending);
-
-      if (newVideos.length > 0) {
-        toast.info(`${newVideos.length} new video(s) uploaded`);
-      }
-      setLastFetchTime(currentTime);
+      // const videosApproved = videoData.filter((video: Video) => video.status === 'Approved');
+      // const videosPending = videoData.filter((video: Video) => ['Pending', 'Rejected', 'InReview'].includes(video.status));
+      // setApprovedVideos(videosApproved);
+      // setPendingVideos(videosPending);
     }
     catch (err) {
       setLoading(false)
@@ -125,14 +165,9 @@ const index = () => {
     finally {
       setLoading(false);
     }
-  }
+  };
 
-  useEffect(() => {
-    fetchVideos()
-    // Set up interval to fetch videos every 5 minutes
-    const interval = setInterval(fetchVideos, 5 * 60 * 1000)
-    return () => clearInterval(interval)
-  }, [])
+
 
   const handleStatusChange = async (id: number, newStatus: number, reason?: string) => {
     try {
@@ -173,12 +208,16 @@ const index = () => {
     }
   }
 
+
+
   const handleView = async (item: Video) => {
     setSelectedItem(item);
     navigate(`/admin/video-management/${item.id}`, {
       state: { video: item },
     });
   };
+
+
 
   const handleVideoAction = async (id: number, action: string, reason?: string) => {
     try {
@@ -323,16 +362,32 @@ const index = () => {
 
 
 
-  const getCurrentItems = () => {
-    switch (activeTab) {
-      case 'active':
-        return approvedVideos;
-      case 'pending':
-        return pendingVideos;
-      default:
-        return [];
-    }
+  const handleTabChange = (tab: 'active' | 'pending') => {
+    setActiveTab(tab)
+    setCurrentPage(1) // Reset to first page when tab changes
+  }
+
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page); // Update current page
   };
+
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size)
+    setCurrentPage(1) // Reset to first page when page size changes
+  }
+
+  // const getCurrentItems = () => {
+  //   switch (activeTab) {
+  //     case 'active':
+  //       return approvedVideos;
+  //     case 'pending':
+  //       return pendingVideos;
+  //     default:
+  //       return [];
+  //   }
+  // };
 
 
   
@@ -348,7 +403,7 @@ const index = () => {
                   ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg'
                   : 'text-blue-600 hover:text-blue-600'
               }`}
-              onClick={() => { setActiveTab(tab as typeof activeTab) }}
+              onClick={() => { handleTabChange(tab as typeof activeTab) }}
             >
               {tab === 'active' ? 'Approved Videos' : 'Pending Videos'}
             </button>
@@ -356,7 +411,7 @@ const index = () => {
         </div>
       </div>
 
-      <Table loading={false} columns={columns} data={getCurrentItems()} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+      <Table loading={false} columns={columns} data={videos} search={setSearch} filter={filter} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="dialog-title" aria-describedby="dialog-description" PaperProps={{ sx: { padding: 3, borderRadius: 2, boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)', width: { xs: '90%', sm: '500px' }, maxWidth: '750px' }, }} BackdropProps={{ sx: { backdropFilter: 'blur(2px)', backgroundColor: 'rgba(0, 0, 0, 0.2)', }, }} >
         <DialogTitle>Rejection Reason</DialogTitle>

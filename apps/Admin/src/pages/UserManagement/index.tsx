@@ -85,6 +85,8 @@ const UserManagement = () => {
   const [rejectionDialogOpen, setRejectionDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedAction, setSelectedAction] = useState<"reject" | "revoke" | null>(null);
+  const [currentPage, setCurrentPage] = useState(1); // Pagination state
+  const [pageSize, setPageSize] = useState(10); // Items per page
   
   const navigate = useNavigate();
 
@@ -94,61 +96,48 @@ const UserManagement = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [activeTab, searchQuery, currentPage, pageSize]);
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
+
+      const queryParams = new URLSearchParams({
+        Page: currentPage.toString(),
+        Limit: pageSize.toString(),
+      })
+
+      switch (activeTab) {
+        case "subAdmins":
+          queryParams.append("UserTypeId", "1")
+          break
+        case "professionals":
+          queryParams.append("UserTypeId", "3")
+          break
+        case "employers":
+          queryParams.append("UserTypeId", "2")
+          queryParams.append("StatusId", "1")
+          break
+        case "pendingEmployers":
+          queryParams.append("UserTypeId", "2")
+          queryParams.append("StatusId", "2")
+          break
+      }
       
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USERS}?respType=${activeTab === "pendingEmployers" ? "employers" : activeTab}&Download=true`, {
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.GET_USERS}?${queryParams.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
 
-      if (resp.code === '00') {
-        const data = await resp;
+      if (resp.succeeded === true) {
+        const data = await resp?.data;
+        console.log(data)
 
-        const filteredUsers = data?.data?.filter((user: User) => {
-          switch (activeTab) {
-            case 'subAdmins':
-              return user.userBioDetails.type === 'SuperAdmin' && user.userBioDetails.userTypeId === 1;
-            case 'professionals':
-              return user.userBioDetails.type === 'Professional' && user.userBioDetails.userTypeId === 3;
-            case 'employers':
-              return user.userBioDetails.type === 'Employer' && user.userBioDetails.userTypeId === 2 && user.userBioDetails.status === 'Active';
-            case 'pendingEmployers':
-              return user.userBioDetails.type === 'Employer' && user.userBioDetails.userTypeId === 2 && user.userBioDetails.status === 'InReview';
-            default:
-              return false;
-          }
-        });
+        setUsers(data || [])
 
-        if (activeTab === "professionals") {
-          filteredUsers.forEach((user: Professional) => {
-            user.userBioDetails.institution = user.userBioDetails.institution
-            user.userBioDetails.qualification = user.userBioDetails.qualification
-            user.userBioDetails.courseOfStudy = user.userBioDetails.courseOfStudy
-            user.userBioDetails.nyscStateCode = user.userBioDetails.nyscStateCode
-            user.userBioDetails.nyscStartDate = user.userBioDetails.nyscStartDate
-            user.userBioDetails.nyscEndDate = user.userBioDetails.nyscEndDate
-          })
-        }
-
-        if (activeTab === "employers" || activeTab === 'pendingEmployers') {
-          filteredUsers.forEach((user: Employer) => {
-            user.userBioDetails.companyUrl = user.userBioDetails.companyUrl
-            user.userBioDetails.location = user.userBioDetails.location
-            user.userBioDetails.businessAddress = user.userBioDetails.businessAddress
-            user.userBioDetails.contactPersonName = user.userBioDetails.contactPersonName
-            user.userBioDetails.contactPersonPosition = user.userBioDetails.contactPersonPosition
-            user.userBioDetails.contactPersonPhoneNumber = user.userBioDetails.contactPersonPhoneNumber
-            user.userBioDetails.socialMediaLink = user.userBioDetails.socialMediaLink
-            user.userBioDetails.industry = user.userBioDetails.industry
-          })
-        }
-
-        setUsers(filteredUsers);
+        // setUsers(filteredUsers);
         console.log(users)
+        console.log(users.length)
       }
     }
     catch (err) {
@@ -163,9 +152,20 @@ const UserManagement = () => {
   };
 
 
-  useEffect(() => {
-    fetchUsers();
-  }, [activeTab, searchQuery]);
+  const handleTabChange = (tab: "subAdmins" | "professionals" | "employers" | "pendingEmployers") => {
+    setActiveTab(tab)
+    setCurrentPage(1) // Reset to first page when tab changes
+  }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page); // Update current page
+  };
+
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size)
+    setCurrentPage(1) // Reset to first page when page size changes
+  }
 
 
   const handleStatusToggle = async (user: User, newStatusId: number, action: "approve" | "reject" | "revoke") => {
@@ -334,40 +334,40 @@ const UserManagement = () => {
             header: 'Date of birth',
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor("userBioDetails.nyscStateCode", {
-            header: "NYSC State Code",
-            cell: (info) => info.getValue(),
-          }),
-          columnHelper.accessor("userBioDetails.nyscStartDate", {
-            header: "NYSC Start Date",
-            cell: (info) => info.getValue(),
-          }),
-          columnHelper.accessor("userBioDetails.nyscEndDate", {
-            header: "NYSC End Date",
-            cell: (info) => info.getValue(),
-          }),
-          columnHelper.accessor("userBioDetails.courseOfStudy", {
-            header: "Course of Study",
-            cell: (info) => info.getValue(),
-          }),
-          columnHelper.accessor("userBioDetails.institution", {
-            header: "Institution",
-            cell: (info) => info.getValue(),
-          }),
-          columnHelper.accessor('userBioDetails.businessName', {
-            header: 'Business Name',
-            cell: (info) => info.getValue(),
-          }),
-          columnHelper.accessor('userBioDetails.businessPhone', {
-            header: 'Business Phone Number',
-            cell: (info) => info.getValue(),
-          }),
           columnHelper.accessor('userBioDetails.grade', {
             header: 'Grade',
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor("userBioDetails.businessSector", {
-            header: "Industry",
+          // columnHelper.accessor("userBioDetails.nyscStateCode", {
+          //   header: "NYSC State Code",
+          //   cell: (info) => info.getValue(),
+          // }),
+          // columnHelper.accessor("userBioDetails.nyscStartDate", {
+          //   header: "NYSC Start Date",
+          //   cell: (info) => info.getValue(),
+          // }),
+          // columnHelper.accessor("userBioDetails.nyscEndDate", {
+          //   header: "NYSC End Date",
+          //   cell: (info) => info.getValue(),
+          // }),
+          // columnHelper.accessor("userBioDetails.courseOfStudy", {
+          //   header: "Course of Study",
+          //   cell: (info) => info.getValue(),
+          // }),
+          columnHelper.accessor("userBioDetails.institution", {
+            header: "Institution",
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor('userBusinessDetails.businessName', {
+            header: 'Business Name',
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor('userBusinessDetails.businessPhone', {
+            header: 'Business Phone Number',
+            cell: (info) => info.getValue(),
+          }),
+          columnHelper.accessor("userBusinessDetails.industry", {
+            header: "Business Sector",
             cell: (info) => info.getValue(),
           }),
           
@@ -375,45 +375,69 @@ const UserManagement = () => {
     : []),
     ...(activeTab === "employers" || activeTab === 'pendingEmployers'
       ? [
-          columnHelper.accessor('userBioDetails.businessName', {
+          columnHelper.accessor('userBusinessDetails.businessName', {
             header: 'Business Name',
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor('userBioDetails.businessPhone', {
+          columnHelper.accessor('userBusinessDetails.businessPhone', {
             header: 'Business Phone Number',
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor("userBioDetails.businessAddress", {
+          columnHelper.accessor("userBusinessDetails.address", {
             header: "Business Address",
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor("userBioDetails.companyUrl", {
-            header: "Company Website",
+          columnHelper.accessor('userBusinessDetails.businessEmail', {
+            header: 'Business Email',
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor("userBioDetails.location", {
-            header: "Location",
+          columnHelper.accessor("userBusinessDetails.websiteUrl", {
+            header: "Business Website",
+            cell: (info) => (
+              <a href={info.getValue()} target="_blank" rel="noopener noreferrer" className="hover:cursor-pointer">
+                {info.getValue()}
+              </a>
+            ),
+          }),
+          columnHelper.accessor("userBusinessDetails.industry", {
+            header: "Business Sector",
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor("userBioDetails.contactPersonName", {
+          columnHelper.accessor("userBusinessDetails.contactName", {
             header: "Contact Person",
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor("userBioDetails.contactPersonPosition", {
+          columnHelper.accessor("userBusinessDetails.contactPosition", {
             header: "Contact Position",
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor("userBioDetails.contactPersonPhoneNumber", {
+          columnHelper.accessor("userBusinessDetails.contactPhone", {
             header: "Contact Phone",
             cell: (info) => info.getValue(),
           }),
-          columnHelper.accessor("userBioDetails.socialMediaLink", {
-            header: "Social Media",
-            cell: (info) => info.getValue(),
+          columnHelper.accessor("userBusinessDetails.fbLink", {
+            header: "Facebook Link",
+            cell: (info) => (
+              <a href={info.getValue()} target="_blank" rel="noopener noreferrer" className="hover:cursor-pointer">
+                {info.getValue()}
+              </a>
+            ),
           }),
-          columnHelper.accessor("userBioDetails.industry", {
-            header: "Industry",
-            cell: (info) => info.getValue(),
+          columnHelper.accessor("userBusinessDetails.twitter", {
+            header: "Twitter Link",
+            cell: (info) => (
+              <a href={info.getValue()} target="_blank" rel="noopener noreferrer" className="hover:cursor-pointer">
+                {info.getValue()}
+              </a>
+            ),
+          }),
+          columnHelper.accessor("userBusinessDetails.instagramUrl", {
+            header: "Instagram Link",
+            cell: (info) => (
+              <a href={info.getValue()} target="_blank" rel="noopener noreferrer" className="hover:cursor-pointer">
+                {info.getValue()}
+              </a>
+            ),
           }),
         ]
     : []),
@@ -484,8 +508,6 @@ const UserManagement = () => {
                     },
                   ]
                 : [
-                { label: "Approve", onClick: () => handleStatusToggle(row.original, 1, 'approve'), value: 1, icon: <RecommendOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'success' },
-                { label: "Revoke", onClick: () => handleStatusToggle(row.original, 3, 'revoke'), value: 3, icon: <ThumbDownOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'red' },
                 { label: "View", onClick: () => navigate(`/admin/user-management/${activeTab}-view/${row.original.userBioDetails.email}`, { state: { user: row.original }, }), icon: <PreviewOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'black' },
                 { label: "Edit", onClick: () => navigate(`/admin/user-management/edit/${activeTab}/${row.original.userBioDetails.email}`, { state: { user: row.original }, }), icon: <CreateOutlinedIcon sx={{ fontSize: 'medium' }} />, variant: 'tertiary' },
               ]}
@@ -523,7 +545,7 @@ const UserManagement = () => {
                   ? 'text-white border-b-2 border-blue-600 bg-neutral-150 rounded-lg'
                   : 'text-blue-600 hover:text-blue-600'
               }`}
-              onClick={() => setActiveTab(tab as typeof activeTab)}
+              onClick={() => handleTabChange(tab as typeof activeTab)}
             >
               {tab === "pendingEmployers" ? "Pending Employers" : tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
@@ -542,6 +564,9 @@ const UserManagement = () => {
           globalFilter={globalFilter}
           setGlobalFilter={setGlobalFilter}
           tableHeading={`All ${activeTab === "pendingEmployers" ? "Pending Employers" : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
+          currentPage={currentPage} // Pass current page
+          pageSize={pageSize} // Pass page size
+          onPageChange={handlePageChange} // Pass page change handler
         />
       </div>
 

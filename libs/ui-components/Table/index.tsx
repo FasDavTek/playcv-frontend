@@ -27,6 +27,9 @@ interface ReactTableProps<T extends object> {
   setGlobalFilter: (value: string) => void;
   tableHeadingColorClassName?: string;
   tableRowOnclickFunction?: (rowData: T) => void;
+  currentPage?: number; // Current page
+  pageSize?: number; // Items per page
+  onPageChange?: (page: number) => void; // Page change handler
 }
 
 const Table: React.FC<any> = <T extends object>({
@@ -41,10 +44,11 @@ const Table: React.FC<any> = <T extends object>({
   setGlobalFilter,
   tableHeadingColorClassName = 'bg-gray-200',
   tableRowOnclickFunction = () => {},
+  currentPage = 1, // Default to page 1
+  pageSize = 10, // Default to 10 items per page
+  onPageChange, // Page change handler
 }: ReactTableProps<T>) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [columnFilters, setColumnFilters] = useState([]);
 
   const { authState } = useAuth();
@@ -59,7 +63,7 @@ const Table: React.FC<any> = <T extends object>({
         value?.toString().toLowerCase().includes(globalFilter?.toLowerCase())
       )
     );
-  }, [data, searchQuery, filter]);
+  }, [data, searchQuery, filter, globalFilter]);
 
   const paginatedData = useMemo(() => {
     if (!Array.isArray(filteredData)) return [];
@@ -68,7 +72,7 @@ const Table: React.FC<any> = <T extends object>({
     return filteredData?.slice(startIndex, endIndex);
   }, [filteredData, currentPage, pageSize]);
 
-  const totalPages = Math.ceil((Array.isArray(filteredData) ? filteredData.length : 0) / pageSize);
+  const totalPages = Math.ceil(filteredData.length / pageSize);
 
   const numberedColumns = useMemo<ColumnDef<T, any>[]>(() => [
     {
@@ -126,7 +130,6 @@ const Table: React.FC<any> = <T extends object>({
     link.click()
     document.body.removeChild(link)
   }
-
 
 
   if (loading) {
@@ -194,10 +197,13 @@ const Table: React.FC<any> = <T extends object>({
         </div>
       </div>
       <div className='sticky left-0 right-0 mt-2 flex justify-end gap-2 px-4'>
-        <Button variant={currentPage === 1 ? 'custom' : 'black'} icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+        <span className="text-sm text-gray-600 mr-10">
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button variant={currentPage === 1 ? 'custom' : 'black'} icon={<ChevronLeftOutlinedIcon sx={{ fontSize: '1rem' }} />} onClick={() => onPageChange?.(currentPage - 1)} disabled={currentPage === 1}>
           Previous
         </Button>
-        <Button variant={currentPage === totalPages ? 'custom' : 'black'} icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
+        <Button variant={currentPage === totalPages ? 'custom' : 'black'} icon={<NavigateNextIcon sx={{ fontSize: '1rem' }} />} onClick={() => onPageChange?.(currentPage + 1)} disabled={currentPage === totalPages}>
           Next
         </Button>
       </div>

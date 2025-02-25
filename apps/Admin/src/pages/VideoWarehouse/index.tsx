@@ -61,11 +61,31 @@ interface Video {
 }
 
 
-const index = () => {
+interface VideosProps {
+  page?: number
+  limit?: number
+  startDate?: string
+  endDate?: string
+  title?: string
+  authorName?: string
+  status?: string
+  category?: string
+  categoryId?: number
+  download?: boolean
+  userType?: string
+  userId?: string
+  type?: "pinned" | "latest" | "category"
+}
+
+
+const index: React.FC<VideosProps> = ({ page = 1, limit = 10, status, download = false, type = "category", }) => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active');
   const [videos, setVideos] = useState<Video[]>([]);
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState('');
+  const [currentPage, setCurrentPage] = useState(page)
+  const [itemsPerPage, setItemsPerPage] = useState(limit)
   const [selectedVideoId, setSelectedVideoId] = useState<number | null>(null);
   const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
   const [loading, setLoading] = useState(true);
@@ -79,21 +99,27 @@ const index = () => {
   const token = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
 
   const fetchVideos = async () => {
-    setLoading(true);
     try {  
+      setLoading(true);
 
-      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?Download=true`, {
+      const queryParams = new URLSearchParams({
+        Page: currentPage.toString(),
+        Limit: itemsPerPage.toString(),
+        ...(status && { Status: status }),
+      })
+
+      const resp = await getData(`${CONFIG.BASE_URL}${apiEndpoints.ALL_VIDEO_LIST}?${queryParams}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      let data;
-      if (resp.code === '00') {
-        data = await resp.videos;
-        setVideos(data || []);
+      let videoData;
+      if (resp.succeeded === true) {
+        videoData = await resp.data;
+        setVideos(videoData);
       }
 
       const currentTime = Date.now();
-      const newVideos = data.filter((video: Video) => new Date(video.dateCreated).getTime() > lastFetchTime);
+      const newVideos = videoData.filter((video: Video) => new Date(video.dateCreated).getTime() > lastFetchTime);
       if (newVideos.length > 0) {
         toast.info(`${newVideos.length} new video(s) uploaded`);
       }
