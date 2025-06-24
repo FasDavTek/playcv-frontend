@@ -1,0 +1,32 @@
+[build]
+  command = "yarn build-landing && yarn build-employer && yarn build-candidate && yarn build-admin"
+  publish = "dist/apps/video-cv"
+
+[build.environment]
+  SECRETS_SCAN_OMIT_PATHS = "dist/apps/*/assets/config-*.ts"
+  SECRETS_SCAN_OMIT_KEYS = "VITE_*"
+
+[[redirects]]
+  from = "/employer/*"
+  to = "/employer/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/candidate/*"
+  to = "/candidate/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

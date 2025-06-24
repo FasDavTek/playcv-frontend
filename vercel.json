@@ -1,0 +1,46 @@
+{
+  "projects": {
+    "video-cv": {
+      "root": "apps/video-cv",
+      "buildCommand": "nx build video-cv",
+      "outputDirectory": "dist/apps/video-cv"
+    },
+    "candidate": {
+      "root": "apps/candidate",
+      "buildCommand": "nx build Candidate",
+      "outputDirectory": "dist/apps/candidate"
+    },
+    "employer": {
+      "root": "apps/employer",
+      "buildCommand": "nx build Employer",
+      "outputDirectory": "dist/apps/employer"
+    },
+    "admin": {
+      "root": "apps/admin",
+      "buildCommand": "nx build Admin",
+      "outputDirectory": "dist/apps/admin"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/dist/apps/video-cv/index.html"
+    },
+    {
+      "source": "/account",
+      "destination": "/dist/apps/candidate/index.html"
+    },
+    {
+      "source": "/employer/:path*",
+      "destination": "/dist/apps/employer/:path*"
+    },
+    {
+      "source": "/professional/:path*",
+      "destination": "/dist/apps/candidate/:path*"
+    },
+    {
+      "source": "/vcadmin/:path*",
+      "destination": "/dist/apps/admin/:path*"
+    }
+  ]
+}

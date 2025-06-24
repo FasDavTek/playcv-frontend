@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.centered-modal {
+  @apply fixed top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[100%] md:max-w-[45%] overflow-y-auto h-auto max-h-[100%];
+}
+.centered-modal-md {
+  @apply fixed top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[90%] md:max-w-[35%] overflow-y-auto h-auto max-h-[100%];
+}
+.centered-modal-large {
+  @apply fixed top-[80%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-[90%] md:max-w-[75%] rounded-[20px] overflow-y-auto h-auto max-h-[100%] block;
+}
+
+.right-modal {
+  @apply absolute top-0 bottom-0 right-0 w-[90%] md:max-w-[650px] 2xl:max-w-[950px];
+}
+
+.ce-px {
+  @apply px-4 md:px-6;
+}
+
+.ce-py {
+  @apply py-4 md:py-6;
+}
+
+// table
+.ce-table-holder {
+  @apply border-[#E5E5E5] border border-solid bg-[#FBFBFB] rounded-[20px] py-[16px];
+  overflow-x: auto;
+
+  .table-heading {
+    @apply font-medium mb-[14px] text-lg text-neutral-200;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+
+    thead {
+      @apply rounded-lg;
+
+      th {
+        @apply text-[#282828] text-left;
+        white-space: nowrap;
+      }
+    }
+
+    tbody {
+      tr {
+        background-color: white;
+      }
+
+      td {
+        @apply text-[#525252] text-nowrap;
+        border-bottom: 1px solid #e1e1e1;
+      }
+    }
+
+    th,
+    td {
+      padding: 12px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 400;
+    }
+  }
+}
+
+.icon {
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+}
+
+.icon-blue {
+  filter: invert(21%) sepia(78%) saturate(3395%) hue-rotate(188deg) brightness(94%) contrast(96%);
+}
+
+/* Chrome, Safari, Edge, Opera */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+
+// .dashboard-table-holder {
+//   overflow-x: auto;
+
+//   table {
+//     width: 100%;
+//     border-collapse: separate;
+//     border-spacing: 0 8px;
+
+//     thead {
+//       @apply bg-primary-100;
+
+//       th {
+//         @apply text-white text-left;
+//         white-space: nowrap;
+//       }
+//     }
+
+//     tbody {
+//       td {
+//         @apply text-[#525252] text-nowrap;
+//         border-bottom: 1px solid #e1e1e1;
+//       }
+//     }
+
+//     th,
+//     td {
+//       padding: 12px;
+//       font-size: 14px;
+//       line-height: 20px;
+//       font-weight: 400;
+//     }
+//   }
+// }
+
+.sort-container {
+  @apply bg-[#F8F8FA] gap-4 rounded-[20px] flex px-5 py-2.5 items-center;
+
+  .sort-text {
+    @apply text-xs;
+  }
+
+  .sort-value {
+    @apply text-[#2C3647] text-sm;
+  }
+}
+
+
+.custom-quill .ql-container {
+  padding: .75rem;
+  border-radius: .5rem;
+  border: 1px solid #ddd;
+}
+
+.custom-quill .ql-editor {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.custom-quill .ql-toolbar {
+  border-radius: .5rem;
+  border: 1px solid #ddd;
+}
+
+.custom-quill {
+  width: 100%;
+}
+
+.input-box {
+  position: relative;
+  margin: .5rem 0;
+  height: 3.25rem;
+  outline: none;
+}
+
+.input-box label {
+  position: absolute;
+  top: -.5rem;
+  left: .5rem;
+  background: #F6F9F8;
+  padding: 0 .25rem;
+  font-size: .75rem;
+  color: gray;
+}
+
+.input-like {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: .875rem .75rem;
+  font-size: 1rem;
+  color: black;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: .5rem;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.input-like:hover {
+  border-color: rgba(0, 0, 0, 0.87);
+}
