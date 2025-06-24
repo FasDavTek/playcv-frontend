@@ -68,11 +68,16 @@ const EmailConfirmation = () => {
     }
     setEmailAndMessage();
 
-    if (location.state && (location.state.userType || location.state.username || location.state.showAlert)) {
-      navigate(location.pathname, { replace: true, state: {} });
-    }
+  }, [emailFromState, userTypeFromState]);
 
-  }, [emailFromState, userTypeFromState, navigate, location.state, location.pathname]);
+
+  useEffect(() => {
+    if (location.state && (location.state.userType || location.state.username || location.state.showAlert)) {
+      const timer = setTimeout(() => {
+        navigate(location.pathname, { replace: true, state: {} });
+      }, 100);
+    }
+  }, [navigate, location.state, location.pathname])
 
 
   const handleResendVerificationEmail = async () => {

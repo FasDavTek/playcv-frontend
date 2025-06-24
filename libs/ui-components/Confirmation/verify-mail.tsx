@@ -41,18 +41,18 @@ const VerifyEmail = () => {
         );
         
         if (response.statusCode === '00' && response?.data?.auth === 'ok') {
-          const isUserVerified = response.data.isVerified === 'true';
+          const isUserVerified = response.data.isVerified === true || response.data.isVerified === 'true';
           const successMessage = response.message;
           setLoading(false);
           setCurrentMessage(successMessage);
           navigate('/auth/login', { state: { verified: isUserVerified, message: successMessage } });
         }
         else {
-          const isUserVerified = response.data.isVerified === 'false';
+          // const isUserVerified = response.data.isVerified === 'false';
           const errorMessage = response.message;
           setLoading(false);
           setCurrentMessage(errorMessage);
-          navigate('/auth/login', { state: { verified: isUserVerified, message: errorMessage } });
+          navigate('/auth/login', { state: { verified: false, message: errorMessage } });
         }
       }
       catch (error: any) {
