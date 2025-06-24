@@ -9,6 +9,7 @@ import { Layout, ProfileCompletionNotice } from '@video-cv/ui-components';
 import * as Assets from '@video-cv/assets';
 import { useTokenExpiration } from './../../../../libs/utils/helpers/useTokenExpiration';
 import { useProfileCompletionNotice } from './../../../../libs/utils/helpers/profileCompletionNotice';
+import { useFirstLogin } from './../../../../libs/hooks/useFirstLogin';
 
 const routesWithoutDashboardLayout = ['job-board', 'cart', 'talents', 'video/', 'job/', '/terms-and-conditions', '/advert-policy', '/privacy-policy', 'faq', 'video-guideline'];
 
@@ -17,8 +18,7 @@ export default function AppLayout(): React.ReactElement {
   const location = useLocation();
   const navigate = useNavigate()
   const { shouldShowNotice, dismissNotice } = useProfileCompletionNotice();
-  const [isFirstLogin, setIsFirstLogin] = useState(false);
-  const [shouldShowFirstLoginNotice, setShouldShowFirstLoginNotice] = useState(false);
+  const { isFirstLogin, shouldShowFirstLoginNotice } = useFirstLogin(authState.user?.id);
 
   useTokenExpiration();
 
@@ -34,16 +34,12 @@ export default function AppLayout(): React.ReactElement {
         const loginTime = new Date().toISOString();
         localStorage.setItem(firstLoginTimeKey, loginTime);
         localStorage.setItem(firstLoginKey, 'false');
-        setIsFirstLogin(true);
-        setShouldShowFirstLoginNotice(true);
       }
       else if (hasLoggedInBefore && firstLoginData) {
         const firstLoginDate = new Date(firstLoginData);
         const eightDaysLater = new Date(firstLoginDate);
         eightDaysLater.setUTCDate(eightDaysLater.getUTCDate() + 8);
         const isWithinEightDays = new Date() <= eightDaysLater;
-        setIsFirstLogin(false)
-        setShouldShowFirstLoginNotice(isWithinEightDays)
       }
     }
   }, [authState]);

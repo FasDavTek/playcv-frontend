@@ -18,6 +18,7 @@ import { useAuth } from './../../../../../libs/context/AuthContext';
 import { decodeJWT } from './../../../../../libs/utils/helpers/decoder';
 import { useCart } from '../../context/CartProvider';
 import { useProfileCompletionNotice } from './../../../../../libs/utils/helpers/profileCompletionNotice';
+import { useFirstLogin } from './../../../../../libs/hooks/useFirstLogin';
 
 const ErrorMessages: any = {
   required: (field: any) => `${field} is required`,
@@ -58,6 +59,8 @@ const Login = () => {
   const { register, handleSubmit, watch, control, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
+
+  const { completeFirstLogin } = useFirstLogin();
 
   useEffect(() => {
     if (location.state) {
@@ -138,17 +141,14 @@ const Login = () => {
 
       if (res.code === "200") {
         const userId = res.user.id;
-        const firstLoginKey = `first_login_${userId}`;
-
-        const hasLoggedInBefore = localStorage.getItem(firstLoginKey) === 'false';
-        const isFirstLogin = !hasLoggedInBefore;
-
-        if (isFirstLogin) {
-          localStorage.setItem(firstLoginKey, 'false'); 
-        }
+        const { isFirstLogin } = useFirstLogin(userId);
 
         const token = res.token;
         const decoded = decodeJWT(token);
+
+        if (isFirstLogin) {
+          completeFirstLogin();
+        }
 
         sessionStorage.setItem(SESSION_STORAGE_KEYS.TOKEN, res.token);
 
@@ -156,7 +156,8 @@ const Login = () => {
         let userProfile;
         try {
           userProfile = await fetchUserProfile(userToken || '')
-        } catch (profileError) {
+        }
+        catch (profileError) {
           toast.warning("Logged in successfully, but there was an issue fetching your profile.")
         }
 
@@ -191,7 +192,7 @@ const Login = () => {
 
         markNoticeAsShown();
 
-        toast.success(`Welcome aboard once again! Let's continue where we left off.`);
+        toast.success(isFirstLogin ? `Welcome! Let's get started by completing your profile.` : `Welcome aboard once again! Let's continue where we left off.`);
         reset();
 
         const from = location.state?.from || '/';
